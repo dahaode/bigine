@@ -1,0 +1,17 @@
+{
+  "name": "bigine",
+  "version": "0.1.0-dev",
+  "description": "Player for BiGood.com",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@redmine.intra.bigood.com:bigood/sdk/bigine.git"
+  },
+  "author": "郑煜宇 <zhengyuyu@kanshu.com>",
+  "license": "GPL-3.0+",
+  "devDependencies": {
+  }
+}

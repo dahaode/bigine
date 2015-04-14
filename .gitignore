@@ -1,0 +1,8 @@
+*
+
+!.gitignore
+
+!lib/
+!var/
+
+!package.json
