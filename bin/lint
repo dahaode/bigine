@@ -10,7 +10,7 @@ require('fs').readFile(process.argv[2], {encoding: 'utf8'}, function (err, data)
             throw err;
         }
         var bigine = require('bigine/bigine');
-        bigine(data);
+        bigine(bigine(data).tags());
     } catch (error) {
         var msg = '错误：' + error.message;
         process.stderr.write(msg);
