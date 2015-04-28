@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+if (!process.argv[2]) {
+    process.exit(1);
+}
+
+require('fs').readFile(process.argv[2], {encoding: 'utf8'}, function (err, data) {
+    try {
+        if (err) {
+            throw err;
+        }
+        var bigine = require('bigine/bigine'),
+            parser = bigine(data);
+        bigine(parser.tags());
+        process.stdout.write(parser.toScript());
+    } catch (error) {
+        var msg = '错误：' + error.message;
+        process.stderr.write(msg);
+    }
+});
