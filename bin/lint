@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+if (!process.argv[2]) {
+    process.exit(1);
+}
+
+require('fs').readFile(process.argv[2], {encoding: 'utf8'}, function (err, data) {
+    var bigine = require('bigine/bigine');
+    bigine(data);
+});

@@ -2,7 +2,9 @@
 
 !.gitignore
 
+!bin/
 !lib/
+!node_modules/
 !var/
 
 !package.json
