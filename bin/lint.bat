@@ -1,3 +1,3 @@
 @echo off
 
-node "%~n0" "%1"
+node %~p0%~n0 %1
