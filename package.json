@@ -2,16 +2,33 @@
   "name": "bigine",
   "version": "0.1.0-dev",
   "description": "Player for BiGood.com",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "keywords": [
+    "bigine",
+    "bigood",
+    "avg"
+  ],
+  "license": "GPL-3.0",
+  "author": "郑煜宇 <yzheng@atfacg.com>",
+  "contributors": [
+    "姚尧 <yyao@atfacg.com>"
+  ],
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "main": "lib/bigine.js",
+  "bin": {
+    "compile": "bin/compile",
+    "lint": "bin/lint"
   },
   "repository": {
     "type": "git",
     "url": "git@redmine.intra.bigood.com:bigood/sdk/bigine.git"
   },
-  "author": "郑煜宇 <zhengyuyu@kanshu.com>",
-  "license": "GPL-3.0+",
-  "devDependencies": {
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "es6-promise": "^2.1.1"
   }
 }
