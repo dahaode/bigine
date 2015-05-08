@@ -9,8 +9,10 @@ require('fs').readFile(process.argv[2], {encoding: 'utf8'}, function (err, data)
         if (err) {
             throw err;
         }
-        var bigine = require('../lib/bigine').$import('.util.parser');
-        process.stdout.write(bigine.util.parser.parse(data).toScript());
+        var bigine = require('../lib/bigine').$import('.util.parser'),
+            parser = bigine.util.parser.parse(data);
+        bigine(parser.tags);
+        process.stdout.write(parser.toScript());
     } catch (error) {
         var msg = '错误：' + error.message;
         process.stderr.write(msg);
