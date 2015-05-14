@@ -1,10 +1,10 @@
 *
 
 !.gitignore
+!Gulpfile.js
+!package.json
 
 !bin/
 !lib/
 !node_modules/
 !var/
-
-!package.json

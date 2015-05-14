@@ -30,5 +30,16 @@
   },
   "dependencies": {
     "es6-promise": "^2.1.1"
+  },
+  "devDependencies": {
+    "browserify": "^10.2.0",
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.4",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.2.1"
   }
 }
