@@ -14,7 +14,7 @@ require('fs').readFile(process.argv[2], {encoding: 'utf8'}, function (err, data)
             .$import('.util.parser'),
             parser = bigine.util.parser.parse(data);
         (new bigine.core.episode(parser.tags)).$ready().then(function () {
-            process.stdout.write(parser.toScript() + "\n");
+            process.stdout.write(parser.toScript(process.argv[3]) + "\n");
         }).fail(function (error) {
             console.log(error.stack);
         });
