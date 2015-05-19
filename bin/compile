@@ -9,12 +9,16 @@ require('fs').readFile(process.argv[2], {encoding: 'utf8'}, function (err, data)
         if (err) {
             throw err;
         }
-        var bigine = require('../lib/bigine').$import('.util.parser'),
+        var bigine = require('../lib/bigine')
+            .$import('.core.episode')
+            .$import('.util.parser'),
             parser = bigine.util.parser.parse(data);
-        bigine(parser.tags);
-        process.stdout.write(parser.toScript());
+        (new bigine.core.episode(parser.tags)).$ready().then(function () {
+            process.stdout.write(parser.toScript() + "\n");
+        }).fail(function (error) {
+            console.log(error.stack);
+        });
     } catch (error) {
-        var msg = '错误：' + error.message;
-        process.stderr.write(msg);
+        console.log(error.stack);
     }
 });
