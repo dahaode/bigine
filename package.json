@@ -1,10 +1,10 @@
 {
   "name": "bigine",
   "version": "0.1.0-dev",
-  "description": "Player for BiGood.com",
+  "description": "Player for DaHao.de",
   "keywords": [
     "bigine",
-    "bigood",
+    "dahao",
     "avg"
   ],
   "license": "GPL-3.0",
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@redmine.intra.bigood.com:bigood/sdk/bigine.git"
+    "url": "git@redmine.intra.dahao.de:bigood/sdk/bigine.git"
   },
   "scripts": {
     "watch": "watchify -r ./lib/bigine.js:bigine -d -o var/build/0.1.0.bundle.js",

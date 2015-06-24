@@ -1,6 +1,6 @@
 /**
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 BiGood.com
+ * @copyright © 2015 DaHao.de
  * @license   GPL-3.0+
  */
 
