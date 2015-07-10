@@ -1,10 +1,10 @@
 {
   "name": "bigine",
-  "version": "0.1.0-dev",
-  "description": "Player for DaHao.de",
+  "version": "0.3.0",
+  "description": "DaHao.de 播放引擎",
   "keywords": [
-    "bigine",
     "dahao",
+    "bigine",
     "avg"
   ],
   "license": "GPL-3.0",
@@ -18,15 +18,14 @@
   ],
   "main": "lib/bigine.js",
   "bin": {
-    "compile": "bin/compile",
-    "lint": "bin/lint"
+    "bg-compile": "bin/compile",
+    "bg-lint": "bin/lint"
   },
   "repository": {
     "type": "git",
-    "url": "git@redmine.intra.dahao.de:bigood/sdk/bigine.git"
+    "url": "git@redmine.intra.dahao.de:bigood/sdk/bigine"
   },
   "scripts": {
-    "watch": "watchify -r ./lib/bigine.js:bigine -d -o var/build/0.1.0.bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
