@@ -16,9 +16,11 @@ require('fs').readFile(process.argv[2], {encoding: 'utf8'}, function (err, data)
         (new bigine.core.episode(parser.tags)).$ready().then(function () {
             process.stdout.write(parser.compile(process.argv[3]));
         }).fail(function (error) {
-            console.log(error.stack);
+            process.stderr.write('错误：' + error.message + "\n");
+            process.exit(2);
         });
     } catch (error) {
-        console.log(error.stack);
+        process.stderr.write('错误：' + error.message + "\n");
+        process.exit(3);
     }
 });
