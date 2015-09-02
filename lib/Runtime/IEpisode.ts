@@ -7,11 +7,13 @@
  */
 
 /// <reference path="../Core/IEpisode.ts" />
+/// <reference path="../Tag/_Structure/ISceneHost.ts" />
 /// <reference path="../Tag/IRoot.ts" />
 /// <reference path="../Tag/_Definition/IEntity.ts" />
 
 module Runtime {
-    export interface IEpisode extends Core.IEpisode {
+    // Tag.ISceneHost:a(), Tag.ISceneHost:p()
+    export interface IEpisode extends Core.IEpisode, Tag.ISceneHost {
         // new (ep: Tag.IRoot): IEpisode;
 
         /**
