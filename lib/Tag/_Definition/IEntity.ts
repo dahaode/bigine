@@ -9,6 +9,7 @@
 /// <reference path="../ITag.ts" />
 
 module Tag {
+    // ITag:b(), ITag:r()
     export interface IEntity extends ITag {
         /**
          * 获取唯一编号。
