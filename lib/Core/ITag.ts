@@ -23,6 +23,11 @@ module Core {
         gTagName(): string;
 
         /**
+         * 获取索引号。
+         */
+        gTagIndex(abstract?: boolean): number;
+
+        /**
          * 注册（自身实体）至作品。
          */
         r(ep: IEpisode): boolean;

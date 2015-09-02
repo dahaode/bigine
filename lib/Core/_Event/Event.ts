@@ -20,7 +20,7 @@ module Core {
          * 构造函数。
          */
         constructor(metas: IEventMetas<T>) {
-            Util.each<void>(metas, (value, key) => {
+            Util.each(metas, (value, key) => {
                 this[key] = value;
             });
         }

@@ -7,18 +7,22 @@
  */
 
 module SCHEMA {
-    /*{
-        [index: number]: {
-            name: string,
-            params: number | number[], // 精确量 | [最小量, 最大量]
-            content: number // -1 禁止，0 可选，1 必须,
-            children: {
-                [index: number]: number | number[] // 精确量 | [最小量, 最大量]
-            }
-        }
-    }*/
-    export var S = { // 59
-        '': ['ROOT', 0, -1, {
+    /**
+     * 语法规则。
+     *
+     * {
+     *     [index: number]: {
+     *         name: string,
+     *         params: number[], // [最小量, 最大量]
+     *         content: number // -1 禁止，0 可选，1 必须,
+     *         children: {
+     *             [index: number]: number[] // [最小量, 最大量]
+     *         }
+     *     }
+     * }
+     */
+    export var S: {[index: number]: any[]} = { // 59
+        '-1': ['ROOT', 0, -1, {
             54: [0, 1],
             55: [0, 1],
             56: [0, 1],
@@ -45,10 +49,10 @@ module SCHEMA {
         }],
         50: ['类型', 0, 1],
         51: ['条件', 0, -1, {
-            '': [0]
+            '-1': [0]
         }],
         52: ['内容', 0, -1, {
-            '': [1]
+            '-1': [1]
         }],
 
         33: ['音乐', 0, 1, {
@@ -100,22 +104,22 @@ module SCHEMA {
         48: ['天气', 0, 1],
 
         21: ['且', 0, -1, {
-            '': [1]
+            '-1': [1]
         }],
         26: ['或', 0, -1, {
-            '': [1]
+            '-1': [1]
         }],
         22: ['当数据', [2, 3], -1],
         24: ['对比数据', 1, -1],
 
         28: ['那么', 0, -1, {
-            '': [1]
+            '-1': [1]
         }],
         27: ['否则', 0, -1, {
-            '': [1]
+            '-1': [1]
         }],
 
-        53: ['UNKNOWN', 0, 1],
+        53: ['UNKNOWN', 1, 1],
 
          0: ['人物出场', [0, 1], 1],
          1: ['人物离场', 1, -1],
@@ -143,34 +147,44 @@ module SCHEMA {
             53: [1]
         }],
         29: ['如果', 1, -1, {
-            '': [1]
+            '-1': [1]
         }],
         30: ['增加数据', 1, 1],
         58: ['循环', 0, -1, {
-            '': [1]
+            '-1': [1]
         }],
         59: ['循环中止', 0, -1]
     };
+    var ii: any,
+        jj: any;
+    for (ii in S) {
+        if (!(S[ii][1] instanceof Array))
+            S[ii][1] = [S[ii][1], S[ii][1]];
+        if (S[ii][3])
+            for (jj in S[ii][3])
+                if (!(S[ii][3][jj] instanceof Array))
+                    S[ii][3][jj] = [S[ii][3][jj], S[ii][3][jj]];
+    }
 
-    /*{
-        [name: string]: number // 索引编号
-    }*/
-    export var I = {};
-    for (var ii in S)
+    /**
+     * 标签索引。
+     */
+    export var I: {[name: string]: number} = {};
+    for (ii in S)
         if (S.hasOwnProperty(ii))
             I[S[ii][0]] = ii;
 
-    /*{
-        [name: string]: string // 类名
-    }*/
-    export var T = {
+    /**
+     * 标签到类映射。
+     */
+    export var T: {[name: string]: string} = {
         音乐: 'DefBGM',
         音源: 'Audio',
         画面: 'Image',
         特写: 'DefCG',
         人物: 'DefChar',
         头像: 'Avatar',
-        姿态: 'Pose',
+        姿态: 'Poses',
         地图: 'DefMap',
         底图: 'BgImage',
         交互点: 'Point',
@@ -179,7 +193,7 @@ module SCHEMA {
         对应房间: 'Target',
         房间: 'DefRoom',
         使用地图: 'Link',
-        时刻: 'Time',
+        时刻: 'Times',
         音效: 'DefSE',
         天气: 'DefWeather',
 

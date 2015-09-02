@@ -12,12 +12,12 @@
 module Tag {
     export interface ITag extends Core.ITag {
         /**
-         * 注册（自身实体）至作品。
+         * 注册（自身实体）至（运行时）作品。
          */
         r(ep: Runtime.IEpisode): boolean;
 
         /**
-         * 绑定作品（实体）。
+         * 绑定（运行时）作品（实体）。
          */
         b(ep: Runtime.IEpisode): boolean;
     }
