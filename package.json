@@ -1,0 +1,21 @@
+{
+  "name": "bigine",
+  "version": "0.1.0",
+  "description": "DaHao.de 播放引擎（TypeScript 版）",
+  "keywords": [
+    "dahao",
+    "bigine",
+    "avg"
+  ],
+  "license": "GPL-3.0",
+  "author": "郑煜宇 <yzheng@atfacg.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bigine/bigine"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+  }
+}
