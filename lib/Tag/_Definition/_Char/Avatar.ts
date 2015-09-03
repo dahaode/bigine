@@ -7,15 +7,10 @@
  * @file      Tag/_Definition/_Char/Avatar.ts
  */
 
-/// <reference path="../../Unknown.ts" />
+/// <reference path="../Image.ts" />
 
 module Tag {
-    export class Avatar extends Unknown {
-        /**
-         * 图片资源。
-         */
-        private _o: Runtime.IResource;
-
+    export class Avatar extends Image {
         /**
          * 获取标签名称。
          */
@@ -28,13 +23,6 @@ module Tag {
          */
         $r(ep: Runtime.IEpisode): void {
             this._o = ep.r(this._c, Runtime.IResource.Type.Avatar);
-        }
-
-        /**
-         * 获取资源。
-         */
-        o(): Runtime.IResource {
-            return this._o;
         }
     }
 }

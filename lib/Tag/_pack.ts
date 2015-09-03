@@ -9,3 +9,4 @@
 
 /// <reference path="Unknown.ts" />
 /// <reference path="_Definition/_Char/DefChar.ts" />
+/// <reference path="_Definition/DefCG.ts" />

@@ -7,13 +7,12 @@
  * @file      Tag/_Definition/_Char/DefChar.ts
  */
 
-/// <reference path="../../Unknown.ts" />
-/// <reference path="../IEntity.ts" />
+/// <reference path="../Entity.ts" />
 /// <reference path="Avatar.ts" />
 /// <reference path="Poses.ts" />
 
 module Tag {
-    export class DefChar extends Unknown implements IEntity {
+    export class DefChar extends Entity {
         /**
          * 原型。
          */
@@ -36,25 +35,11 @@ module Tag {
         }
 
         /**
-         * 注册（自身实体）至（运行时）作品。
-         */
-        $r(ep: Runtime.IEpisode): void {
-            ep.f(this);
-        }
-
-        /**
          * 绑定（运行时）作品（实体）。
          */
         $b(ep: Runtime.IEpisode): void {
             if (this._p[0])
                 this._o = <DefChar> ep.q(this._p[0], Core.IEpisode.Entity.Chr);
-        }
-
-        /**
-         * 获取唯一编号。
-         */
-        gI(): string {
-            return this._c;
         }
 
         /**
