@@ -11,12 +11,21 @@
 /// <reference path="../IPerformable.ts" />
 
 module Tag {
-    // ITag:b(), ITag:r(), IIdable:i(), IIdable:gId(), IPerformable:p()
+    // Core.ITag:gL()
+    // Core.ITag:gN()
+    // Core.ITag:gC()
+    // Core.ITag:toString()
+    // Core.ITag:toJsrn()
+    // ITag:r()
+    // ITag:b()
+    // IIdable:gI()
+    // IIdable:i()
+    // IPerformable:p()
     export interface IScene extends IIdable, IPerformable {
         /**
          * 获取类型。
          */
-        gType(): IScene.Type;
+        gT(): IScene.Type;
     }
 
     export module IScene {

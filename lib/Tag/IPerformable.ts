@@ -12,9 +12,9 @@
 /// <reference path="../Util/_Promise/Q.ts" />
 
 module Tag {
-    // Core.ITag:gLineNo()
-    // Core.ITag:gTagName()
-    // Core.ITag:gTagIndex()
+    // Core.ITag:gL()
+    // Core.ITag:gN()
+    // Core.ITag:gC()
     // Core.ITag:toString()
     // Core.ITag:toJsrn()
     // ITag:r()

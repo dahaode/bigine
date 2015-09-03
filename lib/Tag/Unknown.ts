@@ -56,7 +56,7 @@ module Tag {
             this._r =
             this._b = false;
             this._q = {};
-            var schema = SCHEMA.S[this.gTagIndex()],
+            var schema = SCHEMA.S[this.gC()],
                 contraints: Util.IHashTable<number[]> = {};
             if (params.length < schema[1][0])
                 throw new E(E.TAG_PARAMS_TOO_FEW, lineNo);
@@ -74,9 +74,9 @@ module Tag {
                 contraints[index] = counter;
             });
             Util.each(children, (tag) => {
-                var index = tag.gTagIndex(!!contraints[-1]);
+                var index = tag.gC(!!contraints[-1]);
                 if (!(index in contraints))
-                    throw new E(E.SCHEMA_CHILD_NOT_ALLOWED, tag.gLineNo());
+                    throw new E(E.SCHEMA_CHILD_NOT_ALLOWED, tag.gL());
                 contraints[index][2]++;
             });
             Util.every(contraints, (counter) => {
@@ -88,22 +88,22 @@ module Tag {
         /**
          * 获取行号。
          */
-        gLineNo(): number {
+        gL(): number {
             return this._l;
         }
 
         /**
          * 获取标签名称。
          */
-        gTagName(): string {
+        gN(): string {
             return SCHEMA.T['Unknown'];
         }
 
         /**
          * 获取标签索引号。
          */
-        gTagIndex(abstract?: boolean): number {
-            var index = SCHEMA.I[this.gTagName()];
+        gC(abstract?: boolean): number {
+            var index = SCHEMA.I[this.gN()];
             if (undefined === index)
                 throw new E(E.SCHEMA_TAG_NOT_DECLARED, this._l);
             return index;
@@ -149,7 +149,7 @@ module Tag {
          * 转化为（中文）剧本（代码）。
          */
         toString(): string {
-            var clob = this.gTagName(),
+            var clob = this.gN(),
                 params = this._p.slice(0);
             if ('UNKNOWN' == clob)
                 clob = params.shift();
@@ -168,7 +168,7 @@ module Tag {
          * 转化为运行时（Javascript）代码。
          */
         toJsrn(): string {
-            var parts: any[] = [this.gTagIndex()],
+            var parts: any[] = [this.gC()],
                 children: string[] = [],
                 clob: string;
             if (this._c)
@@ -205,7 +205,7 @@ module Tag {
             if (!(name in this._q)) {
                 this._q[name] = [];
                 Util.each(this._s, (tag) => {
-                    if (tag.gTagName() == name)
+                    if (tag.gN() == name)
                         this._q[name].push(tag);
                 });
             }

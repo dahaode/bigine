@@ -19,7 +19,7 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gTagName(): string {
+        gN(): string {
             return SCHEMA.T['Poses'];
         }
 

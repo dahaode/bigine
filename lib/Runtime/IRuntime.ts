@@ -22,12 +22,12 @@ module Runtime {
         /**
          * 获取日志组件。
          */
-        l(): ILogger;
+        gL(): ILogger;
 
         /**
          * 获取数据状态组件。
          */
-        s(): IStates;
+        gS(): IStates;
 
         /**
          * 初始化。

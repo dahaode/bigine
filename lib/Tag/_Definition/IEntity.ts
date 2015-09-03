@@ -10,9 +10,9 @@
 /// <reference path="../ITag.ts" />
 
 module Tag {
-    // Core.ITag:gLineNo()
-    // Core.ITag:gTagName()
-    // Core.ITag:gTagIndex()
+    // Core.ITag:gL()
+    // Core.ITag:gN()
+    // Core.ITag:gC()
     // Core.ITag:toString()
     // Core.ITag:toJsrn()
     // ITag:r()
@@ -21,11 +21,11 @@ module Tag {
         /**
          * 获取唯一编号。
          */
-        gId(): string;
+        gI(): string;
 
         /**
          * 获取类型。
          */
-        gType(): Core.IEpisode.Entity;
+        gT(): Core.IEpisode.Entity;
     }
 }

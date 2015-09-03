@@ -29,7 +29,7 @@ module Core {
         /**
          * 获取类型。
          */
-        gType(): string {
+        gT(): string {
             return '';
         }
     }

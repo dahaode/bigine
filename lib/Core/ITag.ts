@@ -16,17 +16,17 @@ module Core {
         /**
          * 获取行号。
          */
-        gLineNo(): number;
+        gL(): number;
 
         /**
-         * 获取标签名称。
+         * 获取名称。
          */
-        gTagName(): string;
+        gN(): string;
 
         /**
-         * 获取索引号。
+         * 获取代号。
          */
-        gTagIndex(abstract?: boolean): number;
+        gC(abstract?: boolean): number;
 
         /**
          * 注册（自身实体）至作品。

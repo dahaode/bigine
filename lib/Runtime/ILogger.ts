@@ -12,21 +12,21 @@ module Runtime {
         /**
          * 调试。
          */
-        debug(...parts: any[]): void;
+        d(...parts: any[]): void;
 
         /**
          * 信息。
          */
-        info(...parts: any[]): void;
+        i(...parts: any[]): void;
 
         /**
          * 警告。
          */
-        warn(...parts: any[]): void;
+        w(...parts: any[]): void;
 
         /**
          * 错误。
          */
-        error(...parts: any[]): void;
+        e(...parts: any[]): void;
     }
 }

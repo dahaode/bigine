@@ -31,7 +31,7 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gTagName(): string {
+        gN(): string {
             return SCHEMA.T['DefChar'];
         }
 
@@ -53,14 +53,14 @@ module Tag {
         /**
          * 获取唯一编号。
          */
-        gId(): string {
+        gI(): string {
             return this._c;
         }
 
         /**
          * 获取类型。
          */
-        gType(): Core.IEpisode.Entity {
+        gT(): Core.IEpisode.Entity {
             return Core.IEpisode.Entity.Chr;
         }
 
