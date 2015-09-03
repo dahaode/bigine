@@ -4,12 +4,18 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
+ * @file      Tag/ITag.ts
  */
 
 /// <reference path="../Core/ITag.ts" />
 /// <reference path="../Runtime/IEpisode.ts" />
 
 module Tag {
+    // Core.ITag:gLineNo()
+    // Core.ITag:gTagName()
+    // Core.ITag:gTagIndex()
+    // Core.ITag:toString()
+    // Core.ITag:toJsrn()
     export interface ITag extends Core.ITag {
         /**
          * 注册（自身实体）至（运行时）作品。

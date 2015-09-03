@@ -4,6 +4,7 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
+ * @file      Runtime/IEpisode.ts
  */
 
 /// <reference path="../Core/IEpisode.ts" />
@@ -12,7 +13,11 @@
 /// <reference path="../Tag/_Definition/IEntity.ts" />
 
 module Runtime {
-    // Tag.ISceneHost:a(), Tag.ISceneHost:p()
+    // Core.IEmittable:addEventListener()
+    // Core.IEmittable:removeEventListener()
+    // Core.IEmittable:dispatchEvent()
+    // Tag.ISceneHost:a()
+    // Tag.ISceneHost:p()
     export interface IEpisode extends Core.IEpisode, Tag.ISceneHost {
         // new (ep: Tag.IRoot): IEpisode;
 

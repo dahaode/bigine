@@ -4,12 +4,16 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
+ * @file      Core/IEpisode.ts
  */
 
 /// <reference path="_Event/IEmittable.ts" />
 /// <reference path="ITag.ts" />
 
 module Core {
+    // IEmittable:addEventListener()
+    // IEmittable:removeEventListener()
+    // IEmittable:dispatchEvent()
     export interface IEpisode extends IEmittable {
         /**
          * 注册实体。

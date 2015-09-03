@@ -4,6 +4,7 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
+ * @file      Runtime/IRuntime.ts
  */
 
 /// <reference path="../Core/_Event/IEmittable.ts" />
@@ -12,6 +13,9 @@
 /// <reference path="IStates.ts" />
 
 module Runtime {
+    // Core.IEmittable:addEventListener()
+    // Core.IEmittable:removeEventListener()
+    // Core.IEmittable:dispatchEvent()
     export interface IRuntime extends Core.IEmittable {
         // new (ep: Tag.IRoot): IRuntime;
 
