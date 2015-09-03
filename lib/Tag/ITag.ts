@@ -20,11 +20,11 @@ module Tag {
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        r(ep: Runtime.IEpisode): boolean;
+        r(ep: Runtime.IEpisode): void;
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        b(ep: Runtime.IEpisode): boolean;
+        b(ep: Runtime.IEpisode): void;
     }
 }

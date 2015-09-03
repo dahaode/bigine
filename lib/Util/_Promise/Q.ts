@@ -8,7 +8,7 @@
  */
 
 /// <reference path="es6-promise.d.ts" />
-/// <reference path="../_Iterator/iterator.ts" />
+/// <reference path="../_Iterator/_iterator.ts" />
 
 declare var require;
 

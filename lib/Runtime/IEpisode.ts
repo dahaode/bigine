@@ -11,6 +11,7 @@
 /// <reference path="../Tag/_Structure/ISceneHost.ts" />
 /// <reference path="../Tag/IRoot.ts" />
 /// <reference path="../Tag/_Definition/IEntity.ts" />
+/// <reference path="_Resource/IResource.ts" />
 
 module Runtime {
     // Core.IEmittable:addEventListener()
@@ -29,6 +30,11 @@ module Runtime {
         /**
          * 查询实体。
          */
-        q(id: string, type?: Core.IEpisode.Entity): Tag.IEntity;
+        q(id: string, type: Core.IEpisode.Entity): Tag.IEntity;
+
+        /**
+         * 注册资源。
+         */
+        r(uri: string, type: IResource.Type): IResource;
     }
 }

@@ -35,4 +35,8 @@ class E extends Error {
     static TAG_CHILDREN_TOO_FEW = '子标签数量不满足最低要求';
 
     static TAG_CHILDREN_TOO_MANY = '子标签数量超过最大限制';
+
+    static DEF_CHAR_AVATAR_NOT_FOUND = '头像标签缺失';
+
+    static DEF_CHAR_POSES_NOT_FOUND = '姿态标签未定义';
 }

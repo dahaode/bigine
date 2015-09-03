@@ -8,7 +8,7 @@
  */
 
 /// <reference path="IEventMetas.ts" />
-/// <reference path="../../Util/_Iterator/iterator.ts" />
+/// <reference path="../../Util/_Iterator/_iterator.ts" />
 
 module Core {
     export class Event<T> {

@@ -31,12 +31,12 @@ module Core {
         /**
          * 注册（自身实体）至作品。
          */
-        r(ep: IEpisode): boolean;
+        r(ep: IEpisode): void;
 
         /**
          * 绑定作品（实体）。
          */
-        b(ep: IEpisode): boolean;
+        b(ep: IEpisode): void;
 
         /**
          * 转化为（中文）剧本（代码）。

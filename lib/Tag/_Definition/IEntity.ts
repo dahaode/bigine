@@ -22,5 +22,10 @@ module Tag {
          * 获取唯一编号。
          */
         gId(): string;
+
+        /**
+         * 获取类型。
+         */
+        gType(): Core.IEpisode.Entity;
     }
 }

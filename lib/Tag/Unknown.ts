@@ -56,7 +56,7 @@ module Tag {
             this._r =
             this._b = false;
             this._q = {};
-            var schema: any[] = SCHEMA.S[this.gTagIndex()],
+            var schema = SCHEMA.S[this.gTagIndex()],
                 contraints: Util.IHashTable<number[]> = {};
             if (params.length < schema[1][0])
                 throw new E(E.TAG_PARAMS_TOO_FEW, lineNo);
@@ -74,7 +74,7 @@ module Tag {
                 contraints[index] = counter;
             });
             Util.each(children, (tag) => {
-                var index: number = tag.gTagIndex(!!contraints[-1]);
+                var index = tag.gTagIndex(!!contraints[-1]);
                 if (!(index in contraints))
                     throw new E(E.SCHEMA_CHILD_NOT_ALLOWED, tag.gLineNo());
                 contraints[index][2]++;
@@ -96,14 +96,14 @@ module Tag {
          * 获取标签名称。
          */
         gTagName(): string {
-            return 'UNKNOWN';
+            return SCHEMA.T['Unknown'];
         }
 
         /**
          * 获取标签索引号。
          */
         gTagIndex(abstract?: boolean): number {
-            var index: number = SCHEMA.I[this.gTagName()];
+            var index = SCHEMA.I[this.gTagName()];
             if (undefined === index)
                 throw new E(E.SCHEMA_TAG_NOT_DECLARED, this._l);
             return index;
@@ -112,47 +112,45 @@ module Tag {
         /**
          * 注册（子标签实体及自身实体）至作品。
          */
-        r(ep: Runtime.IEpisode): boolean {
-            if (this._r)
-                return true;
+        r(ep: Runtime.IEpisode): void {
+            if (this._r) return;
             this._r = true;
-            return Util.every(this._s, (tag) => {
-                return tag.r(ep);
-            }) && this.$r(ep);
+            Util.each(this._s, (tag) => {
+                tag.r(ep);
+            })
+            this.$r(ep);
         }
 
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        $r(ep: Runtime.IEpisode): boolean {
-            return true;
+        $r(ep: Runtime.IEpisode): void {
         }
 
         /**
          * 绑定（运行时）作品（实体到子标签及自身）。
          */
-        b(ep: Runtime.IEpisode): boolean {
-            if (this._b)
-                return true;
+        b(ep: Runtime.IEpisode): void {
+            if (this._b) return;
             this._b = true;
-            return Util.every(this._s, (tag) => {
-                return tag.b(ep);
+            Util.each(this._s, (tag) => {
+                tag.b(ep);
             });
+            this.$b(ep);
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): boolean {
-            return true;
+        $b(ep: Runtime.IEpisode): void {
         }
 
         /**
          * 转化为（中文）剧本（代码）。
          */
         toString(): string {
-            var clob: string = this.gTagName(),
-                params: string[] = this._p.slice(0);
+            var clob = this.gTagName(),
+                params = this._p.slice(0);
             if ('UNKNOWN' == clob)
                 clob = params.shift();
             if (params.length)
