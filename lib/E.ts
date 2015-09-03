@@ -39,4 +39,10 @@ class E extends Error {
     static DEF_CHAR_AVATAR_NOT_FOUND = '头像标签缺失';
 
     static DEF_CHAR_POSES_NOT_FOUND = '姿态标签未定义';
+
+    static DEF_EPISODE_NOT_REGISTERED = '关联实体尚未注册';
+
+    static DEF_EPISODE_NOT_BINDED = '关联实体尚未绑定';
+
+    static DEF_ROOM_EMPTY = '使用地图标签和时刻标签均未定义';
 }

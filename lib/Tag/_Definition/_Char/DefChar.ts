@@ -54,11 +54,14 @@ module Tag {
          */
         o(id?: string): Runtime.IResource {
             var q = this.$q(SCHEMA.T[id ? 'Poses' : 'Avatar']);
-            if (!q.length)
+            if (!q.length) {
+                if (!this._b)
+                    throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
                 if (this._o)
                     return this._o.o(id);
                 else
                     throw new E(E.DEF_CHAR_POSES_NOT_FOUND, this._l);
+            }
             return (<Poses> q[0]).o(id);
         }
     }

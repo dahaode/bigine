@@ -34,6 +34,8 @@ module Tag {
          * 获取资源。
          */
         o(): Runtime.IResource {
+            if (!this._r)
+                throw new E(E.DEF_EPISODE_NOT_REGISTERED, this._l);
             return this._o;
         }
     }

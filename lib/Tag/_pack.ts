@@ -12,3 +12,4 @@
 /// <reference path="_Definition/DefBGM.ts" />
 /// <reference path="_Definition/DefCG.ts" />
 /// <reference path="_Definition/DefSE.ts" />
+/// <reference path="_Definition/_Room/DefRoom.ts" />
