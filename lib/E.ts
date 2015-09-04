@@ -47,4 +47,16 @@ class E extends Error {
     static DEF_EPISODE_NOT_BINDED = '关联实体尚未绑定';
 
     static DEF_ROOM_EMPTY = '使用地图标签和时刻标签均未定义';
+
+    static DEF_MAP_REGION_BROKEN = '区域定义信息出错';
+
+    static DEF_MAP_BGIMAGE_NOT_FOUND = '底图标签缺失';
+
+    static DEF_MAP_HLIMAGE_NOT_FOUND = '高亮图标签缺失';
+
+    static DEF_MAP_REGION_NOT_FOUND = '区域标签缺失';
+
+    static DEF_MAP_TARGET_NOT_FOUND = '对应房间标签缺失';
+
+    static DEF_MAP_POINT_NOT_FOUND = '继承交互点未定义';
 }
