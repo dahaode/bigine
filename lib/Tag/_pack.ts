@@ -14,3 +14,4 @@
 /// <reference path="_Definition/DefSE.ts" />
 /// <reference path="_Definition/_Room/DefRoom.ts" />
 /// <reference path="_Definition/_Map/DefMap.ts" />
+/// <reference path="_Structure/Auto.ts" />
