@@ -58,7 +58,11 @@ module Core {
             /**
              * 天气。
              */
-            Weather
+            Weather,
+            /**
+             * 主角（特殊类型）。
+             */
+            Player
         }
     }
 }

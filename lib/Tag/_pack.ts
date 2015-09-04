@@ -15,3 +15,4 @@
 /// <reference path="_Definition/_Room/DefRoom.ts" />
 /// <reference path="_Definition/_Map/DefMap.ts" />
 /// <reference path="_Structure/Auto.ts" />
+/// <reference path="_Definition/Player.ts" />
