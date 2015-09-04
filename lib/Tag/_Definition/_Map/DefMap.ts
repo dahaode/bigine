@@ -30,7 +30,7 @@ module Tag {
          * 获取资源。
          */
         o(): Runtime.IResource {
-            return (<BGImage> this.$q(SCHEMA.T['BGImage'])[0]).o();
+            return (<BGImage> this.$q('BGImage')[0]).o();
         }
     }
 }

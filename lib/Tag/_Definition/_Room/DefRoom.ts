@@ -25,7 +25,7 @@ module Tag {
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             this._a = {};
             super(params, content, children, lineNo);
-            if (!this.gM() && !this.$q(SCHEMA.T['Times']).length)
+            if (!this.gM() && !this.$q('Times').length)
                 throw new E(E.DEF_ROOM_EMPTY, lineNo);
         }
 
@@ -71,14 +71,14 @@ module Tag {
             var map = this.gM();
             if (map)
                 return map.o();
-            return (<Times> this.$q(SCHEMA.T['Times'])[0]).o(id);
+            return (<Times> this.$q('Times')[0]).o(id);
         }
 
         /**
          * 获取关联地图。
          */
         gM(): DefMap {
-            return <DefMap> this.$q(SCHEMA.T['Link'])[0];
+            return <DefMap> this.$q('Link')[0];
         }
     }
 }

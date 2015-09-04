@@ -202,6 +202,10 @@ module Tag {
          * 过滤名称符合要求地子标签。
          */
         $q(name: string): Unknown[] {
+            if (!(name in SCHEMA.C))
+                name = SCHEMA.T[name];
+            if (!name || !(name in SCHEMA.C))
+                throw new E(E.SCHEMA_CLASS_NOT_FOUND);
             if (!(name in this._q)) {
                 this._q[name] = [];
                 Util.each(this._s, (tag) => {

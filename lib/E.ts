@@ -24,6 +24,8 @@ class E extends Error {
 
     static SCHEMA_CHILD_NOT_ALLOWED = '上级标签不支持此子标签';
 
+    static SCHEMA_CLASS_NOT_FOUND = '未定义的标签类';
+
     static TAG_PARAMS_TOO_FEW = '标签参数个数不满足最低要求';
 
     static TAG_PARAMS_TOO_MANY = '标签参数个数超过最大限制';

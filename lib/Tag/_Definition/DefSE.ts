@@ -30,7 +30,7 @@ module Tag {
          * 获取资源。
          */
         o(): Runtime.IResource {
-            return (<Audio> this.$q(SCHEMA.T['Audio'])[0]).o();
+            return (<Audio> this.$q('Audio')[0]).o();
         }
     }
 }

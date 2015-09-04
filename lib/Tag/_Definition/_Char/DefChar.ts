@@ -23,7 +23,7 @@ module Tag {
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
-            if (!this.$q(SCHEMA.T['Avatar']).length && !params.length)
+            if (!this.$q('Avatar').length && !params.length)
                 throw new E(E.DEF_CHAR_AVATAR_NOT_FOUND, lineNo);
         }
 
@@ -53,7 +53,7 @@ module Tag {
          * 获取资源。
          */
         o(id?: string): Runtime.IResource {
-            var q = this.$q(SCHEMA.T[id ? 'Poses' : 'Avatar']);
+            var q = this.$q(id ? 'Poses' : 'Avatar');
             if (!q.length) {
                 if (!this._b)
                     throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);

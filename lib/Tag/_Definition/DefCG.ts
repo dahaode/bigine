@@ -23,7 +23,7 @@ module Tag {
          * 获取资源。
          */
         o(): Runtime.IResource {
-            return (<Image> this.$q(SCHEMA.T['Image'])[0]).o();
+            return (<Image> this.$q('Image')[0]).o();
         }
     }
 }
