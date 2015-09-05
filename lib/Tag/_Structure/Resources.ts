@@ -21,7 +21,7 @@ module Tag {
          * 获取标签名称。
          */
         gN(): string {
-            return SCHEMA.T['Resources'];
+            return 'Resources';
         }
 
         /**

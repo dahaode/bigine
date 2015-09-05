@@ -102,7 +102,7 @@ module Tag {
          * 获取标签名称。
          */
         gN(): string {
-            return SCHEMA.T['Unknown'];
+            return 'Unknown';
         }
 
         /**
@@ -145,7 +145,7 @@ module Tag {
          * 转化为（中文）剧本（代码）。
          */
         toString(): string {
-            var clob = this.gN(),
+            var clob = SCHEMA.T[this.gN()],
                 params = this._p.slice(0);
             if ('UNKNOWN' == clob)
                 clob = params.shift();
@@ -222,10 +222,8 @@ module Tag {
          * 过滤名称符合要求地子标签。
          */
         $q(name: string): Unknown[] {
-            if (!(name in SCHEMA.C))
-                name = SCHEMA.T[name];
-            if (!name || !(name in SCHEMA.C))
-                throw new E(E.SCHEMA_CLASS_NOT_FOUND);
+            if (!(name in SCHEMA.I))
+                throw new E(E.SCHEMA_TAG_NOT_DECLARED);
             if (!(name in this._q)) {
                 this._q[name] = [];
                 Util.each(this._s, (tag) => {
