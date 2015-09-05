@@ -65,4 +65,6 @@ class E extends Error {
     static ACT_ILLEGAL_POSITION = '无效地人物站位';
 
     static ACT_CHAR_NOT_ON = '人物并不在场';
+
+    static ACT_CHAR_ONSTAGE = '人物已在场';
 }

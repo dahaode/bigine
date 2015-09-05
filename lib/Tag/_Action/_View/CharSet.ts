@@ -1,17 +1,17 @@
 /**
- * 定义人物出场动作标签组件。
+ * 定义设置人物动作标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Action/_View/CharOn.ts
+ * @file      Tag/_Action/_View/CharSet.ts
  */
 
 /// <reference path="../Action.ts" />
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 
 module Tag {
-    export class CharOn extends Action {
+    export class CharSet extends Action {
         /**
          * 位置。
          */
@@ -60,7 +60,7 @@ module Tag {
          * 获取标签名称。
          */
         gN(): string {
-            return 'CharOn';
+            return 'CharSet';
         }
 
         /**
@@ -81,7 +81,7 @@ module Tag {
                 return <Util.Q<Runtime.IRuntime>> Util.Q.reject(new E(E.ACT_CHAR_ONSTAGE, this._l));
             states.s(kpos, this._mp);
             states.s('_s' + this._mc, this._ms);
-            return runtime.gD().charOn(this._mo, this._mp);
+            return runtime.gD().charSet(this._mo, this._mp);
         }
     }
 }

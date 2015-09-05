@@ -22,5 +22,10 @@ module Runtime {
          * 人物离场。
          */
         charOff(position: Tag.IAction.Position): Util.Q<IRuntime>;
+
+        /**
+         * 设置人物。
+         */
+        charSet(resource: IResource, position: Tag.IAction.Position): Util.Q<IRuntime>;
     }
 }

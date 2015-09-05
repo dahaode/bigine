@@ -22,3 +22,4 @@
 /// <reference path="_Structure/Root.ts" />
 /// <reference path="_Action/_View/CharOn.ts" />
 /// <reference path="_Action/_View/CharOff.ts" />
+/// <reference path="_Action/_View/CharSet.ts" />
