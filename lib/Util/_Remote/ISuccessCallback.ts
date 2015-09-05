@@ -10,7 +10,7 @@
 /// <reference path="../_Iterator/IHashTable.ts" />
 
 module Util {
-    export interface ISuccessCallback {
-        (data: IHashTable<any>): void;
+    export interface ISuccessCallback<T> {
+        (data: IHashTable<T>): void;
     }
 }

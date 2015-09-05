@@ -25,15 +25,15 @@ module Util {
         /**
          * HTTP GET 远端数据。
          */
-        export function get(url: string, onSuccess: ISuccessCallback, onFailure: IFailureCallback): void {
-            http(Method.GET, url, {}, onSuccess, onFailure);
+        export function get<T>(url: string, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void {
+            http<T>(Method.GET, url, {}, onSuccess, onFailure);
         }
 
         /**
          * HTTP POST 远端数据。
          */
-        export function post(url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback, onFailure: IFailureCallback): void {
-            http(Method.POST, url, data, onSuccess, onFailure);
+        export function post<T>(url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void {
+            http<T>(Method.POST, url, data, onSuccess, onFailure);
         }
 
         /**
@@ -47,7 +47,7 @@ module Util {
         /**
          * HTTP 请求远端数据。
          */
-        export function http(method: Method, url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback, onFailure: IFailureCallback): void {
+        export function http<T>(method: Method, url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void {
             var xhr = new XMLHttpRequest(),
                 qs: string[] = [],
                 q: string;
