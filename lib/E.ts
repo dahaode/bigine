@@ -59,4 +59,6 @@ class E extends Error {
     static DEF_MAP_TARGET_NOT_FOUND = '对应房间标签缺失';
 
     static DEF_MAP_POINT_NOT_FOUND = '继承交互点未定义';
+
+    static SCENE_TYPE_UNKNOWN = '无效的事件类型';
 }

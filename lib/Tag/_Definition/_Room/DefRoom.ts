@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Entity.ts" />
-/// <reference path="../../_Structure/ISceneHost.ts" />
+/// <reference path="../../_Structure/_Scene/ISceneHost.ts" />
 /// <reference path="Link.ts" />
 /// <reference path="Times.ts" />
 
@@ -59,9 +59,7 @@ module Tag {
         p(type: IScene.Type, runtime: Runtime.IRuntime): Util.Q<Runtime.IRuntime> {
             if (!(type in this._a))
                 return <Util.Q<Runtime.IRuntime>> Util.Q.resolve(runtime);
-            return Util.Q.every(this._a[type], (scene) => {
-                return scene.p(runtime);
-            });
+            return Util.Q.every(this._a[type], (scene) => scene.p(runtime));
         }
 
         /**

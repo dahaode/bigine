@@ -18,3 +18,4 @@
 /// <reference path="_Definition/Player.ts" />
 /// <reference path="_Structure/Theme.ts" />
 /// <reference path="_Structure/Resources.ts" />
+/// <reference path="_Structure/_Scene/Scene.ts" />

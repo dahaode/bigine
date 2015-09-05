@@ -26,6 +26,6 @@ module Tag {
         /**
          * 恢复编号。
          */
-        i(id: string): IIdable;
+        i(id: string): void;
     }
 }
