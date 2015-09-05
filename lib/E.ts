@@ -61,4 +61,6 @@ class E extends Error {
     static SCENE_TYPE_UNKNOWN = '无效的事件类型';
 
     static ROOT_NOT_PARENT = '根标签没有父标签';
+
+    static ACT_ILLEGAL_POSITION = '无效地人物站位';
 }

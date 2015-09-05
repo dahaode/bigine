@@ -22,4 +22,24 @@ module Tag {
     // IPerformable:p()
     export interface IAction extends IAssertable, IPerformable {
     }
+
+    export module IAction {
+        /**
+         * 位置。
+         */
+        export enum Position {
+            /**
+             * 左。
+             */
+            Left,
+            /**
+             * 中。
+             */
+            Center,
+            /**
+             * 右。
+             */
+            Right
+        }
+    }
 }

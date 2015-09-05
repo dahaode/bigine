@@ -11,6 +11,7 @@
 /// <reference path="../Tag/_Structure/IRoot.ts" />
 /// <reference path="ILogger.ts" />
 /// <reference path="IStates.ts" />
+/// <reference path="_Director/IDirector.ts" />
 
 module Runtime {
     // Core.IEmittable:addEventListener()
@@ -28,6 +29,11 @@ module Runtime {
          * 获取数据状态组件。
          */
         gS(): IStates;
+
+        /**
+         * 获取场效调度器组件。
+         */
+        gD(): IDirector;
 
         /**
          * 初始化。
