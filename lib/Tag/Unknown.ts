@@ -155,7 +155,7 @@ module Tag {
                 clob += '：';
             clob += '\n';
             Util.each(this._s, (tag) => {
-                clob += '\t' + tag.toString().replace(/\r?\n/, '\n\t').substr(0, -1);
+                clob += '\t' + tag.toString().replace(/\n/, '\n\t').substr(0, -1);
             });
             return clob;
         }

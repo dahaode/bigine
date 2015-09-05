@@ -9,7 +9,7 @@
 
 /// <reference path="../Core/IEpisode.ts" />
 /// <reference path="../Tag/_Structure/_Scene/ISceneHost.ts" />
-/// <reference path="../Tag/IRoot.ts" />
+/// <reference path="../Tag/_Structure/IRoot.ts" />
 /// <reference path="../Tag/_Definition/IEntity.ts" />
 /// <reference path="_Resource/IResource.ts" />
 

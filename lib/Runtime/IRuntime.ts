@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Core/_Event/IEmittable.ts" />
-/// <reference path="../Tag/IRoot.ts" />
+/// <reference path="../Tag/_Structure/IRoot.ts" />
 /// <reference path="ILogger.ts" />
 /// <reference path="IStates.ts" />
 
