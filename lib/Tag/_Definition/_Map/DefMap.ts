@@ -71,7 +71,7 @@ module Tag {
          */
         gP(): Util.IHashTable<Point>;
         gP(id: string): Point;
-        gP(id?): any {
+        gP(id?: string): any {
             if (id) {
                 if (!(id in this._a))
                     throw new E(E.DEF_MAP_POINT_NOT_FOUND, this._l);

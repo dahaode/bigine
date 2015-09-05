@@ -16,3 +16,4 @@
 /// <reference path="_Definition/_Map/DefMap.ts" />
 /// <reference path="_Structure/Auto.ts" />
 /// <reference path="_Definition/Player.ts" />
+/// <reference path="_Structure/Theme.ts" />

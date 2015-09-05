@@ -4,16 +4,15 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Util/_Promise/Q.ts
+ * @file      Util/Q.ts
  */
 
 /// <reference path="es6-promise.d.ts" />
-/// <reference path="../_Iterator/_iterator.ts" />
-
-declare var require;
+/// <reference path="_Iterator/_iterator.ts" />
+/// <reference path="Env.ts" />
 
 module Util {
-    if ('undefined' == typeof window || !window['Promise'])
+    if (!Env.Window || !('Promise' in window))
         require('es6-promise').polyfill();
 
     export class Q<T> extends Promise<T> {
@@ -30,7 +29,7 @@ module Util {
         static every<U>(array: U[], iterator: IArrayIterator<U, Thenable<any>>, $this?: any): Q<any> {
             $this = $this || array;
             var q: Q<any>;
-            Util.each<U>(array, (item, index) => {
+            each<U>(array, (item, index) => {
                 q = index ?
                     <Q<any>> q.then(() => {
                         return iterator.call($this, item, index, array);

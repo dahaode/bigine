@@ -1,5 +1,5 @@
 /**
- * @file Util/_Promise/es6-promise.d.ts
+ * @file Util/es6-promise.d.ts
  */
 
 // Type definitions for es6-promise

@@ -9,7 +9,7 @@
 
 /// <reference path="ITag.ts" />
 /// <reference path="../Runtime/IRuntime.ts" />
-/// <reference path="../Util/_Promise/Q.ts" />
+/// <reference path="../Util/Q.ts" />
 
 module Tag {
     // Core.ITag:gL()

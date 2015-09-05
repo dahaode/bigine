@@ -21,9 +21,7 @@ module Core {
          * 构造函数。
          */
         constructor(metas: IEventMetas<T>) {
-            Util.each(metas, (value, key) => {
-                this[key] = value;
-            });
+            this.target = metas.target;
         }
 
         /**

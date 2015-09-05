@@ -99,7 +99,7 @@ module SCHEMA {
      * }
      */
     export var S: { [index: number]: any[] } = { // 59
-        '-1': [T['ROOT'], 0, -1, {
+        '-1': [T['Root'], 0, -1, {
             54: [0, 1],
             55: [0, 1],
             56: [0, 1],
@@ -196,7 +196,7 @@ module SCHEMA {
             '-1': [1]
         }],
 
-        53: [T['UNKNOWN'], 1, 1],
+        53: [T['Unknown'], 1, 1],
 
         0: [T['CharOn'], [0, 1], 1],
         1: [T['CharOff'], 1, -1],
@@ -209,7 +209,7 @@ module SCHEMA {
         8: [T['Save'], [0, 1], -1],
         9: [T['End'], 0, -1],
         10: [T['Fail'], 0, -1],
-        11: [T['Rank'], 1, -1],
+        11: [T['Stars'], 1, -1],
         12: [T['PlayBGM'], 1, -1],
         13: [T['HideCG'], 0, -1],
         14: [T['ShowCG'], 1, -1],

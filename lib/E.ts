@@ -12,7 +12,7 @@ class E extends Error {
      * 构造函数。
      */
     constructor(message: string, lineNo?: number) {
-        if (Error['captureStackTrace'])
+        if ('captureStackTrace' in Error)
             Error['captureStackTrace'](this, E);
         if (lineNo)
             message = '第 ' + lineNo + ' 行' + message;

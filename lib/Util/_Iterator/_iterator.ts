@@ -16,7 +16,7 @@ module Util {
      */
     export function each<T>(array: T[], iterator: IArrayIterator<T, any>, thisArg?: any): void;
     export function each<T>(object: IHashTable<T>, iterator: IObjectIterator<T, any>, thisArg?: any): void;
-    export function each<T>(obj, cb, $this): void {
+    export function each<T>(obj: any, cb:any , $this: any): void {
         $this = $this || {};
         var ii: any;
         if (obj instanceof Array) {
@@ -36,7 +36,7 @@ module Util {
      */
     export function every<T>(array: T[], iterator: IArrayIterator<T, boolean>, thisArg?: any): boolean;
     export function every<T>(object: IHashTable<T>, iterator: IObjectIterator<T, boolean>, thisArg?: any): boolean;
-    export function every<T>(obj, cb, $this): boolean {
+    export function every<T>(obj: any, cb: any, $this: any): boolean {
         $this = $this || {};
         var ii: any;
         if (obj instanceof Array) {
@@ -57,7 +57,7 @@ module Util {
      */
     export function some<T>(array: T[], iterator: IArrayIterator<T, boolean>, thisArg?: any): boolean;
     export function some<T>(object: IHashTable<T>, iterator: IObjectIterator<T, boolean>, thisArg?: any): boolean;
-    export function some<T>(obj, cb, $this): boolean {
+    export function some<T>(obj: any, cb: any, $this: any): boolean {
         $this = $this || {};
         var ii: any;
         if (obj instanceof Array) {
@@ -78,7 +78,7 @@ module Util {
      */
     export function indexOf<T>(array: T[], element: T, offset?: number): number;
     export function indexOf<T>(object: IHashTable<T>, element: T): string | number;
-    export function indexOf<T>(obj, item, offset = 0): any {
+    export function indexOf<T>(obj: any, item: T, offset = 0): any {
         var ii: any;
         if (obj instanceof Array) {
             if (obj.indexOf)

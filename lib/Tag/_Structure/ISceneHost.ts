@@ -8,7 +8,7 @@
  */
 
 /// <reference path="IScene.ts" />
-/// <reference path="../../Util/_Promise/Q.ts" />
+/// <reference path="../../Util/Q.ts" />
 /// <reference path="../../Runtime/IRuntime.ts" />
 
 module Tag {

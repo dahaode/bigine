@@ -1,0 +1,82 @@
+/**
+ * 定义远端通信组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Util/_Remote/Remote.ts
+ */
+
+/// <reference path="../../E.ts" />
+/// <reference path="../Env.ts" />
+/// <reference path="ISuccessCallback.ts" />
+/// <reference path="IFailureCallback.ts" />
+/// <reference path="../_Iterator/_iterator.ts" />
+
+module Util {
+    export module Remote {
+        /**
+         * 格式化。
+         */
+        export function format(url: string): string {
+            return Env.Protocol + url.replace(/^.+\/\//, '//').replace(/\?.*$/, '');
+        }
+
+        /**
+         * HTTP GET 远端数据。
+         */
+        export function get(url: string, onSuccess: ISuccessCallback, onFailure: IFailureCallback): void {
+            http(Method.GET, url, {}, onSuccess, onFailure);
+        }
+
+        /**
+         * HTTP POST 远端数据。
+         */
+        export function post(url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback, onFailure: IFailureCallback): void {
+            http(Method.POST, url, data, onSuccess, onFailure);
+        }
+
+        /**
+         * HTTP 请求方法。
+         */
+        export enum Method {
+            GET,
+            POST
+        };
+
+        /**
+         * HTTP 请求远端数据。
+         */
+        export function http(method: Method, url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback, onFailure: IFailureCallback): void {
+            var xhr = new XMLHttpRequest(),
+                qs: string[] = [],
+                q: string;
+            xhr.addEventListener('load', () => {
+                try {
+                    var data = <Util.IHashTable<any>> JSON.parse(xhr.responseText);
+                    if ('reason' in data)
+                        throw new E(<string> data['reason']);
+                    if (200 != xhr.status)
+                        throw new E(xhr.statusText);
+                    onSuccess(data);
+                } catch (error) {
+                    onFailure(<Error> error, xhr.status);
+                }
+            });
+            xhr.addEventListener('error', (event) => {
+                onFailure(<Error> event.error);
+            });
+            xhr.open(Method.GET == method ? 'GET' : 'POST', format(url), true);
+            each(data, (value, key) => {
+                qs.push(key + '=' + encodeURIComponent(<string> value));
+            });
+            if (qs.length) {
+                q = qs.join('&');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.setRequestHeader('Content-Length', q.length.toString());
+                xhr.send(q);
+            } else
+                xhr.send();
+        }
+    }
+}
