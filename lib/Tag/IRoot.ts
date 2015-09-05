@@ -17,6 +17,7 @@ module Tag {
     // Core.ITag:toJsrn()
     // ITag:r()
     // ITag:b()
+    // ITag:gU()
     export interface IRoot extends ITag {
     }
 }

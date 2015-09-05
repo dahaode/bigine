@@ -12,11 +12,11 @@
 module Tag {
     // Core.ITag:gL()
     // Core.ITag:gN()
-    // Core.ITag:gC()
     // Core.ITag:toString()
     // Core.ITag:toJsrn()
     // ITag:r()
     // ITag:b()
+    // ITag:gU()
     export interface IEntity extends ITag {
         /**
          * 获取唯一编号。

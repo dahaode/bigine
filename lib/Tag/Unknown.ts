@@ -34,6 +34,11 @@ module Tag {
         _l: number;
 
         /**
+         * 父标签。
+         */
+        _u: Unknown;
+
+        /**
          * 已注册。
          */
         _r: boolean;
@@ -56,7 +61,7 @@ module Tag {
             this._r =
             this._b = false;
             this._q = {};
-            var schema = SCHEMA.S[this.gC()],
+            var schema = SCHEMA.S[this.$i()],
                 contraints: Util.IHashTable<number[]> = {};
             if (params.length < schema[1][0])
                 throw new E(E.TAG_PARAMS_TOO_FEW, lineNo);
@@ -74,10 +79,11 @@ module Tag {
                 contraints[index] = counter;
             });
             Util.each(children, (tag) => {
-                var index = tag.gC(!!contraints[-1]);
+                var index = tag.$i(!!contraints[-1]);
                 if (!(index in contraints))
                     throw new E(E.SCHEMA_CHILD_NOT_ALLOWED, tag.gL());
                 contraints[index][2]++;
+                tag.$u(this);
             });
             Util.every(contraints, (counter) => {
                 return true;
@@ -97,16 +103,6 @@ module Tag {
          */
         gN(): string {
             return SCHEMA.T['Unknown'];
-        }
-
-        /**
-         * 获取标签索引号。
-         */
-        gC(abstract?: boolean): number {
-            var index = SCHEMA.I[this.gN()];
-            if (undefined === index)
-                throw new E(E.SCHEMA_TAG_NOT_DECLARED, this._l);
-            return index;
         }
 
         /**
@@ -168,7 +164,7 @@ module Tag {
          * 转化为运行时（Javascript）代码。
          */
         toJsrn(): string {
-            var parts: any[] = [this.gC()],
+            var parts: any[] = [this.$i()],
                 children: string[] = [],
                 clob: string;
             if (this._c)
@@ -182,6 +178,30 @@ module Tag {
             if (children.length)
                 clob += ',[' + children.join(',') + ']';
             return '$(' + clob + ')';
+        }
+
+        /**
+         * 设置父标签。
+         */
+        $u(parent: Unknown): void {
+            this._u = parent;
+        }
+
+        /**
+         * 获取父标签。
+         */
+        gU(): Unknown {
+            return this._u;
+        }
+
+        /**
+         * 获取标签索引号。
+         */
+        $i(abstract?: boolean): number {
+            var index = SCHEMA.I[this.gN()];
+            if (undefined === index)
+                throw new E(E.SCHEMA_TAG_NOT_DECLARED, this._l);
+            return index;
         }
 
         /**

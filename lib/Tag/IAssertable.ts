@@ -1,15 +1,14 @@
 /**
- * 声明可执行标签接口规范。
+ * 声明可检查标签接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/IPerformable.ts
+ * @file      Tag/IAssertable.ts
  */
 
 /// <reference path="ITag.ts" />
-/// <reference path="../Runtime/IRuntime.ts" />
-/// <reference path="../Util/Q.ts" />
+/// <reference path="../Runtime/IStates.ts" />
 
 module Tag {
     // Core.ITag:gL()
@@ -19,10 +18,10 @@ module Tag {
     // ITag:r()
     // ITag:b()
     // ITag:gU()
-    export interface IPerformable extends ITag {
+    export interface IAssertable extends ITag {
         /**
-         * 执行。
+         * 检查。
          */
-        p(runtime: Runtime.IRuntime): Util.Q<Runtime.IRuntime>;
+        t(states: Runtime.IStates): boolean;
     }
 }

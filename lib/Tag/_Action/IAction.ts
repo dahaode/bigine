@@ -7,22 +7,19 @@
  * @file      Tag/_Action/IAction.ts
  */
 
+/// <reference path="../IAssertable.ts" />
 /// <reference path="../IPerformable.ts" />
-/// <reference path="../../Runtime/IStates.ts" />
 
 module Tag {
     // Core.ITag:gL()
     // Core.ITag:gN()
-    // Core.ITag:gC()
     // Core.ITag:toString()
     // Core.ITag:toJsrn()
     // ITag:r()
     // ITag:b()
+    // ITag:gU()
+    // IAssertable:t()
     // IPerformable:p()
-    export interface IAction extends IPerformable {
-        /**
-         * （执行）检查。
-         */
-        t(states: Runtime.IStates): boolean;
+    export interface IAction extends IAssertable, IPerformable {
     }
 }

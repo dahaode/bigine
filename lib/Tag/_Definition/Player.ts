@@ -50,7 +50,7 @@ module Tag {
         /**
          * 获取关联角色。
          */
-        o(): DefChar {
+        gC(): DefChar {
             if (!this._b)
                 throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
             return this._o;

@@ -4,20 +4,20 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Structure/IScene.ts
+ * @file      Tag/_Structure/_Scene/IScene.ts
  */
 
-/// <reference path="../IIdable.ts" />
-/// <reference path="../IPerformable.ts" />
+/// <reference path="../../IIdable.ts" />
+/// <reference path="../../IPerformable.ts" />
 
 module Tag {
     // Core.ITag:gL()
     // Core.ITag:gN()
-    // Core.ITag:gC()
     // Core.ITag:toString()
     // Core.ITag:toJsrn()
     // ITag:r()
     // ITag:b()
+    // ITag:gU()
     // IIdable:gI()
     // IIdable:i()
     // IPerformable:p()

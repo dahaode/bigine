@@ -24,11 +24,6 @@ module Core {
         gN(): string;
 
         /**
-         * 获取代号。
-         */
-        gC(abstract?: boolean): number;
-
-        /**
          * 注册（自身实体）至作品。
          */
         r(ep: IEpisode): void;

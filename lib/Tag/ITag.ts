@@ -13,7 +13,6 @@
 module Tag {
     // Core.ITag:gL()
     // Core.ITag:gN()
-    // Core.ITag:gC()
     // Core.ITag:toString()
     // Core.ITag:toJsrn()
     export interface ITag extends Core.ITag {
@@ -26,5 +25,10 @@ module Tag {
          * 绑定（运行时）作品（实体）。
          */
         b(ep: Runtime.IEpisode): void;
+
+        /**
+         * 获取父标签。
+         */
+        gU(): ITag;
     }
 }
