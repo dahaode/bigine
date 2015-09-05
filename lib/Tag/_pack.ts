@@ -21,3 +21,4 @@
 /// <reference path="_Structure/_Scene/Scene.ts" />
 /// <reference path="_Structure/Root.ts" />
 /// <reference path="_Action/_View/CharOn.ts" />
+/// <reference path="_Action/_View/CharOff.ts" />

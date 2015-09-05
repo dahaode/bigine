@@ -31,7 +31,7 @@ module Tag {
             /**
              * 左。
              */
-            Left,
+            Left = 1,
             /**
              * 中。
              */

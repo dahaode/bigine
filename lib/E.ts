@@ -63,4 +63,6 @@ class E extends Error {
     static ROOT_NOT_PARENT = '根标签没有父标签';
 
     static ACT_ILLEGAL_POSITION = '无效地人物站位';
+
+    static ACT_CHAR_NOT_ON = '人物并不在场';
 }

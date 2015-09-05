@@ -13,6 +13,14 @@
 
 module Runtime {
     export interface IDirector {
+        /**
+         * 人物出场。
+         */
         charOn(resource: IResource, position: Tag.IAction.Position): Util.Q<IRuntime>;
+
+        /**
+         * 人物离场。
+         */
+        charOff(position: Tag.IAction.Position): Util.Q<IRuntime>;
     }
 }

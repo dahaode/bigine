@@ -18,5 +18,10 @@ module Runtime {
          * 获取值。
          */
         g(key: string): any;
+
+        /**
+         * 删除值。
+         */
+        d(key: string): void;
     }
 }
