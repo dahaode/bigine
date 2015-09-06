@@ -24,3 +24,4 @@
 /// <reference path="_Action/_View/CharOff.ts" />
 /// <reference path="_Action/_View/CharSet.ts" />
 /// <reference path="_Action/_View/CharPose.ts" />
+/// <reference path="_Action/_Text/Monolog.ts" />

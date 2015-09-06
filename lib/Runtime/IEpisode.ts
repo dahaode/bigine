@@ -36,5 +36,10 @@ module Runtime {
          * 注册资源。
          */
         r(uri: string, type: IResource.Type): IResource;
+
+        /**
+         * 获取主题信息。
+         */
+        t(category: string): Util.IHashTable<any>;
     }
 }

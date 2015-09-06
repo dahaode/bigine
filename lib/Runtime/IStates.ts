@@ -23,5 +23,10 @@ module Runtime {
          * 删除值。
          */
         d(key: string): void;
+
+        /**
+         * 转化文本中的变量名至实际值。
+         */
+        t(text: string): string;
     }
 }

@@ -21,6 +21,11 @@ module Runtime {
         // new (ep: Tag.IRoot): IRuntime;
 
         /**
+         * 获取作品组件。
+         */
+        gE(): IEpisode;
+
+        /**
          * 获取日志组件。
          */
         gL(): ILogger;

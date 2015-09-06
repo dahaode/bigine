@@ -27,5 +27,10 @@ module Runtime {
          * 设置人物。
          */
         charSet(resource: IResource, position: Tag.IAction.Position): Util.Q<IRuntime>;
+
+        /**
+         * 某白。
+         */
+        words(words: string, theme: Util.IHashTable<any>, who?: string, avatar?: IResource): Util.Q<IRuntime>;
     }
 }
