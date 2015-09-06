@@ -8,6 +8,7 @@
  */
 
 /// <reference path="../_Resource/IResource.ts" />
+/// <reference path="../IRuntime.ts" />
 /// <reference path="../../Util/Q.ts" />
 
 module Runtime {
@@ -61,6 +62,11 @@ module Runtime {
          * 关闭特写。
          */
         hideCG(): Promise<IRuntime>;
+
+        /**
+         * 展示特写。
+         */
+        showCG(resource: IResource): Promise<IRuntime>;
     }
 
     export module IDirector {

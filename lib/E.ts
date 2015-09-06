@@ -80,6 +80,8 @@ class E extends Error {
     static ACT_ILLEGAL_STARS = '无效地评分星级';
 
     static ACT_CG_NOT_SHOWN = '并未展示任何特写';
+
+    static ACT_CG_ALREADY_SHOWN = '正在展示另一特写';
 }
 
 module E {
