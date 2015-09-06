@@ -10,6 +10,7 @@
 /// <reference path="es6-promise.d.ts" />
 /// <reference path="_Iterator/_iterator.ts" />
 /// <reference path="Env.ts" />
+/// <reference path="../E.ts" />
 
 module Util {
     if (!Env.Window || !('Promise' in window))
@@ -21,6 +22,20 @@ module Util {
          */
         fail<U>(onRejected?: (error: any) => U | Thenable<U>): Q<U> {
             return <Q<U>> this['catch'](onRejected);
+        }
+
+        /**
+         * 中断顺序时序流。
+         */
+        halt<U>(): Q<U> {
+            return <Q<U>> Q.reject(new E('', E.Signal.HALT));
+        }
+
+        /**
+         * 中断循环时序流。
+         */
+        break<U>(): Q<U> {
+            return <Q<U>> Q.reject(new E('', E.Signal.BREAK));
         }
 
         /**

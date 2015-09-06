@@ -9,13 +9,22 @@
 
 class E extends Error {
     /**
+     * 信号。
+     */
+    signal: E.Signal;
+
+    /**
      * 构造函数。
      */
     constructor(message: string, lineNo?: number) {
         if ('captureStackTrace' in Error)
             Error['captureStackTrace'](this, E);
-        if (lineNo)
+        if (lineNo in E.Signal)
+            this.signal = lineNo;
+        else {
+            this.signal = E.Signal.OK;
             message = '第 ' + lineNo + ' 行' + message;
+        }
         super(message);
         this.name = 'BigineError';
     }
@@ -67,4 +76,21 @@ class E extends Error {
     static ACT_CHAR_NOT_ON = '人物并不在场';
 
     static ACT_CHAR_ONSTAGE = '人物已在场';
+}
+
+module E {
+    export enum Signal {
+        /**
+         * 中断循环。
+         */
+        BREAK = -2,
+        /**
+         * 中断时序播放。
+         */
+        HALT = -1,
+        /**
+         * 正常。
+         */
+        OK
+    }
 }

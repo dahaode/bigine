@@ -32,5 +32,20 @@ module Runtime {
          * 某白。
          */
         words(words: string, theme: Util.IHashTable<any>, who?: string, avatar?: IResource): Util.Q<IRuntime>;
+
+        /**
+         * 开始动画。
+         */
+        OP(): Util.Q<IRuntime>;
+
+        /**
+         * 完结动画。
+         */
+        ED(): Util.Q<IRuntime>;
+
+        /**
+         * 失败动画。
+         */
+        FAIL(): Util.Q<IRuntime>;
     }
 }
