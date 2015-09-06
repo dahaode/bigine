@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../../Unknown.ts" />
-/// <reference path="IScene.ts" />
+/// <reference path="../../IScene.ts" />
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
 module Tag {

@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Unknown.ts" />
-/// <reference path="../../Util/_Remote/Remote.ts" />
+/// <reference path="../../Util/Remote.ts" />
 /// <reference path="../_Definition/_Room/DefRoom.ts" />
 /// <reference path="../_Definition/_Char/DefChar.ts" />
 /// <reference path="../_Definition/DefBGM.ts" />

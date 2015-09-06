@@ -8,10 +8,10 @@
  */
 
 /// <reference path="../Core/IEpisode.ts" />
-/// <reference path="../Tag/_Structure/_Scene/ISceneHost.ts" />
-/// <reference path="../Tag/_Structure/IRoot.ts" />
-/// <reference path="../Tag/_Definition/IEntity.ts" />
-/// <reference path="_Resource/IResource.ts" />
+/// <reference path="../Tag/ISceneHost.ts" />
+/// <reference path="../Tag/IRoot.ts" />
+/// <reference path="../Tag/IEntity.ts" />
+/// <reference path="IResource.ts" />
 
 module Runtime {
     // Core.IEmittable:addEventListener()

@@ -4,11 +4,11 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Structure/_Scene/IScene.ts
+ * @file      Tag/IScene.ts
  */
 
-/// <reference path="../../IIdable.ts" />
-/// <reference path="../../IPerformable.ts" />
+/// <reference path="IIdable.ts" />
+/// <reference path="IPerformable.ts" />
 
 module Tag {
     // Core.ITag:gL()

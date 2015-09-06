@@ -8,10 +8,11 @@
  */
 
 /// <reference path="Entity.ts" />
+/// <reference path="../ISE.ts" />
 /// <reference path="Audio.ts" />
 
 module Tag {
-    export class DefSE extends Entity {
+    export class DefSE extends Entity implements ISE {
         /**
          * 获取标签名称。
          */

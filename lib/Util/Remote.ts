@@ -4,14 +4,14 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Util/_Remote/Remote.ts
+ * @file      Util/Remote.ts
  */
 
-/// <reference path="../../E.ts" />
-/// <reference path="../Env.ts" />
+/// <reference path="../E.ts" />
+/// <reference path="Env.ts" />
 /// <reference path="ISuccessCallback.ts" />
 /// <reference path="IFailureCallback.ts" />
-/// <reference path="../_Iterator/_iterator.ts" />
+/// <reference path="_iterator.ts" />
 
 module Util {
     export module Remote {

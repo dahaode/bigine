@@ -4,13 +4,13 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/_Director/IDirector.ts
+ * @file      Runtime/IDirector.ts
  */
 
-/// <reference path="../_Resource/IResource.ts" />
-/// <reference path="../IRuntime.ts" />
-/// <reference path="../../Util/Q.ts" />
-/// <reference path="../../Tag/_Definition/_Map/IPoint.ts" />
+/// <reference path="IResource.ts" />
+/// <reference path="IRuntime.ts" />
+/// <reference path="../Util/Q.ts" />
+/// <reference path="../Tag/IPoint.ts" />
 
 module Runtime {
     export interface IDirector {

@@ -4,12 +4,12 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Definition/_Room/IRoom.ts
+ * @file      Tag/IRoom.ts
  */
 
-/// <reference path="../IEntity.ts" />
-/// <reference path="../../_Structure/_Scene/ISceneHost.ts" />
-/// <reference path="../_Map/IMap.ts" />
+/// <reference path="IEntity.ts" />
+/// <reference path="ISceneHost.ts" />
+/// <reference path="IMap.ts" />
 
 module Tag {
     export interface IRoom extends IEntity, ISceneHost {

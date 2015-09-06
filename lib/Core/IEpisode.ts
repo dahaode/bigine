@@ -7,7 +7,7 @@
  * @file      Core/IEpisode.ts
  */
 
-/// <reference path="_Event/IEmittable.ts" />
+/// <reference path="IEmittable.ts" />
 /// <reference path="ITag.ts" />
 
 module Core {

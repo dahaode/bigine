@@ -8,10 +8,11 @@
  */
 
 /// <reference path="Entity.ts" />
+/// <reference path="../IBGM.ts" />
 /// <reference path="Audio.ts" />
 
 module Tag {
-    export class DefBGM extends Entity {
+    export class DefBGM extends Entity implements IBGM {
         /**
          * 获取标签名称。
          */

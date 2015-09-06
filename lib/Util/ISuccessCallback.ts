@@ -4,10 +4,10 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Util/_Remote/ISuccessCallback.ts
+ * @file      Util/ISuccessCallback.ts
  */
 
-/// <reference path="../_Iterator/IHashTable.ts" />
+/// <reference path="IHashTable.ts" />
 
 module Util {
     export interface ISuccessCallback<T> {

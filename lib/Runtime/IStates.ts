@@ -7,7 +7,7 @@
  * @file      Runtime/IStates.ts
  */
 
-/// <reference path="../Util/_Iterator/IHashTable.ts" />
+/// <reference path="../Util/IHashTable.ts" />
 
 /**
  * 1. `_` 表明为场效相关信息，需要被存档记录；

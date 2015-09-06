@@ -4,12 +4,11 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Structure/IRoot.ts
+ * @file      Tag/IRoot.ts
  */
 
-/// <reference path="../ITag.ts" />
-/// <reference path="../../Util/_Remote/ISuccessCallback.ts" />
-/// <reference path="../_Definition/IEntity.ts" />
+/// <reference path="ITag.ts" />
+/// <reference path="../Util/ISuccessCallback.ts" />
 
 module Tag {
     // Core.ITag:gLineNo()

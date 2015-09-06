@@ -4,7 +4,7 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Util/_Remote/IFailureCallback.ts
+ * @file      Util/IFailureCallback.ts
  */
 
 module Util {

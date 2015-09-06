@@ -4,11 +4,11 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Definition/_Map/IPoint.ts
+ * @file      Tag/IPoint.ts
  */
 
-/// <reference path="../../../Runtime/IRuntime.ts" />
-/// <reference path="../_Room/IRoom.ts" />
+/// <reference path="../Runtime/IRuntime.ts" />
+/// <reference path="IRoom.ts" />
 
 module Tag {
     export interface IPoint {

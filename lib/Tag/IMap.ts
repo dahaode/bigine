@@ -4,10 +4,10 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Definition/_Map/IMap.ts
+ * @file      Tag/IMap.ts
  */
 
-/// <reference path="../IEntity.ts" />
+/// <reference path="IEntity.ts" />
 /// <reference path="IPoint.ts" />
 
 module Tag {

@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Entity.ts" />
-/// <reference path="IRoom.ts" />
+/// <reference path="../../IRoom.ts" />
 /// <reference path="Link.ts" />
 /// <reference path="Times.ts" />
 

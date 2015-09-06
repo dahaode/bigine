@@ -4,7 +4,7 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Util/_Iterator/_iterator.ts
+ * @file      Util/_iterator.ts
  */
 
 /// <reference path="IArrayIterator.ts" />

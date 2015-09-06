@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Unknown.ts" />
-/// <reference path="../../Util/_Remote/Remote.ts" />
+/// <reference path="../../Util/Remote.ts" />
 
 module Tag {
     export class Theme extends Unknown {

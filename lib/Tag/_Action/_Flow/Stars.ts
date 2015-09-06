@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Action.ts" />
-/// <reference path="../../../Runtime/_Director/IDirector.ts" />
+/// <reference path="../../../Runtime/IDirector.ts" />
 
 module Tag {
     export class Stars extends Action {

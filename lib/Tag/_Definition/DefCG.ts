@@ -8,10 +8,11 @@
  */
 
 /// <reference path="Entity.ts" />
+/// <reference path="../ICG.ts" />
 /// <reference path="Image.ts" />
 
 module Tag {
-    export class DefCG extends Entity {
+    export class DefCG extends Entity implements ICG {
         /**
          * 获取标签名称。
          */

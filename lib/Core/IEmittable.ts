@@ -4,7 +4,7 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Core/_Event/IEmittable.ts
+ * @file      Core/IEmittable.ts
  */
 
 /// <reference path="IEventListener.ts" />

@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Entity.ts" />
-/// <reference path="IMap.ts" />
+/// <reference path="../../IMap.ts" />
 /// <reference path="BGImage.ts" />
 /// <reference path="Point.ts" />
 

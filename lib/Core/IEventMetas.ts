@@ -4,10 +4,10 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Core/_Event/IEventMetas.ts
+ * @file      Core/IEventMetas.ts
  */
 
-/// <reference path="../../Util/_Iterator/IHashTable.ts" />
+/// <reference path="../Util/IHashTable.ts" />
 
 module Core {
     export interface IEventMetas<T> extends Util.IHashTable<any> {

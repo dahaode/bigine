@@ -7,11 +7,12 @@
  * @file      Runtime/IRuntime.ts
  */
 
-/// <reference path="../Core/_Event/IEmittable.ts" />
-/// <reference path="../Tag/_Structure/IRoot.ts" />
+/// <reference path="../Core/IEmittable.ts" />
+/// <reference path="../Tag/IRoot.ts" />
+/// <reference path="IEpisode.ts" />
 /// <reference path="ILogger.ts" />
 /// <reference path="IStates.ts" />
-/// <reference path="_Director/IDirector.ts" />
+/// <reference path="IDirector.ts" />
 
 module Runtime {
     // Core.IEmittable:addEventListener()

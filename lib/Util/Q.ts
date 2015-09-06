@@ -10,7 +10,7 @@
 /// <reference path="node.d.ts" />
 /// <reference path="es6-promise.d.ts" />
 /// <reference path="../E.ts" />
-/// <reference path="_Iterator/_iterator.ts" />
+/// <reference path="_iterator.ts" />
 
 require('es6-promise').polyfill();
 

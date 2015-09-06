@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Unknown.ts" />
-/// <reference path="IAction.ts" />
+/// <reference path="../IAction.ts" />
 
 module Tag {
     export class Action extends Unknown implements IAction {

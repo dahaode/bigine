@@ -4,11 +4,11 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Definition/IPlayer.ts
+ * @file      Tag/IPlayer.ts
  */
 
 /// <reference path="IEntity.ts" />
-/// <reference path="_Char/DefChar.ts" />
+/// <reference path="IChar.ts" />
 
 module Tag {
     // Core.ITag:gL()
@@ -24,6 +24,6 @@ module Tag {
         /**
          * 获取关联角色。
          */
-        gC(): DefChar;
+        gC(): IChar;
     }
 }

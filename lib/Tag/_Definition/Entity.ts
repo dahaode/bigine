@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Unknown.ts" />
-/// <reference path="IEntity.ts" />
+/// <reference path="../IEntity.ts" />
 
 module Tag {
     export class Entity extends Unknown implements IEntity {

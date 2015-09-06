@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Unknown.ts" />
-/// <reference path="IRoot.ts" />
+/// <reference path="../IRoot.ts" />
 /// <reference path="Resources.ts" />
 /// <reference path="Theme.ts" />
 

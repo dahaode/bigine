@@ -8,7 +8,8 @@
  */
 
 /// <reference path="../Unknown.ts" />
-/// <reference path="IPlayer.ts" />
+/// <reference path="../IPlayer.ts" />
+/// <reference path="_Char/DefChar.ts" />
 
 module Tag {
     export class Player extends Unknown implements IPlayer {
