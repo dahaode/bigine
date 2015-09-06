@@ -41,12 +41,12 @@ module Tag {
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Util.Q<Runtime.IRuntime> {
+        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             var states = runtime.gS(),
                 pos = <IAction.Position> states.g('_p' + this._mc);
             if (!pos)
-                return <Util.Q<Runtime.IRuntime>> Util.Q.reject(new E(E.ACT_CHAR_NOT_ON, this._l));
-            return <Util.Q<Runtime.IRuntime>> runtime.gD().charOff(pos).then(() => {
+                return Util.Q.reject(new E(E.ACT_CHAR_NOT_ON, this._l));
+            return runtime.gD().charOff(pos).then(() => {
                 states.d('_p' + this._mc);
                 states.d('_s' + this._mc);
                 return runtime;

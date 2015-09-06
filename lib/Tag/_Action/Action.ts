@@ -29,8 +29,8 @@ module Tag {
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Util.Q<Runtime.IRuntime> {
-            return <Util.Q<Runtime.IRuntime>> Util.Q.resolve(runtime);
+        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            return runtime;
         }
     }
 }

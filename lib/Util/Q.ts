@@ -26,12 +26,12 @@ module Util {
         /**
          * 顺序遍历数组。
          */
-        static every<U>(array: U[], iterator: IArrayIterator<U, Thenable<any>>, $this?: any): Q<any> {
+        static every<U, V>(array: U[], iterator: IArrayIterator<U, V | Thenable<V>>, $this?: any): Q<V> {
             $this = $this || array;
-            var q: Q<any>;
+            var q: Q<V>;
             each<U>(array, (item, index) => {
                 q = index ?
-                    <Q<any>> q.then(() => {
+                    <Q<V>> q.then(() => {
                         return iterator.call($this, item, index, array);
                     }) :
                     new Q((resolve) => {

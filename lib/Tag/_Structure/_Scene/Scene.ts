@@ -49,10 +49,10 @@ module Tag {
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Util.Q<Runtime.IRuntime> {
+        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             var conds = <Conditions> this.$q('Conditions')[0];
             if (!conds || !conds.t(runtime.gS()))
-                return <Util.Q<Runtime.IRuntime>> Util.Q.resolve(runtime);
+                return runtime;
             return (<Content> this.$q('Content')[0]).p(runtime);
         }
 
