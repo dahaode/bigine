@@ -32,3 +32,4 @@
 /// <reference path="_Action/_Flow/Fail.ts" />
 /// <reference path="_Action/_Flow/Stars.ts" />
 /// <reference path="_Action/_Director/PlayBGM.ts" />
+/// <reference path="_Action/_Director/HideCG.ts" />

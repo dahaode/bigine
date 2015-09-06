@@ -56,6 +56,11 @@ module Runtime {
          * 播放背景音乐。
          */
         playBGM(resource: IResource): Util.Q<IRuntime>;
+
+        /**
+         * 关闭特写。
+         */
+        hideCG(): Util.Q<IRuntime>;
     }
 
     export module IDirector {
