@@ -21,6 +21,6 @@ module Tag {
         /**
          * 播放。
          */
-        p(type: IScene.Type, runtime: Runtime.IRuntime): Thenable<Runtime.IRuntime>;
+        p(type: IScene.Type, runtime: Runtime.IRuntime): Promise<Runtime.IRuntime>;
     }
 }

@@ -26,7 +26,7 @@ module Tag {
                 key = '_c',
                 cg = states.g(key);
             if (!cg)
-                return <Util.Q<Runtime.IRuntime>> Util.Q.reject(new E(E.ACT_CG_NOT_SHOWN, this._l));
+                return Promise.reject<Runtime.IRuntime>(new E(E.ACT_CG_NOT_SHOWN, this._l));
             return runtime.gD().hideCG();
         }
     }

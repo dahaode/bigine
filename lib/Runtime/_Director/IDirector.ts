@@ -15,52 +15,52 @@ module Runtime {
         /**
          * 人物出场。
          */
-        charOn(resource: IResource, position: IDirector.Position): Util.Q<IRuntime>;
+        charOn(resource: IResource, position: IDirector.Position): Promise<IRuntime>;
 
         /**
          * 人物离场。
          */
-        charOff(position: IDirector.Position): Util.Q<IRuntime>;
+        charOff(position: IDirector.Position): Promise<IRuntime>;
 
         /**
          * 设置人物。
          */
-        charSet(resource: IResource, position: IDirector.Position): Util.Q<IRuntime>;
+        charSet(resource: IResource, position: IDirector.Position): Promise<IRuntime>;
 
         /**
          * 某白。
          */
-        words(words: string, theme: Util.IHashTable<any>, who?: string, avatar?: IResource): Util.Q<IRuntime>;
+        words(words: string, theme: Util.IHashTable<any>, who?: string, avatar?: IResource): Promise<IRuntime>;
 
         /**
          * 开始动画。
          */
-        OP(): Util.Q<IRuntime>;
+        OP(): Promise<IRuntime>;
 
         /**
          * 完结动画。
          */
-        ED(): Util.Q<IRuntime>;
+        ED(): Promise<IRuntime>;
 
         /**
          * 失败动画。
          */
-        FAIL(): Util.Q<IRuntime>;
+        FAIL(): Promise<IRuntime>;
 
         /**
          * 评分动画。
          */
-        stars(rank: IDirector.Stars): Util.Q<IRuntime>;
+        stars(rank: IDirector.Stars): Promise<IRuntime>;
 
         /**
          * 播放背景音乐。
          */
-        playBGM(resource: IResource): Util.Q<IRuntime>;
+        playBGM(resource: IResource): Promise<IRuntime>;
 
         /**
          * 关闭特写。
          */
-        hideCG(): Util.Q<IRuntime>;
+        hideCG(): Promise<IRuntime>;
     }
 
     export module IDirector {

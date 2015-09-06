@@ -56,9 +56,9 @@ module Tag {
         /**
          * 播放。
          */
-        p(type: IScene.Type, runtime: Runtime.IRuntime): Thenable<Runtime.IRuntime> {
+        p(type: IScene.Type, runtime: Runtime.IRuntime): Promise<Runtime.IRuntime> {
             if (!(type in this._a))
-                return Util.Q.resolve(runtime);
+                return Promise.resolve(runtime);
             return Util.Q.every(this._a[type], (scene) => scene.p(runtime));
         }
 

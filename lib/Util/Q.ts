@@ -7,50 +7,40 @@
  * @file      Util/Q.ts
  */
 
+/// <reference path="node.d.ts" />
 /// <reference path="es6-promise.d.ts" />
-/// <reference path="_Iterator/_iterator.ts" />
-/// <reference path="Env.ts" />
 /// <reference path="../E.ts" />
+/// <reference path="_Iterator/_iterator.ts" />
+
+require('es6-promise').polyfill();
 
 module Util {
-    if (!Env.Window || !('Promise' in window))
-        require('es6-promise').polyfill();
-
-    export class Q<T> extends Promise<T> {
-        /**
-         * catch() 方法的 ES3 别名方法。
-         */
-        fail<U>(onRejected?: (error: any) => U | Thenable<U>): Q<U> {
-            return <Q<U>> this['catch'](onRejected);
-        }
-
+    export module Q {
         /**
          * 中断顺序时序流。
          */
-        halt<U>(): Q<U> {
-            return <Q<U>> Q.reject(new E('', E.Signal.HALT));
+        export function doHalt<T>(): Promise<T> {
+            return Promise.reject<T>(new E('', E.Signal.HALT));
         }
 
         /**
          * 中断循环时序流。
          */
-        break<U>(): Q<U> {
-            return <Q<U>> Q.reject(new E('', E.Signal.BREAK));
+        export function doBreak<T>(): Promise<T> {
+            return Promise.reject<T>(new E('', E.Signal.BREAK));
         }
 
         /**
          * 顺序遍历数组。
          */
-        static every<U, V>(array: U[], iterator: IArrayIterator<U, V | Thenable<V>>, $this?: any): Q<V> {
+        export function every<T, U>(array: T[], iterator: IArrayIterator<T, U | Thenable<U>>, $this?: any): Promise<U> {
             $this = $this || array;
-            var q: Q<V>;
-            each<U>(array, (item, index) => {
+            var q: Promise<U>;
+            each(array, (element, index) => {
                 q = index ?
-                    <Q<V>> q.then(() => {
-                        return iterator.call($this, item, index, array);
-                    }) :
-                    new Q((resolve) => {
-                        resolve(iterator.call($this, item, index, array));
+                    q.then(() => iterator.call($this, element, index, array)) :
+                    new Promise((resolve) => {
+                        resolve(iterator.call($this, element, index, array));
                     });
             });
             return q;
