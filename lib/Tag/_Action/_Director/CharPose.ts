@@ -4,7 +4,7 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Action/_View/CharPose.ts
+ * @file      Tag/_Action/_Director/CharPose.ts
  */
 
 /// <reference path="../Action.ts" />
@@ -55,11 +55,11 @@ module Tag {
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             var states = runtime.gS(),
-                kpos = '_p' + this._mc,
-                pos: IAction.Position = states.g(kpos);
+                kpos = '.p' + this._mc,
+                pos: Runtime.IDirector.Position = states.g(kpos);
             if (!pos)
                 return Util.Q.reject(new E(E.ACT_CHAR_NOT_ON, this._l));
-            states.s('_s' + this._mc, this._ms);
+            states.s('_s' + pos, this._ms);
             return runtime.gD().charSet(this._mo, pos);
         }
     }

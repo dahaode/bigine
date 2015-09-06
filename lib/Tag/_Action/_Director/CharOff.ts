@@ -4,7 +4,7 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Action/_View/CharOff.ts
+ * @file      Tag/_Action/_Director/CharOff.ts
  */
 
 /// <reference path="../Action.ts" />
@@ -43,12 +43,14 @@ module Tag {
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             var states = runtime.gS(),
-                pos = <IAction.Position> states.g('_p' + this._mc);
+                kpos = '.p' + this._mc,
+                pos = <Runtime.IDirector.Position> states.g(kpos);
             if (!pos)
                 return Util.Q.reject(new E(E.ACT_CHAR_NOT_ON, this._l));
             return runtime.gD().charOff(pos).then(() => {
-                states.d('_p' + this._mc);
-                states.d('_s' + this._mc);
+                states.d(kpos);
+                states.d('_c' + pos);
+                states.d('_s' + pos);
                 return runtime;
             });
         }

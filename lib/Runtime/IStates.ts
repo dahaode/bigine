@@ -9,6 +9,16 @@
 
 /// <reference path="../Util/_Iterator/IHashTable.ts" />
 
+/**
+ * 1. `_` 表明为场效相关信息，需要被存档记录；
+ *     * `_c<站位>` - 人物名 - Tag
+ *     * `_s<站位>` - 人物神态名 - Tag
+ * 2. `.` 表明为会话持久信息，不能被存档记录；
+ *     * `.p<人物名>` - 人物站位 - Tag
+ * 3. `$` 表明为注册对象，不能被存档记录；
+ *     * `$c<站位>` - 资源对象 - Runtime
+ * 4. 其它为作品运行信息，需要被存档记录。
+ */
 module Runtime {
     export interface IStates {
         /**

@@ -1,21 +1,21 @@
 /**
- * 定义设置人物动作标签组件。
+ * 定义人物出场动作标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Action/_View/CharSet.ts
+ * @file      Tag/_Action/_Director/CharOn.ts
  */
 
 /// <reference path="../Action.ts" />
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 
 module Tag {
-    export class CharSet extends Action {
+    export class CharOn extends Action {
         /**
          * 位置。
          */
-        private _mp: IAction.Position;
+        private _mp: Runtime.IDirector.Position;
 
         /**
          * 人物名称。
@@ -37,7 +37,7 @@ module Tag {
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
-            var pos = IAction.Position,
+            var pos = Runtime.IDirector.Position,
                 exp = content.split('，');
             switch (params[0]) {
                 case '左':
@@ -61,7 +61,7 @@ module Tag {
          * 获取标签名称。
          */
         gN(): string {
-            return 'CharSet';
+            return 'CharOn';
         }
 
         /**
@@ -76,13 +76,14 @@ module Tag {
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             var states = runtime.gS(),
-                kpos = '_p' + this._mc,
-                pos: IAction.Position = states.g(kpos);
+                kpos = '.p' + this._mc,
+                pos: Runtime.IDirector.Position = states.g(kpos);
             if (pos)
                 return Util.Q.reject(new E(E.ACT_CHAR_ONSTAGE, this._l));
             states.s(kpos, this._mp);
-            states.s('_s' + this._mc, this._ms);
-            return runtime.gD().charSet(this._mo, this._mp);
+            states.s('_c' + this._mp, this._mc);
+            states.s('_s' + this._mp, this._ms);
+            return runtime.gD().charOn(this._mo, this._mp);
         }
     }
 }

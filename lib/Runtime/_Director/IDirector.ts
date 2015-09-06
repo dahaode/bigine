@@ -8,7 +8,6 @@
  */
 
 /// <reference path="../_Resource/IResource.ts" />
-/// <reference path="../../Tag/_Action/IAction.ts" />
 /// <reference path="../../Util/Q.ts" />
 
 module Runtime {
@@ -16,17 +15,17 @@ module Runtime {
         /**
          * 人物出场。
          */
-        charOn(resource: IResource, position: Tag.IAction.Position): Util.Q<IRuntime>;
+        charOn(resource: IResource, position: IDirector.Position): Util.Q<IRuntime>;
 
         /**
          * 人物离场。
          */
-        charOff(position: Tag.IAction.Position): Util.Q<IRuntime>;
+        charOff(position: IDirector.Position): Util.Q<IRuntime>;
 
         /**
          * 设置人物。
          */
-        charSet(resource: IResource, position: Tag.IAction.Position): Util.Q<IRuntime>;
+        charSet(resource: IResource, position: IDirector.Position): Util.Q<IRuntime>;
 
         /**
          * 某白。
@@ -52,9 +51,40 @@ module Runtime {
          * 评分动画。
          */
         stars(rank: IDirector.Stars): Util.Q<IRuntime>;
+
+        /**
+         * 播放背景音乐。
+         */
+        playBGM(resource: IResource): Util.Q<IRuntime>;
     }
 
     export module IDirector {
+        /**
+         * 位置。
+         */
+        export enum Position {
+            /**
+             * 左。
+             */
+            Left = 1,
+            /**
+             * 左中。
+             */
+            CLeft,
+            /**
+             * 中。
+             */
+            Center,
+            /**
+             * 右中。
+             */
+            CRight,
+            /**
+             * 右。
+             */
+            Right
+        }
+
         /**
          * 评分星级。
          */
