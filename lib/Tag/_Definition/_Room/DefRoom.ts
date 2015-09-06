@@ -8,12 +8,12 @@
  */
 
 /// <reference path="../Entity.ts" />
-/// <reference path="../../_Structure/_Scene/ISceneHost.ts" />
+/// <reference path="IRoom.ts" />
 /// <reference path="Link.ts" />
 /// <reference path="Times.ts" />
 
 module Tag {
-    export class DefRoom extends Entity implements ISceneHost {
+    export class DefRoom extends Entity implements IRoom {
         /**
          * 已添加地事件。
          */

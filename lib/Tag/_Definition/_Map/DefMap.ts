@@ -8,11 +8,12 @@
  */
 
 /// <reference path="../Entity.ts" />
+/// <reference path="IMap.ts" />
 /// <reference path="BGImage.ts" />
 /// <reference path="Point.ts" />
 
 module Tag {
-    export class DefMap extends Entity {
+    export class DefMap extends Entity implements IMap {
         /**
          * 交互点集合。
          */

@@ -10,6 +10,7 @@
 /// <reference path="../_Resource/IResource.ts" />
 /// <reference path="../IRuntime.ts" />
 /// <reference path="../../Util/Q.ts" />
+/// <reference path="../../Tag/_Definition/_Map/IPoint.ts" />
 
 module Runtime {
     export interface IDirector {
@@ -67,6 +68,16 @@ module Runtime {
          * 展示特写。
          */
         showCG(resource: IResource): Promise<IRuntime>;
+
+        /**
+         * 设置房间。
+         */
+        asRoom(resource: IResource): Promise<IRuntime>;
+
+        /**
+         * 设置地图。
+         */
+        asMap(points: Util.IHashTable<Tag.IPoint>): Promise<IRuntime>;
     }
 
     export module IDirector {
