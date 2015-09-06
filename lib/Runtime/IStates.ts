@@ -7,6 +7,8 @@
  * @file      Runtime/IStates.ts
  */
 
+/// <reference path="../Util/_Iterator/IHashTable.ts" />
+
 module Runtime {
     export interface IStates {
         /**
@@ -28,5 +30,17 @@ module Runtime {
          * 转化文本中的变量名至实际值。
          */
         t(text: string): string;
+
+        /**
+         * 导出数据（存档）。
+         *
+         * 此方法应触发 Save 事件。
+         */
+        e(brief?: string): Util.IHashTable<any>;
+
+        /**
+         * 导入数据。
+         */
+        i(data: Util.IHashTable<any>): void;
     }
 }
