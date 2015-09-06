@@ -26,3 +26,4 @@
 /// <reference path="_Action/_View/CharPose.ts" />
 /// <reference path="_Action/_Text/Monolog.ts" />
 /// <reference path="_Action/_Text/Speak.ts" />
+/// <reference path="_Action/_Text/VoiceOver.ts" />
