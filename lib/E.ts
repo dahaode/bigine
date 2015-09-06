@@ -76,6 +76,8 @@ class E extends Error {
     static ACT_CHAR_NOT_ON = '人物并不在场';
 
     static ACT_CHAR_ONSTAGE = '人物已在场';
+
+    static ACT_ILLEGAL_STARS = '无效地评分星级';
 }
 
 module E {

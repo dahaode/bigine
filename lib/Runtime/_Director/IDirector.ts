@@ -47,5 +47,30 @@ module Runtime {
          * 失败动画。
          */
         FAIL(): Util.Q<IRuntime>;
+
+        /**
+         * 评分动画。
+         */
+        stars(rank: IDirector.Stars): Util.Q<IRuntime>;
+    }
+
+    export module IDirector {
+        /**
+         * 评分星级。
+         */
+        export enum Stars {
+            /**
+             * 及格。
+             */
+            OK,
+            /**
+             * 优秀。
+             */
+            Awesome,
+            /**
+             * 完美。
+             */
+            Perfect
+        }
     }
 }

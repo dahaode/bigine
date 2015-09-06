@@ -37,21 +37,22 @@ module Tag {
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
+            var pos = IAction.Position,
+                exp = content.split('，');
             switch (params[0]) {
                 case '左':
-                    this._mp = IAction.Position.Left;
+                    this._mp = pos.Left;
                     break;
                 case '右':
-                    this._mp = IAction.Position.Right;
+                    this._mp = pos.Right;
                     break;
                 case '中':
                 case undefined:
-                    this._mp = IAction.Position.Center;
+                    this._mp = pos.Center;
                     break;
                 default:
                     throw new E(E.ACT_ILLEGAL_POSITION, lineNo);
             }
-            var exp = content.split('，');
             this._mc = exp[0];
             this._ms = exp[1] || '默认';
         }
