@@ -53,7 +53,7 @@ module Tag {
             }
             var exp = content.split('，');
             this._mc = exp[0];
-            this._ms = exp[1] || '';
+            this._ms = exp[1] || '默认';
         }
 
         /**

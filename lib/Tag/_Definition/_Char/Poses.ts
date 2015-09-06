@@ -26,7 +26,7 @@ module Tag {
                 var id = tag.$p(0);
                 this._o[id] = ep.r(tag.$c(), Runtime.IResource.Type.Pose);
                 if (!index)
-                    this._o[''] = this._o[id];
+                    this._o['默认'] = this._o[id];
             });
         }
     }
