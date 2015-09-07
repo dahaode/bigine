@@ -36,13 +36,12 @@ module Tag {
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             var states = runtime.gS(),
-                kroom = '_rc',
+                kroom = '_rd',
                 room = states.g(kroom),
                 ktime = '_t',
                 time = states.g(ktime),
                 director = runtime.gD(),
-                map = this._mo.gM(),
-                q: Promise<Runtime.IRuntime>;
+                map = this._mo.gM();
             if (!time) {
                 time = '午';
                 states.s(ktime, time);
@@ -50,11 +49,8 @@ module Tag {
             if (room == this._p[0])
                 return runtime;
             states.s(kroom, this._p[0]);
-            states.s('$rc', this._mo);
-            q = director.asRoom(this._mo.o(time));
-            if (map)
-                q = q.then(() => director.asMap(map.gP()));
-            return q;
+            states.s('$rd', this._mo);
+            return director.asRoom(this._mo.o(time)).then(() => director.asMap(map ? map.gP() : {}));
         }
     }
 }
