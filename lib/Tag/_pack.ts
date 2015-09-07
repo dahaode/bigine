@@ -43,3 +43,4 @@
 /// <reference path="_Action/_Logic/Assert.ts" />
 /// <reference path="_Action/_Logic/Assign.ts" />
 /// <reference path="_Action/_Logic/Compare.ts" />
+/// <reference path="_Action/_Logic/Increase.ts" />

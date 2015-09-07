@@ -84,6 +84,10 @@ class E extends Error {
     static ACT_CG_ALREADY_SHOWN = '正在展示另一特写';
 
     static ACT_ILLEGAL_OP = '无效的比较符';
+
+    static ACT_STATE_NOT_NUMERIC = '状态数据不是数值';
+
+    static ACT_DELTA_NOT_NUMERIC = '状态增量不是数值';
 }
 
 module E {
