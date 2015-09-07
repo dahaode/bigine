@@ -37,3 +37,4 @@
 /// <reference path="_Action/_Director/AsRoom.ts" />
 /// <reference path="_Action/_Director/AsTime.ts" />
 /// <reference path="_Action/_Flow/Enter.ts" />
+/// <reference path="_Action/_Flow/Freeze.ts" />
