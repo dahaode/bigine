@@ -22,7 +22,9 @@ module Tag {
          * 执行。
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            return runtime.gD().FAIL().then(() => runtime.gE().p(IScene.Type.Fail, runtime)).then(Util.Q.doHalt);
+            runtime.gD().FAIL()
+                .then(() => runtime.gE().p(IScene.Type.Fail, runtime));
+            return Util.Q.doHalt<Runtime.IRuntime>();
         }
     }
 }

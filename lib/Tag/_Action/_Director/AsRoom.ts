@@ -50,7 +50,8 @@ module Tag {
                 return runtime;
             states.s(kroom, this._p[0]);
             states.s('$rd', this._mo);
-            return director.asRoom(this._mo.o(time)).then(() => director.asMap(map ? map.gP() : {}));
+            return director.asRoom(this._mo.o(time))
+                .then(() => director.asMap(map ? map.gP() : {}));
         }
     }
 }

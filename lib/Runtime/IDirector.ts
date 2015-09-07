@@ -78,6 +78,16 @@ module Runtime {
          * 设置地图。
          */
         asMap(points: Util.IHashTable<Tag.IPoint>): Promise<IRuntime>;
+
+        /**
+         * 关灯（落幕）。
+         */
+        lightOff(): Promise<IRuntime>;
+
+        /**
+         * 开灯（开幕）。
+         */
+        lightOn(): Promise<IRuntime>;
     }
 
     export module IDirector {

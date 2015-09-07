@@ -36,7 +36,7 @@ module Runtime {
         /**
          * 设置值。
          */
-        s<T>(key: string, value: T): T;
+        s(key: string, value: any): IStates;
 
         /**
          * 获取值。
@@ -46,7 +46,22 @@ module Runtime {
         /**
          * 删除值。
          */
-        d(key: string): void;
+        d(key: string): IStates;
+
+        /**
+         * 比较两个值是否一致。
+         */
+        a(key1: string, key2: string): boolean;
+
+        /**
+         * 复制值。
+         */
+        c(src: string, dest: string): IStates;
+
+        /**
+         * 移动值。
+         */
+        m(src: string, dest: string): IStates;
 
         /**
          * 转化文本中的变量名至实际值。
@@ -63,6 +78,6 @@ module Runtime {
         /**
          * 导入数据。
          */
-        i(data: Util.IHashTable<any>): void;
+        i(data: Util.IHashTable<any>): IStates;
     }
 }

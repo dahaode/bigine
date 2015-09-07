@@ -47,12 +47,13 @@ module Tag {
                 pos = <Runtime.IDirector.Position> states.g(kpos);
             if (!pos)
                 return Promise.reject<Runtime.IRuntime>(new E(E.ACT_CHAR_NOT_ON, this._l));
-            return runtime.gD().charOff(pos).then(() => {
-                states.d(kpos);
-                states.d('_c' + pos);
-                states.d('_s' + pos);
-                return runtime;
-            });
+            return runtime.gD().charOff(pos)
+                .then(() => {
+                    states.d(kpos);
+                    states.d('_c' + pos);
+                    states.d('_s' + pos);
+                    return runtime;
+                });
         }
     }
 }
