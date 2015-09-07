@@ -79,7 +79,7 @@ module Tag {
                 kpos = '.p' + this._mc,
                 pos: Runtime.IDirector.Position = states.g(kpos);
             if (pos)
-                return Promise.reject<Runtime.IRuntime>(new E(E.ACT_CHAR_ONSTAGE, this._l));
+                throw new E(E.ACT_CHAR_ONSTAGE, this._l);
             states.s(kpos, this._mp);
             states.s('_c' + this._mp, this._mc);
             states.s('_s' + this._mp, this._ms);

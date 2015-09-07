@@ -39,7 +39,7 @@ module Tag {
                 key = '_c',
                 cg = states.g(key);
             if (cg)
-                return Promise.reject<Runtime.IRuntime>(new E(E.ACT_CG_ALREADY_SHOWN, this._l));
+                throw new E(E.ACT_CG_ALREADY_SHOWN, this._l);
             states.s(key, this._c);
             return runtime.gD().showCG(this._mo);
         }
