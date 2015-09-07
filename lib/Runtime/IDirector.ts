@@ -60,6 +60,11 @@ module Runtime {
         playBGM(resource: IResource): Promise<IRuntime>;
 
         /**
+         * 播放音效。
+         */
+        playSE(resource: IResource): Promise<IRuntime>;
+
+        /**
          * 关闭特写。
          */
         hideCG(): Promise<IRuntime>;
