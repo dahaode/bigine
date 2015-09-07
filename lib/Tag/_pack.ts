@@ -41,3 +41,4 @@
 /// <reference path="_Action/_Director/PlaySE.ts" />
 /// <reference path="_Action/_Director/Weather.ts" />
 /// <reference path="_Action/_Logic/Assert.ts" />
+/// <reference path="_Action/_Logic/Assign.ts" />
