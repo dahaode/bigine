@@ -82,6 +82,8 @@ class E extends Error {
     static ACT_CG_NOT_SHOWN = '并未展示任何特写';
 
     static ACT_CG_ALREADY_SHOWN = '正在展示另一特写';
+
+    static ACT_ILLEGAL_OP = '无效的比较符';
 }
 
 module E {

@@ -22,4 +22,36 @@ module Tag {
     // IPerformable:p()
     export interface IAction extends IAssertable, IPerformable {
     }
+
+    export module IAction {
+        /**
+         * 操作符。
+         */
+        export enum OP {
+            /**
+             * 等于。
+             */
+            EQ,
+            /**
+             * 不等于。
+             */
+            NE,
+            /**
+             * 小于。
+             */
+            LT,
+            /**
+             * 不小于。
+             */
+            NL,
+            /**
+             * 大于。
+             */
+            GT,
+            /**
+             * 不大于。
+             */
+            NG
+        }
+    }
 }

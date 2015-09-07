@@ -40,3 +40,4 @@
 /// <reference path="_Action/_Flow/Freeze.ts" />
 /// <reference path="_Action/_Director/PlaySE.ts" />
 /// <reference path="_Action/_Director/Weather.ts" />
+/// <reference path="_Action/_Logic/Assert.ts" />

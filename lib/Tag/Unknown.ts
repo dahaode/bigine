@@ -165,12 +165,17 @@ module Tag {
          */
         toJsrn(): string {
             var parts: any[] = [this.$i()],
+                params: (number | string)[] = [],
                 children: string[] = [],
                 clob: string;
             if (this._c)
-                parts.push(this._c);
-            if (this._p.length)
-                parts.push(this._p);
+                parts.push(this.$v(this._c));
+            if (this._p.length) {
+                Util.each(this._p, (param) => {
+                    params.push(this.$v(param));
+                });
+                parts.push(params);
+            }
             Util.each(this._s, (tag) => {
                 children.push(tag.toJsrn());
             })
@@ -178,6 +183,18 @@ module Tag {
             if (children.length)
                 clob += ',[' + children.join(',') + ']';
             return '$(' + clob + ')';
+        }
+
+        /**
+         * 尝试将数值字符串转为数值。
+         */
+        $v(orig: string): number | string {
+            if ('真' == orig)
+                return 1;
+            else if ('伪' == orig)
+                return 0;
+            var ret = <any> orig - 0;
+            return isNaN(ret) ? orig : ret;
         }
 
         /**
