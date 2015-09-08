@@ -46,3 +46,4 @@
 /// <reference path="_Action/_Logic/Increase.ts" />
 /// <reference path="_Action/_Flow/LoopBreak.ts" />
 /// <reference path="_Action/_Logic/And.ts" />
+/// <reference path="_Action/_Logic/Or.ts" />
