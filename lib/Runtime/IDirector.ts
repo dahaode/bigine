@@ -11,6 +11,7 @@
 /// <reference path="IRuntime.ts" />
 /// <reference path="../Util/Q.ts" />
 /// <reference path="../Tag/IPoint.ts" />
+/// <reference path="../Tag/IOption.ts" />
 
 module Runtime {
     export interface IDirector {
@@ -93,6 +94,11 @@ module Runtime {
          * 开灯（开幕）。
          */
         lightOn(): Promise<IRuntime>;
+
+        /**
+         * 选择。
+         */
+        choose(options: Util.IHashTable<Tag.IOption>): Promise<IRuntime>;
     }
 
     export module IDirector {

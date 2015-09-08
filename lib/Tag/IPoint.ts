@@ -7,11 +7,19 @@
  * @file      Tag/IPoint.ts
  */
 
-/// <reference path="../Runtime/IRuntime.ts" />
 /// <reference path="IRoom.ts" />
+/// <reference path="../Runtime/IButtonable.ts" />
 
 module Tag {
-    export interface IPoint {
+    // Core.ITag:gL()
+    // Core.ITag:gN()
+    // Core.ITag:toString()
+    // Core.ITag:toJsrn()
+    // ITag:r()
+    // ITag:b()
+    // ITag:gU()
+    // Runtime.IButtonable.p()
+    export interface IPoint extends ITag, Runtime.IButtonable {
         /**
          * 获取唯一编号。
          */
@@ -51,6 +59,5 @@ module Tag {
          * 获取相关房间。
          */
         gR(): IRoom;
-
     }
 }

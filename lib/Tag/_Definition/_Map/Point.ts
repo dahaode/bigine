@@ -8,12 +8,14 @@
  */
 
 /// <reference path="../../Unknown.ts" />
+/// <reference path="../../IPoint.ts" />
 /// <reference path="HLImage.ts" />
 /// <reference path="Region.ts" />
 /// <reference path="Target.ts" />
+/// <reference path="../../_Action/_Flow/Enter.ts" />
 
 module Tag {
-    export class Point extends Unknown {
+    export class Point extends Unknown implements IPoint {
         /**
          * 原型。
          */
@@ -49,6 +51,17 @@ module Tag {
         $b(ep: Runtime.IEpisode): void {
             if (this._m && this._p[0])
                 this._o = (<DefMap> ep.q(this._m, Core.IEpisode.Entity.Map)).gP(this._m);
+        }
+
+        /**
+         * 交互逻辑。
+         */
+        p(runtime: Runtime.IRuntime): void {
+            var room = this.gR();
+            (<Promise<Runtime.IRuntime>> Enter.prototype.p.call({
+                _p: [room.gI()],
+                _mo: room
+            }, runtime))['catch'](Util.Q.ignoreHalt);
         }
 
         /**

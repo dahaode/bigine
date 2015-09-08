@@ -11,6 +11,13 @@
 /// <reference path="../Runtime/IResource.ts" />
 
 module Tag {
+    // Core.ITag:gL()
+    // Core.ITag:gN()
+    // Core.ITag:toString()
+    // Core.ITag:toJsrn()
+    // ITag:r()
+    // ITag:b()
+    // ITag:gU()
     export interface ISE extends IEntity {
         /**
          * 获取资源。

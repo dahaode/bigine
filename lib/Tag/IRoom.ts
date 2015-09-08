@@ -12,6 +12,17 @@
 /// <reference path="IMap.ts" />
 
 module Tag {
+    // Core.ITag:gL()
+    // Core.ITag:gN()
+    // Core.ITag:toString()
+    // Core.ITag:toJsrn()
+    // ITag:r()
+    // ITag:b()
+    // ITag:gU()
+    // IEntity:gI()
+    // IEntity:gT()
+    // ISceneHost:a()
+    // ISceneHost:p()
     export interface IRoom extends IEntity, ISceneHost {
         /**
          * 获取资源。

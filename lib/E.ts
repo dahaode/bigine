@@ -88,6 +88,8 @@ class E extends Error {
     static ACT_STATE_NOT_NUMERIC = '状态数据不是数值';
 
     static ACT_DELTA_NOT_NUMERIC = '状态增量不是数值';
+
+    static ACT_OPTION_CAST_FAILURE = '无法转化为选项';
 }
 
 module E {

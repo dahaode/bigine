@@ -11,6 +11,15 @@
 /// <reference path="IPoint.ts" />
 
 module Tag {
+    // Core.ITag:gL()
+    // Core.ITag:gN()
+    // Core.ITag:toString()
+    // Core.ITag:toJsrn()
+    // ITag:r()
+    // ITag:b()
+    // ITag:gU()
+    // IEntity:gI()
+    // IEntity:gT()
     export interface IMap extends IEntity {
         /**
          * 获取资源。
