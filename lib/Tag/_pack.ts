@@ -49,3 +49,4 @@
 /// <reference path="_Action/_Logic/Or.ts" />
 /// <reference path="_Action/_Logic/Otherwise.ts" />
 /// <reference path="_Action/_Logic/Then.ts" />
+/// <reference path="_Action/_Logic/When.ts" />
