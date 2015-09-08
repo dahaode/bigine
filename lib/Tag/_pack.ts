@@ -50,3 +50,4 @@
 /// <reference path="_Action/_Logic/Otherwise.ts" />
 /// <reference path="_Action/_Logic/Then.ts" />
 /// <reference path="_Action/_Logic/When.ts" />
+/// <reference path="_Action/_Logic/Loop.ts" />

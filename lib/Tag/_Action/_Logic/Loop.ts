@@ -1,32 +1,28 @@
 /**
- * 定义否则动作组件标签。
+ * 定义循环动作标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Action/_Logic/Otherwise.ts
+ * @file      Tag/_Action/_Logic/Loop.ts
  */
 
 /// <reference path="../Action.ts" />
 
 module Tag {
-    export class Otherwise extends Action {
+    export class Loop extends Action {
         /**
          * 获取标签名称。
          */
         gN(): string {
-            return 'Otherwise';
+            return 'Loop';
         }
 
         /**
          * （执行）检查。
          */
         t(states: Runtime.IStates): boolean {
-            var key = '$t' + states.g('$d');
-            if (states.g(key))
-                return true;
-            states.s(key, true);
-            return Util.every(this._s, (tag) => (<Action> tag).t(states));
+            return false;
         }
 
         /**
@@ -36,12 +32,12 @@ module Tag {
             var states = runtime.gS(),
                 kd = '$d',
                 depth = states.g(kd),
-                kt = '$t' + depth;
-            if (states.g(kt))
-                return runtime;
-            states.s(kt, true)
-                .s(kd, 1 + depth);
-            return Util.Q.every(this._s, (tag) => (<Action> tag).p(runtime))
+                loop = function (): Promise<Runtime.IRuntime> {
+                    return Util.Q.every(<Action[]> this._s, (action) => action.p(runtime))
+                        .then(loop);
+                };
+            states.s(kd, 1 + depth);
+            return loop()['catch'](Util.Q.ignoreBreak)
                 .then(() => {
                     states.s(kd, depth);
                     return runtime;

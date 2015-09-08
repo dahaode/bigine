@@ -24,10 +24,28 @@ module Util {
         }
 
         /**
+         * 忽略中断信号。
+         */
+        export function ignoreHalt(error: E): Promise<void> {
+            if (E.Signal.HALT == error.signal)
+                return Promise.resolve();
+            return Promise.reject(error);
+        }
+
+        /**
          * 中断循环时序流。
          */
         export function doBreak<T>(): Promise<T> {
             return Promise.reject<T>(new E('', E.Signal.BREAK));
+        }
+
+        /**
+         * 忽略循环中断信号。
+         */
+        export function ignoreBreak(error: E): Promise<void> {
+            if (E.Signal.BREAK == error.signal)
+                return Promise.resolve();
+            return Promise.reject(error);
         }
 
         /**

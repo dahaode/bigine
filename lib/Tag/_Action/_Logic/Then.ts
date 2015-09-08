@@ -36,13 +36,19 @@ module Tag {
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             var states = runtime.gS(),
-                depth = states.g('$d'),
+                kd = '$d',
+                depth = states.g(kd),
                 kt = '$t' + depth,
                 kv = '$v' + depth;
             if (states.g(kt) || !states.g(kv))
                 return runtime;
-            states.s(kt, true);
-            return Util.Q.every(this._s, (tag) => (<Action> tag).p(runtime));
+            states.s(kt, true)
+                .s(kd, 1 + depth);
+            return Util.Q.every(this._s, (tag) => (<Action> tag).p(runtime))
+                .then(() => {
+                    states.s(kd, depth);
+                    return runtime;
+                });
         }
     }
 }
