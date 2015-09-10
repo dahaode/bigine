@@ -14,13 +14,10 @@
 /// <reference path="IResource.ts" />
 
 module Runtime {
-    // Core.IEmittable:addEventListener()
-    // Core.IEmittable:removeEventListener()
-    // Core.IEmittable:dispatchEvent()
     // Tag.ISceneHost:a()
     // Tag.ISceneHost:p()
     export interface IEpisode extends Core.IEpisode, Tag.ISceneHost {
-        // new (ep: Tag.IRoot): IEpisode;
+        // new (ep: Tag.IRoot, runtime: IRuntime): IEpisode;
 
         /**
          * 注册实体。

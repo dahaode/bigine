@@ -7,14 +7,10 @@
  * @file      Core/IEpisode.ts
  */
 
-/// <reference path="IEmittable.ts" />
 /// <reference path="ITag.ts" />
 
 module Core {
-    // IEmittable:addEventListener()
-    // IEmittable:removeEventListener()
-    // IEmittable:dispatchEvent()
-    export interface IEpisode extends IEmittable {
+    export interface IEpisode {
         /**
          * 注册实体。
          */

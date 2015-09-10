@@ -9,13 +9,13 @@
  */
 
 interface Thenable<T> {
-    then(onFulfilled?: (value: T) => T | Thenable<T>, onRejected?: (reason: any) => T | Thenable<T>): Thenable<T>;
-    then(onFulfilled?: (value: T) => T | Thenable<T>, onRejected?: (reason: any) => void): Thenable<T>;
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (reason: any) => U | Thenable<U>): Thenable<U>;
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (reason: any) => void): Thenable<U>;
 }
 
 interface Promise<T> extends Thenable<T> {
-    then(onFulfilled?: (value: T) => T | Thenable<T>, onRejected?: (reason: any) => T | Thenable<T>): Promise<T>;
-    then(onFulfilled?: (value: T) => T | Thenable<T>, onRejected?: (reason: any) => void): Promise<T>;
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (reason: any) => U | Thenable<U>): Promise<U>;
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (reason: any) => void): Promise<U>;
     catch(onRejected?: (reason: any) => T | Thenable<T>): Promise<T>;
     catch(onRejected?: (reason: any) => void): Promise<T>;
 }

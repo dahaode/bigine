@@ -77,7 +77,7 @@ module Tag {
         /**
          * 加载资源包。
          */
-        l(callback: Util.ISuccessCallback<IEntity>): boolean {
+        l(callback: Util.ISuccessCallback<Util.IHashTable<IEntity>>): boolean {
             var resources = <Resources> this.$q('Resources')[0];
             if (!resources)
                 return false;
@@ -88,7 +88,7 @@ module Tag {
         /**
          * 加载主题。
          */
-        t(callback: Util.ISuccessCallback<any>): void {
+        t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
             (<Theme> this.$q('Theme')[0]).l(callback);
         }
     }

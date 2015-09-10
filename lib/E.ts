@@ -94,6 +94,10 @@ class E extends Error {
     static RES_INVALID_URI = '无效的资源地址';
 
     static ENV_NOT_AVAILABLE = '环境不满足播放条件';
+
+    static EP_ENTITY_NOT_FOUND = '实体不存在';
+
+    static EP_THEME_NOT_LOADED = '主题数据尚未加载完成';
 }
 
 module E {

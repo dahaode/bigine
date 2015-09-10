@@ -28,11 +28,11 @@ module Tag {
         /**
          * 加载资源包。
          */
-        l(callback: Util.ISuccessCallback<IEntity>): boolean;
+        l(callback: Util.ISuccessCallback<Util.IHashTable<IEntity>>): boolean;
 
         /**
          * 加载主题。
          */
-        t(callback: Util.ISuccessCallback<any>): void;
+        t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
     }
 }

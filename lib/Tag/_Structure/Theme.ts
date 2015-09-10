@@ -22,7 +22,7 @@ module Tag {
         /**
          * 加载远端数据。
          */
-        l(callback: Util.ISuccessCallback<any>): void {
+        l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
             Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json', callback, (error, status?) => {
                 throw error;
             });
