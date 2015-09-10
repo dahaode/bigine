@@ -8,6 +8,7 @@
  */
 
 /// <reference path="node.d.ts" />
+/// <reference path="../E.ts" />
 
 module Util {
     export var Env = {
@@ -40,12 +41,16 @@ module Util {
         /**
          * 是否为移动设备。
          */
-        Mobile: false
+        Mobile: false,
+        /**
+         * IE 浏览器。
+         */
+        MSIE: false
     };
     ((env: typeof Env) => {
         if (env.Node.JS)
             env.Node.Webkit = !!(('node-webkit' in process.versions) || ('atom-shell' in process.versions) || ('electron' in process.versions));
-        var detect = function (): boolean {
+        var detect = function (): [boolean, boolean] {
             var ua = navigator.userAgent.toLowerCase(),
                 pick = function(pattern: RegExp): string {
                         var match = ua.match(pattern);
@@ -55,22 +60,32 @@ module Util {
                 android = /android/.test(ua) && !/like android/.test(ua),
                 tablet = /tablet/.test(ua),
                 mobile = !tablet && /[^-]mobi/.test(ua),
-                osver = 0;
+                osver = 0,
+                msie = false;
             if (android)
                 osver = parseInt(pick(/android[ \/-](\d+(\.\d+)*)/));
             if ('ipad' == ios || (android && (3 == osver || (4 == osver && !mobile))) || /silk/.test(ua))
                 tablet = true;
             else if ('ipod' == ios || 'iphone' == ios || android || /blackberry|\bbb\d+/.test(ua) || /rim\stablet/.test(ua) || /(web|hpw)os/.test(ua) || /bada/i.test(ua))
                 mobile = true;
-            return tablet || mobile;
+            if (/windows phone/.test(ua)) {
+                if (!/edge\/(\d+(\.\d+)?)/.test(ua))
+                    msie = true;
+            } else if (/msie|trident/.test(ua))
+                msie = true;
+            return [tablet || mobile, msie];
         }
         if (env.Window) {
             env.Screen.Width = screen.width;
             env.Screen.Height = screen.height;
             if ('https:' == location.protocol)
                 env.Protocol = 'https:';
-            env.Canvas = 'CanvasRenderingContext2D' in window;
-            env.Mobile = detect();
+            if (!('CanvasRenderingContext2D' in window))
+                throw new E(E.ENV_NOT_AVAILABLE);
+            env.Canvas = true;
+            var desult = detect();
+            env.Mobile = desult[0];
+            env.MSIE = desult[1];
         }
     })(Env);
 }

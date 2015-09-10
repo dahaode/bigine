@@ -7,6 +7,8 @@
  * @file      Runtime/IResource.ts
  */
 
+/// <reference path="../Util/Q.ts" />
+
 module Runtime {
     export interface IResource {
         // new (uri: string, type: IResource.Type): IResource;
@@ -14,7 +16,7 @@ module Runtime {
         /**
          * 获取 DOM 对象。
          */
-        o(): HTMLImageElement | HTMLMediaElement;
+        o(): Promise<string | HTMLImageElement>;
     }
 
     export module IResource {

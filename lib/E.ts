@@ -90,6 +90,10 @@ class E extends Error {
     static ACT_DELTA_NOT_NUMERIC = '状态增量不是数值';
 
     static ACT_OPTION_CAST_FAILURE = '无法转化为选项';
+
+    static RES_INVALID_URI = '无效的资源地址';
+
+    static ENV_NOT_AVAILABLE = '环境不满足播放条件';
 }
 
 module E {
