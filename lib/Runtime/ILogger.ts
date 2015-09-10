@@ -28,5 +28,34 @@ module Runtime {
          * 错误。
          */
         e(...parts: any[]): void;
+
+        /**
+         * 设置日志等级。
+         */
+        l(level: ILogger.Level): ILogger;
+    }
+
+    export module ILogger {
+        /**
+         * 日志等级。
+         */
+        export enum Level {
+            /**
+             * 调试。
+             */
+            Debug,
+            /**
+             * 信息。
+             */
+            Info,
+            /**
+             * 警告。
+             */
+            Warn,
+            /**
+             * 错误。
+             */
+            Error
+        }
     }
 }
