@@ -7,7 +7,12 @@
  * @file      Tag/_Action/_Logic/Loop.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../_Action/_Director/AsRoom.ts" />
+/// <reference path="../../_Action/_Director/CharOn.ts" />
+/// <reference path="../../_Action/_Director/PlayBGM.ts" />
+/// <reference path="../../_Action/_Director/PlaySE.ts" />
+/// <reference path="../../_Action/_Director/ShowCG.ts" />
+/// <reference path="../../_Action/_Text/Speak.ts" />
 
 module Tag {
     export class Loop extends Action {
@@ -42,6 +47,56 @@ module Tag {
                     states.s(kd, depth);
                     return runtime;
                 });
+        }
+
+        /**
+         * 获取使用资源列表。
+         */
+        c(): Runtime.IResource[][] {
+            var frame: Runtime.IResource[] = [],
+                resources: Runtime.IResource[][] = [];
+            Util.each(<Action[]> this._s, (action) => {
+                switch (action.gN()) {
+                    case 'AsRoom':
+                        frame = frame.concat((<AsRoom> action).gR().d());
+                        break;
+                    case 'CharOn':
+                    case 'CharSet':
+                        frame = frame.concat((<CharOn> action).gC().d());
+                        break;
+                    case 'PlayBGM':
+                        frame.push((<PlayBGM> action).gB().o());
+                        break;
+                    case 'PlaySE':
+                        frame.push((<PlaySE> action).gS().o());
+                        break;
+                    case 'ShowCG':
+                        frame.push((<ShowCG> action).gC().o());
+                        break;
+                    case 'Monolog':
+                    case 'Speak':
+                        frame.push((<Speak> action).gC().o());
+                    case 'VoiceOver':
+                        if (frame.length) {
+                            resources.push(frame);
+                            frame = [];
+                        }
+                        break;
+                    case 'Loop':
+                    case 'Otherwise':
+                    case 'Then':
+                    case 'When':
+                        if (frame.length) {
+                            resources.push(frame);
+                            frame = [];
+                        }
+                        resources.concat((<Loop> action).c());
+                        break;
+                }
+            });
+            if (frame.length)
+                resources.push(frame);
+            return resources;
         }
     }
 }

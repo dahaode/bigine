@@ -27,8 +27,20 @@ module Tag {
                 var id = tag.$p(0);
                 this._o[id] = ep.r(tag.$c(), Runtime.IResource.Type.Room);
                 if (!index)
-                    this._o[''] = this._o[id];
+                    this._o['默认'] = this._o[id];
             });
+        }
+
+        /**
+         * 获取所有关联资源。
+         */
+        d(): Runtime.IResource[] {
+            var ret: Runtime.IResource[] = [];
+            Util.each(this._o, (resource, index) => {
+                if ('默认' != index)
+                    ret.push(resource);
+            });
+            return ret;
         }
     }
 }

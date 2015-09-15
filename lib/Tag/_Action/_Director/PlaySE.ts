@@ -13,9 +13,9 @@
 module Tag {
     export class PlaySE extends Action {
         /**
-         * 使用资源。
+         * 使用音效。
          */
-        private _mo: Runtime.IResource;
+        private _mo: DefSE;
 
         /**
          * 获取标签名称。
@@ -28,14 +28,21 @@ module Tag {
          * 绑定（运行时）作品（实体）。
          */
         $b(ep: Runtime.IEpisode): void {
-            this._mo = (<DefSE> ep.q(this._p[0], Core.IEpisode.Entity.SE)).o();
+            this._mo = (<DefSE> ep.q(this._p[0], Core.IEpisode.Entity.SE));
         }
 
         /**
          * 执行。
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            return runtime.gD().playSE(this._mo);
+            return runtime.gD().playSE(this._mo.o());
+        }
+
+        /**
+         * 获取关联音效。
+         */
+        gS(): DefSE {
+            return this._mo;
         }
     }
 }

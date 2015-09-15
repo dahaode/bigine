@@ -64,5 +64,14 @@ module Tag {
             }
             return (<Poses> q[0]).o(id);
         }
+
+        /**
+         * 获取所有关联资源。
+         */
+        d(): Runtime.IResource[] {
+            var ret = (<Poses> this.$q('Poses')[0]).d();
+            ret.unshift((<Avatar> this.$q('Avatar')[0]).o());
+            return ret;
+        }
     }
 }

@@ -7,7 +7,7 @@
  * @file      Tag/_Structure/_Scene/Content.ts
  */
 
-/// <reference path="../../_Action/Action.ts" />
+/// <reference path="../../_Action/_Logic/Loop.ts" />
 
 module Tag {
     export class Content extends Unknown implements IPerformable {
@@ -23,7 +23,9 @@ module Tag {
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             runtime.gS().s('$d', 1);
-            return Util.Q.every(<Action[]> this._s, (action) => action.p(runtime));
+            return runtime.gE().c(<Runtime.IResource[][]> Loop.prototype.c.call(this)).then(() => {
+                return Util.Q.every(<Action[]> this._s, (action) => action.p(runtime));
+            });
         }
     }
 }

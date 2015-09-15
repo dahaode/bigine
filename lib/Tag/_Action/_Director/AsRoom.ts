@@ -53,5 +53,12 @@ module Tag {
             return director.asRoom(this._mo.o(time))
                 .then(() => director.asMap(map ? map.gP() : {}));
         }
+
+        /**
+         * 获取关联房间。
+         */
+        gR(): DefRoom {
+            return this._mo;
+        }
     }
 }

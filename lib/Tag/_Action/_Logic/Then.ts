@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Logic/Then.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="Loop.ts" />
 
 module Tag {
     export class Then extends Action {
@@ -49,6 +49,13 @@ module Tag {
                     states.s(kd, depth);
                     return runtime;
                 });
+        }
+
+        /**
+         * 获取使用资源列表。
+         */
+        c(): Runtime.IResource[][] {
+            return <Runtime.IResource[][]> Loop.prototype.c.call(this);
         }
     }
 }

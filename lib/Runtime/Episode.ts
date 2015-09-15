@@ -8,7 +8,7 @@
  */
 
 /// <reference path="Event/Ready.ts" />
-/// <reference path="_Resource/Resource.ts" />
+/// <reference path="_Resource/Prefetcher.ts" />
 
 module Runtime {
     export class Episode implements IEpisode {
@@ -115,6 +115,15 @@ module Runtime {
             if (!this._t)
                 throw new E(E.EP_THEME_NOT_LOADED);
             return this._t[category];
+        }
+
+        /**
+         * 预加载指定资源组。
+         *
+         * @param resources 一个（作品）事件所包含地所有资源
+         */
+        c(resources: Resource[][]): Promise<void> {
+            return Prefecher.c(resources);
         }
     }
 }

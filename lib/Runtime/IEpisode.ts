@@ -38,5 +38,12 @@ module Runtime {
          * 获取主题信息。
          */
         t(category: string): Util.IHashTable<any>;
+
+        /**
+         * 预加载指定资源组。
+         *
+         * @param resources 一个（作品）事件所包含地所有资源
+         */
+        c(resources: IResource[][]): Promise<void>;
     }
 }

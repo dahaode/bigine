@@ -29,5 +29,17 @@ module Tag {
                     this._o['默认'] = this._o[id];
             });
         }
+
+        /**
+         * 获取所有关联资源。
+         */
+        d(): Runtime.IResource[] {
+            var ret: Runtime.IResource[] = [];
+            Util.each(this._o, (resource, index) => {
+                if ('默认' != index)
+                    ret.push(resource);
+            });
+            return ret;
+        }
     }
 }

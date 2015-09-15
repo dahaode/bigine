@@ -28,9 +28,9 @@ module Tag {
         private _ms: string;
 
         /**
-         * 使用资源。
+         * 使用人物。
          */
-        private _mo: Runtime.IResource;
+        private _mo: DefChar;
 
         /**
          * 构造函数。
@@ -68,7 +68,7 @@ module Tag {
          * 绑定（运行时）作品（实体）。
          */
         $b(ep: Runtime.IEpisode): void {
-            this._mo = (<DefChar> ep.q(this._mc, Core.IEpisode.Entity.Chr)).o(this._ms);
+            this._mo = (<DefChar> ep.q(this._mc, Core.IEpisode.Entity.Chr));
         }
 
         /**
@@ -83,7 +83,14 @@ module Tag {
             states.s(kpos, this._mp);
             states.s('_c' + this._mp, this._mc);
             states.s('_s' + this._mp, this._ms);
-            return runtime.gD().charSet(this._mo, this._mp);
+            return runtime.gD().charSet(this._mo.o(this._ms), this._mp);
+        }
+
+        /**
+         * 获取关联人物。
+         */
+        gC(): DefChar {
+            return this._mo;
         }
     }
 }

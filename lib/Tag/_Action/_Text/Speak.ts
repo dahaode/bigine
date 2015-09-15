@@ -42,5 +42,12 @@ module Tag {
                 this._mc.o()
             );
         }
+
+        /**
+         * 获取关联人物。
+         */
+        gC(): DefChar {
+            return this._mc;
+        }
     }
 }

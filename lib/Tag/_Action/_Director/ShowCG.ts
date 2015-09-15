@@ -13,9 +13,9 @@
 module Tag {
     export class ShowCG extends Action {
         /**
-         * 使用资源。
+         * 使用特写。
          */
-        private _mo: Runtime.IResource;
+        private _mo: DefCG;
 
         /**
          * 获取标签名称。
@@ -28,7 +28,7 @@ module Tag {
          * 绑定（运行时）作品（实体）。
          */
         $b(ep: Runtime.IEpisode): void {
-            this._mo = (<DefCG> ep.q(this._p[0], Core.IEpisode.Entity.CG)).o();
+            this._mo = (<DefCG> ep.q(this._p[0], Core.IEpisode.Entity.CG));
         }
 
         /**
@@ -41,7 +41,14 @@ module Tag {
             if (cg)
                 throw new E(E.ACT_CG_ALREADY_SHOWN, this._l);
             states.s(key, this._c);
-            return runtime.gD().showCG(this._mo);
+            return runtime.gD().showCG(this._mo.o());
+        }
+
+        /**
+         * 获取关联特写。
+         */
+        gC(): DefCG {
+            return this._mo;
         }
     }
 }

@@ -32,5 +32,12 @@ module Tag {
             states.s(ktime, this._p[0]);
             return runtime.gD().asRoom(room.o(this._p[0]));
         }
+
+        /**
+         * 获取时间。
+         */
+        gT(): string {
+            return this._p[0];
+        }
     }
 }

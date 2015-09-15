@@ -80,5 +80,15 @@ module Tag {
             if (!l) return;
             return l.gM();
         }
+
+        /**
+         * 获取所有关联资源。
+         */
+        d(): Runtime.IResource[] {
+            var map = this.gM();
+            if (map)
+                return map.d();
+            return (<Times> this.$q('Times')[0]).d();
+        }
     }
 }

@@ -13,9 +13,9 @@
 module Tag {
     export class PlayBGM extends Action {
         /**
-         * 使用资源。
+         * 使用音乐。
          */
-        private _mo: Runtime.IResource;
+        private _mo: DefBGM;
 
         /**
          * 获取标签名称。
@@ -28,7 +28,7 @@ module Tag {
          * 绑定（运行时）作品（实体）。
          */
         $b(ep: Runtime.IEpisode): void {
-            this._mo = (<DefBGM> ep.q(this._p[0], Core.IEpisode.Entity.BGM)).o();
+            this._mo = (<DefBGM> ep.q(this._p[0], Core.IEpisode.Entity.BGM));
         }
 
         /**
@@ -41,7 +41,14 @@ module Tag {
             if (bgm == this._p[0])
                 return runtime;
             states.s(key, this._p[0]);
-            return runtime.gD().playBGM(this._mo);
+            return runtime.gD().playBGM(this._mo.o());
+        }
+
+        /**
+         * 获取关联音乐。
+         */
+        gB(): DefBGM {
+            return this._mo;
         }
     }
 }

@@ -80,5 +80,16 @@ module Tag {
             }
             return this._a;
         }
+
+        /**
+         * 获取所有关联资源。
+         */
+        d(): Runtime.IResource[] {
+            var ret = [this.o()];
+            Util.each(this._a, (point) => {
+                ret.push(point.o());
+            });
+            return ret;
+        }
     }
 }
