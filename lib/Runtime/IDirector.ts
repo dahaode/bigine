@@ -16,6 +16,23 @@
 module Runtime {
     export interface IDirector {
         /**
+         * 预加载指定资源组。
+         *
+         * @param resources 一个（作品）事件所包含地所有资源
+         */
+        c(resources: IResource[][]): Promise<void>;
+
+        /**
+         * 完结动画。
+         */
+        ED(): Promise<IRuntime>;
+
+        /**
+         * 失败动画。
+         */
+        FAIL(): Promise<IRuntime>;
+
+        /**
          * 人物出场。
          */
         charOn(resource: IResource, position: IDirector.Position): Promise<IRuntime>;
@@ -33,22 +50,7 @@ module Runtime {
         /**
          * 某白。
          */
-        words(words: string, theme: Util.IHashTable<any>, who?: string, avatar?: IResource): Promise<IRuntime>;
-
-        /**
-         * 开始动画。
-         */
-        OP(): Promise<IRuntime>;
-
-        /**
-         * 完结动画。
-         */
-        ED(): Promise<IRuntime>;
-
-        /**
-         * 失败动画。
-         */
-        FAIL(): Promise<IRuntime>;
+        words(words: string, theme: string, who?: string, avatar?: IResource): Promise<IRuntime>;
 
         /**
          * 评分动画。

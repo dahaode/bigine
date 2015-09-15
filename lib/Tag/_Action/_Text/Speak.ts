@@ -37,7 +37,7 @@ module Tag {
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             return runtime.gD().words(
                 runtime.gS().t(this._c),
-                runtime.gE().t('speak'),
+                'speak',
                 this._p[2] || this._mc.gI(),
                 this._mc.o()
             );

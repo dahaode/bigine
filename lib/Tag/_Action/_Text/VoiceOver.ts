@@ -22,7 +22,7 @@ module Tag {
          * 执行。
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            return runtime.gD().words(runtime.gS().t(this._c), runtime.gE().t('voiceover'));
+            return runtime.gD().words(runtime.gS().t(this._c), 'voiceover');
         }
     }
 }

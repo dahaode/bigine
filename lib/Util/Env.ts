@@ -80,9 +80,7 @@ module Util {
             env.Screen.Height = screen.height;
             if ('https:' == location.protocol)
                 env.Protocol = 'https:';
-            if (!('CanvasRenderingContext2D' in window))
-                throw new E(E.ENV_NOT_AVAILABLE);
-            env.Canvas = true;
+            env.Canvas = 'CanvasRenderingContext2D' in window;
             var desult = detect();
             env.Mobile = desult[0];
             env.MSIE = desult[1];

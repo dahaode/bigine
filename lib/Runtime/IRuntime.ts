@@ -42,11 +42,6 @@ module Runtime {
         gD(): IDirector;
 
         /**
-         * 初始化。
-         */
-        setup(): IRuntime;
-
-        /**
          * 播放。
          */
         play(): IRuntime;
@@ -65,5 +60,15 @@ module Runtime {
          * DOM 定位修正。
          */
         fix(): void;
+
+        /**
+         * 设置或获取自动播放设置。
+         */
+        auto(auto?: boolean): boolean;
+
+        /**
+         * 设置或获取音量。
+         */
+        volume(volume?: number): number;
     }
 }

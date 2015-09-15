@@ -8,7 +8,8 @@
  */
 
 /// <reference path="Event/Ready.ts" />
-/// <reference path="_Resource/Prefetcher.ts" />
+/// <reference path="Event/End.ts" />
+/// <reference path="_Resource/Resource.ts" />
 
 module Runtime {
     export class Episode implements IEpisode {
@@ -28,11 +29,17 @@ module Runtime {
         private _t: Util.IHashTable<Util.IHashTable<any>>;
 
         /**
+         * 是否自动播放标识。
+         */
+        private _p: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(ep: Tag.IRoot, runtime: IRuntime) {
             this._a = {};
             this._e = {};
+            this._p = ep.a();
             ep.r(this);
             Promise.all([
                 new Promise<void>((resolve) => {
@@ -78,7 +85,13 @@ module Runtime {
         p(type: Tag.IScene.Type, runtime: IRuntime): Promise<IRuntime> {
             if (!(type in this._a))
                 return Promise.resolve(runtime);
-            return Util.Q.every(this._a[type], (scene) => scene.p(runtime));
+            return Util.Q.every(this._a[type], (scene) => scene.p(runtime)).then(() => {
+                if (Tag.IScene.Type.End == type)
+                    runtime.dispatchEvent(new Event.End({
+                        target: this
+                    }));
+                return runtime;
+            });
         }
 
         /**
@@ -109,21 +122,19 @@ module Runtime {
         }
 
         /**
-         * 获取主题信息。
+         * 是否自动播放。
          */
-        t(category: string): Util.IHashTable<any> {
-            if (!this._t)
-                throw new E(E.EP_THEME_NOT_LOADED);
-            return this._t[category];
+        gA(): boolean {
+            return this._p;
         }
 
         /**
-         * 预加载指定资源组。
-         *
-         * @param resources 一个（作品）事件所包含地所有资源
+         * 获取主题信息。
          */
-        c(resources: Resource[][]): Promise<void> {
-            return Prefecher.c(resources);
+        gT(): Util.IHashTable<Util.IHashTable<any>> {
+            if (!this._t)
+                throw new E(E.EP_THEME_NOT_LOADED);
+            return this._t;
         }
     }
 }

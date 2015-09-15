@@ -35,7 +35,7 @@ module Tag {
          * 执行。
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            return runtime.gD().words(runtime.gS().t(this._c), runtime.gE().t('monolog'), this._mc.gI(), this._mc.o());
+            return runtime.gD().words(runtime.gS().t(this._c), 'monolog', this._mc.gI(), this._mc.o());
         }
 
         /**

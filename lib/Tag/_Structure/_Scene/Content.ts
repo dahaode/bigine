@@ -23,7 +23,7 @@ module Tag {
          */
         p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             runtime.gS().s('$d', 1);
-            return runtime.gE().c(<Runtime.IResource[][]> Loop.prototype.c.call(this)).then(() => {
+            return runtime.gD().c(<Runtime.IResource[][]> Loop.prototype.c.call(this)).then(() => {
                 return Util.Q.every(<Action[]> this._s, (action) => action.p(runtime));
             });
         }

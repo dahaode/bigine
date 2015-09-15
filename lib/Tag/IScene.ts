@@ -36,7 +36,7 @@ module Tag {
             /**
              * 开始时。
              */
-            Start,
+            Begin,
             /**
              * 失败时。
              */

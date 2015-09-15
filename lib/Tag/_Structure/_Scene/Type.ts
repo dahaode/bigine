@@ -36,7 +36,7 @@ module Tag {
             }
             switch (term) {
                 case '开始时':
-                    this._t = IScene.Type.Start;
+                    this._t = IScene.Type.Begin;
                     break;
                 case '完结时':
                     this._t = IScene.Type.End;

@@ -24,6 +24,6 @@ module Core {
         /**
          * 发生事件。
          */
-        dispatchEvent(event: Event<any>): IEmittable;
+        dispatchEvent<T>(event: Event<T>): IEmittable;
     }
 }
