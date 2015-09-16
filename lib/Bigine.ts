@@ -48,7 +48,7 @@ function Bigine(code: any, ...args: any[]): any {
 }
 
 module Bigine {
-    export var version = '0.7.2';
+    export var version = '${BIGINE_VERSION}';
 }
 
-export = Bigine;
+//export = Bigine;

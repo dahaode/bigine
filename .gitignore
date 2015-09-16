@@ -3,6 +3,8 @@
 !.gitignore
 !Gulpfile.js
 !package.json
+!tsconfig.json
+!tslint.json
 
 !bin/
 !lib/
