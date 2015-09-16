@@ -12,6 +12,10 @@ class E extends Error {
 
     public static SCHEMA_CHILD_NOT_ALLOWED: string = '上级标签不支持此子标签';
 
+    public static LEX_ILLEGAL_SOURCE: string = '语法格式错误';
+
+    public static LEX_UNEXPECTED_INDENTATION: string = '缩进深度错误';
+
     public static TAG_PARAMS_TOO_FEW: string = '标签参数个数不满足最低要求';
 
     public static TAG_PARAMS_TOO_MANY: string = '标签参数个数超过最大限制';

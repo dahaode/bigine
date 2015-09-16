@@ -8,14 +8,22 @@
  */
 
 /// <reference path="Runtime/Runtime.ts" />
+/// <reference path="Lex/Parser.ts" />
 
+function Bigine(source: string): Core.IRootTag;
+function Bigine(lines: string[]): Core.IRootTag;
 function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Core.ITag[], id?: string): Core.ITag;
 function Bigine(children: Core.ITag[]): Core.IRuntime;
 function Bigine(code: any, ...args: any[]): any {
     'use strict';
 
-    if (code instanceof Array)
+    if ('string' == typeof code)
+        return Lex.Parser.c(code);
+    if (code instanceof Array) {
+        if ('string' == typeof code[0])
+            return Lex.Parser.c(code);
         return new Runtime.Runtime(new Tag.Root(<Tag.Unknown[]> code));
+    }
     if (!(code in SCHEMA.S))
         throw new E(E.SCHEMA_TAG_NOT_DECLARED);
     var proto: typeof Tag.Unknown = eval('Tag.' + SCHEMA.S[code][0]),
@@ -44,7 +52,7 @@ function Bigine(code: any, ...args: any[]): any {
     if ('string' == typeof arg)
         id = arg;
     tag = new proto(params, content, children, 0);
-    if (id)
+    if (id && ('i' in tag))
         (<Tag.Idable> tag).i(id);
     return tag;
 }
