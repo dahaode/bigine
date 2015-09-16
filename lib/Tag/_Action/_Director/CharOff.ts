@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Director/CharOff.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 
 namespace Tag {
     'use strict';
@@ -36,17 +36,17 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             ep.q(this._mc, Core.IEpisode.Entity.Chr);
         }
 
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var states: Core.IStates = runtime.gS(),
                 kpos: string = '.p' + this._mc,
-                pos: Runtime.IDirector.Position = <Runtime.IDirector.Position> states.g(kpos);
+                pos: Core.IDirector.Position = <Core.IDirector.Position> states.g(kpos);
             if (!pos)
                 throw new E(E.ACT_CHAR_NOT_ON, this._l);
             return runtime.gD().charOff(pos)

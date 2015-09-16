@@ -7,14 +7,13 @@
  * @file      Tag/_Definition/DefSE.ts
  */
 
-/// <reference path="Entity.ts" />
-/// <reference path="../ISE.ts" />
+/// <reference path="../Entity.ts" />
 /// <reference path="Audio.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class DefSE extends Entity implements ISE {
+    export class DefSE extends Entity {
         /**
          * 获取标签名称。
          */
@@ -32,7 +31,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(): Runtime.IResource {
+        public o(): Core.IResource {
             return (<Audio> this.$q('Audio')[0]).o();
         }
     }

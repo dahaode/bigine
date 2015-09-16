@@ -16,7 +16,7 @@
 namespace Runtime {
     'use strict';
 
-    export class Runtime implements IRuntime {
+    export class Runtime implements Core.IRuntime {
         /**
          * 事件监听函数池。
          */
@@ -65,7 +65,7 @@ namespace Runtime {
         /**
          * 构造函数。
          */
-        constructor(ep: Tag.IRoot) {
+        constructor(ep: Core.IRootTag) {
             this._a = {};
             this._e = new Episode(ep, this);
             this._l = new ConsoleLogger();
@@ -85,7 +85,7 @@ namespace Runtime {
                 }
             });
             this.addEventListener<Episode>('begin', () => {
-                this._e.p(Tag.IScene.Type.Begin, this);
+                this._e.p(Core.ISceneTag.Type.Begin, this);
             });
             this.addEventListener<Episode>('end', () => {
                 this._fp = false;
@@ -120,7 +120,7 @@ namespace Runtime {
         /**
          * 发生事件。
          */
-        public dispatchEvent<T>(event: Core.Event<T>): Runtime {
+        public dispatchEvent<T>(event: Event.Event<T>): Runtime {
             var type: string = event.gT();
             if (!(type in this._a))
                 return this;

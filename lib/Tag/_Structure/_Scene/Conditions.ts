@@ -7,12 +7,12 @@
  * @file      Tag/_Structure/_Scene/Conditions.ts
  */
 
-/// <reference path="../../_Action/Action.ts" />
+/// <reference path="../../Action.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class Conditions extends Unknown implements IAssertable {
+    export class Conditions extends Unknown {
         /**
          * 获取标签名称。
          */
@@ -23,7 +23,7 @@ namespace Tag {
         /**
          * 检查。
          */
-        public t(states: Runtime.IStates): boolean {
+        public t(states: Core.IStates): boolean {
             return Util.every(this._s, (condition: Action) => condition.t(states));
         }
     }

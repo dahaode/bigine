@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Director/AsTime.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
 namespace Tag {
@@ -24,8 +24,8 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var states: Core.IStates = runtime.gS(),
                 ktime: string = '_t',
                 time: string = states.g(ktime),
                 room: DefRoom = <DefRoom> states.g('$rd');

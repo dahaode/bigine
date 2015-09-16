@@ -29,9 +29,9 @@ namespace Tag {
         /**
          * 加载远端数据。
          */
-        public l(callback: Util.ISuccessCallback<Util.IHashTable<IEntity>>): void {
+        public l(callback: Util.ISuccessCallback<Util.IHashTable<Core.IEntityTag>>): void {
             Util.Remote.post<Util.IHashTable<Util.IHashTable<any>>>('//api.dahao.de/resource/' + this._c + '/', {}, (data: Util.IHashTable<Util.IHashTable<Util.IHashTable<any>>>) => {
-                var ret: Util.IHashTable<Util.IHashTable<IEntity>> = {};
+                var ret: Util.IHashTable<Util.IHashTable<Core.IEntityTag>> = {};
                 ret['rooms'] = {};
                 Util.each(data['rooms'] || {}, (room: Util.IHashTable<any>, index: string) => {
                     var times: Unknown[] = [];

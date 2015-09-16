@@ -9,8 +9,8 @@
 
 /// <reference path="Runtime/Runtime.ts" />
 
-function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Tag.ITag[], id?: string): Tag.ITag;
-function Bigine(children: Tag.ITag[]): Runtime.IRuntime;
+function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Core.ITag[], id?: string): Core.ITag;
+function Bigine(children: Core.ITag[]): Core.IRuntime;
 function Bigine(code: any, ...args: any[]): any {
     'use strict';
 

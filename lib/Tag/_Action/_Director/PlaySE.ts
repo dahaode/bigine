@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Director/PlaySE.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 /// <reference path="../../_Definition/DefSE.ts" />
 
 namespace Tag {
@@ -29,14 +29,14 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             this._mo = (<DefSE> ep.q(this._p[0], Core.IEpisode.Entity.SE));
         }
 
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             return runtime.gD().playSE(this._mo.o());
         }
 

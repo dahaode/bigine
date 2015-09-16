@@ -8,13 +8,12 @@
  */
 
 /// <reference path="../Unknown.ts" />
-/// <reference path="../IPlayer.ts" />
 /// <reference path="_Char/DefChar.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class Player extends Unknown implements IPlayer {
+    export class Player extends Unknown {
         /**
          * 关联对象。
          */
@@ -30,7 +29,7 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             this._o = <DefChar> ep.q(this._c, Core.IEpisode.Entity.Chr);
             ep.f(this);
         }

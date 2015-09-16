@@ -4,24 +4,34 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Core/IEpisode.ts
+ * @file      Core/_Runtime/IEpisode.ts
  */
 
-/// <reference path="ITag.ts" />
+/// <reference path="../_Tag/ISceneHost.ts" />
+/// <reference path="IRuntime.ts" />
+/// <reference path="../_Tag/IEntityTag.ts" />
+/// <reference path="IResource.ts" />
 
 namespace Core {
     'use strict';
 
-    export interface IEpisode {
+    export interface IEpisode extends ISceneHost {
+        // new (ep: Tag.IRoot, runtime: IRuntime): IEpisode;
+
         /**
          * 注册实体。
          */
-        f(tag: ITag): IEpisode;
+        f(tag: IEntityTag): IEpisode;
 
         /**
          * 查询实体。
          */
-        q(id: string, type?: IEpisode.Entity): ITag;
+        q(id: string, type?: IEpisode.Entity): IEntityTag;
+
+        /**
+         * 注册资源。
+         */
+        r(uri: string, type: IResource.Type): IResource;
     }
 
     export namespace IEpisode {

@@ -14,7 +14,7 @@
 namespace Tag {
     'use strict';
 
-    export class Scene extends Unknown implements IScene {
+    export class Scene extends Unknown implements Core.ISceneTag {
         /**
          * 唯一编号。
          */
@@ -30,7 +30,7 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             ((<Type> this.$q('Type')[0]).gR() || ep).a(this);
         }
 
@@ -51,7 +51,7 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var conds: Conditions = <Conditions> this.$q('Conditions')[0];
             if (!conds || !conds.t(runtime.gS()))
                 return runtime;
@@ -61,7 +61,7 @@ namespace Tag {
         /**
          * 获取类型。
          */
-        public gT(): IScene.Type {
+        public gT(): Core.ISceneTag.Type {
             return (<Type> this.$q('Type')[0]).gT();
         }
     }

@@ -29,7 +29,7 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             this._o = <DefMap> ep.q(this._c, Core.IEpisode.Entity.Map);
         }
 

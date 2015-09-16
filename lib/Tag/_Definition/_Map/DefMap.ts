@@ -7,15 +7,15 @@
  * @file      Tag/_Definition/_Map/DefMap.ts
  */
 
-/// <reference path="../Entity.ts" />
-/// <reference path="../../IMap.ts" />
+/// <reference path="../../Entity.ts" />
+/// <reference path="../../../Core/_Tag/IMapTag.ts" />
 /// <reference path="BGImage.ts" />
 /// <reference path="Point.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class DefMap extends Entity implements IMap {
+    export class DefMap extends Entity implements Core.IMapTag {
         /**
          * 交互点集合。
          */
@@ -50,7 +50,7 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             if (this._p[0])
                 this._o = <DefMap> ep.q(this._p[0], Core.IEpisode.Entity.Map);
         }
@@ -65,7 +65,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(): Runtime.IResource {
+        public o(): Core.IResource {
             return (<BGImage> this.$q('BGImage')[0] || this._o).o();
         }
 
@@ -86,8 +86,8 @@ namespace Tag {
         /**
          * 获取所有关联资源。
          */
-        public d(): Runtime.IResource[] {
-            var ret: Runtime.IResource[] = [this.o()];
+        public d(): Core.IResource[] {
+            var ret: Core.IResource[] = [this.o()];
             Util.each(this._a, (point: Point) => {
                 ret.push(point.o());
             });

@@ -16,7 +16,7 @@ namespace Tag {
         /**
          * 图片资源。
          */
-        protected _o: Runtime.IResource;
+        protected _o: Core.IResource;
 
         /**
          * 获取标签名称。
@@ -28,14 +28,14 @@ namespace Tag {
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        public $r(ep: Runtime.IEpisode): void {
-            this._o = ep.r(this._c, Runtime.IResource.Type.CG);
+        public $r(ep: Core.IEpisode): void {
+            this._o = ep.r(this._c, Core.IResource.Type.CG);
         }
 
         /**
          * 获取资源。
          */
-        public o(): Runtime.IResource {
+        public o(): Core.IResource {
             if (!this._r)
                 throw new E(E.DEF_EPISODE_NOT_REGISTERED, this._l);
             return this._o;

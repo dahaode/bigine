@@ -4,10 +4,10 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/IStates.ts
+ * @file      Core/_Runtime/IStates.ts
  */
 
-/// <reference path="../Util/IHashTable.ts" />
+/// <reference path="../../Util/IHashTable.ts" />
 
 /**
  * 1. `_` 表明为场效相关信息，需要被存档记录；
@@ -35,7 +35,7 @@
  *     * `$v<深度>` - 当前比较值 - Tag
  * 4. 其它为作品运行信息，需要被存档记录。
  */
-namespace Runtime {
+namespace Core {
     'use strict';
 
     export interface IStates {

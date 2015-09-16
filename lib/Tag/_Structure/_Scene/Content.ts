@@ -12,7 +12,7 @@
 namespace Tag {
     'use strict';
 
-    export class Content extends Unknown implements IPerformable {
+    export class Content extends Unknown implements Core.IPerformableTag {
         /**
          * 获取标签名称。
          */
@@ -23,9 +23,9 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             runtime.gS().s('$d', 1);
-            return runtime.gD().c(<Runtime.IResource[][]> Loop.prototype.c.call(this)).then(() => {
+            return runtime.gD().c(<Core.IResource[][]> Loop.prototype.c.call(this)).then(() => {
                 return Util.Q.every(this._s, (action: Action) => action.p(runtime));
             });
         }

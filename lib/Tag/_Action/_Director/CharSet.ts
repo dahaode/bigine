@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Director/CharSet.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 
 namespace Tag {
@@ -17,7 +17,7 @@ namespace Tag {
         /**
          * 位置。
          */
-        private _mp: Runtime.IDirector.Position;
+        private _mp: Core.IDirector.Position;
 
         /**
          * 人物名称。
@@ -39,7 +39,7 @@ namespace Tag {
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
-            var pos: typeof Runtime.IDirector.Position = Runtime.IDirector.Position,
+            var pos: typeof Core.IDirector.Position = Core.IDirector.Position,
                 exp: string[] = content.split('，');
             switch (params[0]) {
                 case '左':
@@ -69,17 +69,17 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             this._mo = (<DefChar> ep.q(this._mc, Core.IEpisode.Entity.Chr));
         }
 
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var states: Core.IStates = runtime.gS(),
                 kpos: string = '.p' + this._mc,
-                pos: Runtime.IDirector.Position = states.g(kpos);
+                pos: Core.IDirector.Position = states.g(kpos);
             if (pos)
                 throw new E(E.ACT_CHAR_ONSTAGE, this._l);
             states.s(kpos, this._mp);

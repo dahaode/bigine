@@ -23,7 +23,7 @@ namespace Tag {
         /**
          * （执行）检查。
          */
-        public t(states: Runtime.IStates): boolean {
+        public t(states: Core.IStates): boolean {
             var depth: number = states.g('$d'),
                 kt: string = '$t' + depth,
                 kv: string = '$v' + depth;
@@ -36,8 +36,8 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var states: Core.IStates = runtime.gS(),
                 kd: string = '$d',
                 depth: number = states.g(kd),
                 kt: string = '$t' + depth,
@@ -56,8 +56,8 @@ namespace Tag {
         /**
          * 获取使用资源列表。
          */
-        public c(): Runtime.IResource[][] {
-            return <Runtime.IResource[][]> Loop.prototype.c.call(this);
+        public c(): Core.IResource[][] {
+            return <Core.IResource[][]> Loop.prototype.c.call(this);
         }
     }
 }

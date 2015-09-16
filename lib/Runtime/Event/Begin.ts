@@ -7,14 +7,14 @@
  * @file      Runtime/Event/Begin.ts
  */
 
-/// <reference path="../../Core/Event.ts" />
+/// <reference path="Event.ts" />
 /// <reference path="IBeginMetas.ts" />
 
 namespace Runtime {
     'use strict';
 
     export namespace Event {
-        export class Begin extends Core.Event<IEpisode> {
+        export class Begin extends Event<Core.IEpisode> {
             /**
              * 构造函数。
              */

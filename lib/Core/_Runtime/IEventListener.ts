@@ -4,15 +4,15 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Core/IEventListener.ts
+ * @file      Core/_Runtime/IEventListener.ts
  */
 
-/// <reference path="Event.ts" />
+/// <reference path="IEvent.ts" />
 
 namespace Core {
     'use strict';
 
     export interface IEventListener<T> {
-        (event: Event<T>): void;
+        (event: IEvent<T>): void;
     }
 }

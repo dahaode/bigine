@@ -7,16 +7,16 @@
  * @file      Runtime/_Logger/ConsoleLogger.ts
  */
 
-/// <reference path="../ILogger.ts" />
+/// <reference path="../../Core/_Runtime/ILogger.ts" />
 
 namespace Runtime {
     'use strict';
 
-    export class ConsoleLogger implements ILogger {
+    export class ConsoleLogger implements Core.ILogger {
         /**
          * 日志级别。
          */
-        private _l: ILogger.Level;
+        private _l: Core.ILogger.Level;
 
         /**
          * 控制台。
@@ -27,7 +27,7 @@ namespace Runtime {
          * 构造函数。
          */
         constructor() {
-            this._l = ILogger.Level.Error;
+            this._l = Core.ILogger.Level.Error;
             this._c = 'undefined' != typeof console ?
                 console :
                 undefined;
@@ -37,7 +37,7 @@ namespace Runtime {
          * 调试。
          */
         public d(...parts: any[]): void {
-            if (this._l > ILogger.Level.Debug || !this._c) return;
+            if (this._l > Core.ILogger.Level.Debug || !this._c) return;
             (this._c.debug || this._c.log).apply(this._c, parts);
         }
 
@@ -45,7 +45,7 @@ namespace Runtime {
          * 信息。
          */
         public i(...parts: any[]): void {
-            if (this._l > ILogger.Level.Info || !this._c) return;
+            if (this._l > Core.ILogger.Level.Info || !this._c) return;
             (this._c.info || this._c.log).apply(this._c, parts);
         }
 
@@ -53,7 +53,7 @@ namespace Runtime {
          * 警告。
          */
         public w(...parts: any[]): void {
-            if (this._l > ILogger.Level.Warn || !this._c) return;
+            if (this._l > Core.ILogger.Level.Warn || !this._c) return;
             (this._c.warn || this._c.log).apply(this._c, parts);
         }
 
@@ -68,7 +68,7 @@ namespace Runtime {
         /**
          * 设置日志等级。
          */
-        public l(level: ILogger.Level): ConsoleLogger {
+        public l(level: Core.ILogger.Level): ConsoleLogger {
             this._l = level;
             return this;
         }

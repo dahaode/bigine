@@ -4,24 +4,25 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/IPoint.ts
+ * @file      Core/_Tag/IPointTag.ts
  */
 
-/// <reference path="IRoom.ts" />
-/// <reference path="../Runtime/IButtonable.ts" />
+/// <reference path="IRoomTag.ts" />
+/// <reference path="../_Runtime/IButtonable.ts" />
+/// <reference path="../_Runtime/IResource.ts" />
 
-namespace Tag {
+namespace Core {
     'use strict';
 
-    // Core.ITag:gL()
-    // Core.ITag:gN()
-    // Core.ITag:toString()
-    // Core.ITag:toJsrn()
+    // ITag:gL()
+    // ITag:gN()
     // ITag:r()
     // ITag:b()
+    // ITag:toString()
+    // ITag:toJsrn()
     // ITag:gU()
-    // Runtime.IButtonable.p()
-    export interface IPoint extends ITag, Runtime.IButtonable {
+    // IButtonable:p()
+    export interface IPointTag extends ITag, IButtonable {
         /**
          * 获取唯一编号。
          */
@@ -30,7 +31,7 @@ namespace Tag {
         /**
          * 获取高亮图资源。
          */
-        o(): Runtime.IResource;
+        o(): IResource;
 
         /**
          * 获取横轴座标值。
@@ -60,6 +61,6 @@ namespace Tag {
         /**
          * 获取相关房间。
          */
-        gR(): IRoom;
+        gR(): IRoomTag;
     }
 }

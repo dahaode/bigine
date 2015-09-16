@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Director/ShowCG.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 /// <reference path="../../_Definition/DefCG.ts" />
 
 namespace Tag {
@@ -29,15 +29,15 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             this._mo = (<DefCG> ep.q(this._p[0], Core.IEpisode.Entity.CG));
         }
 
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var states: Core.IStates = runtime.gS(),
                 key: string = '_c',
                 cg: string = states.g(key);
             if (cg)

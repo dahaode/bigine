@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Director/CharPose.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 
 namespace Tag {
@@ -27,7 +27,7 @@ namespace Tag {
         /**
          * 使用资源。
          */
-        private _mo: Runtime.IResource;
+        private _mo: Core.IResource;
 
         /**
          * 构造函数。
@@ -48,17 +48,17 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             this._mo = (<DefChar> ep.q(this._mc, Core.IEpisode.Entity.Chr)).o(this._ms);
         }
 
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var states: Core.IStates = runtime.gS(),
                 kpos: string = '.p' + this._mc,
-                pos: Runtime.IDirector.Position = states.g(kpos);
+                pos: Core.IDirector.Position = states.g(kpos);
             if (!pos)
                 throw new E(E.ACT_CHAR_NOT_ON, this._l);
             states.s('_s' + pos, this._ms);

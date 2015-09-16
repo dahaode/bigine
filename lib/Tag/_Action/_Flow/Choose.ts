@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Flow/Choose.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 /// <reference path="Option.ts" />
 
 namespace Tag {
@@ -24,7 +24,7 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var opts: Util.IHashTable<Option> = {};
             Util.each(this._s, (tag: Unknown) => {
                 var opt: Option = Option.f(tag, this._p[0]);

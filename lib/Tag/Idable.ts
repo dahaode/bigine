@@ -4,16 +4,16 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Action/Idable.ts
+ * @file      Tag/Idable.ts
  */
 
 /// <reference path="Action.ts" />
-/// <reference path="../IIdable.ts" />
+/// <reference path="../Core/_Tag/IIdableTag.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class Idable extends Action implements IIdable {
+    export class Idable extends Action implements Core.IIdableTag {
         /**
          * 唯一编号。
          */

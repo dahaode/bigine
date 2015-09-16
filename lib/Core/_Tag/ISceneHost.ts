@@ -4,25 +4,23 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/ISceneHost.ts
+ * @file      Core/_Tag/ISceneHost.ts
  */
 
-/// <reference path="IScene.ts" />
-/// <reference path="../Util/Q.ts" />
-/// <reference path="../Runtime/IRuntime.ts" />
+/// <reference path="ISceneTag.ts" />
 
-namespace Tag {
+namespace Core {
     'use strict';
 
     export interface ISceneHost {
         /**
          * 添加事件。
          */
-        a(scene: IScene): ISceneHost;
+        a(scene: ISceneTag): ISceneHost;
 
         /**
          * 播放。
          */
-        p(type: IScene.Type, runtime: Runtime.IRuntime): Promise<Runtime.IRuntime>;
+        p(type: ISceneTag.Type, runtime: IRuntime): Promise<IRuntime>;
     }
 }

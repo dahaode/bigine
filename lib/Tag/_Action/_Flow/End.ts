@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Flow/End.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 
 namespace Tag {
     'use strict';
@@ -23,9 +23,9 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             runtime.gD().ED();
-            return Util.Q.doHalt<Runtime.IRuntime>();
+            return Util.Q.doHalt<Core.IRuntime>();
         }
     }
 }

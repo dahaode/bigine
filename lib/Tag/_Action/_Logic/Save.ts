@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Logic/Save.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 
 namespace Tag {
     'use strict';
@@ -23,7 +23,7 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var scene: Unknown = this.gU(),
                 brief: string = this._p[0];
             if (!brief) {

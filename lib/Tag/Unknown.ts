@@ -7,14 +7,14 @@
  * @file      Tag/Unknown.ts
  */
 
-/// <reference path="ITag.ts" />
+/// <reference path="../Core/_Tag/ITag.ts" />
 /// <reference path="../SCHEMA.ts" />
 /// <reference path="../E.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class Unknown implements ITag {
+    export class Unknown implements Core.ITag {
         /**
          * 参数。
          */
@@ -110,7 +110,7 @@ namespace Tag {
         /**
          * 注册（子标签实体及自身实体）至作品。
          */
-        public r(ep: Runtime.IEpisode): void {
+        public r(ep: Core.IEpisode): void {
             if (this._r) return;
             this._r = true;
             Util.each(this._s, (tag: Unknown) => {
@@ -122,14 +122,14 @@ namespace Tag {
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        protected $r(ep: Runtime.IEpisode): void {
+        protected $r(ep: Core.IEpisode): void {
             //
         }
 
         /**
          * 绑定（运行时）作品（实体到子标签及自身）。
          */
-        public b(ep: Runtime.IEpisode): void {
+        public b(ep: Core.IEpisode): void {
             if (this._b) return;
             this._b = true;
             Util.each(this._s, (tag: Unknown) => {
@@ -141,7 +141,7 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        protected $b(ep: Runtime.IEpisode): void {
+        protected $b(ep: Core.IEpisode): void {
             //
         }
 

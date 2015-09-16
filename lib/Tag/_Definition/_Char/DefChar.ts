@@ -7,7 +7,7 @@
  * @file      Tag/_Definition/_Char/DefChar.ts
  */
 
-/// <reference path="../Entity.ts" />
+/// <reference path="../../Entity.ts" />
 /// <reference path="Avatar.ts" />
 /// <reference path="Poses.ts" />
 
@@ -39,7 +39,7 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             if (this._p[0])
                 this._o = <DefChar> ep.q(this._p[0], Core.IEpisode.Entity.Chr);
         }
@@ -54,7 +54,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(id?: string): Runtime.IResource {
+        public o(id?: string): Core.IResource {
             var q: Unknown[] = this.$q(id ? 'Poses' : 'Avatar');
             if (!q.length) {
                 if (!this._b)
@@ -70,8 +70,8 @@ namespace Tag {
         /**
          * 获取所有关联资源。
          */
-        public d(): Runtime.IResource[] {
-            var ret: Runtime.IResource[] = (<Poses> this.$q('Poses')[0]).d();
+        public d(): Core.IResource[] {
+            var ret: Core.IResource[] = (<Poses> this.$q('Poses')[0]).d();
             ret.unshift((<Avatar> this.$q('Avatar')[0]).o());
             return ret;
         }

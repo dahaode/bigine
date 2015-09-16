@@ -7,14 +7,14 @@
  * @file      Runtime/Event/Save.ts
  */
 
-/// <reference path="../../Core/Event.ts" />
+/// <reference path="Event.ts" />
 /// <reference path="ISaveMetas.ts" />
 
 namespace Runtime {
     'use strict';
 
     export namespace Event {
-        export class Save extends Core.Event<IStates> {
+        export class Save extends Event<Core.IStates> {
             /**
              * 存档标题。
              */

@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Director/AsRoom.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
 namespace Tag {
@@ -29,20 +29,20 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             this._mo = <DefRoom> ep.q(this._p[0], Core.IEpisode.Entity.Room);
         }
 
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var states: Core.IStates = runtime.gS(),
                 kroom: string = '_rd',
                 room: string = states.g(kroom),
                 ktime: string = '_t',
                 time: string = states.g(ktime),
-                director: Runtime.IDirector = runtime.gD(),
+                director: Core.IDirector = runtime.gD(),
                 map: DefMap = this._mo.gM();
             if (!time) {
                 time = '午';

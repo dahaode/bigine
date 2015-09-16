@@ -7,14 +7,13 @@
  * @file      Tag/_Definition/DefCG.ts
  */
 
-/// <reference path="Entity.ts" />
-/// <reference path="../ICG.ts" />
+/// <reference path="../Entity.ts" />
 /// <reference path="Image.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class DefCG extends Entity implements ICG {
+    export class DefCG extends Entity {
         /**
          * 获取标签名称。
          */
@@ -25,7 +24,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(): Runtime.IResource {
+        public o(): Core.IResource {
             return (<Image> this.$q('Image')[0]).o();
         }
     }

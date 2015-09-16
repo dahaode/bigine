@@ -4,22 +4,22 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/IIdable.ts
+ * @file      Core/_Tag/IIdableTag.ts
  */
 
 /// <reference path="ITag.ts" />
 
-namespace Tag {
+namespace Core {
     'use strict';
 
-    // Core.ITag:gL()
-    // Core.ITag:gN()
-    // Core.ITag:toString()
-    // Core.ITag:toJsrn()
+    // ITag:gL()
+    // ITag:gN()
     // ITag:r()
     // ITag:b()
+    // ITag:toString()
+    // ITag:toJsrn()
     // ITag:gU()
-    export interface IIdable extends ITag {
+    export interface IIdableTag extends ITag {
         /**
          * 获取编号。
          */

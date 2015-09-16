@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Text/VoiceOver.ts
  */
 
-/// <reference path="../Idable.ts" />
+/// <reference path="../../Idable.ts" />
 
 namespace Tag {
     'use strict';
@@ -23,7 +23,7 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             return runtime.gD().words(runtime.gS().t(this._c), 'voiceover');
         }
     }

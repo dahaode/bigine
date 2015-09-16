@@ -4,36 +4,36 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/IRoom.ts
+ * @file      Core/_Tag/IRoomTag.ts
  */
 
-/// <reference path="IEntity.ts" />
+/// <reference path="IMapTag.ts" />
 /// <reference path="ISceneHost.ts" />
-/// <reference path="IMap.ts" />
+/// <reference path="../_Runtime/IResource.ts" />
 
-namespace Tag {
+namespace Core {
     'use strict';
 
-    // Core.ITag:gL()
-    // Core.ITag:gN()
-    // Core.ITag:toString()
-    // Core.ITag:toJsrn()
+    // ITag:gL()
+    // ITag:gN()
     // ITag:r()
     // ITag:b()
+    // ITag:toString()
+    // ITag:toJsrn()
     // ITag:gU()
-    // IEntity:gI()
-    // IEntity:gT()
+    // IEntityTag:gI()
+    // IEntityTag:gT()
     // ISceneHost:a()
     // ISceneHost:p()
-    export interface IRoom extends IEntity, ISceneHost {
+    export interface IRoomTag extends IEntityTag, ISceneHost {
         /**
          * 获取资源。
          */
-        o(id?: string): Runtime.IResource;
+        o(id?: string): IResource;
 
         /**
          * 获取关联地图。
          */
-        gM(): IMap;
+        gM(): IMapTag;
     }
 }

@@ -14,16 +14,16 @@
 namespace Runtime {
     'use strict';
 
-    export class Episode implements IEpisode {
+    export class Episode implements Core.IEpisode {
         /**
          * 已添加地事件。
          */
-        private _a: Util.IHashTable<Tag.IScene[]>;
+        private _a: Util.IHashTable<Core.ISceneTag[]>;
 
         /**
          * 已注册地实体。
          */
-        private _e: Util.IHashTable<Util.IHashTable<Tag.IEntity>>;
+        private _e: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>;
 
         /**
          * 主题。
@@ -38,16 +38,16 @@ namespace Runtime {
         /**
          * 构造函数。
          */
-        constructor(ep: Tag.IRoot, runtime: IRuntime) {
+        constructor(ep: Core.IRootTag, runtime: Core.IRuntime) {
             this._a = {};
             this._e = {};
             this._p = ep.a();
             ep.r(this);
             Promise.all([
                 new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-                    var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Tag.IEntity>>) => {
-                        Util.each(entities, (typed: Util.IHashTable<Tag.IEntity>) => {
-                            Util.each(typed, (entity: Tag.IEntity) => {
+                    var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
+                        Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
+                            Util.each(typed, (entity: Core.IEntityTag) => {
                                 this.f(entity);
                             });
                         });
@@ -74,8 +74,8 @@ namespace Runtime {
         /**
          * 添加事件。
          */
-        public a(scene: Tag.IScene): Episode {
-            var type: Tag.IScene.Type = scene.gT();
+        public a(scene: Core.ISceneTag): Episode {
+            var type: Core.ISceneTag.Type = scene.gT();
             this._a[type] = this._a[type] || [];
             this._a[type].push(scene);
             return this;
@@ -84,11 +84,11 @@ namespace Runtime {
         /**
          * 播放。
          */
-        public p(type: Tag.IScene.Type, runtime: IRuntime): Promise<IRuntime> {
+        public p(type: Core.ISceneTag.Type, runtime: Core.IRuntime): Promise<Core.IRuntime> {
             if (!(type in this._a))
                 return Promise.resolve(runtime);
-            return Util.Q.every(this._a[type], (scene: Tag.IScene) => scene.p(runtime)).then(() => {
-                if (Tag.IScene.Type.End == type)
+            return Util.Q.every(this._a[type], (scene: Core.ISceneTag) => scene.p(runtime)).then(() => {
+                if (Core.ISceneTag.Type.End == type)
                     runtime.dispatchEvent(new Event.End({
                         target: this
                     }));
@@ -99,7 +99,7 @@ namespace Runtime {
         /**
          * 注册实体。
          */
-        public f(tag: Tag.IEntity): Episode {
+        public f(tag: Core.IEntityTag): Episode {
             var type: Core.IEpisode.Entity = tag.gT();
             this._e[type] = this._e[type] || {};
             this._e[type][tag.gI()] = tag;
@@ -109,7 +109,7 @@ namespace Runtime {
         /**
          * 查询实体。
          */
-        public q(id: string, type: Core.IEpisode.Entity): Tag.IEntity {
+        public q(id: string, type: Core.IEpisode.Entity): Core.IEntityTag {
             this._e[type] = this._e[type] || {};
             if (!(id in this._e[type]))
                 throw new E(E.EP_ENTITY_NOT_FOUND);
@@ -119,7 +119,7 @@ namespace Runtime {
         /**
          * 注册资源。
          */
-        public r(uri: string, type: IResource.Type): Resource {
+        public r(uri: string, type: Core.IResource.Type): Resource {
             return new Resource(uri, type);
         }
 

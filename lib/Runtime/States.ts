@@ -7,14 +7,14 @@
  * @file      Runtime/States.ts
  */
 
-/// <reference path="IStates.ts" />
-/// <reference path="IRuntime.ts" />
+/// <reference path="../Core/_Runtime/IStates.ts" />
+/// <reference path="../Core/_Runtime/IRuntime.ts" />
 /// <reference path="Event/Save.ts" />
 
 namespace Runtime {
     'use strict';
 
-    export class States implements IStates {
+    export class States implements Core.IStates {
         /**
          * 数据池。
          */
@@ -23,12 +23,12 @@ namespace Runtime {
         /**
          * 运行时。
          */
-        private _r: IRuntime;
+        private _r: Core.IRuntime;
 
         /**
          * 构造函数。
          */
-        constructor(runtime: IRuntime) {
+        constructor(runtime: Core.IRuntime) {
             this._d = {};
             this._r = runtime;
         }

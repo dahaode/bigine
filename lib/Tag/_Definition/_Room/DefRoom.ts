@@ -7,19 +7,19 @@
  * @file      Tag/_Definition/_Room/DefRoom.ts
  */
 
-/// <reference path="../Entity.ts" />
-/// <reference path="../../IRoom.ts" />
+/// <reference path="../../Entity.ts" />
+/// <reference path="../../../Core/_Tag/IRoomTag.ts" />
 /// <reference path="Link.ts" />
 /// <reference path="Times.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class DefRoom extends Entity implements IRoom {
+    export class DefRoom extends Entity implements Core.IRoomTag {
         /**
          * 已添加地事件。
          */
-        private _a: Util.IHashTable<IScene[]>;
+        private _a: Util.IHashTable<Core.ISceneTag[]>;
 
         /**
          * 构造函数。
@@ -48,8 +48,8 @@ namespace Tag {
         /**
          * 添加事件。
          */
-        public a(scene: IScene): DefRoom {
-            var type: IScene.Type = scene.gT();
+        public a(scene: Core.ISceneTag): DefRoom {
+            var type: Core.ISceneTag.Type = scene.gT();
             this._a[type] = this._a[type] || [];
             this._a[type].push(scene);
             return this;
@@ -58,16 +58,16 @@ namespace Tag {
         /**
          * 播放。
          */
-        public p(type: IScene.Type, runtime: Runtime.IRuntime): Promise<Runtime.IRuntime> {
+        public p(type: Core.ISceneTag.Type, runtime: Core.IRuntime): Promise<Core.IRuntime> {
             if (!(type in this._a))
                 return Promise.resolve(runtime);
-            return Util.Q.every(this._a[type], (scene: IScene) => scene.p(runtime));
+            return Util.Q.every(this._a[type], (scene: Core.ISceneTag) => scene.p(runtime));
         }
 
         /**
          * 获取资源。
          */
-        public o(id?: string): Runtime.IResource {
+        public o(id?: string): Core.IResource {
             var map: DefMap = this.gM();
             if (map)
                 return map.o();
@@ -86,7 +86,7 @@ namespace Tag {
         /**
          * 获取所有关联资源。
          */
-        public d(): Runtime.IResource[] {
+        public d(): Core.IResource[] {
             var map: DefMap = this.gM();
             if (map)
                 return map.d();

@@ -7,14 +7,14 @@
  * @file      Runtime/Event/ISaveMetas.ts
  */
 
-/// <reference path="../../Core/IEventMetas.ts" />
-/// <reference path="../IStates.ts" />
+/// <reference path="../../Core/_Runtime/IEventMetas.ts" />
+/// <reference path="../../Core/_Runtime/IStates.ts" />
 
 namespace Runtime {
     'use strict';
 
     export namespace Event {
-        export interface ISaveMetas extends Core.IEventMetas<IStates> {
+        export interface ISaveMetas extends Core.IEventMetas<Core.IStates> {
             /**
              * 标题。
              */

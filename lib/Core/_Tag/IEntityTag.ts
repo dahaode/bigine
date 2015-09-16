@@ -4,22 +4,22 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/IEntity.ts
+ * @file      Core/_Tag/IEntityTag.ts
  */
 
 /// <reference path="ITag.ts" />
 
-namespace Tag {
+namespace Core {
     'use strict';
 
-    // Core.ITag:gL()
-    // Core.ITag:gN()
-    // Core.ITag:toString()
-    // Core.ITag:toJsrn()
+    // ITag:gL()
+    // ITag:gN()
     // ITag:r()
     // ITag:b()
+    // ITag:toString()
+    // ITag:toJsrn()
     // ITag:gU()
-    export interface IEntity extends ITag {
+    export interface IEntityTag extends ITag {
         /**
          * 获取唯一编号。
          */
@@ -28,6 +28,6 @@ namespace Tag {
         /**
          * 获取类型。
          */
-        gT(): Core.IEpisode.Entity;
+        gT(): IEpisode.Entity;
     }
 }

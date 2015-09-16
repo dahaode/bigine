@@ -7,8 +7,8 @@
  * @file      Tag/_Action/_Flow/Stars.ts
  */
 
-/// <reference path="../Action.ts" />
-/// <reference path="../../../Runtime/IDirector.ts" />
+/// <reference path="../../Action.ts" />
+/// <reference path="../../../Core/_Runtime/IDirector.ts" />
 
 namespace Tag {
     'use strict';
@@ -17,14 +17,14 @@ namespace Tag {
         /**
          * 星级。
          */
-        private _ms: Runtime.IDirector.Stars;
+        private _ms: Core.IDirector.Stars;
 
         /**
          * 构造函数。
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
-            var stars: typeof Runtime.IDirector.Stars = Runtime.IDirector.Stars;
+            var stars: typeof Core.IDirector.Stars = Core.IDirector.Stars;
             switch (params[0]) {
                 case '及格':
                     this._ms = stars.OK;
@@ -50,7 +50,7 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             return runtime.gD().stars(this._ms);
         }
     }

@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Logic/Assign.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 
 namespace Tag {
     'use strict';
@@ -23,7 +23,7 @@ namespace Tag {
         /**
          * （执行）检查。
          */
-        public t(states: Runtime.IStates): boolean {
+        public t(states: Core.IStates): boolean {
             var depth: number = states.g('$d');
             states.s(this._p[0], this.$v(this._c))
                 .c(this._p[0], '$v' + depth)
@@ -34,7 +34,7 @@ namespace Tag {
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             this.t(runtime.gS());
             return runtime;
         }

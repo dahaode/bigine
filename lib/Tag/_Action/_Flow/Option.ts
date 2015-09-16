@@ -8,12 +8,12 @@
  */
 
 /// <reference path="../../Unknown.ts" />
-/// <reference path="../../IOption.ts" />
+/// <reference path="../../../Core/_Tag/IOptionTag.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class Option extends Unknown implements IOption {
+    export class Option extends Unknown implements Core.IOptionTag {
         /**
          * 关联状态名称。
          */
@@ -40,8 +40,8 @@ namespace Tag {
         /**
          * 交互逻辑。
          */
-        public p(runtime: Runtime.IRuntime): void {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): void {
+            var states: Core.IStates = runtime.gS(),
                 depth: number = states.g('$d'),
                 kv: string = '$v' + depth;
             states.s(kv, this.$v(this._p[0]))

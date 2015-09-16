@@ -4,23 +4,19 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/IRuntime.ts
+ * @file      Core/_Runtime/IRuntime.ts
  */
 
-/// <reference path="../Core/IEmittable.ts" />
-/// <reference path="../Tag/IRoot.ts" />
-/// <reference path="IEpisode.ts" />
+/// <reference path="IEmittable.ts" />
+/// <reference path="../_Tag/IRootTag.ts" />
 /// <reference path="ILogger.ts" />
 /// <reference path="IStates.ts" />
 /// <reference path="IDirector.ts" />
 
-namespace Runtime {
+namespace Core {
     'use strict';
 
-    // Core.IEmittable:addEventListener()
-    // Core.IEmittable:removeEventListener()
-    // Core.IEmittable:dispatchEvent()
-    export interface IRuntime extends Core.IEmittable {
+    export interface IRuntime extends IEmittable {
         // new (ep: Tag.IRoot): IRuntime;
 
         /**

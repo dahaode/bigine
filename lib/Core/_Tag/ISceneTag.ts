@@ -4,33 +4,33 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/IScene.ts
+ * @file      Core/_Tag/ISceneTag.ts
  */
 
-/// <reference path="IIdable.ts" />
-/// <reference path="IPerformable.ts" />
+/// <reference path="IIdableTag.ts" />
+/// <reference path="IPerformableTag.ts" />
 
-namespace Tag {
+namespace Core {
     'use strict';
 
-    // Core.ITag:gL()
-    // Core.ITag:gN()
-    // Core.ITag:toString()
-    // Core.ITag:toJsrn()
+    // ITag:gL()
+    // ITag:gN()
     // ITag:r()
     // ITag:b()
+    // ITag:toString()
+    // ITag:toJsrn()
     // ITag:gU()
-    // IIdable:gI()
-    // IIdable:i()
-    // IPerformable:p()
-    export interface IScene extends IIdable, IPerformable {
+    // IIdableTag:gI()
+    // IIdableTag:i()
+    // IPerformableTag:p()
+    export interface ISceneTag extends IIdableTag, IPerformableTag {
         /**
          * 获取类型。
          */
-        gT(): IScene.Type;
+        gT(): ISceneTag.Type;
     }
 
-    export namespace IScene {
+    export namespace ISceneTag {
         /**
          * 类型。
          */

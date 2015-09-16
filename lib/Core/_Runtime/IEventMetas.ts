@@ -4,10 +4,10 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Core/IEventMetas.ts
+ * @file      Core/_Runtime/IEventMetas.ts
  */
 
-/// <reference path="../Util/IHashTable.ts" />
+/// <reference path="../../Util/IHashTable.ts" />
 
 namespace Core {
     'use strict';

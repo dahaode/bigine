@@ -16,7 +16,7 @@ namespace Tag {
         /**
          * 图片资源。
          */
-        protected _o: Util.IHashTable<Runtime.IResource>;
+        protected _o: Util.IHashTable<Core.IResource>;
 
         /**
          * 构造函数。
@@ -29,7 +29,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(id: string): Runtime.IResource {
+        public o(id: string): Core.IResource {
             if (!this._b)
                 throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
             return this._o[id] || this._o[''];

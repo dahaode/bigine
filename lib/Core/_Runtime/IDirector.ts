@@ -4,16 +4,15 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/IDirector.ts
+ * @file      Core/_Runtime/IDirector.ts
  */
 
 /// <reference path="IResource.ts" />
 /// <reference path="IRuntime.ts" />
-/// <reference path="../Util/Q.ts" />
-/// <reference path="../Tag/IPoint.ts" />
-/// <reference path="../Tag/IOption.ts" />
+/// <reference path="../_Tag/IPointTag.ts" />
+/// <reference path="../_Tag/IOptionTag.ts" />
 
-namespace Runtime {
+namespace Core {
     'use strict';
 
     export interface IDirector {
@@ -87,7 +86,7 @@ namespace Runtime {
         /**
          * 设置地图。
          */
-        asMap(points: Util.IHashTable<Tag.IPoint>): Promise<IRuntime>;
+        asMap(points: Util.IHashTable<IPointTag>): Promise<IRuntime>;
 
         /**
          * 关灯（落幕）。
@@ -102,7 +101,7 @@ namespace Runtime {
         /**
          * 选择。
          */
-        choose(options: Util.IHashTable<Tag.IOption>): Promise<IRuntime>;
+        choose(options: Util.IHashTable<IOptionTag>): Promise<IRuntime>;
     }
 
     export namespace IDirector {

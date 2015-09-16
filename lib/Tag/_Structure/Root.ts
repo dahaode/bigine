@@ -8,14 +8,14 @@
  */
 
 /// <reference path="../Unknown.ts" />
-/// <reference path="../IRoot.ts" />
+/// <reference path="../../Core/_Tag/IRootTag.ts" />
 /// <reference path="Resources.ts" />
 /// <reference path="Theme.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class Root extends Unknown implements IRoot {
+    export class Root extends Unknown implements Core.IRootTag {
         /**
          * 构造函数。
          */
@@ -33,7 +33,7 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体到子标签及自身）。
          */
-        public b(ep: Runtime.IEpisode): void {
+        public b(ep: Core.IEpisode): void {
             var player: Unknown = this.$q('Player')[0];
             if (player)
                 player.b(ep);
@@ -79,7 +79,7 @@ namespace Tag {
         /**
          * 加载资源包。
          */
-        public l(callback: Util.ISuccessCallback<Util.IHashTable<IEntity>>): boolean {
+        public l(callback: Util.ISuccessCallback<Util.IHashTable<Core.IEntityTag>>): boolean {
             var resources: Resources = <Resources> this.$q('Resources')[0];
             if (!resources)
                 return false;

@@ -4,20 +4,20 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Definition/Entity.ts
+ * @file      Tag/Entity.ts
  */
 
-/// <reference path="../Unknown.ts" />
-/// <reference path="../IEntity.ts" />
+/// <reference path="Unknown.ts" />
+/// <reference path="../Core/_Tag/IEntityTag.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class Entity extends Unknown implements IEntity {
+    export class Entity extends Unknown implements Core.IEntityTag {
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        public $r(ep: Runtime.IEpisode): void {
+        public $r(ep: Core.IEpisode): void {
             ep.f(this);
         }
 

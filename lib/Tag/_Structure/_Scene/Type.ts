@@ -8,7 +8,6 @@
  */
 
 /// <reference path="../../Unknown.ts" />
-/// <reference path="../../IScene.ts" />
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
 namespace Tag {
@@ -18,7 +17,7 @@ namespace Tag {
         /**
          * 类型。
          */
-        private _t: IScene.Type;
+        private _t: Core.ISceneTag.Type;
 
         /**
          * 关联对象。
@@ -31,32 +30,33 @@ namespace Tag {
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
             var match: RegExpMatchArray = content.match(/^(进入|离开)（(.+)）(前|后)$/),
-                term: string = content;
+                term: string = content,
+                type: typeof Core.ISceneTag.Type = Core.ISceneTag.Type;
             if (match) {
                 this._o = match[2];
                 term = match[1] + '房间' + match[3];
             }
             switch (term) {
                 case '开始时':
-                    this._t = IScene.Type.Begin;
+                    this._t = type.Begin;
                     break;
                 case '完结时':
-                    this._t = IScene.Type.End;
+                    this._t = type.End;
                     break;
                 case '失败时':
-                    this._t = IScene.Type.Fail;
+                    this._t = type.Fail;
                     break;
                 case '离开房间前':
-                    this._t = IScene.Type.PreLeave;
+                    this._t = type.PreLeave;
                     break;
                 case '进入房间前':
-                    this._t = IScene.Type.PreEnter;
+                    this._t = type.PreEnter;
                     break;
                 case '离开房间后':
-                    this._t = IScene.Type.PostLeave;
+                    this._t = type.PostLeave;
                     break;
                 case '进入房间后':
-                    this._t = IScene.Type.PostEnter;
+                    this._t = type.PostEnter;
                     break;
                 default:
                     throw new E(E.SCENE_TYPE_UNKNOWN, lineNo);
@@ -73,7 +73,7 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             if (this._o)
                 this._o = <DefRoom> ep.q(<string> this._o, Core.IEpisode.Entity.Room);
         }
@@ -81,7 +81,7 @@ namespace Tag {
         /**
          * 获取类型。
          */
-        public gT(): IScene.Type {
+        public gT(): Core.ISceneTag.Type {
             return this._t;
         }
 

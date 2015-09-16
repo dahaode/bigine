@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Text/Monolog.ts
  */
 
-/// <reference path="../Idable.ts" />
+/// <reference path="../../Idable.ts" />
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 
 namespace Tag {
@@ -29,14 +29,14 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             this._mc = <DefChar> ep.q('', Core.IEpisode.Entity.Player);
         }
 
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             return runtime.gD().words(runtime.gS().t(this._c), 'monolog', this._mc.gI(), this._mc.o());
         }
 

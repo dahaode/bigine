@@ -23,8 +23,8 @@ namespace Tag {
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        public $r(ep: Runtime.IEpisode): void {
-            this._o = ep.r(this._c, Runtime.IResource.Type.Room);
+        public $r(ep: Core.IEpisode): void {
+            this._o = ep.r(this._c, Core.IResource.Type.Room);
         }
     }
 }

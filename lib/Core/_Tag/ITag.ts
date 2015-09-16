@@ -4,10 +4,10 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Core/ITag.ts
+ * @file      Core/_Tag/ITag.ts
  */
 
-/// <reference path="IEpisode.ts" />
+/// <reference path="../_Runtime/IEpisode.ts" />
 
 namespace Core {
     'use strict';
@@ -44,5 +44,10 @@ namespace Core {
          * 转化为运行时（Javascript）代码。
          */
         toJsrn(): string;
+
+        /**
+         * 获取父标签。
+         */
+        gU(): ITag;
     }
 }

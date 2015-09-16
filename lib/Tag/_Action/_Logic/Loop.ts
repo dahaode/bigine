@@ -28,18 +28,18 @@ namespace Tag {
         /**
          * （执行）检查。
          */
-        public t(states: Runtime.IStates): boolean {
+        public t(states: Core.IStates): boolean {
             return false;
         }
 
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var states: Core.IStates = runtime.gS(),
                 kd: string = '$d',
                 depth: number = states.g(kd),
-                loop: () => Promise<Runtime.IRuntime> = function (): Promise<Runtime.IRuntime> {
+                loop: () => Promise<Core.IRuntime> = function (): Promise<Core.IRuntime> {
                     return Util.Q.every(<Action[]> this._s, (action: Action) => action.p(runtime))
                         .then(loop);
                 };
@@ -54,9 +54,9 @@ namespace Tag {
         /**
          * 获取使用资源列表。
          */
-        public c(): Runtime.IResource[][] {
-            var frame: Runtime.IResource[] = [],
-                resources: Runtime.IResource[][] = [],
+        public c(): Core.IResource[][] {
+            var frame: Core.IResource[] = [],
+                resources: Core.IResource[][] = [],
                 pack: () => void = function(): void {
                     if (frame.length) {
                         resources.push(frame);

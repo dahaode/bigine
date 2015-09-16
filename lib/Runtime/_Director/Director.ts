@@ -7,23 +7,23 @@
  * @file      Runtime/_Director/Director.ts
  */
 
-/// <reference path="../IDirector.ts" />
+/// <reference path="../../Core/_Runtime/IDirector.ts" />
 /// <reference path="../_Resource/Prefetcher.ts" />
 /// <reference path="../Event/Begin.ts" />
 
 namespace Runtime {
     'use strict';
 
-    export class Director implements IDirector {
+    export class Director implements Core.IDirector {
         /**
          * 运行时。
          */
-        private _r: IRuntime;
+        private _r: Core.IRuntime;
 
         /**
          * 反馈运行时的即时 Promise 。
          */
-        private _p: Promise<IRuntime>;
+        private _p: Promise<Core.IRuntime>;
 
         /**
          * 是否动态创建。
@@ -48,7 +48,7 @@ namespace Runtime {
         /**
          * 构造函数。
          */
-        constructor(runtime: IRuntime) {
+        constructor(runtime: Core.IRuntime) {
             this._r = runtime;
             this._p = Promise.resolve(this._r);
             this._d =
@@ -68,7 +68,7 @@ namespace Runtime {
         /**
          * 开始动画。
          */
-        public OP(start: boolean): Promise<IRuntime> {
+        public OP(start: boolean): Promise<Core.IRuntime> {
             if (!start)
                 this._r.dispatchEvent(new Event.Begin({
                     target: this._r.gE()
@@ -79,28 +79,28 @@ namespace Runtime {
         /**
          * 完结动画。
          */
-        public ED(): Promise<IRuntime> {
-            return this._p.then(() => this._r.gE().p(Tag.IScene.Type.End, this._r));
+        public ED(): Promise<Core.IRuntime> {
+            return this._p.then(() => this._r.gE().p(Core.ISceneTag.Type.End, this._r));
         }
 
         /**
          * 失败动画。
          */
-        public FAIL(): Promise<IRuntime> {
-            return this._p.then(() => this._r.gE().p(Tag.IScene.Type.Fail, this._r));
+        public FAIL(): Promise<Core.IRuntime> {
+            return this._p.then(() => this._r.gE().p(Core.ISceneTag.Type.Fail, this._r));
         }
 
         /**
          * 人物出场。
          */
-        public charOn(resource: IResource, position: IDirector.Position): Promise<IRuntime> {
+        public charOn(resource: Core.IResource, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             return this.charSet(resource, position);
         }
 
         /**
          * 人物离场。
          */
-        public charOff(position: IDirector.Position): Promise<IRuntime> {
+        public charOff(position: Core.IDirector.Position): Promise<Core.IRuntime> {
             this._r.gS().d('$c' + position);
             return this._p;
         }
@@ -108,7 +108,7 @@ namespace Runtime {
         /**
          * 设置人物。
          */
-        public charSet(resource: IResource, position: IDirector.Position): Promise<IRuntime> {
+        public charSet(resource: Core.IResource, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             this._r.gS().s('$c' + position, resource);
             return this._p;
         }
@@ -116,21 +116,21 @@ namespace Runtime {
         /**
          * 某白。
          */
-        public words(words: string, theme: string, who?: string, avatar?: IResource): Promise<IRuntime> {
+        public words(words: string, theme: string, who?: string, avatar?: Core.IResource): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 评分动画。
          */
-        public stars(rank: IDirector.Stars): Promise<IRuntime> {
+        public stars(rank: Core.IDirector.Stars): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 播放背景音乐。
          */
-        public playBGM(resource: IResource): Promise<IRuntime> {
+        public playBGM(resource: Core.IResource): Promise<Core.IRuntime> {
             this._r.gS().s('$b', resource);
             return this._p;
         }
@@ -138,14 +138,14 @@ namespace Runtime {
         /**
          * 播放音效。
          */
-        public playSE(resource: IResource): Promise<IRuntime> {
+        public playSE(resource: Core.IResource): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 关闭特写。
          */
-        public hideCG(): Promise<IRuntime> {
+        public hideCG(): Promise<Core.IRuntime> {
             this._r.gS().d('$c');
             return this._p;
         }
@@ -153,7 +153,7 @@ namespace Runtime {
         /**
          * 展示特写。
          */
-        public showCG(resource: IResource): Promise<IRuntime> {
+        public showCG(resource: Core.IResource): Promise<Core.IRuntime> {
             this._r.gS().s('$c', resource);
             return this._p;
         }
@@ -161,7 +161,7 @@ namespace Runtime {
         /**
          * 设置房间。
          */
-        public asRoom(resource: IResource): Promise<IRuntime> {
+        public asRoom(resource: Core.IResource): Promise<Core.IRuntime> {
             this._r.gS().s('$t', resource);
             return this._p;
         }
@@ -169,28 +169,28 @@ namespace Runtime {
         /**
          * 设置地图。
          */
-        public asMap(points: Util.IHashTable<Tag.IPoint>): Promise<IRuntime> {
+        public asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 关灯（落幕）。
          */
-        public lightOff(): Promise<IRuntime> {
+        public lightOff(): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 开灯（开幕）。
          */
-        public lightOn(): Promise<IRuntime> {
+        public lightOn(): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 选择。
          */
-        public choose(options: Util.IHashTable<Tag.IOption>): Promise<IRuntime> {
+        public choose(options: Util.IHashTable<Core.IOptionTag>): Promise<Core.IRuntime> {
             return this._p;
         }
 

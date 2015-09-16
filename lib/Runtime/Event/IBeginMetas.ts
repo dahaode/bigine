@@ -7,14 +7,14 @@
  * @file      Runtime/Event/IBeginMetas.ts
  */
 
-/// <reference path="../../Core/IEventMetas.ts" />
-/// <reference path="../IEpisode.ts" />
+/// <reference path="../../Core/_Runtime/IEventMetas.ts" />
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
 
 namespace Runtime {
     'use strict';
 
     export namespace Event {
-        export interface IBeginMetas extends Core.IEventMetas<IEpisode> {
+        export interface IBeginMetas extends Core.IEventMetas<Core.IEpisode> {
         }
     }
 }

@@ -7,14 +7,14 @@
  * @file      Runtime/_Resource/Resource.ts
  */
 
-/// <reference path="../IResource.ts" />
+/// <reference path="../../Core/_Runtime/IResource.ts" />
 /// <reference path="../../Util/ENV.ts" />
 /// <reference path="../../Util/Q.ts" />
 
 namespace Runtime {
     'use strict';
 
-    export class Resource implements IResource {
+    export class Resource implements Core.IResource {
         /**
          * 真实 URL 。
          */
@@ -28,11 +28,12 @@ namespace Runtime {
         /**
          * 构造函数。
          */
-        constructor(uri: string, type: IResource.Type) {
+        constructor(uri: string, type: Core.IResource.Type) {
             var env: typeof Util.ENV = Util.ENV,
+                types: typeof Core.IResource.Type = Core.IResource.Type,
                 ie9: boolean = env.MSIE && 'undefined' == typeof URL,
                 ext: string;
-            if (IResource.Type.Raw == type) {
+            if (types.Raw == type) {
                 this._l = uri.replace(/^.+:\/\//, '//');
                 if ('//s.dahao.de/' != this._l.substr(0, 13))
                     throw new E(E.RES_INVALID_URI);
@@ -45,19 +46,19 @@ namespace Runtime {
                 var height: number = env.Screen.Height,
                     filename: string = height + '.';
                 switch (type) {
-                    case IResource.Type.Room:
-                    case IResource.Type.CG:
+                    case types.Room:
+                    case types.CG:
                         filename += 'jpg';
                         break;
-                    case IResource.Type.Map:
-                    case IResource.Type.Pose:
+                    case types.Map:
+                    case types.Pose:
                         filename += 'png';
                         break;
-                    case IResource.Type.Avatar:
+                    case types.Avatar:
                         filename = Math.round(height / 4) + '.png';
                         break;
-                    case IResource.Type.BGM:
-                    case IResource.Type.SE:
+                    case types.BGM:
+                    case types.SE:
                         filename = (env.Mobile ? 64 : 128) + '.mp3';
                         break;
                 }

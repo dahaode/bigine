@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../../Unknown.ts" />
-/// <reference path="../../IPoint.ts" />
+/// <reference path="../../../Core/_Tag/IPointTag.ts" />
 /// <reference path="HLImage.ts" />
 /// <reference path="Region.ts" />
 /// <reference path="Target.ts" />
@@ -17,7 +17,7 @@
 namespace Tag {
     'use strict';
 
-    export class Point extends Unknown implements IPoint {
+    export class Point extends Unknown implements Core.IPointTag {
         /**
          * 原型。
          */
@@ -50,7 +50,7 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             if (this._m && this._p[0])
                 this._o = (<DefMap> ep.q(this._m, Core.IEpisode.Entity.Map)).gP(this._m);
         }
@@ -58,9 +58,9 @@ namespace Tag {
         /**
          * 交互逻辑。
          */
-        public p(runtime: Runtime.IRuntime): void {
+        public p(runtime: Core.IRuntime): void {
             var room: DefRoom = this.gR();
-            (<Promise<Runtime.IRuntime>> Enter.prototype.p.call({
+            (<Promise<Core.IRuntime>> Enter.prototype.p.call({
                 _p: [room.gI()],
                 _mo: room
             }, runtime))['catch'](Util.Q.ignoreHalt);
@@ -76,7 +76,7 @@ namespace Tag {
         /**
          * 获取高亮图资源。
          */
-        public o(): Runtime.IResource {
+        public o(): Core.IResource {
             return (<HLImage> this.$q('HLImage')[0] || this._o).o();
         }
 

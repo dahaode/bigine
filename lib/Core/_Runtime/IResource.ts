@@ -4,12 +4,12 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/IResource.ts
+ * @file      Core/_Runtime/IResource.ts
  */
 
-/// <reference path="../Util/Q.ts" />
+/// <reference path="../../Util/Q.ts" />
 
-namespace Runtime {
+namespace Core {
     'use strict';
 
     export interface IResource {

@@ -4,24 +4,23 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/IRoot.ts
+ * @file      Core/_Tag/IRootTag.ts
  */
 
-/// <reference path="ITag.ts" />
-/// <reference path="../Util/ISuccessCallback.ts" />
+/// <reference path="IEntityTag.ts" />
+/// <reference path="../../Util/ISuccessCallback.ts" />
 
-namespace Tag {
+namespace Core {
     'use strict';
 
-    // Core.ITag:gLineNo()
-    // Core.ITag:gTagName()
-    // Core.ITag:gTagIndex()
-    // Core.ITag:toString()
-    // Core.ITag:toJsrn()
+    // ITag:gL()
+    // ITag:gN()
     // ITag:r()
     // ITag:b()
+    // ITag:toString()
+    // ITag:toJsrn()
     // ITag:gU()
-    export interface IRoot extends ITag {
+    export interface IRootTag extends ITag {
         /**
          * 是否自动播放。
          */
@@ -30,7 +29,7 @@ namespace Tag {
         /**
          * 加载资源包。
          */
-        l(callback: Util.ISuccessCallback<Util.IHashTable<IEntity>>): boolean;
+        l(callback: Util.ISuccessCallback<Util.IHashTable<IEntityTag>>): boolean;
 
         /**
          * 加载主题。

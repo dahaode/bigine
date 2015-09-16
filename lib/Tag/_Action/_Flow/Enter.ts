@@ -7,7 +7,7 @@
  * @file      Tag/_Action/_Flow/Enter.ts
  */
 
-/// <reference path="../Action.ts" />
+/// <reference path="../../Action.ts" />
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
 namespace Tag {
@@ -29,15 +29,15 @@ namespace Tag {
         /**
          * 绑定（运行时）作品（实体）。
          */
-        public $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Core.IEpisode): void {
             this._mo = <DefRoom> ep.q(this._p[0], Core.IEpisode.Entity.Room);
         }
 
         /**
          * 执行。
          */
-        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states: Runtime.IStates = runtime.gS(),
+        public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var states: Core.IStates = runtime.gS(),
                 kcn: string = '_rc',
                 cn: string = states.g(kcn),
                 kdn: string = '_rd',
@@ -47,7 +47,7 @@ namespace Tag {
                 co: DefRoom = <DefRoom> states.g(kco),
                 kdo: string = '$rd',
                 kto: string = '$rt',
-                director: Runtime.IDirector = runtime.gD();
+                director: Core.IDirector = runtime.gD();
             if (cn == this._p[0]) // 同房间二次进入，
                 return director.lightOff()
                     .then(() => {
@@ -65,9 +65,9 @@ namespace Tag {
                         .s(kto, this._mo);
                     if (!cn)
                         return runtime;
-                    return co.p(IScene.Type.PreLeave, runtime);
+                    return co.p(Core.ISceneTag.Type.PreLeave, runtime);
                 })
-                .then(() => this._mo.p(IScene.Type.PreEnter, runtime)) // 播放关联（目标）房间进入前事件
+                .then(() => this._mo.p(Core.ISceneTag.Type.PreEnter, runtime)) // 播放关联（目标）房间进入前事件
                 .then(() => { // 播放当前房间离开后事件
                     states.d(kcn)
                         .d(kco)
@@ -75,16 +75,16 @@ namespace Tag {
                         .d(kdo);
                     if (!cn)
                         return runtime;
-                    return co.p(IScene.Type.PostLeave, runtime);
+                    return co.p(Core.ISceneTag.Type.PostLeave, runtime);
                 })
                 .then(() => { // 播放关联房间（目标）房间进入后事件
                     states.m(kdn, kcn)
                         .m(kdo, kco)
                         .c(kcn, kdn)
                         .c(kco, kdo);
-                    return this._mo.p(IScene.Type.PostEnter, runtime);
+                    return this._mo.p(Core.ISceneTag.Type.PostEnter, runtime);
                 });
-            return Util.Q.doHalt<Runtime.IRuntime>(); // 中断原有时序流。
+            return Util.Q.doHalt<Core.IRuntime>(); // 中断原有时序流。
         }
     }
 }

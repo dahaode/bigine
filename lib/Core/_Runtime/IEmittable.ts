@@ -4,7 +4,7 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      Core/IEmittable.ts
+ * @file      Core/_Runtime/IEmittable.ts
  */
 
 /// <reference path="IEventListener.ts" />
@@ -26,6 +26,6 @@ namespace Core {
         /**
          * 发生事件。
          */
-        dispatchEvent<T>(event: Event<T>): IEmittable;
+        dispatchEvent<T>(event: IEvent<T>): IEmittable;
     }
 }
