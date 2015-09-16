@@ -51,3 +51,4 @@
 /// <reference path="_Action/_Logic/When.ts" />
 /// <reference path="_Action/_Logic/Loop.ts" />
 /// <reference path="_Action/_Flow/Choose.ts" />
+/// <reference path="_Action/_Text/Tip.ts" />

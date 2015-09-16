@@ -38,7 +38,7 @@ namespace Util {
          * 是否为 NodeJS 环境。
          */
         Node: {
-            JS: !!(process && process.version && process.arch),
+            JS: !!('undefined' !== typeof process && process.version && process.arch),
             Webkit: false
         },
         /**
