@@ -10,7 +10,9 @@
 /// <reference path="IAssertable.ts" />
 /// <reference path="IPerformable.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     // Core.ITag:gL()
     // Core.ITag:gN()
     // Core.ITag:toString()
@@ -23,7 +25,7 @@ module Tag {
     export interface IAction extends IAssertable, IPerformable {
     }
 
-    export module IAction {
+    export namespace IAction {
         /**
          * 操作符。
          */

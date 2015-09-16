@@ -7,7 +7,9 @@
  * @file      Runtime/ILogger.ts
  */
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export interface ILogger {
         /**
          * 调试。
@@ -35,7 +37,7 @@ module Runtime {
         l(level: ILogger.Level): ILogger;
     }
 
-    export module ILogger {
+    export namespace ILogger {
         /**
          * 日志等级。
          */

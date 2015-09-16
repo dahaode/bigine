@@ -9,31 +9,33 @@
 
 /// <reference path="../Unknown.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Image extends Unknown {
         /**
          * 图片资源。
          */
-        _o: Runtime.IResource;
+        protected _o: Runtime.IResource;
 
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Image';
         }
 
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        $r(ep: Runtime.IEpisode): void {
+        public $r(ep: Runtime.IEpisode): void {
             this._o = ep.r(this._c, Runtime.IResource.Type.CG);
         }
 
         /**
          * 获取资源。
          */
-        o(): Runtime.IResource {
+        public o(): Runtime.IResource {
             if (!this._r)
                 throw new E(E.DEF_EPISODE_NOT_REGISTERED, this._l);
             return this._o;

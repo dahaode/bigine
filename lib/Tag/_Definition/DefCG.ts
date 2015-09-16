@@ -11,19 +11,21 @@
 /// <reference path="../ICG.ts" />
 /// <reference path="Image.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class DefCG extends Entity implements ICG {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'DefCG';
         }
 
         /**
          * 获取资源。
          */
-        o(): Runtime.IResource {
+        public o(): Runtime.IResource {
             return (<Image> this.$q('Image')[0]).o();
         }
     }

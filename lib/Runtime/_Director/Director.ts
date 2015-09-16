@@ -11,7 +11,9 @@
 /// <reference path="../_Resource/Prefetcher.ts" />
 /// <reference path="../Event/Begin.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export class Director implements IDirector {
         /**
          * 运行时。
@@ -59,14 +61,14 @@ module Runtime {
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        c(resources: Resource[][]): Promise<void> {
+        public c(resources: Resource[][]): Promise<void> {
             return Prefecher.c(resources);
         }
 
         /**
          * 开始动画。
          */
-        OP(start: boolean): Promise<IRuntime> {
+        public OP(start: boolean): Promise<IRuntime> {
             if (!start)
                 this._r.dispatchEvent(new Event.Begin({
                     target: this._r.gE()
@@ -77,28 +79,28 @@ module Runtime {
         /**
          * 完结动画。
          */
-        ED(): Promise<IRuntime> {
+        public ED(): Promise<IRuntime> {
             return this._p.then(() => this._r.gE().p(Tag.IScene.Type.End, this._r));
         }
 
         /**
          * 失败动画。
          */
-        FAIL(): Promise<IRuntime> {
+        public FAIL(): Promise<IRuntime> {
             return this._p.then(() => this._r.gE().p(Tag.IScene.Type.Fail, this._r));
         }
 
         /**
          * 人物出场。
          */
-        charOn(resource: IResource, position: IDirector.Position): Promise<IRuntime> {
+        public charOn(resource: IResource, position: IDirector.Position): Promise<IRuntime> {
             return this.charSet(resource, position);
         }
 
         /**
          * 人物离场。
          */
-        charOff(position: IDirector.Position): Promise<IRuntime> {
+        public charOff(position: IDirector.Position): Promise<IRuntime> {
             this._r.gS().d('$c' + position);
             return this._p;
         }
@@ -106,7 +108,7 @@ module Runtime {
         /**
          * 设置人物。
          */
-        charSet(resource: IResource, position: IDirector.Position): Promise<IRuntime> {
+        public charSet(resource: IResource, position: IDirector.Position): Promise<IRuntime> {
             this._r.gS().s('$c' + position, resource);
             return this._p;
         }
@@ -114,21 +116,21 @@ module Runtime {
         /**
          * 某白。
          */
-        words(words: string, theme: string, who?: string, avatar?: IResource): Promise<IRuntime> {
+        public words(words: string, theme: string, who?: string, avatar?: IResource): Promise<IRuntime> {
             return this._p;
         }
 
         /**
          * 评分动画。
          */
-        stars(rank: IDirector.Stars): Promise<IRuntime> {
+        public stars(rank: IDirector.Stars): Promise<IRuntime> {
             return this._p;
         }
 
         /**
          * 播放背景音乐。
          */
-        playBGM(resource: IResource): Promise<IRuntime> {
+        public playBGM(resource: IResource): Promise<IRuntime> {
             this._r.gS().s('$b', resource);
             return this._p;
         }
@@ -136,14 +138,14 @@ module Runtime {
         /**
          * 播放音效。
          */
-        playSE(resource: IResource): Promise<IRuntime> {
+        public playSE(resource: IResource): Promise<IRuntime> {
             return this._p;
         }
 
         /**
          * 关闭特写。
          */
-        hideCG(): Promise<IRuntime> {
+        public hideCG(): Promise<IRuntime> {
             this._r.gS().d('$c');
             return this._p;
         }
@@ -151,7 +153,7 @@ module Runtime {
         /**
          * 展示特写。
          */
-        showCG(resource: IResource): Promise<IRuntime> {
+        public showCG(resource: IResource): Promise<IRuntime> {
             this._r.gS().s('$c', resource);
             return this._p;
         }
@@ -159,7 +161,7 @@ module Runtime {
         /**
          * 设置房间。
          */
-        asRoom(resource: IResource): Promise<IRuntime> {
+        public asRoom(resource: IResource): Promise<IRuntime> {
             this._r.gS().s('$t', resource);
             return this._p;
         }
@@ -167,42 +169,42 @@ module Runtime {
         /**
          * 设置地图。
          */
-        asMap(points: Util.IHashTable<Tag.IPoint>): Promise<IRuntime> {
+        public asMap(points: Util.IHashTable<Tag.IPoint>): Promise<IRuntime> {
             return this._p;
         }
 
         /**
          * 关灯（落幕）。
          */
-        lightOff(): Promise<IRuntime> {
+        public lightOff(): Promise<IRuntime> {
             return this._p;
         }
 
         /**
          * 开灯（开幕）。
          */
-        lightOn(): Promise<IRuntime> {
+        public lightOn(): Promise<IRuntime> {
             return this._p;
         }
 
         /**
          * 选择。
          */
-        choose(options: Util.IHashTable<Tag.IOption>): Promise<IRuntime> {
+        public choose(options: Util.IHashTable<Tag.IOption>): Promise<IRuntime> {
             return this._p;
         }
 
         /**
          * 获取动态创建标识。
          */
-        gD(): boolean {
+        public gD(): boolean {
             return this._d;
         }
 
         /**
          * 使用主题。
          */
-        t(theme: Util.IHashTable<Util.IHashTable<any>>): Director {
+        public t(theme: Util.IHashTable<Util.IHashTable<any>>): Director {
             this._t = theme;
             return this;
         }
@@ -210,7 +212,7 @@ module Runtime {
         /**
          * 设置自动播放。
          */
-        a(auto: boolean): Director {
+        public a(auto: boolean): Director {
             this._a = auto;
             return this;
         }
@@ -218,7 +220,7 @@ module Runtime {
         /**
          * 设置音量。
          */
-        v(volumn: number): Director {
+        public v(volumn: number): Director {
             this._v = volumn;
             return this;
         }

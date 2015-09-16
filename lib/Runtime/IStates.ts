@@ -35,7 +35,9 @@
  *     * `$v<深度>` - 当前比较值 - Tag
  * 4. 其它为作品运行信息，需要被存档记录。
  */
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export interface IStates {
         /**
          * 设置值。

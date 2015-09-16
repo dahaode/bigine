@@ -10,7 +10,9 @@
 /// <reference path="ITag.ts" />
 /// <reference path="../Util/ISuccessCallback.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     // Core.ITag:gLineNo()
     // Core.ITag:gTagName()
     // Core.ITag:gTagIndex()

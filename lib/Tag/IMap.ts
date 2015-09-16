@@ -10,7 +10,9 @@
 /// <reference path="IEntity.ts" />
 /// <reference path="IPoint.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     // Core.ITag:gL()
     // Core.ITag:gN()
     // Core.ITag:toString()

@@ -10,26 +10,28 @@
 /// <reference path="../Unknown.ts" />
 /// <reference path="../IEntity.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Entity extends Unknown implements IEntity {
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        $r(ep: Runtime.IEpisode): void {
+        public $r(ep: Runtime.IEpisode): void {
             ep.f(this);
         }
 
         /**
          * 获取唯一编号。
          */
-        gI(): string {
+        public gI(): string {
             return this._c;
         }
 
         /**
          * 获取类型。
          */
-        gT(): Core.IEpisode.Entity {
+        public gT(): Core.IEpisode.Entity {
             return Core.IEpisode.Entity.CG;
         }
     }

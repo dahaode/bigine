@@ -9,7 +9,9 @@
 
 /// <reference path="IHashTable.ts" />
 
-module Util {
+namespace Util {
+    'use strict';
+
     export interface ISuccessCallback<T> {
         (data: IHashTable<T>): void;
     }

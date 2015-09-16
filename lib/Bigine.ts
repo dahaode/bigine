@@ -12,17 +12,19 @@
 function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Tag.ITag[], id?: string): Tag.ITag;
 function Bigine(children: Tag.ITag[]): Runtime.IRuntime;
 function Bigine(code: any, ...args: any[]): any {
+    'use strict';
+
     if (code instanceof Array)
         return new Runtime.Runtime(new Tag.Root(<Tag.Unknown[]> code));
     if (!(code in SCHEMA.S))
         throw new E(E.SCHEMA_TAG_NOT_DECLARED);
     var proto: typeof Tag.Unknown = eval('Tag.' + SCHEMA.S[code][0]),
-        content = '',
+        content: string = '',
         params: string[] = [],
         children: Tag.Unknown[] = [],
-        id = '',
-        arg = args.shift(),
-        type = typeof arg,
+        id: string = '',
+        arg: any = args.shift(),
+        type: string = typeof arg,
         tag: Tag.Unknown;
     if ('string' == type || 'number' == type) {
         content = arg;
@@ -47,8 +49,10 @@ function Bigine(code: any, ...args: any[]): any {
     return tag;
 }
 
-module Bigine {
-    export var version = '${BIGINE_VERSION}';
+namespace Bigine {
+    'use strict';
+
+    export var version: string = '${BIGINE_VERSION}';
 }
 
 //export = Bigine;

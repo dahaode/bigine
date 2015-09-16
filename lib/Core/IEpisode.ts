@@ -9,7 +9,9 @@
 
 /// <reference path="ITag.ts" />
 
-module Core {
+namespace Core {
+    'use strict';
+
     export interface IEpisode {
         /**
          * 注册实体。
@@ -22,7 +24,7 @@ module Core {
         q(id: string, type?: IEpisode.Entity): ITag;
     }
 
-    export module IEpisode {
+    export namespace IEpisode {
         /**
          * 实体类型。
          */

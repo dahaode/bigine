@@ -9,22 +9,24 @@
 
 /// <reference path="../Action.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class HideCG extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'HideCG';
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states = runtime.gS(),
-                key = '_c',
-                cg = states.g(key);
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var states: Runtime.IStates = runtime.gS(),
+                key: string = '_c',
+                cg: string = states.g(key);
             if (!cg)
                 throw new E(E.ACT_CG_NOT_SHOWN, this._l);
             return runtime.gD().hideCG();

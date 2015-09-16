@@ -10,7 +10,9 @@
 /// <reference path="../../Unknown.ts" />
 /// <reference path="../_Map/DefMap.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Link extends Unknown {
         /**
          * 关联地图。
@@ -20,21 +22,21 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Link';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._o = <DefMap> ep.q(this._c, Core.IEpisode.Entity.Map);
         }
 
         /**
          * 获取关联地图。
          */
-        gM(): DefMap {
+        public gM(): DefMap {
             if (!this._b)
                 throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
             return this._o;

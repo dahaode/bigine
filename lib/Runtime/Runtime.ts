@@ -13,7 +13,9 @@
 /// <reference path="_Director/DirectorFactory.ts" />
 /// <reference path="../Tag/_pack.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export class Runtime implements IRuntime {
         /**
          * 事件监听函数池。
@@ -93,9 +95,9 @@ module Runtime {
         /**
          * 新增事件监听。
          */
-        addEventListener<T>(type: string, listener: Core.IEventListener<T>): Runtime {
+        public addEventListener<T>(type: string, listener: Core.IEventListener<T>): Runtime {
             this._a[type] = this._a[type] || [];
-            if (!Util.some(this._a[type], (reged) => reged == listener))
+            if (!Util.some(this._a[type], (reged: Core.IEventListener<any>) => reged == listener))
                 this._a[type].push(listener);
             return this;
         }
@@ -103,10 +105,10 @@ module Runtime {
         /**
          * 取消事件监听。
          */
-        removeEventListener<T>(type: string, listener: Core.IEventListener<T>): Runtime {
+        public removeEventListener<T>(type: string, listener: Core.IEventListener<T>): Runtime {
             if (!(type in this._a))
                 return this;
-            Util.some(this._a[type], (reged, index) => {
+            Util.some(this._a[type], (reged: Core.IEventListener<any>, index: number) => {
                 if (reged != listener)
                     return false;
                 this._a[type].splice(index, 1);
@@ -118,11 +120,11 @@ module Runtime {
         /**
          * 发生事件。
          */
-        dispatchEvent<T>(event: Core.Event<T>): Runtime {
-            var type = event.gT();
+        public dispatchEvent<T>(event: Core.Event<T>): Runtime {
+            var type: string = event.gT();
             if (!(type in this._a))
                 return this;
-            Util.each(<Core.IEventListener<T>[]> this._a[type], (listener) => {
+            Util.each(<Core.IEventListener<T>[]> this._a[type], (listener: Core.IEventListener<T>) => {
                 listener(event);
             });
             return this;
@@ -131,35 +133,35 @@ module Runtime {
         /**
          * 获取作品组件。
          */
-        gE(): Episode {
+        public gE(): Episode {
             return this._e;
         }
 
         /**
          * 获取日志组件。
          */
-        gL(): ConsoleLogger {
+        public gL(): ConsoleLogger {
             return this._l;
         }
 
         /**
          * 获取数据状态组件。
          */
-        gS(): States {
+        public gS(): States {
             return this._s;
         }
 
         /**
          * 获取场效调度器组件。
          */
-        gD(): Director {
+        public gD(): Director {
             return this._d;
         }
 
         /**
          * 播放。
          */
-        play(): Runtime {
+        public play(): Runtime {
             if (this._fp)
                 return this;
             this._fp = true;
@@ -173,26 +175,28 @@ module Runtime {
         /**
          * 重新播放。
          */
-        replay(): Runtime {
+        public replay(): Runtime {
             return this.play();
         }
 
         /**
          * 销毁。
          */
-        destroy(): void {
+        public destroy(): void {
+            //
         }
 
         /**
          * DOM 定位修正。
          */
-        fix(): void {
+        public fix(): void {
+            //
         }
 
         /**
          * 设置或获取自动播放设置。
          */
-        auto(auto?: boolean): boolean {
+        public auto(auto?: boolean): boolean {
             if (undefined !== auto)
                 this._d.a(this._fa = !!auto);
             return this._fa;
@@ -201,7 +205,7 @@ module Runtime {
         /**
          * 设置或获取音量。
          */
-        volume(volume?: number): number {
+        public volume(volume?: number): number {
             if (undefined !== volume)
                 this._d.v(this._fv = Math.min(1, Math.max(0, parseFloat(<any> volume))));
             return this._fv;

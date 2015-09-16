@@ -12,7 +12,9 @@
 /// <reference path="BGImage.ts" />
 /// <reference path="Point.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class DefMap extends Entity implements IMap {
         /**
          * 交互点集合。
@@ -32,7 +34,7 @@ module Tag {
             super(params, content, children, lineNo);
             if (!this.$q('BGImage').length && !params.length)
                 throw new E(E.DEF_MAP_BGIMAGE_NOT_FOUND, lineNo);
-            Util.each(<Point[]> this.$q('Point'), (point) => {
+            Util.each(this.$q('Point'), (point: Point) => {
                 this._a[point.gI()] = point;
                 point.sM(params[0]);
             });
@@ -41,14 +43,14 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'DefMap';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             if (this._p[0])
                 this._o = <DefMap> ep.q(this._p[0], Core.IEpisode.Entity.Map);
         }
@@ -56,23 +58,23 @@ module Tag {
         /**
          * 获取类型。
          */
-        gT(): Core.IEpisode.Entity {
+        public gT(): Core.IEpisode.Entity {
             return Core.IEpisode.Entity.Map;
         }
 
         /**
          * 获取资源。
          */
-        o(): Runtime.IResource {
+        public o(): Runtime.IResource {
             return (<BGImage> this.$q('BGImage')[0] || this._o).o();
         }
 
         /**
          * 获取交互点集合。
          */
-        gP(): Util.IHashTable<Point>;
-        gP(id: string): Point;
-        gP(id?: string): any {
+        public gP(): Util.IHashTable<Point>;
+        public gP(id: string): Point;
+        public gP(id?: string): any {
             if (id) {
                 if (!(id in this._a))
                     throw new E(E.DEF_MAP_POINT_NOT_FOUND, this._l);
@@ -84,9 +86,9 @@ module Tag {
         /**
          * 获取所有关联资源。
          */
-        d(): Runtime.IResource[] {
-            var ret = [this.o()];
-            Util.each(this._a, (point) => {
+        public d(): Runtime.IResource[] {
+            var ret: Runtime.IResource[] = [this.o()];
+            Util.each(this._a, (point: Point) => {
                 ret.push(point.o());
             });
             return ret;

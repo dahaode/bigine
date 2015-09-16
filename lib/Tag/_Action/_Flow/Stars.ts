@@ -10,7 +10,9 @@
 /// <reference path="../Action.ts" />
 /// <reference path="../../../Runtime/IDirector.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Stars extends Action {
         /**
          * 星级。
@@ -22,7 +24,7 @@ module Tag {
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
-            var stars = Runtime.IDirector.Stars;
+            var stars: typeof Runtime.IDirector.Stars = Runtime.IDirector.Stars;
             switch (params[0]) {
                 case '及格':
                     this._ms = stars.OK;
@@ -41,14 +43,14 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Stars';
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             return runtime.gD().stars(this._ms);
         }
     }

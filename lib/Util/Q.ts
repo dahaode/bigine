@@ -14,8 +14,10 @@
 
 require('es6-promise').polyfill();
 
-module Util {
-    export module Q {
+namespace Util {
+    'use strict';
+
+    export namespace Q {
         /**
          * 中断顺序时序流。
          */
@@ -51,13 +53,13 @@ module Util {
         /**
          * 顺序遍历数组。
          */
-        export function every<T, U>(array: T[], iterator: IArrayIterator<T, U | Thenable<U>>, $this?: any): Promise<U> {
+        export function every<T, U>(array: T[], iterator: Util.IArrayIterator<T, U | Thenable<U>>, $this?: any): Promise<U> {
             $this = $this || array;
             var q: Promise<U>;
-            each(array, (element, index) => {
+            each(array, (element: T, index: number) => {
                 q = index ?
-                    q.then(() => iterator.call($this, element, index, array)) :
-                    new Promise((resolve) => {
+                    q.then<U>(() => iterator.call($this, element, index, array)) :
+                    new Promise<U>((resolve: (value?: U | Thenable<U>) => void) => {
                         resolve(iterator.call($this, element, index, array));
                     });
             });

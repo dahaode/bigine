@@ -9,7 +9,9 @@
 
 /// <reference path="Event.ts" />
 
-module Core {
+namespace Core {
+    'use strict';
+
     export interface IEventListener<T> {
         (event: Event<T>): void;
     }

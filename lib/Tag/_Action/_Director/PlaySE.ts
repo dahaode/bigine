@@ -10,7 +10,9 @@
 /// <reference path="../Action.ts" />
 /// <reference path="../../_Definition/DefSE.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class PlaySE extends Action {
         /**
          * 使用音效。
@@ -20,28 +22,28 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'PlaySE';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._mo = (<DefSE> ep.q(this._p[0], Core.IEpisode.Entity.SE));
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             return runtime.gD().playSE(this._mo.o());
         }
 
         /**
          * 获取关联音效。
          */
-        gS(): DefSE {
+        public gS(): DefSE {
             return this._mo;
         }
     }

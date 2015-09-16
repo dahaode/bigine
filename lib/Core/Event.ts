@@ -10,12 +10,14 @@
 /// <reference path="IEventMetas.ts" />
 /// <reference path="../Util/_iterator.ts" />
 
-module Core {
+namespace Core {
+    'use strict';
+
     export class Event<T> {
         /**
          * 触发对象。
          */
-        target: T;
+        public target: T;
 
         /**
          * 构造函数。
@@ -27,7 +29,7 @@ module Core {
         /**
          * 获取类型。
          */
-        gT(): string {
+        public gT(): string {
             return '';
         }
     }

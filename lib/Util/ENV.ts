@@ -10,8 +10,26 @@
 /// <reference path="node.d.ts" />
 /// <reference path="../E.ts" />
 
-module Util {
-    export var Env = {
+namespace Util {
+    'use strict';
+
+    interface IEnvType {
+        Window: boolean;
+        Node: {
+            JS: boolean,
+            Webkit: boolean
+        };
+        Screen: {
+            Width: number,
+            Height: number
+        };
+        Protocol: string;
+        Canvas: boolean;
+        Mobile: boolean;
+        MSIE: boolean;
+    }
+
+    export var ENV: IEnvType = {
         /**
          * 是否存在 Window 对象。
          */
@@ -47,26 +65,26 @@ module Util {
          */
         MSIE: false
     };
-    ((env: typeof Env) => {
+    ((env: IEnvType) => {
         if (env.Node.JS)
             env.Node.Webkit = !!(('node-webkit' in process.versions) || ('atom-shell' in process.versions) || ('electron' in process.versions));
-        var detect = function (): [boolean, boolean] {
-            var ua = navigator.userAgent.toLowerCase(),
-                pick = function(pattern: RegExp): string {
-                        var match = ua.match(pattern);
-                        return (match && 1 < match.length) ? match[1] : '';
-                    },
-                ios = pick(/(ipod|iphone|ipad)/),
-                android = /android/.test(ua) && !/like android/.test(ua),
-                tablet = /tablet/.test(ua),
-                mobile = !tablet && /[^-]mobi/.test(ua),
-                osver = 0,
-                msie = false;
+        var detect: () => [boolean, boolean] = function(): [boolean, boolean] {
+            var ua: string = navigator.userAgent.toLowerCase(),
+                pick: (pattern: RegExp) => string = function(pattern: RegExp): string {
+                    var match: string[] = ua.match(pattern);
+                    return (match && 1 < match.length) ? match[1] : '';
+                },
+                ios: string = pick(/(ipod|iphone|ipad)/),
+                android: boolean = /android/.test(ua) && !/like android/.test(ua),
+                tablet: boolean = /tablet/.test(ua),
+                mobile: boolean = !tablet && /[^-]mobi/.test(ua),
+                osver: number = 0,
+                msie: boolean = false;
             if (android)
-                osver = parseInt(pick(/android[ \/-](\d+(\.\d+)*)/));
-            if ('ipad' == ios || (android && (3 == osver || (4 == osver && !mobile))) || /silk/.test(ua))
+                osver = parseInt(pick(/android[ \/-](\d+(\.\d+)*)/), 10);
+            if ('ipad' == ios || (android && (3 == osver || (4 == osver && !mobile))) || /silk/.test(ua)) {
                 tablet = true;
-            else if ('ipod' == ios || 'iphone' == ios || android || /blackberry|\bbb\d+/.test(ua) || /rim\stablet/.test(ua) || /(web|hpw)os/.test(ua) || /bada/i.test(ua))
+            } else if ('ipod' == ios || 'iphone' == ios || android || /blackberry|\bbb\d+/.test(ua) || /rim\stablet/.test(ua) || /(web|hpw)os/.test(ua) || /bada/i.test(ua))
                 mobile = true;
             if (/windows phone/.test(ua)) {
                 if (!/edge\/(\d+(\.\d+)?)/.test(ua))
@@ -74,16 +92,16 @@ module Util {
             } else if (/msie|trident/.test(ua))
                 msie = true;
             return [tablet || mobile, msie];
-        }
+        };
         if (env.Window) {
             env.Screen.Width = screen.width;
             env.Screen.Height = screen.height;
             if ('https:' == location.protocol)
                 env.Protocol = 'https:';
             env.Canvas = 'CanvasRenderingContext2D' in window;
-            var desult = detect();
+            var desult: [boolean, boolean] = detect();
             env.Mobile = desult[0];
             env.MSIE = desult[1];
         }
-    })(Env);
+    })(ENV);
 }

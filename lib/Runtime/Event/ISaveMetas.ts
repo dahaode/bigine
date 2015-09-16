@@ -10,16 +10,20 @@
 /// <reference path="../../Core/IEventMetas.ts" />
 /// <reference path="../IStates.ts" />
 
-module Runtime.Event {
-    export interface ISaveMetas extends Core.IEventMetas<IStates> {
-        /**
-         * 标题。
-         */
-        title: string;
+namespace Runtime {
+    'use strict';
 
-        /**
-         * 数据。
-         */
-        data: Util.IHashTable<any>;
+    export namespace Event {
+        export interface ISaveMetas extends Core.IEventMetas<IStates> {
+            /**
+             * 标题。
+             */
+            title: string;
+
+            /**
+             * 数据。
+             */
+            data: Util.IHashTable<any>;
+        }
     }
 }

@@ -10,12 +10,15 @@ var $gulp = require('gulp'),
     $uglify = require('gulp-uglify');
 
 $gulp.task('lint', function () {
-    return $gulp.src('lib/**/*.ts')
+    return $gulp.src([
+        'lib/**/*.ts',
+        '!lib/**/*.d.ts'
+    ])
         .pipe($lint())
         .pipe($lint.report('prose'));
 });
 
-$gulp.task('compile', function () {
+$gulp.task('compile', ['lint'], function () {
     var pkg = require('./package.json'),
         ts = $gulp.src('lib/Bigine.ts')
             .pipe($smap.init())
@@ -63,4 +66,4 @@ $gulp.task('minify', ['compile'], function () {
         .pipe($gulp.dest('var/build'));
 });
 
-$gulp.task('default', ['lint', 'minify']);
+$gulp.task('default', ['minify']);

@@ -9,31 +9,32 @@
 
 /// <reference path="Resource.ts" />
 
-module Runtime.Prefecher {
-    /**
-     * 预加载资源。
-     */
-    export function c(resources: Resource[][]): Promise<void> {
-        if (!resources.length)
-            return Promise.resolve();
-        var total = resources.slice(0),
-            first: Promise<string | HTMLImageElement>[] = [],
-            q: Promise<(string | HTMLImageElement)[]>;
-        Util.each(total[0], (resource) => {
-            first.push(resource.o());
-        });
-        q = Promise.all(first);
-        total.shift();
-        if (total.length)
-            q.then(() => {
-                Util.Q.every(total, (group) => {
-                    var step: Promise<string | HTMLImageElement>[] = [];
-                    Util.each(group, (resource) => {
-                        step.push(resource.o());
-                    });
-                    Promise.all(step);
-                });
+namespace Runtime {
+    'use strict';
+
+    export namespace Prefecher {
+        /**
+         * 预加载资源。
+         */
+        export function c(resources: Resource[][]): Promise<void> {
+            if (!resources.length)
+                return Promise.resolve();
+            var total: Resource[][] = resources.slice(0),
+                first: Promise<string | HTMLImageElement>[] = [];
+            Util.each(total[0], (resource: Resource) => {
+                first.push(resource.o());
             });
-        return q.then(() => { });
+            return Promise.all(first).then(() => {
+                total.shift();
+                if (total.length)
+                    Util.Q.every(total, (group: Resource[]) => {
+                        var step: Promise<string | HTMLImageElement>[] = [];
+                        Util.each(group, (resource: Resource) => {
+                            step.push(resource.o());
+                        });
+                        Promise.all(step);
+                    });
+            });
+        }
     }
 }

@@ -14,7 +14,9 @@
 /// <reference path="Target.ts" />
 /// <reference path="../../_Action/_Flow/Enter.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Point extends Unknown implements IPoint {
         /**
          * 原型。
@@ -32,23 +34,23 @@ module Tag {
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
             if (!params.length)
-                if (!this.$q('HLImage').length)
+                if (!this.$q('HLImage').length) {
                     throw new E(E.DEF_MAP_HLIMAGE_NOT_FOUND, lineNo);
-                else if (!this.$q('Region').length)
+                } else if (!this.$q('Region').length)
                     throw new E(E.DEF_MAP_REGION_NOT_FOUND, lineNo);
         }
 
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Point';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             if (this._m && this._p[0])
                 this._o = (<DefMap> ep.q(this._m, Core.IEpisode.Entity.Map)).gP(this._m);
         }
@@ -56,8 +58,8 @@ module Tag {
         /**
          * 交互逻辑。
          */
-        p(runtime: Runtime.IRuntime): void {
-            var room = this.gR();
+        public p(runtime: Runtime.IRuntime): void {
+            var room: DefRoom = this.gR();
             (<Promise<Runtime.IRuntime>> Enter.prototype.p.call({
                 _p: [room.gI()],
                 _mo: room
@@ -67,64 +69,64 @@ module Tag {
         /**
          * 获取唯一编号。
          */
-        gI(): string {
+        public gI(): string {
             return this._c;
         }
 
         /**
          * 获取高亮图资源。
          */
-        o(): Runtime.IResource {
+        public o(): Runtime.IResource {
             return (<HLImage> this.$q('HLImage')[0] || this._o).o();
         }
 
         /**
          * 设置地图（模板）。
          */
-        sM(id: string): void {
+        public sM(id: string): void {
             this._m = id;
         }
 
         /**
          * 获取横轴座标值。
          */
-        gX(): number {
+        public gX(): number {
             return (<Region> this.$q('Region')[0] || this._o).gX();
         }
 
         /**
          * 获取纵轴座标值。
          */
-        gY(): number {
+        public gY(): number {
             return (<Region> this.$q('Region')[0] || this._o).gY();
         }
 
         /**
          * 获取深轴座标值。
          */
-        gZ(): number {
+        public gZ(): number {
             return (<Region> this.$q('Region')[0] || this._o).gZ();
         }
 
         /**
          * 获取宽度值。
          */
-        gW(): number {
+        public gW(): number {
             return (<Region> this.$q('Region')[0] || this._o).gW();
         }
 
         /**
          * 获取高度值。
          */
-        gH(): number {
+        public gH(): number {
             return (<Region> this.$q('Region')[0] || this._o).gH();
         }
 
         /**
          * 获取相关房间。
          */
-        gR(): DefRoom {
-            var obj = <Target> this.$q('Target')[0] || this._o;
+        public gR(): DefRoom {
+            var obj: Point | Target = <Target> this.$q('Target')[0] || this._o;
             if (obj)
                 return obj.gR();
             throw new E(E.DEF_MAP_TARGET_NOT_FOUND, this._l);

@@ -9,7 +9,9 @@
 
 /// <reference path="../Util/Q.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export interface IResource {
         // new (uri: string, type: IResource.Type): IResource;
 
@@ -19,7 +21,7 @@ module Runtime {
         o(): Promise<string | HTMLImageElement>;
     }
 
-    export module IResource {
+    export namespace IResource {
         /**
          * 类型。
          */

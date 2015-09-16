@@ -10,20 +10,22 @@
 /// <reference path="../Unknown.ts" />
 /// <reference path="../../Util/Remote.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Theme extends Unknown {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Theme';
         }
 
         /**
          * 加载远端数据。
          */
-        l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
-            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json', callback, (error, status?) => {
+        public l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
+            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json', callback, (error: Error, status?: any) => {
                 throw error;
             });
         }

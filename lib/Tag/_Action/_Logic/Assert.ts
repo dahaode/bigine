@@ -9,22 +9,24 @@
 
 /// <reference path="../Action.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Assert extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Assert';
         }
 
         /**
          * （执行）检查。
          */
-        t(states: Runtime.IStates): boolean {
-            var real = this.$v(<string> states.g(this._p[0])),
-                expected = this.$v(this._p[1]),
-                depth = <string> states.g('$d'),
+        public t(states: Runtime.IStates): boolean {
+            var real: number | string = this.$v(<string> states.g(this._p[0])),
+                expected: number | string = this.$v(this._p[1]),
+                depth: number = states.g('$d'),
                 ret: boolean;
             switch (this._p[2] || '等于') {
                 case '等于':
@@ -45,8 +47,9 @@ module Tag {
                 case '不小于':
                     ret = real >= expected;
                     break;
+                default:
+                    throw new E(E.ACT_ILLEGAL_OP, this._l);
             }
-            throw new E(E.ACT_ILLEGAL_OP, this._l);
             states.s('$v' + depth, ret)
                 .s('$t' + depth, false);
             return ret;
@@ -55,7 +58,7 @@ module Tag {
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             this.t(runtime.gS());
             return runtime;
         }

@@ -11,7 +11,9 @@
 /// <reference path="../Runtime/IRuntime.ts" />
 /// <reference path="../Util/Q.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     // Core.ITag:gL()
     // Core.ITag:gN()
     // Core.ITag:toString()

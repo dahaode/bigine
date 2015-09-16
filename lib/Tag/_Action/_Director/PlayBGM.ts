@@ -10,7 +10,9 @@
 /// <reference path="../Action.ts" />
 /// <reference path="../../_Definition/DefBGM.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class PlayBGM extends Action {
         /**
          * 使用音乐。
@@ -20,24 +22,24 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'PlayBGM';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._mo = (<DefBGM> ep.q(this._p[0], Core.IEpisode.Entity.BGM));
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states = runtime.gS(),
-                key = '_b',
-                bgm = states.g(key);
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var states: Runtime.IStates = runtime.gS(),
+                key: string = '_b',
+                bgm: string = states.g(key);
             if (bgm == this._p[0])
                 return runtime;
             states.s(key, this._p[0]);
@@ -47,7 +49,7 @@ module Tag {
         /**
          * 获取关联音乐。
          */
-        gB(): DefBGM {
+        public gB(): DefBGM {
             return this._mo;
         }
     }

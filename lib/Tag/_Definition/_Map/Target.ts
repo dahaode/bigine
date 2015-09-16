@@ -10,7 +10,9 @@
 /// <reference path="../../Unknown.ts" />
 /// <reference path="../_Room/DefRoom.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Target extends Unknown {
         /**
          * 关联对象。
@@ -20,21 +22,21 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Target';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._o = <DefRoom> ep.q(this._c, Core.IEpisode.Entity.Room);
         }
 
         /**
          * 获取关联对象。
          */
-        gR(): DefRoom {
+        public gR(): DefRoom {
             if (!this._b)
                 throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
             return this._o;

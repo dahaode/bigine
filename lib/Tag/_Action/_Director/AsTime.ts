@@ -10,23 +10,25 @@
 /// <reference path="../Action.ts" />
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class AsTime extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'AsTime';
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states = runtime.gS(),
-                ktime = '_t',
-                time = states.g(ktime),
-                room = <DefRoom> states.g('$rd');
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var states: Runtime.IStates = runtime.gS(),
+                ktime: string = '_t',
+                time: string = states.g(ktime),
+                room: DefRoom = <DefRoom> states.g('$rd');
             if (time == this._p[0] || !room)
                 return runtime;
             states.s(ktime, this._p[0]);
@@ -36,7 +38,7 @@ module Tag {
         /**
          * 获取时间。
          */
-        gT(): string {
+        public gT(): string {
             return this._p[0];
         }
     }

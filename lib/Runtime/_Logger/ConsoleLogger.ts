@@ -9,7 +9,9 @@
 
 /// <reference path="../ILogger.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export class ConsoleLogger implements ILogger {
         /**
          * 日志级别。
@@ -17,51 +19,56 @@ module Runtime {
         private _l: ILogger.Level;
 
         /**
+         * 控制台。
+         */
+        private _c: Console;
+
+        /**
          * 构造函数。
          */
         constructor() {
             this._l = ILogger.Level.Error;
+            this._c = 'undefined' != typeof console ?
+                console :
+                undefined;
         }
 
         /**
          * 调试。
          */
-        d(...parts: any[]): void {
-            if (this._l > ILogger.Level.Debug) return;
-            if ('undefined' != typeof console && 'function' == typeof console.log)
-                (console.debug || console.log).apply(console, parts);
+        public d(...parts: any[]): void {
+            if (this._l > ILogger.Level.Debug || !this._c) return;
+            (this._c.debug || this._c.log).apply(this._c, parts);
         }
 
         /**
          * 信息。
          */
-        i(...parts: any[]): void {
-            if (this._l > ILogger.Level.Info) return;
-            if ('undefined' != typeof console && 'function' == typeof console.log)
-                (console.info || console.log).apply(console, parts);
+        public i(...parts: any[]): void {
+            if (this._l > ILogger.Level.Info || !this._c) return;
+            (this._c.info || this._c.log).apply(this._c, parts);
         }
 
         /**
          * 警告。
          */
-        w(...parts: any[]): void {
-            if (this._l > ILogger.Level.Warn) return;
-            if ('undefined' != typeof console && 'function' == typeof console.log)
-                (console.warn || console.log).apply(console, parts);
+        public w(...parts: any[]): void {
+            if (this._l > ILogger.Level.Warn || !this._c) return;
+            (this._c.warn || this._c.log).apply(this._c, parts);
         }
 
         /**
          * 错误。
          */
-        e(...parts: any[]): void {
-            if ('undefined' != typeof console && 'function' == typeof console.error)
-                console.error.apply(console, 1 < parts.length ? parts : [parts[0]['stack'] || parts[0]]);
+        public e(...parts: any[]): void {
+            if (this._c && 'function' == typeof this._c.error)
+                this._c.error.apply(this._c, 1 < parts.length ? parts : [parts[0]['stack'] || parts[0]]);
         }
 
         /**
          * 设置日志等级。
          */
-        l(level: ILogger.Level): ILogger {
+        public l(level: ILogger.Level): ConsoleLogger {
             this._l = level;
             return this;
         }

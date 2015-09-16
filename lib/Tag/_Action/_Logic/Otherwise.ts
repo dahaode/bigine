@@ -9,39 +9,41 @@
 
 /// <reference path="Loop.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Otherwise extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Otherwise';
         }
 
         /**
          * （执行）检查。
          */
-        t(states: Runtime.IStates): boolean {
-            var key = '$t' + states.g('$d');
+        public t(states: Runtime.IStates): boolean {
+            var key: string = '$t' + states.g('$d');
             if (states.g(key))
                 return true;
             states.s(key, true);
-            return Util.every(this._s, (tag) => (<Action> tag).t(states));
+            return Util.every(this._s, (tag: Action) => tag.t(states));
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states = runtime.gS(),
-                kd = '$d',
-                depth = states.g(kd),
-                kt = '$t' + depth;
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var states: Runtime.IStates = runtime.gS(),
+                kd: string = '$d',
+                depth: number = states.g(kd),
+                kt: string = '$t' + depth;
             if (states.g(kt))
                 return runtime;
             states.s(kt, true)
                 .s(kd, 1 + depth);
-            return Util.Q.every(this._s, (tag) => (<Action> tag).p(runtime))
+            return Util.Q.every(this._s, (tag: Action) => tag.p(runtime))
                 .then(() => {
                     states.s(kd, depth);
                     return runtime;
@@ -51,7 +53,7 @@ module Tag {
         /**
          * 获取使用资源列表。
          */
-        c(): Runtime.IResource[][] {
+        public c(): Runtime.IResource[][] {
             return <Runtime.IResource[][]> Loop.prototype.c.call(this);
         }
     }

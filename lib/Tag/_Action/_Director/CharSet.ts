@@ -10,7 +10,9 @@
 /// <reference path="../Action.ts" />
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class CharSet extends Action {
         /**
          * 位置。
@@ -37,8 +39,8 @@ module Tag {
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
-            var pos = Runtime.IDirector.Position,
-                exp = content.split('，');
+            var pos: typeof Runtime.IDirector.Position = Runtime.IDirector.Position,
+                exp: string[] = content.split('，');
             switch (params[0]) {
                 case '左':
                     this._mp = pos.Left;
@@ -60,23 +62,23 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'CharSet';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._mo = (<DefChar> ep.q(this._mc, Core.IEpisode.Entity.Chr));
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states = runtime.gS(),
-                kpos = '.p' + this._mc,
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var states: Runtime.IStates = runtime.gS(),
+                kpos: string = '.p' + this._mc,
                 pos: Runtime.IDirector.Position = states.g(kpos);
             if (pos)
                 throw new E(E.ACT_CHAR_ONSTAGE, this._l);
@@ -89,7 +91,7 @@ module Tag {
         /**
          * 获取关联人物。
          */
-        gC(): DefChar {
+        public gC(): DefChar {
             return this._mo;
         }
     }

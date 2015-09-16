@@ -8,18 +8,20 @@
  */
 
 /// <reference path="../E.ts" />
-/// <reference path="Env.ts" />
+/// <reference path="ENV.ts" />
 /// <reference path="ISuccessCallback.ts" />
 /// <reference path="IFailureCallback.ts" />
 /// <reference path="_iterator.ts" />
 
-module Util {
-    export module Remote {
+namespace Util {
+    'use strict';
+
+    export namespace Remote {
         /**
          * 格式化。
          */
         export function format(url: string): string {
-            return Env.Protocol + url.replace(/^.+\/\//, '//').replace(/\?.*$/, '');
+            return ENV.Protocol + url.replace(/^.+\/\//, '//').replace(/\?.*$/, '');
         }
 
         /**
@@ -48,26 +50,26 @@ module Util {
          * HTTP 请求远端数据。
          */
         export function http<T>(method: Method, url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void {
-            var xhr = new XMLHttpRequest(),
+            var xhr: XMLHttpRequest = new XMLHttpRequest(),
                 qs: string[] = [],
                 q: string;
             xhr.addEventListener('load', () => {
                 try {
-                    var data = <Util.IHashTable<any>> JSON.parse(xhr.responseText);
-                    if ('reason' in data)
-                        throw new E(<string> data['reason']);
+                    var resp: Util.IHashTable<any> = <Util.IHashTable<any>> JSON.parse(xhr.responseText);
+                    if ('reason' in resp)
+                        throw new E(<string> resp['reason']);
                     if (200 != xhr.status)
                         throw new E(xhr.statusText);
-                    onSuccess(data);
+                    onSuccess(resp);
                 } catch (error) {
                     onFailure(<Error> error, xhr.status);
                 }
             });
-            xhr.addEventListener('error', (event) => {
+            xhr.addEventListener('error', (event: ErrorEvent) => {
                 onFailure(<Error> event.error);
             });
             xhr.open(Method.GET == method ? 'GET' : 'POST', format(url), true);
-            each(data, (value, key) => {
+            each(data, (value: string | number, key: string) => {
                 qs.push(key + '=' + encodeURIComponent(<string> value));
             });
             if (qs.length) {

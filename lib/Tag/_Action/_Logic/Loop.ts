@@ -14,31 +14,33 @@
 /// <reference path="../../_Action/_Director/ShowCG.ts" />
 /// <reference path="../../_Action/_Text/Speak.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Loop extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Loop';
         }
 
         /**
          * （执行）检查。
          */
-        t(states: Runtime.IStates): boolean {
+        public t(states: Runtime.IStates): boolean {
             return false;
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states = runtime.gS(),
-                kd = '$d',
-                depth = states.g(kd),
-                loop = function (): Promise<Runtime.IRuntime> {
-                    return Util.Q.every(<Action[]> this._s, (action) => action.p(runtime))
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var states: Runtime.IStates = runtime.gS(),
+                kd: string = '$d',
+                depth: number = states.g(kd),
+                loop: () => Promise<Runtime.IRuntime> = function (): Promise<Runtime.IRuntime> {
+                    return Util.Q.every(<Action[]> this._s, (action: Action) => action.p(runtime))
                         .then(loop);
                 };
             states.s(kd, 1 + depth);
@@ -52,10 +54,16 @@ module Tag {
         /**
          * 获取使用资源列表。
          */
-        c(): Runtime.IResource[][] {
+        public c(): Runtime.IResource[][] {
             var frame: Runtime.IResource[] = [],
-                resources: Runtime.IResource[][] = [];
-            Util.each(<Action[]> this._s, (action) => {
+                resources: Runtime.IResource[][] = [],
+                pack: () => void = function(): void {
+                    if (frame.length) {
+                        resources.push(frame);
+                        frame = [];
+                    }
+                };
+            Util.each(this._s, (action: Action) => {
                 switch (action.gN()) {
                     case 'AsRoom':
                         frame = frame.concat((<AsRoom> action).gR().d());
@@ -76,20 +84,16 @@ module Tag {
                     case 'Monolog':
                     case 'Speak':
                         frame.push((<Speak> action).gC().o());
+                        pack();
+                        break;
                     case 'VoiceOver':
-                        if (frame.length) {
-                            resources.push(frame);
-                            frame = [];
-                        }
+                        pack();
                         break;
                     case 'Loop':
                     case 'Otherwise':
                     case 'Then':
                     case 'When':
-                        if (frame.length) {
-                            resources.push(frame);
-                            frame = [];
-                        }
+                        pack();
                         resources.concat((<Loop> action).c());
                         break;
                 }

@@ -9,12 +9,14 @@
 
 /// <reference path="../Unknown.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class ResTable extends Unknown {
         /**
          * 图片资源。
          */
-        _o: Util.IHashTable<Runtime.IResource>;
+        protected _o: Util.IHashTable<Runtime.IResource>;
 
         /**
          * 构造函数。
@@ -27,7 +29,7 @@ module Tag {
         /**
          * 获取资源。
          */
-        o(id: string): Runtime.IResource {
+        public o(id: string): Runtime.IResource {
             if (!this._b)
                 throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
             return this._o[id] || this._o[''];

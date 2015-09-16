@@ -11,26 +11,28 @@
 /// <reference path="../ISE.ts" />
 /// <reference path="Audio.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class DefSE extends Entity implements ISE {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'DefSE';
         }
 
         /**
          * 获取类型。
          */
-        gT(): Core.IEpisode.Entity {
+        public gT(): Core.IEpisode.Entity {
             return Core.IEpisode.Entity.SE;
         }
 
         /**
          * 获取资源。
          */
-        o(): Runtime.IResource {
+        public o(): Runtime.IResource {
             return (<Audio> this.$q('Audio')[0]).o();
         }
     }

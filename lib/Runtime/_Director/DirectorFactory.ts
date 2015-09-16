@@ -8,12 +8,16 @@
  */
 
 /// <reference path="NodeDirector.ts" />
-/// <reference path="../../Util/Env.ts" />
+/// <reference path="../../Util/ENV.ts" />
 
-module Runtime.DirectorFactory {
-    export function c(runtime: IRuntime): Director {
-        var node = Util.Env.Node;
-        if (node.JS && !node.Webkit)
-            return new NodeDirector(runtime);
+namespace Runtime {
+    'use strict';
+
+    export namespace DirectorFactory {
+        export function c(runtime: IRuntime): Director {
+            var node: { JS: boolean; Webkit: boolean; } = Util.ENV.Node;
+            if (node.JS && !node.Webkit)
+                return new NodeDirector(runtime);
+        }
     }
 }

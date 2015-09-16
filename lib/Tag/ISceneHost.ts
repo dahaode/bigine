@@ -11,7 +11,9 @@
 /// <reference path="../Util/Q.ts" />
 /// <reference path="../Runtime/IRuntime.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export interface ISceneHost {
         /**
          * 添加事件。

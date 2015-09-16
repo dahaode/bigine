@@ -9,21 +9,23 @@
 
 /// <reference path="../Action.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Save extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Save';
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var scene = this.gU(),
-                brief= this._p[0];
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var scene: Unknown = this.gU(),
+                brief: string = this._p[0];
             if (!brief) {
                 while ('Scene' != scene.gN())
                     scene = scene.gU();

@@ -13,7 +13,9 @@
 /// <reference path="../Tag/IEntity.ts" />
 /// <reference path="IResource.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     // Tag.ISceneHost:a()
     // Tag.ISceneHost:p()
     export interface IEpisode extends Core.IEpisode, Tag.ISceneHost {

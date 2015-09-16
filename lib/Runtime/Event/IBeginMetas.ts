@@ -10,7 +10,11 @@
 /// <reference path="../../Core/IEventMetas.ts" />
 /// <reference path="../IEpisode.ts" />
 
-module Runtime.Event {
-    export interface IBeginMetas extends Core.IEventMetas<IEpisode> {
+namespace Runtime {
+    'use strict';
+
+    export namespace Event {
+        export interface IBeginMetas extends Core.IEventMetas<IEpisode> {
+        }
     }
 }

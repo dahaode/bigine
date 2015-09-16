@@ -10,7 +10,9 @@
 /// <reference path="IIdable.ts" />
 /// <reference path="IPerformable.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     // Core.ITag:gL()
     // Core.ITag:gN()
     // Core.ITag:toString()
@@ -28,7 +30,7 @@ module Tag {
         gT(): IScene.Type;
     }
 
-    export module IScene {
+    export namespace IScene {
         /**
          * 类型。
          */

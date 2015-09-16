@@ -10,20 +10,24 @@
 /// <reference path="../../Core/Event.ts" />
 /// <reference path="IEndMetas.ts" />
 
-module Runtime.Event {
-    export class End extends Core.Event<IEpisode> {
-        /**
-         * 构造函数。
-         */
-        constructor(metas: IEndMetas) {
-            super(metas);
-        }
+namespace Runtime {
+    'use strict';
 
-        /**
-         * 获取类型。
-         */
-        gT(): string {
-            return 'end';
+    export namespace Event {
+        export class End extends Core.Event<IEpisode> {
+            /**
+             * 构造函数。
+             */
+            constructor(metas: IEndMetas) {
+                super(metas);
+            }
+
+            /**
+             * 获取类型。
+             */
+            public gT(): string {
+                return 'end';
+            }
         }
     }
 }

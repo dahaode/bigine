@@ -9,21 +9,23 @@
 
 /// <reference path="../Action.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Or extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Or';
         }
 
         /**
          * （执行）检查。
          */
-        t(states: Runtime.IStates): boolean {
-            var depth = <string> states.g('$d'),
-                ret = Util.some(this._s, (tag) => (<Action> tag).t(states));
+        public t(states: Runtime.IStates): boolean {
+            var depth: number = states.g('$d'),
+                ret: boolean = Util.some(this._s, (tag: Action) => tag.t(states));
             states.s('$v' + depth, ret)
                 .s('$t' + depth, false);
             return ret;
@@ -32,7 +34,7 @@ module Tag {
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             this.t(runtime.gS());
             return runtime;
         }

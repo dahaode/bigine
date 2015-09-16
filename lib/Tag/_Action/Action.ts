@@ -10,26 +10,28 @@
 /// <reference path="../Unknown.ts" />
 /// <reference path="../IAction.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Action extends Unknown implements IAction {
         /**
          * 获取代号。
          */
-        $i(abstract?: boolean): number {
+        public $i(abstract?: boolean): number {
             return abstract ? -1 : super.$i(abstract);
         }
 
         /**
          * （执行）检查。
          */
-        t(states: Runtime.IStates): boolean {
+        public t(states: Runtime.IStates): boolean {
             return false;
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             return runtime;
         }
     }

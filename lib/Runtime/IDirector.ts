@@ -13,7 +13,9 @@
 /// <reference path="../Tag/IPoint.ts" />
 /// <reference path="../Tag/IOption.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export interface IDirector {
         /**
          * 预加载指定资源组。
@@ -103,7 +105,7 @@ module Runtime {
         choose(options: Util.IHashTable<Tag.IOption>): Promise<IRuntime>;
     }
 
-    export module IDirector {
+    export namespace IDirector {
         /**
          * 位置。
          */

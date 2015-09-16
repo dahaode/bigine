@@ -9,19 +9,21 @@
 
 /// <reference path="Image.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Audio extends Image {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Audio';
         }
 
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        $r(ep: Runtime.IEpisode): void {
+        public $r(ep: Runtime.IEpisode): void {
             this._o = ep.r(this._c, Runtime.IResource.Type.BGM);
         }
     }

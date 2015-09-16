@@ -10,7 +10,9 @@
 /// <reference path="../Core/ITag.ts" />
 /// <reference path="../Runtime/IEpisode.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     // Core.ITag:gL()
     // Core.ITag:gN()
     // Core.ITag:toString()

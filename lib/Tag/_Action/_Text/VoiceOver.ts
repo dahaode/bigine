@@ -9,19 +9,21 @@
 
 /// <reference path="../Idable.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class VoiceOver extends Idable {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'VoiceOver';
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             return runtime.gD().words(runtime.gS().t(this._c), 'voiceover');
         }
     }

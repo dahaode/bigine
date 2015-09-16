@@ -10,7 +10,9 @@
 /// <reference path="../Action.ts" />
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class AsRoom extends Action {
         /**
          * 使用房间。
@@ -20,28 +22,28 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'AsRoom';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._mo = <DefRoom> ep.q(this._p[0], Core.IEpisode.Entity.Room);
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states = runtime.gS(),
-                kroom = '_rd',
-                room = states.g(kroom),
-                ktime = '_t',
-                time = states.g(ktime),
-                director = runtime.gD(),
-                map = this._mo.gM();
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var states: Runtime.IStates = runtime.gS(),
+                kroom: string = '_rd',
+                room: string = states.g(kroom),
+                ktime: string = '_t',
+                time: string = states.g(ktime),
+                director: Runtime.IDirector = runtime.gD(),
+                map: DefMap = this._mo.gM();
             if (!time) {
                 time = '午';
                 states.s(ktime, time);
@@ -57,7 +59,7 @@ module Tag {
         /**
          * 获取关联房间。
          */
-        gR(): DefRoom {
+        public gR(): DefRoom {
             return this._mo;
         }
     }

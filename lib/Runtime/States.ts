@@ -11,7 +11,9 @@
 /// <reference path="IRuntime.ts" />
 /// <reference path="Event/Save.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export class States implements IStates {
         /**
          * 数据池。
@@ -34,7 +36,7 @@ module Runtime {
         /**
          * 设置值。
          */
-        s(key: string, value: any): States {
+        public s(key: string, value: any): States {
             this._d[key] = value;
             return this;
         }
@@ -42,14 +44,14 @@ module Runtime {
         /**
          * 获取值。
          */
-        g(key: string): any {
+        public g(key: string): any {
             return this._d[key];
         }
 
         /**
          * 删除值。
          */
-        d(key: string): States {
+        public d(key: string): States {
             delete this._d[key];
             return this;
         }
@@ -57,14 +59,14 @@ module Runtime {
         /**
          * 比较两个值是否一致。
          */
-        a(key1: string, key2: string): boolean {
+        public a(key1: string, key2: string): boolean {
             return this._d[key1] == this._d[key2];
         }
 
         /**
          * 复制值。
          */
-        c(src: string, dest: string): States {
+        public c(src: string, dest: string): States {
             this._d[dest] = this._d[src];
             return this;
         }
@@ -72,7 +74,7 @@ module Runtime {
         /**
          * 移动值。
          */
-        m(src: string, dest: string): States {
+        public m(src: string, dest: string): States {
             return this.c(src, dest)
                 .d(src);
         }
@@ -80,8 +82,8 @@ module Runtime {
         /**
          * 转化文本中的变量名至实际值。
          */
-        t(text: string): string {
-            var convert = (match: string, p1: string) => <string> this._d[p1];
+        public t(text: string): string {
+            var convert: (match: string, p1: string) => string = (match: string, p1: string) => <string> this._d[p1];
             return text.replace(/〈(.+)〉/g, convert).replace(/＜(.+)＞/g, convert);
         }
 
@@ -90,7 +92,7 @@ module Runtime {
          *
          * 此方法应触发 Save 事件。
          */
-        e(brief?: string): Util.IHashTable<any> {
+        public e(brief?: string): Util.IHashTable<any> {
             this._r.dispatchEvent(new Event.Save(<Event.ISaveMetas> {
                 target: this,
                 title: brief || '',
@@ -102,7 +104,7 @@ module Runtime {
         /**
          * 导入数据。
          */
-        i(data: Util.IHashTable<any>): States {
+        public i(data: Util.IHashTable<any>): States {
             this._d = data;
             return this;
         }

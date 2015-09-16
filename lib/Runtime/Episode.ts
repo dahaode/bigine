@@ -11,7 +11,9 @@
 /// <reference path="Event/End.ts" />
 /// <reference path="_Resource/Resource.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export class Episode implements IEpisode {
         /**
          * 已添加地事件。
@@ -42,10 +44,10 @@ module Runtime {
             this._p = ep.a();
             ep.r(this);
             Promise.all([
-                new Promise<void>((resolve) => {
-                    var res = ep.l((entities) => {
-                        Util.each(entities, (typed) => {
-                            Util.each(typed, (entity) => {
+                new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                    var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Tag.IEntity>>) => {
+                        Util.each(entities, (typed: Util.IHashTable<Tag.IEntity>) => {
+                            Util.each(typed, (entity: Tag.IEntity) => {
                                 this.f(entity);
                             });
                         });
@@ -56,8 +58,8 @@ module Runtime {
                 }).then(() => {
                     ep.b(this);
                 }),
-                new Promise<void>((resolve) => {
-                    ep.t((data) => {
+                new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                    ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
                         this._t = data;
                         resolve();
                     });
@@ -72,8 +74,8 @@ module Runtime {
         /**
          * 添加事件。
          */
-        a(scene: Tag.IScene): Episode {
-            var type = scene.gT();
+        public a(scene: Tag.IScene): Episode {
+            var type: Tag.IScene.Type = scene.gT();
             this._a[type] = this._a[type] || [];
             this._a[type].push(scene);
             return this;
@@ -82,10 +84,10 @@ module Runtime {
         /**
          * 播放。
          */
-        p(type: Tag.IScene.Type, runtime: IRuntime): Promise<IRuntime> {
+        public p(type: Tag.IScene.Type, runtime: IRuntime): Promise<IRuntime> {
             if (!(type in this._a))
                 return Promise.resolve(runtime);
-            return Util.Q.every(this._a[type], (scene) => scene.p(runtime)).then(() => {
+            return Util.Q.every(this._a[type], (scene: Tag.IScene) => scene.p(runtime)).then(() => {
                 if (Tag.IScene.Type.End == type)
                     runtime.dispatchEvent(new Event.End({
                         target: this
@@ -97,8 +99,8 @@ module Runtime {
         /**
          * 注册实体。
          */
-        f(tag: Tag.IEntity): Episode {
-            var type = tag.gT();
+        public f(tag: Tag.IEntity): Episode {
+            var type: Core.IEpisode.Entity = tag.gT();
             this._e[type] = this._e[type] || {};
             this._e[type][tag.gI()] = tag;
             return this;
@@ -107,7 +109,7 @@ module Runtime {
         /**
          * 查询实体。
          */
-        q(id: string, type: Core.IEpisode.Entity): Tag.IEntity {
+        public q(id: string, type: Core.IEpisode.Entity): Tag.IEntity {
             this._e[type] = this._e[type] || {};
             if (!(id in this._e[type]))
                 throw new E(E.EP_ENTITY_NOT_FOUND);
@@ -117,21 +119,21 @@ module Runtime {
         /**
          * 注册资源。
          */
-        r(uri: string, type: IResource.Type): Resource {
+        public r(uri: string, type: IResource.Type): Resource {
             return new Resource(uri, type);
         }
 
         /**
          * 是否自动播放。
          */
-        gA(): boolean {
+        public gA(): boolean {
             return this._p;
         }
 
         /**
          * 获取主题信息。
          */
-        gT(): Util.IHashTable<Util.IHashTable<any>> {
+        public gT(): Util.IHashTable<Util.IHashTable<any>> {
             if (!this._t)
                 throw new E(E.EP_THEME_NOT_LOADED);
             return this._t;

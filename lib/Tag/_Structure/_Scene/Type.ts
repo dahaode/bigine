@@ -11,7 +11,9 @@
 /// <reference path="../../IScene.ts" />
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Type extends Unknown {
         /**
          * 类型。
@@ -28,8 +30,8 @@ module Tag {
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
-            var match = content.match(/^(进入|离开)（(.+)）(前|后)$/),
-                term = content;
+            var match: RegExpMatchArray = content.match(/^(进入|离开)（(.+)）(前|后)$/),
+                term: string = content;
             if (match) {
                 this._o = match[2];
                 term = match[1] + '房间' + match[3];
@@ -64,14 +66,14 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Type';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             if (this._o)
                 this._o = <DefRoom> ep.q(<string> this._o, Core.IEpisode.Entity.Room);
         }
@@ -79,14 +81,14 @@ module Tag {
         /**
          * 获取类型。
          */
-        gT(): IScene.Type {
+        public gT(): IScene.Type {
             return this._t;
         }
 
         /**
          * 获取关联对象。
          */
-        gR(): DefRoom {
+        public gR(): DefRoom {
             if (!this._b)
                 throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
             return <DefRoom> this._o;

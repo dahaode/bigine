@@ -9,22 +9,24 @@
 
 /// <reference path="../../_Action/_Logic/Loop.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Content extends Unknown implements IPerformable {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Content';
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             runtime.gS().s('$d', 1);
             return runtime.gD().c(<Runtime.IResource[][]> Loop.prototype.c.call(this)).then(() => {
-                return Util.Q.every(<Action[]> this._s, (action) => action.p(runtime));
+                return Util.Q.every(this._s, (action: Action) => action.p(runtime));
             });
         }
     }

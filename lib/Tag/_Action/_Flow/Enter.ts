@@ -10,7 +10,9 @@
 /// <reference path="../Action.ts" />
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Enter extends Action {
         /**
          * 使用房间。
@@ -20,32 +22,32 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Enter';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._mo = <DefRoom> ep.q(this._p[0], Core.IEpisode.Entity.Room);
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states = runtime.gS(),
-                kcn = '_rc',
-                cn = states.g(kcn),
-                kdn = '_rd',
-                ktn = '_rt',
-                kt = '_t',
-                kco = '$rc',
-                co = <DefRoom> states.g(kco),
-                kdo = '$rd',
-                kto = '$rt',
-                director = runtime.gD();
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var states: Runtime.IStates = runtime.gS(),
+                kcn: string = '_rc',
+                cn: string = states.g(kcn),
+                kdn: string = '_rd',
+                ktn: string = '_rt',
+                kt: string = '_t',
+                kco: string = '$rc',
+                co: DefRoom = <DefRoom> states.g(kco),
+                kdo: string = '$rd',
+                kto: string = '$rt',
+                director: Runtime.IDirector = runtime.gD();
             if (cn == this._p[0]) // 同房间二次进入，
                 return director.lightOff()
                     .then(() => {

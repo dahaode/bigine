@@ -9,12 +9,14 @@
 
 /// <reference path="../Unknown.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Auto extends Unknown {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Auto';
         }
     }

@@ -7,8 +7,10 @@
  * @file      Util/IFailureCallback.ts
  */
 
-module Util {
+namespace Util {
+    'use strict';
+
     export interface IFailureCallback {
-        (error: Error, status?: number): void
+        (error: Error, status?: number): void;
     }
 }

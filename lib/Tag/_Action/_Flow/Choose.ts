@@ -10,22 +10,24 @@
 /// <reference path="../Action.ts" />
 /// <reference path="Option.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Choose extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Choose';
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             var opts: Util.IHashTable<Option> = {};
-            Util.each(this._s, (tag) => {
-                var opt = Option.f(tag, this._p[0]);
+            Util.each(this._s, (tag: Unknown) => {
+                var opt: Option = Option.f(tag, this._p[0]);
                 opts[opt.gT()] = opt;
             });
             return runtime.gD().choose(opts);

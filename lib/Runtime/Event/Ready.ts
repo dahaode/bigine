@@ -10,20 +10,24 @@
 /// <reference path="../../Core/Event.ts" />
 /// <reference path="IReadyMetas.ts" />
 
-module Runtime.Event {
-    export class Ready extends Core.Event<IEpisode> {
-        /**
-         * 构造函数。
-         */
-        constructor(metas: IReadyMetas) {
-            super(metas);
-        }
+namespace Runtime {
+    'use strict';
 
-        /**
-         * 获取类型。
-         */
-        gT(): string {
-            return 'ready';
+    export namespace Event {
+        export class Ready extends Core.Event<IEpisode> {
+            /**
+             * 构造函数。
+             */
+            constructor(metas: IReadyMetas) {
+                super(metas);
+            }
+
+            /**
+             * 获取类型。
+             */
+            public gT(): string {
+                return 'ready';
+            }
         }
     }
 }

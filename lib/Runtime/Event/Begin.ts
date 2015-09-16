@@ -10,20 +10,24 @@
 /// <reference path="../../Core/Event.ts" />
 /// <reference path="IBeginMetas.ts" />
 
-module Runtime.Event {
-    export class Begin extends Core.Event<IEpisode> {
-        /**
-         * 构造函数。
-         */
-        constructor(metas: IBeginMetas) {
-            super(metas);
-        }
+namespace Runtime {
+    'use strict';
 
-        /**
-         * 获取类型。
-         */
-        gT(): string {
-            return 'begin';
+    export namespace Event {
+        export class Begin extends Core.Event<IEpisode> {
+            /**
+             * 构造函数。
+             */
+            constructor(metas: IBeginMetas) {
+                super(metas);
+            }
+
+            /**
+             * 获取类型。
+             */
+            public gT(): string {
+                return 'begin';
+            }
         }
     }
 }

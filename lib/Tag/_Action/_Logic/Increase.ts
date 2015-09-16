@@ -9,22 +9,24 @@
 
 /// <reference path="../Action.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Increase extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Increase';
         }
 
         /**
          * （执行）检查。
          */
-        t(states: Runtime.IStates): boolean {
-            var value = <number> states.g(this._p[0]),
-                delta = <number> this.$v(this._c),
-                depth = <string> states.g('$d');
+        public t(states: Runtime.IStates): boolean {
+            var value: number = states.g(this._p[0]),
+                delta: number = <number> this.$v(this._c),
+                depth: number = states.g('$d');
             if ('string' == typeof value)
                 throw new E(E.ACT_STATE_NOT_NUMERIC, this._l);
             if ('string' == typeof delta)
@@ -38,7 +40,7 @@ module Tag {
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             this.t(runtime.gS());
             return runtime;
         }

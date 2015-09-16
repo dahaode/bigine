@@ -12,7 +12,9 @@
 /// <reference path="Link.ts" />
 /// <reference path="Times.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class DefRoom extends Entity implements IRoom {
         /**
          * 已添加地事件。
@@ -32,22 +34,22 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'DefRoom';
         }
 
         /**
          * 获取类型。
          */
-        gT(): Core.IEpisode.Entity {
+        public gT(): Core.IEpisode.Entity {
             return Core.IEpisode.Entity.Room;
         }
 
         /**
          * 添加事件。
          */
-        a(scene: IScene): DefRoom {
-            var type = scene.gT();
+        public a(scene: IScene): DefRoom {
+            var type: IScene.Type = scene.gT();
             this._a[type] = this._a[type] || [];
             this._a[type].push(scene);
             return this;
@@ -56,17 +58,17 @@ module Tag {
         /**
          * 播放。
          */
-        p(type: IScene.Type, runtime: Runtime.IRuntime): Promise<Runtime.IRuntime> {
+        public p(type: IScene.Type, runtime: Runtime.IRuntime): Promise<Runtime.IRuntime> {
             if (!(type in this._a))
                 return Promise.resolve(runtime);
-            return Util.Q.every(this._a[type], (scene) => scene.p(runtime));
+            return Util.Q.every(this._a[type], (scene: IScene) => scene.p(runtime));
         }
 
         /**
          * 获取资源。
          */
-        o(id?: string): Runtime.IResource {
-            var map = this.gM();
+        public o(id?: string): Runtime.IResource {
+            var map: DefMap = this.gM();
             if (map)
                 return map.o();
             return (<Times> this.$q('Times')[0]).o(id);
@@ -75,8 +77,8 @@ module Tag {
         /**
          * 获取关联地图。
          */
-        gM(): DefMap {
-            var l = <Link> this.$q('Link')[0];
+        public gM(): DefMap {
+            var l: Link = <Link> this.$q('Link')[0];
             if (!l) return;
             return l.gM();
         }
@@ -84,8 +86,8 @@ module Tag {
         /**
          * 获取所有关联资源。
          */
-        d(): Runtime.IResource[] {
-            var map = this.gM();
+        public d(): Runtime.IResource[] {
+            var map: DefMap = this.gM();
             if (map)
                 return map.d();
             return (<Times> this.$q('Times')[0]).d();

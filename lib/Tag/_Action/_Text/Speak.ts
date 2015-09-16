@@ -10,7 +10,9 @@
 /// <reference path="../Idable.ts" />
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Speak extends Idable {
         /**
          * 发言者。
@@ -20,21 +22,21 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Speak';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._mc = <DefChar> ep.q(this._p[0], Core.IEpisode.Entity.Chr);
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             return runtime.gD().words(
                 runtime.gS().t(this._c),
                 'speak',
@@ -46,7 +48,7 @@ module Tag {
         /**
          * 获取关联人物。
          */
-        gC(): DefChar {
+        public gC(): DefChar {
             return this._mc;
         }
     }

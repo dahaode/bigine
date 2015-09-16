@@ -9,7 +9,9 @@
 
 /// <reference path="IRuntime.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     export interface IButtonable {
         /**
          * 交互逻辑。

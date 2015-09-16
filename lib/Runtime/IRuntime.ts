@@ -14,7 +14,9 @@
 /// <reference path="IStates.ts" />
 /// <reference path="IDirector.ts" />
 
-module Runtime {
+namespace Runtime {
+    'use strict';
+
     // Core.IEmittable:addEventListener()
     // Core.IEmittable:removeEventListener()
     // Core.IEmittable:dispatchEvent()

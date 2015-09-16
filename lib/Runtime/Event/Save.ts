@@ -10,32 +10,36 @@
 /// <reference path="../../Core/Event.ts" />
 /// <reference path="ISaveMetas.ts" />
 
-module Runtime.Event {
-    export class Save extends Core.Event<IStates> {
-        /**
-         * 存档标题。
-         */
-        title: string;
+namespace Runtime {
+    'use strict';
 
-        /**
-         * 存档数据。
-         */
-        data: Util.IHashTable<any>;
+    export namespace Event {
+        export class Save extends Core.Event<IStates> {
+            /**
+             * 存档标题。
+             */
+            public title: string;
 
-        /**
-         * 构造函数。
-         */
-        constructor(metas: ISaveMetas) {
-            super(metas);
-            this.title = metas.title;
-            this.data = metas.data;
-        }
+            /**
+             * 存档数据。
+             */
+            public data: Util.IHashTable<any>;
 
-        /**
-         * 获取类型。
-         */
-        gT(): string {
-            return 'save';
+            /**
+             * 构造函数。
+             */
+            constructor(metas: ISaveMetas) {
+                super(metas);
+                this.title = metas.title;
+                this.data = metas.data;
+            }
+
+            /**
+             * 获取类型。
+             */
+            public gT(): string {
+                return 'save';
+            }
         }
     }
 }

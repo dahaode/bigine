@@ -9,7 +9,9 @@
 
 /// <reference path="IHashTable.ts" />
 
-module Util {
+namespace Util {
+    'use strict';
+
     export interface IObjectIterator<T, U> {
         (element: T, index?: string, object?: IHashTable<T>): U;
     }

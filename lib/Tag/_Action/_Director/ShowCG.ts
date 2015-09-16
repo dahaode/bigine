@@ -10,7 +10,9 @@
 /// <reference path="../Action.ts" />
 /// <reference path="../../_Definition/DefCG.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class ShowCG extends Action {
         /**
          * 使用特写。
@@ -20,24 +22,24 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'ShowCG';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._mo = (<DefCG> ep.q(this._p[0], Core.IEpisode.Entity.CG));
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var states = runtime.gS(),
-                key = '_c',
-                cg = states.g(key);
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var states: Runtime.IStates = runtime.gS(),
+                key: string = '_c',
+                cg: string = states.g(key);
             if (cg)
                 throw new E(E.ACT_CG_ALREADY_SHOWN, this._l);
             states.s(key, this._c);
@@ -47,7 +49,7 @@ module Tag {
         /**
          * 获取关联特写。
          */
-        gC(): DefCG {
+        public gC(): DefCG {
             return this._mo;
         }
     }

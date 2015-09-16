@@ -9,7 +9,9 @@
 
 /// <reference path="IEpisode.ts" />
 
-module Core {
+namespace Core {
+    'use strict';
+
     export interface ITag {
         // new (params: string[], content: string, children: ITag[], lineNo: number): ITag;
 

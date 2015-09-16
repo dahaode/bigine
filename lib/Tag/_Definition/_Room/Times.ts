@@ -9,22 +9,24 @@
 
 /// <reference path="../ResTable.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Times extends ResTable {
 
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Times';
         }
 
         /**
          * 注册（自身实体）至（运行时）作品。
          */
-        $r(ep: Runtime.IEpisode): void {
-            Util.each(this._s, (tag, index) => {
-                var id = tag.$p(0);
+        public $r(ep: Runtime.IEpisode): void {
+            Util.each(this._s, (tag: Unknown, index: number) => {
+                var id: string = tag.$p(0);
                 this._o[id] = ep.r(tag.$c(), Runtime.IResource.Type.Room);
                 if (!index)
                     this._o['默认'] = this._o[id];
@@ -34,9 +36,9 @@ module Tag {
         /**
          * 获取所有关联资源。
          */
-        d(): Runtime.IResource[] {
+        public d(): Runtime.IResource[] {
             var ret: Runtime.IResource[] = [];
-            Util.each(this._o, (resource, index) => {
+            Util.each(this._o, (resource: Runtime.IResource, index: string) => {
                 if ('默认' != index)
                     ret.push(resource);
             });

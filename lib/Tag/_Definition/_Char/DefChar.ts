@@ -11,7 +11,9 @@
 /// <reference path="Avatar.ts" />
 /// <reference path="Poses.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class DefChar extends Entity {
         /**
          * 原型。
@@ -30,14 +32,14 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'DefChar';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             if (this._p[0])
                 this._o = <DefChar> ep.q(this._p[0], Core.IEpisode.Entity.Chr);
         }
@@ -45,21 +47,21 @@ module Tag {
         /**
          * 获取类型。
          */
-        gT(): Core.IEpisode.Entity {
+        public gT(): Core.IEpisode.Entity {
             return Core.IEpisode.Entity.Chr;
         }
 
         /**
          * 获取资源。
          */
-        o(id?: string): Runtime.IResource {
-            var q = this.$q(id ? 'Poses' : 'Avatar');
+        public o(id?: string): Runtime.IResource {
+            var q: Unknown[] = this.$q(id ? 'Poses' : 'Avatar');
             if (!q.length) {
                 if (!this._b)
                     throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
-                if (this._o)
+                if (this._o) {
                     return this._o.o(id);
-                else
+                } else
                     throw new E(E.DEF_CHAR_POSES_NOT_FOUND, this._l);
             }
             return (<Poses> q[0]).o(id);
@@ -68,8 +70,8 @@ module Tag {
         /**
          * 获取所有关联资源。
          */
-        d(): Runtime.IResource[] {
-            var ret = (<Poses> this.$q('Poses')[0]).d();
+        public d(): Runtime.IResource[] {
+            var ret: Runtime.IResource[] = (<Poses> this.$q('Poses')[0]).d();
             ret.unshift((<Avatar> this.$q('Avatar')[0]).o());
             return ret;
         }

@@ -15,25 +15,27 @@
 /// <reference path="../_Definition/DefCG.ts" />
 /// <reference path="../_Definition/DefSE.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Resources extends Unknown {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Resources';
         }
 
         /**
          * 加载远端数据。
          */
-        l(callback: Util.ISuccessCallback<Util.IHashTable<IEntity>>): void {
-            Util.Remote.post<Util.IHashTable<Util.IHashTable<any>>>('//api.dahao.de/resource/' + this._c + '/', {}, (data) => {
+        public l(callback: Util.ISuccessCallback<Util.IHashTable<IEntity>>): void {
+            Util.Remote.post<Util.IHashTable<Util.IHashTable<any>>>('//api.dahao.de/resource/' + this._c + '/', {}, (data: Util.IHashTable<Util.IHashTable<Util.IHashTable<any>>>) => {
                 var ret: Util.IHashTable<Util.IHashTable<IEntity>> = {};
                 ret['rooms'] = {};
-                Util.each(data['rooms'] || {}, (room, index) => {
+                Util.each(data['rooms'] || {}, (room: Util.IHashTable<any>, index: string) => {
                     var times: Unknown[] = [];
-                    Util.each(<Util.IHashTable<string>> room['snaps'] || {}, (id, title) => {
+                    Util.each(<Util.IHashTable<string>> room['snaps'] || {}, (id: string, title: string) => {
                         times.push(new Unknown([title], id, [], -1));
                     });
                     ret['rooms'][index] = new DefRoom([], <string> room['title'], [
@@ -41,9 +43,9 @@ module Tag {
                     ], -1);
                 });
                 ret['chars'] = {};
-                Util.each(data['chars'] || {}, (chr, index) => {
+                Util.each(data['chars'] || {}, (chr: Util.IHashTable<any>, index: string) => {
                     var poses: Unknown[] = [];
-                    Util.each(<Util.IHashTable<string>> chr['poses'] || {}, (id, title) => {
+                    Util.each(<Util.IHashTable<string>> chr['poses'] || {}, (id: string, title: string) => {
                         poses.push(new Unknown([title], id, [], -1));
                     });
                     ret['chars'][index] = new DefChar([], <string> chr['title'], [
@@ -52,13 +54,13 @@ module Tag {
                     ], -1);
                 });
                 ret['maps'] = {};
-                Util.each(data['maps'] || {}, (map, index) => {
+                Util.each(data['maps'] || {}, (map: Util.IHashTable<any>, index: string) => {
                     var children: Unknown[] = [
                         new BGImage([], <string> map['base'], [], -1)
                     ];
-                    Util.each(<Util.IHashTable<Util.IHashTable<any>>> map['points'] || {}, (point, index) => {
-                        var region = <{top: number, right: number, bottom: number, left: number}> point['region'],
-                            regstr = region.top + '，' + region.right + '，' + region.bottom + '，' + region.left;
+                    Util.each(<Util.IHashTable<Util.IHashTable<any>>> map['points'] || {}, (point: Util.IHashTable<any>) => {
+                        var region: { top: number; right: number; bottom: number; left: number } = point['region'],
+                            regstr: string = region.top + '，' + region.right + '，' + region.bottom + '，' + region.left;
                         if ('priority' in point)
                             regstr += '，' + point['priority'];
                         children.push(new Point([], <string> point['title'], [
@@ -69,25 +71,25 @@ module Tag {
                     ret['maps'][index] = new DefMap([], <string> map['title'], children, -1);
                 });
                 ret['bgms'] = {};
-                Util.each(data['bgms'] || {}, (bgm, index) => {
+                Util.each(data['bgms'] || {}, (bgm: Util.IHashTable<any>, index: string) => {
                     ret['bgms'][index] = new DefBGM([], <string> bgm['title'], [
                         new Audio([], <string> bgm['audio'], [], -1)
                     ], -1);
                 });
                 ret['cgs'] = {};
-                Util.each(data['cgs'] || {}, (cg, index) => {
+                Util.each(data['cgs'] || {}, (cg: Util.IHashTable<any>, index: string) => {
                     ret['cgs'][index] = new DefCG([], <string> cg['title'], [
                         new Image([], <string> cg['image'], [], -1)
                     ], -1);
                 });
                 ret['ses'] = {};
-                Util.each(data['ses'] || {}, (se, index) => {
+                Util.each(data['ses'] || {}, (se: Util.IHashTable<any>, index: string) => {
                     ret['ses'][index] = new DefSE([], <string> se['title'], [
                         new Audio([], <string> se['audio'], [], -1)
                     ], -1);
                 });
                 callback(ret);
-            }, (error, status?) => {
+            }, (error: Error, status?: any) => {
                 throw error;
             });
         }

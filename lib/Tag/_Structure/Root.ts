@@ -12,7 +12,9 @@
 /// <reference path="Resources.ts" />
 /// <reference path="Theme.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Root extends Unknown implements IRoot {
         /**
          * 构造函数。
@@ -24,15 +26,15 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Root';
         }
 
         /**
          * 绑定（运行时）作品（实体到子标签及自身）。
          */
-        b(ep: Runtime.IEpisode): void {
-            var player = this.$q('Player')[0];
+        public b(ep: Runtime.IEpisode): void {
+            var player: Unknown = this.$q('Player')[0];
             if (player)
                 player.b(ep);
             super.b(ep);
@@ -41,9 +43,9 @@ module Tag {
         /**
          * 转化为（中文）剧本（代码）。
          */
-        toString(): string {
-            var clob = '';
-            Util.each(this._s, (tag) => {
+        public toString(): string {
+            var clob: string = '';
+            Util.each(this._s, (tag: Unknown) => {
                 clob += tag.toString();
             });
             return clob;
@@ -52,33 +54,33 @@ module Tag {
         /**
          * 转化为运行时（Javascript）代码。
          */
-        toJsrn(): string {
+        public toJsrn(): string {
             var children: string[] = [];
-            Util.each(this._s, (tag) => {
+            Util.each(this._s, (tag: Unknown) => {
                 children.push(tag.toJsrn());
-            })
+            });
             return '[' + children.join(',') + ']';
         }
 
         /**
          * 获取父标签。
          */
-        gU(): Unknown {
+        public gU(): Unknown {
             throw new E(E.ROOT_NOT_PARENT);
         }
 
         /**
          * 是否自动播放。
          */
-        a(): boolean {
+        public a(): boolean {
             return 0 < this.$q('Auto').length;
         }
 
         /**
          * 加载资源包。
          */
-        l(callback: Util.ISuccessCallback<Util.IHashTable<IEntity>>): boolean {
-            var resources = <Resources> this.$q('Resources')[0];
+        public l(callback: Util.ISuccessCallback<Util.IHashTable<IEntity>>): boolean {
+            var resources: Resources = <Resources> this.$q('Resources')[0];
             if (!resources)
                 return false;
             resources.l(callback);
@@ -88,7 +90,7 @@ module Tag {
         /**
          * 加载主题。
          */
-        t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
+        public t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
             (<Theme> this.$q('Theme')[0]).l(callback);
         }
     }

@@ -10,24 +10,26 @@
 /// <reference path="Action.ts" />
 /// <reference path="../IIdable.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Idable extends Action implements IIdable {
         /**
          * 唯一编号。
          */
-        _i: string;
+        private _i: string;
 
         /**
          * 获取编号。
          */
-        gI(): string {
+        public gI(): string {
             return this._i;
         }
 
         /**
          * 恢复编号。
          */
-        i(id: string): void {
+        public i(id: string): void {
             this._i = id;
         }
     }

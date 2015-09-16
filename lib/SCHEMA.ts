@@ -7,7 +7,9 @@
  * @file      SCHEMA.ts
  */
 
-module SCHEMA {
+namespace SCHEMA {
+    'use strict';
+
     /**
      * 类到标签映射。
      */
@@ -234,14 +236,15 @@ module SCHEMA {
     };
     var ii: any,
         jj: any;
-    for (ii in S) {
-        if (!(S[ii][1] instanceof Array))
-            S[ii][1] = [S[ii][1], S[ii][1]];
-        if (S[ii][3])
-            for (jj in S[ii][3])
-                if (!(S[ii][3][jj] instanceof Array))
-                    S[ii][3][jj] = [S[ii][3][jj], S[ii][3][jj]];
-    }
+    for (ii in S)
+        if (S.hasOwnProperty(ii)) {
+            if (!(S[ii][1] instanceof Array))
+                S[ii][1] = [S[ii][1], S[ii][1]];
+            if (S[ii][3])
+                for (jj in S[ii][3])
+                    if (!(S[ii][3][jj] instanceof Array))
+                        S[ii][3][jj] = [S[ii][3][jj], S[ii][3][jj]];
+        }
 
     /**
      * 标签到类映射。

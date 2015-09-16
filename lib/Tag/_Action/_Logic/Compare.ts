@@ -9,20 +9,22 @@
 
 /// <reference path="../Action.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Compare extends Action {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Compare';
         }
 
         /**
          * （执行）检查。
          */
-        t(states: Runtime.IStates): boolean {
-            var depth = <string> states.g('$d');
+        public t(states: Runtime.IStates): boolean {
+            var depth: number = states.g('$d');
             states.c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;
@@ -31,7 +33,7 @@ module Tag {
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
             this.t(runtime.gS());
             return runtime;
         }

@@ -11,7 +11,9 @@
 /// <reference path="../IPlayer.ts" />
 /// <reference path="_Char/DefChar.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Player extends Unknown implements IPlayer {
         /**
          * 关联对象。
@@ -21,15 +23,14 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Player';
         }
-
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             this._o = <DefChar> ep.q(this._c, Core.IEpisode.Entity.Chr);
             ep.f(this);
         }
@@ -37,21 +38,21 @@ module Tag {
         /**
          * 获取唯一编号。
          */
-        gI(): string {
+        public gI(): string {
             return '';
         }
 
         /**
          * 获取类型。
          */
-        gT(): Core.IEpisode.Entity {
+        public gT(): Core.IEpisode.Entity {
             return Core.IEpisode.Entity.Player;
         }
 
         /**
          * 获取关联角色。
          */
-        gC(): DefChar {
+        public gC(): DefChar {
             if (!this._b)
                 throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
             return this._o;

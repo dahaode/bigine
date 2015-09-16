@@ -11,7 +11,9 @@
 /// <reference path="Conditions.ts" />
 /// <reference path="Content.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Scene extends Unknown implements IScene {
         /**
          * 唯一编号。
@@ -21,36 +23,36 @@ module Tag {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Scene';
         }
 
         /**
          * 绑定（运行时）作品（实体）。
          */
-        $b(ep: Runtime.IEpisode): void {
+        public $b(ep: Runtime.IEpisode): void {
             ((<Type> this.$q('Type')[0]).gR() || ep).a(this);
         }
 
         /**
          * 获取编号。
          */
-        gI(): string {
+        public gI(): string {
             return this._i;
         }
 
         /**
          * 恢复编号。
          */
-        i(id: string): void {
+        public i(id: string): void {
             this._i = id;
         }
 
         /**
          * 执行。
          */
-        p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
-            var conds = <Conditions> this.$q('Conditions')[0];
+        public p(runtime: Runtime.IRuntime): Runtime.IRuntime | Thenable<Runtime.IRuntime> {
+            var conds: Conditions = <Conditions> this.$q('Conditions')[0];
             if (!conds || !conds.t(runtime.gS()))
                 return runtime;
             return (<Content> this.$q('Content')[0]).p(runtime);
@@ -59,7 +61,7 @@ module Tag {
         /**
          * 获取类型。
          */
-        gT(): IScene.Type {
+        public gT(): IScene.Type {
             return (<Type> this.$q('Type')[0]).gT();
         }
     }

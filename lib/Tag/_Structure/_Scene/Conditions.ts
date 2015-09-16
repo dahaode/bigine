@@ -9,20 +9,22 @@
 
 /// <reference path="../../_Action/Action.ts" />
 
-module Tag {
+namespace Tag {
+    'use strict';
+
     export class Conditions extends Unknown implements IAssertable {
         /**
          * 获取标签名称。
          */
-        gN(): string {
+        public gN(): string {
             return 'Conditions';
         }
 
         /**
          * 检查。
          */
-        t(states: Runtime.IStates): boolean {
-            return Util.every(<Action[]> this._s, (condition) => condition.t(states));
+        public t(states: Runtime.IStates): boolean {
+            return Util.every(this._s, (condition: Action) => condition.t(states));
         }
     }
 }
