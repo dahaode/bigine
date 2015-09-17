@@ -50,7 +50,9 @@ namespace Util {
          * HTTP 请求远端数据。
          */
         export function http<T>(method: Method, url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void {
-            var xhr: XMLHttpRequest = new XMLHttpRequest(),
+            var xhr: XMLHttpRequest = 'undefined' != typeof XMLHttpRequest ?
+                    new XMLHttpRequest() :
+                    require('./xhr').create(),
                 qs: string[] = [],
                 q: string;
             xhr.addEventListener('load', () => {

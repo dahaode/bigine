@@ -11,14 +11,17 @@
 /// <reference path="Lex/Parser.ts" />
 
 function Bigine(source: string): Core.IRootTag;
+function Bigine(tags: Core.IRootTag): Core.IRuntime;
 function Bigine(lines: string[]): Core.IRootTag;
-function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Core.ITag[], id?: string): Core.ITag;
 function Bigine(children: Core.ITag[]): Core.IRuntime;
+function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Core.ITag[], id?: string): Core.ITag;
 function Bigine(code: any, ...args: any[]): any {
     'use strict';
 
     if ('string' == typeof code)
         return Lex.Parser.c(code);
+    if (code instanceof Tag.Root)
+        return new Runtime.Runtime(code);
     if (code instanceof Array) {
         if ('string' == typeof code[0])
             return Lex.Parser.c(code);
