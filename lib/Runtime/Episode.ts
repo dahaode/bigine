@@ -8,6 +8,7 @@
  */
 
 /// <reference path="Event/Ready.ts" />
+/// <reference path="Event/Error.ts" />
 /// <reference path="Event/End.ts" />
 /// <reference path="_Resource/Resource.ts" />
 
@@ -67,6 +68,11 @@ namespace Runtime {
             ]).then(() => {
                 runtime.dispatchEvent(new Event.Ready({
                     target: this
+                }));
+            })['catch']((error: any) => {
+                runtime.dispatchEvent(new Event.Error({
+                    target: this,
+                    error: error
                 }));
             });
         }
