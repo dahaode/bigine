@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+
+var $p = process,
+    $fs = require('fs'),
+    $q = require('es6-promise').Promise,
+    $b = require(__dirname + '/../var/build/bigine'),
+    d = false;
+
+$q.resolve($p.argv)
+    .then(function (args) {
+        args.splice(0, 2);
+        for (var ii = 0; ii < args.length; ii++)
+            if ('-d' == args[ii]) {
+                d = true;
+                args.splice(ii, 1);
+            }
+        if (!args.length)
+            throw 1;
+        return args[0];
+    })
+    .then(function (filepath) {
+        return new $q(function (resolve, reject) {
+            $fs.access(filepath, $fs.R_OK, function (error) {
+                if (error)
+                    return reject(2);
+                $fs.readFile(filepath, {
+                    encoding: 'utf8'
+                }, function (error, data) {
+                    if (error)
+                        return reject(3);
+                    resolve(data);
+                });
+            });
+        });
+    })
+    .then(function (source) {
+        $p.stdout.write($b(source).toJsrn());
+        throw 0;
+    })
+    .catch(function (error) {
+        var msg;
+        switch (error) {
+            case 0:
+                msg = '\n';
+                break;
+            case 1:
+                msg = '使用方法：\n' +
+                    '  compile <源代码.txt>\n';
+                break;
+            case 2:
+                msg = '错误：源代码文件无法读取。\n';
+                break;
+            case 3:
+                msg = '错误：源代码读取失败。\n';
+                break;
+            default:
+                throw error;
+        }
+        $p.stderr.write(msg);
+        $p.exit(error);
+    })
+    .catch(function (error) {
+        if (d)
+            console.error(error.stack);
+        $p.stderr.write('错误：' + error.message + '\n');
+        $p.exit(4);
+    });

@@ -18,7 +18,7 @@ $gulp.task('lint', function () {
         .pipe($lint.report('prose'));
 });
 
-$gulp.task('compile', ['lint'], function () {
+$gulp.task('compile', function () {
     var pkg = require('./package.json'),
         ts = $gulp.src('lib/Bigine.ts')
             .pipe($smap.init())
@@ -33,7 +33,7 @@ $gulp.task('compile', ['lint'], function () {
         .pipe($gulp.dest('var/build'));
 });
 
-$gulp.task('bundle', ['compile'], function () {
+$gulp.task('bundle', ['lint', 'compile'], function () {
     var pkg = require('./package.json');
     return $browserify({
             detectGlobals: false
@@ -46,7 +46,7 @@ $gulp.task('bundle', ['compile'], function () {
         .pipe($gulp.dest('var/build'));
 });
 
-$gulp.task('minify', ['compile'], function () {
+$gulp.task('minify', ['lint', 'compile'], function () {
     var pkg = require('./package.json');
     return $browserify({
             debug: true,
@@ -64,6 +64,13 @@ $gulp.task('minify', ['compile'], function () {
         .pipe($uglify())
         .pipe($smap.write('.'))
         .pipe($gulp.dest('var/build'));
+});
+
+$gulp.task('watch', function () {
+    return $gulp.watch([
+        'lib/**/*.ts',
+        '!lib/**/*.d.ts'
+    ], ['compile']);
 });
 
 $gulp.task('default', ['minify']);

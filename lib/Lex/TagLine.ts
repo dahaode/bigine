@@ -117,7 +117,7 @@ namespace Lex {
             }
             proto = eval('Tag.' + SCHEMA.C[name]);
             tag = new proto(params, content, children, this._l[0]);
-            if (tag instanceof Tag.Idable)
+            if (tag instanceof Tag.Idable || 'Scene' == tag.gN())
                 (<Tag.Idable> tag).i(u());
             return tag;
         }

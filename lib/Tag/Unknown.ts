@@ -70,6 +70,7 @@ namespace Tag {
             } else if (undefined !== schema[1][1] && params.length > schema[1][1])
                 throw new E(E.TAG_PARAMS_TOO_MANY, lineNo);
             this._p = params;
+            content = '' + content;
             if (-1 == schema[2] && content.length) {
                 throw new E(E.TAG_CONTENT_FORBIDEN, lineNo);
             } else if (1 == schema[2] && !content.length)

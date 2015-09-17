@@ -30,6 +30,7 @@ namespace Tag {
                 ret: boolean;
             switch (this._p[2] || '等于') {
                 case '等于':
+                    this._p.splice(2);
                     ret = real == expected;
                     break;
                 case '不等于':
