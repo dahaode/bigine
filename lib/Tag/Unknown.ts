@@ -157,9 +157,9 @@ namespace Tag {
                 clob += '（' + params.join('，') + '）';
             if (this._c || this._s.length)
                 clob += '：';
-            clob += '\n';
+            clob += this._c + '\n';
             Util.each(this._s, (tag: Unknown) => {
-                clob += '\t' + tag.toString().replace(/\n/, '\n\t').substr(0, -1);
+                clob += '\t' + tag.toString().replace(/\n/g, '\n\t').replace(/\t$/, '');
             });
             return clob;
         }
@@ -183,7 +183,8 @@ namespace Tag {
             Util.each(this._s, (tag: Unknown) => {
                 children.push(tag.toJsrn());
             });
-            clob = JSON.stringify(parts).substr(1, -1);
+            clob = JSON.stringify(parts);
+            clob = clob.substr(1, clob.length - 2);
             if (children.length)
                 clob += ',[' + children.join(',') + ']';
             return '$(' + clob + ')';
@@ -222,7 +223,7 @@ namespace Tag {
             var index: number = SCHEMA.I[this.gN()];
             if (undefined === index)
                 throw new E(E.SCHEMA_TAG_NOT_DECLARED, this._l);
-            return index;
+            return index - 0;
         }
 
         /**

@@ -99,7 +99,9 @@ namespace Lex {
          */
         public t(): Core.ITag {
             var name: string = this._t[0],
-                params: string[] = this._t[1].split('，'),
+                params: string[] = this._t[1] ?
+                    this._t[1].split('，') :
+                    [],
                 content: string = this._t[2],
                 children: Tag.Unknown[] = [],
                 proto: typeof Tag.Unknown,
@@ -111,7 +113,7 @@ namespace Lex {
                 return new Tag.Root(children);
             if (!(name in SCHEMA.C)) {
                 params.unshift(name);
-                name = 'ROOT';
+                name = 'UNKNOWN';
             }
             proto = eval('Tag.' + SCHEMA.C[name]);
             tag = new proto(params, content, children, this._l[0]);

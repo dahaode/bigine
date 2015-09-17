@@ -257,7 +257,7 @@ namespace SCHEMA {
     };
     for (ii in T)
         if (T.hasOwnProperty(ii) && !(T[ii] in C))
-            C[ii] = ii;
+            C[T[ii]] = ii;
 
     /**
      * 标签索引。

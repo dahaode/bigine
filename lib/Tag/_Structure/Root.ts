@@ -59,7 +59,7 @@ namespace Tag {
             Util.each(this._s, (tag: Unknown) => {
                 children.push(tag.toJsrn());
             });
-            return '[' + children.join(',') + ']';
+            return '(function($){return $([' + children.join(',') + '])})(require("bigine"))';
         }
 
         /**

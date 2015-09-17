@@ -17,7 +17,7 @@ namespace Tag {
          * 获取标签名称。
          */
         public gN(): string {
-            return 'Enter';
+            return 'Freeze';
         }
 
         /**

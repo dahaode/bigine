@@ -20,6 +20,14 @@ namespace Tag {
         private _i: string;
 
         /**
+         * 转化为运行时（Javascript）代码。
+         */
+        public toJsrn(): string {
+            var clob: string = super.toJsrn();
+            return clob.substr(0, clob.length - 1) + ',"' + this._i + '")';
+        }
+
+        /**
          * 获取编号。
          */
         public gI(): string {

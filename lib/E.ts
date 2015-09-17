@@ -93,14 +93,14 @@ class E extends Error {
     constructor(message: string, lineNo?: number) {
         if ('captureStackTrace' in Error)
             Error['captureStackTrace'](this, E);
-        if (lineNo in E.Signal) {
-            this.signal = lineNo;
-        } else {
-            this.signal = E.Signal.OK;
+        this.signal = (lineNo in E.Signal) ?
+            lineNo :
+            E.Signal.OK;
+        if (0 < lineNo)
             message = '第 ' + lineNo + ' 行' + message;
-        }
-        super(message);
+        super();
         this.name = 'BigineError';
+        this.message = message;
     }
 }
 
