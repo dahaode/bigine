@@ -17,6 +17,11 @@ namespace Tag {
 
     export class Root extends Unknown implements Core.IRootTag {
         /**
+         * 压缩键名序列。
+         */
+        public static SERIALS: string = 'qwertyuiopasdfghjklzxcvbnm$_QWERTYUIOPASDFGHJKLZXCVBNM';
+
+        /**
          * 构造函数。
          */
         constructor(children: Unknown[]) {
@@ -55,11 +60,76 @@ namespace Tag {
          * 转化为运行时（Javascript）代码。
          */
         public toJsrn(): string {
-            var children: string[] = [];
+            var children: string[] = [],
+                profiler: (src: string) => Util.IHashTable<number> = (src: string) => {
+                    // 分析代码中各字符串的重复频度。
+                    var profile: Util.IHashTable<number> = {},
+                        buffer: string = '',
+                        found: boolean = false,
+                        escaped: boolean = false,
+                        index: number = 0,
+                        chr: string;
+                    for (; index < src.length; index++) {
+                        chr = src[index];
+                        if (!found) {
+                            if ('"' == chr) {
+                                found = true;
+                                buffer = chr;
+                                continue;
+                            }
+                        }
+                        buffer += chr;
+                        if ('\\' == chr) {
+                            escaped = !escaped;
+                        } else if ('"' == chr && !escaped) {
+                            profile[buffer] = 1 + (profile[buffer] || 0);
+                            buffer = '';
+                            found = false;
+                        } else {
+                            escaped = false;
+                        }
+                    }
+                    return profile;
+                },
+                dictor: (profile: Util.IHashTable<number>) => Util.IHashTable<string> = (profile: Util.IHashTable<number>) => {
+                    // 将可压缩率（重复次数 * 单次节省字符数）最高的字符串制作字典。
+                    var result: Util.IHashTable<string> = {},
+                        deltas: number[] = [0],
+                        terms: string[] = [''];
+                    Util.each(profile, (times: number, term: string) => {
+                        var tlen: number = term.length,
+                            delta: number = (times - 1) * (tlen - 3) - 2;
+                        if (1 > delta) return;
+                        Util.some(deltas, (value: number, index: number) => {
+                            if (delta < value)
+                                return false;
+                            deltas.splice(index, 0, delta);
+                            terms.splice(index, 0, term);
+                            return true;
+                        });
+                    });
+                    terms.pop();
+                    Util.every(terms, (term: string, index: number) => {
+                        if (1 + index > Root.SERIALS.length)
+                            return false;
+                        result[Root.SERIALS[index]] = term;
+                        return true;
+                    });
+                    return result;
+                },
+                dict: Util.IHashTable<string> = {},
+                dlobs: string[] = [],
+                clob: string;
             Util.each(this._s, (tag: Unknown) => {
                 children.push(tag.toJsrn());
             });
-            return '(function($){return $([' + children.join(',') + '])})(require("bigine"))';
+            clob = children.join(',');
+            dict = dictor(profiler(clob));
+            Util.each(dict, (term: string, code: string) => {
+                clob = clob.replace(new RegExp(term, 'g'), '_.' + code);
+                dlobs.push(code + ':' + term);
+            });
+            return '(function($,_){return $([' + clob + '])})(require("bigine"),{' + dlobs.join(',') + '})';
         }
 
         /**

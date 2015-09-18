@@ -38,7 +38,7 @@ function Bigine(code: any, ...args: any[]): any {
         type: string = typeof arg,
         tag: Tag.Unknown;
     if ('string' == type || 'number' == type) {
-        content = arg;
+        content += arg;
         arg = args.shift();
     }
     if (arg instanceof Array) {
