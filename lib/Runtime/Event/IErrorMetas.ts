@@ -7,7 +7,7 @@
  * @file      Runtime/Event/IErrorMetas.ts
  */
 
-/// <reference path="../../Core/_Runtime/IEventMetas.ts" />
+/// <reference path="../../Core/_Event/IEventMetas.ts" />
 
 namespace Runtime {
     'use strict';

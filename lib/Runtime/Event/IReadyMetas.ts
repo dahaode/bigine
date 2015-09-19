@@ -7,7 +7,7 @@
  * @file      Runtime/Event/IReadyMetas.ts
  */
 
-/// <reference path="../../Core/_Runtime/IEventMetas.ts" />
+/// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 
 namespace Runtime {

@@ -7,7 +7,7 @@
  * @file      Core/_Runtime/IRuntime.ts
  */
 
-/// <reference path="IEmittable.ts" />
+/// <reference path="../_Event/IEmittable.ts" />
 /// <reference path="../_Tag/IRootTag.ts" />
 /// <reference path="ILogger.ts" />
 /// <reference path="IStates.ts" />

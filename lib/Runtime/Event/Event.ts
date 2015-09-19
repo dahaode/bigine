@@ -7,7 +7,7 @@
  * @file      Runtime/Event/Event.ts
  */
 
-/// <reference path="../../Core/_Runtime/IEvent.ts" />
+/// <reference path="../../Core/_Event/IEvent.ts" />
 
 namespace Runtime {
     'use strict';
