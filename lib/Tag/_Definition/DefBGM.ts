@@ -31,7 +31,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(): Core.IResource {
+        public o(): Core.IResource<string> {
             return (<Audio> this.$q('Audio')[0]).o();
         }
     }

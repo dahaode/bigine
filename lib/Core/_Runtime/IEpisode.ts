@@ -31,7 +31,7 @@ namespace Core {
         /**
          * 注册资源。
          */
-        r(uri: string, type: IResource.Type): IResource;
+        r(uri: string, type: IResource.Type): IResource<string | HTMLImageElement>;
     }
 
     export namespace IEpisode {

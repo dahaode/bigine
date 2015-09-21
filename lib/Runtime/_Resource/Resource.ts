@@ -14,7 +14,7 @@
 namespace Runtime {
     'use strict';
 
-    export class Resource implements Core.IResource {
+    export class Resource<T> implements Core.IResource<T> {
         /**
          * 真实 URL 。
          */
@@ -23,7 +23,7 @@ namespace Runtime {
         /**
          * 加载 Promise 对象。
          */
-        private _q: Promise<string | HTMLImageElement>;
+        private _q: Promise<T>;
 
         /**
          * 构造函数。
@@ -72,9 +72,9 @@ namespace Runtime {
         /**
          * 获取 DOM 对象。
          */
-        public o(): Promise<string | HTMLImageElement> {
+        public o(): Promise<T> {
             if (!this._q)
-                this._q = new Promise<string | HTMLImageElement>((resolve: (value?: string | HTMLImageElement | Thenable<string | HTMLImageElement>) => void, reject: (reason?: any) => void) => {
+                this._q = new Promise<T>((resolve: (value?: T | Thenable<T>) => void, reject: (reason?: any) => void) => {
                     var $mp3: boolean = '.mp3' == this._l.substr(-4),
                         xhr: XMLHttpRequest,
                         img: HTMLImageElement;
@@ -83,12 +83,12 @@ namespace Runtime {
                         xhr.open('GET', this._l);
                         xhr.onload = () => {
                             if ($mp3)
-                                return resolve(this._l);
+                                return resolve(<any> this._l);
                             var blob: string = URL.createObjectURL(xhr.response);
                             img = new Image();
                             img.onload = () => {
                                 URL.revokeObjectURL(blob);
-                                resolve(img);
+                                resolve(<any> img);
                             };
                             img.src = blob;
                         };
@@ -100,7 +100,7 @@ namespace Runtime {
                     img = new Image();
                     img.crossOrigin = '';
                     img.onload = () => {
-                        resolve(img);
+                        resolve(<any> img);
                     };
                     img.src = this._l;
                 });

@@ -56,8 +56,8 @@ namespace Tag {
         /**
          * 获取使用资源列表。
          */
-        public c(): Core.IResource[][] {
-            return <Core.IResource[][]> Loop.prototype.c.call(this);
+        public c(): Core.IResource<string | HTMLImageElement>[][] {
+            return <Core.IResource<string | HTMLImageElement>[][]> Loop.prototype.c.call(this);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace Runtime {
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        public c(resources: Resource[][]): Promise<void> {
+        public c(resources: Resource<string | HTMLImageElement>[][]): Promise<void> {
             return Prefecher.c(resources);
         }
 
@@ -93,7 +93,7 @@ namespace Runtime {
         /**
          * 人物出场。
          */
-        public charOn(resource: Core.IResource, position: Core.IDirector.Position): Promise<Core.IRuntime> {
+        public charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             return this.charSet(resource, position);
         }
 
@@ -108,7 +108,7 @@ namespace Runtime {
         /**
          * 设置人物。
          */
-        public charSet(resource: Core.IResource, position: Core.IDirector.Position): Promise<Core.IRuntime> {
+        public charSet(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             this._r.gS().s('$c' + position, resource);
             return this._p;
         }
@@ -116,7 +116,7 @@ namespace Runtime {
         /**
          * 某白。
          */
-        public words(words: string, theme: string, who?: string, avatar?: Core.IResource): Promise<Core.IRuntime> {
+        public words(words: string, theme: string, who?: string, avatar?: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             return this._p;
         }
 
@@ -130,7 +130,7 @@ namespace Runtime {
         /**
          * 播放背景音乐。
          */
-        public playBGM(resource: Core.IResource): Promise<Core.IRuntime> {
+        public playBGM(resource: Resource<string>): Promise<Core.IRuntime> {
             this._r.gS().s('$b', resource);
             return this._p;
         }
@@ -138,7 +138,7 @@ namespace Runtime {
         /**
          * 播放音效。
          */
-        public playSE(resource: Core.IResource): Promise<Core.IRuntime> {
+        public playSE(resource: Resource<string>): Promise<Core.IRuntime> {
             return this._p;
         }
 
@@ -153,7 +153,7 @@ namespace Runtime {
         /**
          * 展示特写。
          */
-        public showCG(resource: Core.IResource): Promise<Core.IRuntime> {
+        public showCG(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             this._r.gS().s('$c', resource);
             return this._p;
         }
@@ -161,7 +161,7 @@ namespace Runtime {
         /**
          * 设置房间。
          */
-        public asRoom(resource: Core.IResource): Promise<Core.IRuntime> {
+        public asRoom(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             this._r.gS().s('$t', resource);
             return this._p;
         }

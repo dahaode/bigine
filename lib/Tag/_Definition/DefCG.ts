@@ -24,7 +24,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(): Core.IResource {
+        public o(): Core.IResource<HTMLImageElement> {
             return (<Image> this.$q('Image')[0]).o();
         }
     }

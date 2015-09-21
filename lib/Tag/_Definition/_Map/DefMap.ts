@@ -65,7 +65,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(): Core.IResource {
+        public o(): Core.IResource<HTMLImageElement> {
             return (<BGImage> this.$q('BGImage')[0] || this._o).o();
         }
 
@@ -86,8 +86,8 @@ namespace Tag {
         /**
          * 获取所有关联资源。
          */
-        public d(): Core.IResource[] {
-            var ret: Core.IResource[] = [this.o()];
+        public d(): Core.IResource<HTMLImageElement>[] {
+            var ret: Core.IResource<HTMLImageElement>[] = [this.o()];
             Util.each(this._a, (point: Point) => {
                 ret.push(point.o());
             });

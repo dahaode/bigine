@@ -26,7 +26,7 @@ namespace Core {
         /**
          * 获取资源。
          */
-        o(): IResource;
+        o(): IResource<HTMLImageElement>;
 
         /**
          * 获取交互点集合。

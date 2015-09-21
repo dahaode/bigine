@@ -31,7 +31,7 @@ namespace Core {
         /**
          * 获取高亮图资源。
          */
-        o(): IResource;
+        o(): IResource<HTMLImageElement>;
 
         /**
          * 获取横轴座标值。

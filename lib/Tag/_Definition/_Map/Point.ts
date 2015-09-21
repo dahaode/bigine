@@ -76,7 +76,7 @@ namespace Tag {
         /**
          * 获取高亮图资源。
          */
-        public o(): Core.IResource {
+        public o(): Core.IResource<HTMLImageElement> {
             return (<HLImage> this.$q('HLImage')[0] || this._o).o();
         }
 

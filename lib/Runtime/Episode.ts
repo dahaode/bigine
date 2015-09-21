@@ -125,8 +125,8 @@ namespace Runtime {
         /**
          * 注册资源。
          */
-        public r(uri: string, type: Core.IResource.Type): Resource {
-            return new Resource(uri, type);
+        public r(uri: string, type: Core.IResource.Type): Resource<string | HTMLImageElement> {
+            return new Resource<string | HTMLImageElement>(uri, type);
         }
 
         /**

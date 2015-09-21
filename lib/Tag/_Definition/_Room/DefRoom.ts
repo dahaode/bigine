@@ -67,7 +67,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(id?: string): Core.IResource {
+        public o(id?: string): Core.IResource<HTMLImageElement> {
             var map: DefMap = this.gM();
             if (map)
                 return map.o();
@@ -86,7 +86,7 @@ namespace Tag {
         /**
          * 获取所有关联资源。
          */
-        public d(): Core.IResource[] {
+        public d(): Core.IResource<HTMLImageElement>[] {
             var map: DefMap = this.gM();
             if (map)
                 return map.d();

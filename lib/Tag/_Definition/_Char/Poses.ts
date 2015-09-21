@@ -35,9 +35,9 @@ namespace Tag {
         /**
          * 获取所有关联资源。
          */
-        public d(): Core.IResource[] {
-            var ret: Core.IResource[] = [];
-            Util.each(this._o, (resource: Core.IResource, index: string) => {
+        public d(): Core.IResource<HTMLImageElement>[] {
+            var ret: Core.IResource<HTMLImageElement>[] = [];
+            Util.each(this._o, (resource: Core.IResource<HTMLImageElement>, index: string) => {
                 if ('默认' != index)
                     ret.push(resource);
             });

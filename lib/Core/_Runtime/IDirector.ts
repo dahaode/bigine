@@ -21,7 +21,7 @@ namespace Core {
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        c(resources: IResource[][]): Promise<void>;
+        c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
 
         /**
          * 完结动画。
@@ -36,7 +36,7 @@ namespace Core {
         /**
          * 人物出场。
          */
-        charOn(resource: IResource, position: IDirector.Position): Promise<IRuntime>;
+        charOn(resource: IResource<HTMLImageElement>, position: IDirector.Position): Promise<IRuntime>;
 
         /**
          * 人物离场。
@@ -46,12 +46,12 @@ namespace Core {
         /**
          * 设置人物。
          */
-        charSet(resource: IResource, position: IDirector.Position): Promise<IRuntime>;
+        charSet(resource: IResource<HTMLImageElement>, position: IDirector.Position): Promise<IRuntime>;
 
         /**
          * 某白。
          */
-        words(words: string, theme: string, who?: string, avatar?: IResource): Promise<IRuntime>;
+        words(words: string, theme: string, who?: string, avatar?: IResource<HTMLImageElement>): Promise<IRuntime>;
 
         /**
          * 评分动画。
@@ -61,12 +61,12 @@ namespace Core {
         /**
          * 播放背景音乐。
          */
-        playBGM(resource: IResource): Promise<IRuntime>;
+        playBGM(resource: IResource<string>): Promise<IRuntime>;
 
         /**
          * 播放音效。
          */
-        playSE(resource: IResource): Promise<IRuntime>;
+        playSE(resource: IResource<string>): Promise<IRuntime>;
 
         /**
          * 关闭特写。
@@ -76,12 +76,12 @@ namespace Core {
         /**
          * 展示特写。
          */
-        showCG(resource: IResource): Promise<IRuntime>;
+        showCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
 
         /**
          * 设置房间。
          */
-        asRoom(resource: IResource): Promise<IRuntime>;
+        asRoom(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
 
         /**
          * 设置地图。

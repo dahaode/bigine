@@ -27,7 +27,7 @@ namespace Tag {
         /**
          * 使用资源。
          */
-        private _mo: Core.IResource;
+        private _mo: Core.IResource<HTMLImageElement>;
 
         /**
          * 构造函数。

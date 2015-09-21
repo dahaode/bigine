@@ -29,7 +29,7 @@ namespace Core {
         /**
          * 获取资源。
          */
-        o(id?: string): IResource;
+        o(id?: string): IResource<HTMLImageElement>;
 
         /**
          * 获取关联地图。

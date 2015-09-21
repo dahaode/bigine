@@ -16,20 +16,20 @@ namespace Runtime {
         /**
          * 预加载资源。
          */
-        export function c(resources: Resource[][]): Promise<void> {
+        export function c(resources: Resource<string | HTMLImageElement>[][]): Promise<void> {
             if (!resources.length)
                 return Promise.resolve();
-            var total: Resource[][] = resources.slice(0),
+            var total: Resource<string | HTMLImageElement>[][] = resources.slice(0),
                 first: Promise<string | HTMLImageElement>[] = [];
-            Util.each(total[0], (resource: Resource) => {
+            Util.each(total[0], (resource: Resource<string | HTMLImageElement>) => {
                 first.push(resource.o());
             });
             return Promise.all(first).then(() => {
                 total.shift();
                 if (total.length)
-                    Util.Q.every(total, (group: Resource[]) => {
+                    Util.Q.every(total, (group: Resource<string | HTMLImageElement>[]) => {
                         var step: Promise<string | HTMLImageElement>[] = [];
-                        Util.each(group, (resource: Resource) => {
+                        Util.each(group, (resource: Resource<string | HTMLImageElement>) => {
                             step.push(resource.o());
                         });
                         Promise.all(step);

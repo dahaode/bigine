@@ -9,15 +9,16 @@
 
 /// <reference path="NodeDirector.ts" />
 /// <reference path="../../Util/ENV.ts" />
+/// <reference path="CanvasDirector.ts" />
 
 namespace Runtime {
     'use strict';
 
     export namespace DirectorFactory {
         export function c(runtime: Core.IRuntime): Director {
-            var node: { JS: boolean; Webkit: boolean; } = Util.ENV.Node;
-            if (node.JS && !node.Webkit)
+            if (!Util.ENV.Window)
                 return new NodeDirector(runtime);
+            return new CanvasDirector(runtime);
         }
     }
 }

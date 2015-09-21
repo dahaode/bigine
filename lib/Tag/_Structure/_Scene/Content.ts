@@ -25,7 +25,7 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             runtime.gS().s('$d', 1);
-            return runtime.gD().c(<Core.IResource[][]> Loop.prototype.c.call(this)).then(() => {
+            return runtime.gD().c(<Core.IResource<string | HTMLImageElement>[][]> Loop.prototype.c.call(this)).then(() => {
                 return Util.Q.every(this._s, (action: Action) => action.p(runtime));
             });
         }

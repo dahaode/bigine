@@ -54,7 +54,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(id?: string): Core.IResource {
+        public o(id?: string): Core.IResource<HTMLImageElement> {
             var q: Unknown[] = this.$q(id ? 'Poses' : 'Avatar');
             if (!q.length) {
                 if (!this._b)
@@ -70,8 +70,8 @@ namespace Tag {
         /**
          * 获取所有关联资源。
          */
-        public d(): Core.IResource[] {
-            var ret: Core.IResource[] = (<Poses> this.$q('Poses')[0]).d();
+        public d(): Core.IResource<HTMLImageElement>[] {
+            var ret: Core.IResource<HTMLImageElement>[] = (<Poses> this.$q('Poses')[0]).d();
             ret.unshift((<Avatar> this.$q('Avatar')[0]).o());
             return ret;
         }

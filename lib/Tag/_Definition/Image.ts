@@ -16,7 +16,7 @@ namespace Tag {
         /**
          * 图片资源。
          */
-        protected _o: Core.IResource;
+        protected _o: Core.IResource<HTMLImageElement>;
 
         /**
          * 获取标签名称。
@@ -35,7 +35,7 @@ namespace Tag {
         /**
          * 获取资源。
          */
-        public o(): Core.IResource {
+        public o(): Core.IResource<HTMLImageElement> {
             if (!this._r)
                 throw new E(E.DEF_EPISODE_NOT_REGISTERED, this._l);
             return this._o;

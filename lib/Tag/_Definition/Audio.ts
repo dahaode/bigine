@@ -7,12 +7,17 @@
  * @file      Tag/_Definition/Audio.ts
  */
 
-/// <reference path="Image.ts" />
+/// <reference path="../Unknown.ts" />
 
 namespace Tag {
     'use strict';
 
-    export class Audio extends Image {
+    export class Audio extends Unknown {
+        /**
+         * 音频资源。
+         */
+        protected _o: Core.IResource<string>;
+
         /**
          * 获取标签名称。
          */
@@ -25,6 +30,15 @@ namespace Tag {
          */
         public $r(ep: Core.IEpisode): void {
             this._o = ep.r(this._c, Core.IResource.Type.BGM);
+        }
+
+        /**
+         * 获取资源。
+         */
+        public o(): Core.IResource<string> {
+            if (!this._r)
+                throw new E(E.DEF_EPISODE_NOT_REGISTERED, this._l);
+            return this._o;
         }
     }
 }

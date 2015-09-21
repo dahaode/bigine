@@ -54,9 +54,9 @@ namespace Tag {
         /**
          * 获取使用资源列表。
          */
-        public c(): Core.IResource[][] {
-            var frame: Core.IResource[] = [],
-                resources: Core.IResource[][] = [],
+        public c(): Core.IResource<string | HTMLImageElement>[][] {
+            var frame: Core.IResource<string | HTMLImageElement>[] = [],
+                resources: Core.IResource<string | HTMLImageElement>[][] = [],
                 pack: () => void = function(): void {
                     if (frame.length) {
                         resources.push(frame);

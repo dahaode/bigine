@@ -12,13 +12,13 @@
 namespace Core {
     'use strict';
 
-    export interface IResource {
+    export interface IResource<T> {
         // new (uri: string, type: IResource.Type): IResource;
 
         /**
          * 获取 DOM 对象。
          */
-        o(): Promise<string | HTMLImageElement>;
+        o(): Promise<T>;
     }
 
     export namespace IResource {
