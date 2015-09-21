@@ -11,8 +11,6 @@ namespace Core {
     'use strict';
 
     export interface IBounds {
-        // constructor(x: number, y: number, w: number, h: number);
-
         /**
          * X 轴座标。
          */

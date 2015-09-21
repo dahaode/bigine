@@ -15,6 +15,16 @@ namespace G {
 
     export class Animation implements Core.IAnimation {
         /**
+         * 动画时长（单位：毫秒）。
+         */
+        protected _d: number;
+
+        /**
+         * 元信息。
+         */
+        protected _m: Util.IHashTable<any>;
+
+        /**
          * 链。
          */
         protected _c: Animation[];
@@ -33,16 +43,6 @@ namespace G {
          * 是否已中止。
          */
         protected _h: boolean;
-
-        /**
-         * 元信息。
-         */
-        private _m: Util.IHashTable<any>;
-
-        /**
-         * 动画时长（单位：毫秒）。
-         */
-        private _d: number;
 
         /**
          * 构造函数。

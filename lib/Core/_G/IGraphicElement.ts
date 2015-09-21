@@ -15,8 +15,8 @@ namespace Core {
     'use strict';
 
     export interface IGraphicElement {
-        // constructor(x: number, y: number, w: number, h: number, absolute: boolean = false);
-        // constructor(bounds: IBounds, absolute: boolean = false);
+        // constructor(x: number, y: number, w: number, h: number, absolute?: boolean);
+        // constructor(bounds: IBounds, absolute?: boolean);
 
         /**
          * 获取区域信息。
@@ -39,14 +39,29 @@ namespace Core {
         s(ratio: number): IGraphicElement;
 
         /**
+         * 获取缩放系数。
+         */
+        gS(): number;
+
+        /**
          * 旋转。
          */
         r(degrees: number): IGraphicElement;
 
         /**
+         * 获取旋转度数。
+         */
+        gR(): number;
+
+        /**
          * 透明度。
          */
         o(value: number): IGraphicElement;
+
+        /**
+         * 获取透明度。
+         */
+        gO(): number;
 
         /**
          * 绘制。

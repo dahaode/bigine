@@ -17,11 +17,14 @@ namespace Core {
     // IGraphicElement:x()
     // IGraphicElement:y()
     // IGraphicElement:s()
+    // IGraphicElement:gS()
     // IGraphicElement:r()
+    // IGraphicElement:gR()
     // IGraphicElement:o()
+    // IGraphicElement:gO()
     // IGraphicElement:d()
     // IGraphicElement:p()
     export interface IImageElement extends IGraphicElement {
-        // constructor(image: IResource, x: number = 0, y: number = 0, absolute: boolean = false);
+        // constructor(image: IResource, x?: number, y?: number, absolute?: boolean);
     }
 }

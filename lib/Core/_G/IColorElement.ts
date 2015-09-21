@@ -16,12 +16,15 @@ namespace Core {
     // IGraphicElement:x()
     // IGraphicElement:y()
     // IGraphicElement:s()
+    // IGraphicElement:gS()
     // IGraphicElement:r()
+    // IGraphicElement:gR()
     // IGraphicElement:o()
+    // IGraphicElement:gO()
     // IGraphicElement:d()
     // IGraphicElement:p()
     export interface IColorElement extends IGraphicElement {
-        // constructor(x: number, y: number, w: number, h: number, color: string, absolute: boolean = false);
-        // constructor(bounds: IBounds, color: string, absolute: boolean = false);
+        // constructor(x: number, y: number, w: number, h: number, color: string, absolute?: boolean);
+        // constructor(bounds: IBounds, color: string, absolute?: boolean);
     }
 }
