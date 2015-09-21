@@ -193,7 +193,7 @@ namespace G {
         /**
          * 设置父元素。
          */
-        protected $p(parent: Element): Element {
+        public $p(parent: Element): Element {
             this._p = parent;
             return this;
         }

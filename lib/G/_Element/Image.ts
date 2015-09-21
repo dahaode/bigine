@@ -38,10 +38,11 @@ namespace G {
             return this._d.o().then((img: HTMLImageElement) => {
                 if (this._r)
                     context.rotate(this._r * Math.PI / 180);
-                if (this._o)
+                if (this._o) {
                     context.globalAlpha = this._o;
-                var bounds: Core.IBounds = this.gB();
-                context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
+                    var bounds: Core.IBounds = this.gB();
+                    context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
+                }
                 return super.d(context);
             });
         }
