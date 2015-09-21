@@ -144,7 +144,9 @@ namespace G {
          * 旋转。
          */
         public r(degrees: number): Element {
-            this._r = degrees;
+            this._r = degrees % 360;
+            if (0 > this._r)
+                this._r += 360;
             return this;
         }
 
@@ -159,6 +161,8 @@ namespace G {
          * 透明度。
          */
         public o(value: number): Element {
+            if (0 > value || 1 < value)
+                throw new E(E.G_INVALID_OPACITY);
             this._o = value;
             return this;
         }
@@ -174,6 +178,8 @@ namespace G {
          * 绘制。
          */
         public d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D> {
+            context.rotate(0);
+            context.globalAlpha = 1;
             return context;
         }
 
