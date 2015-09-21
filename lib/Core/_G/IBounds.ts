@@ -30,25 +30,5 @@ namespace Core {
          * 高度。
          */
         h: number;
-
-        /**
-         * 上边距。
-         */
-        t: number;
-
-        /**
-         * 右边距。
-         */
-        r: number;
-
-        /**
-         * 下边距。
-         */
-        b: number;
-
-        /**
-         * 左边距。
-         */
-        l: number;
     }
 }

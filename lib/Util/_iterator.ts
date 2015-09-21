@@ -94,4 +94,21 @@ namespace Util {
                     return ii;
         return -1;
     }
+
+    /**
+     * 克隆。
+     */
+    export function clone<T>(orig: T[]): T[];
+    export function clone<T>(orig: T): T;
+    export function clone(orig: any): any {
+        if ('object' != typeof orig)
+            return orig;
+        if (orig instanceof Array)
+            return (<any[]> orig).slice(0);
+        var dolly: IHashTable<any> = {};
+        Util.each(orig, (value: any, key: string) => {
+            dolly[key] = clone(value);
+        });
+        return dolly;
+    }
 }

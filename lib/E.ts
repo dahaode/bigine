@@ -82,6 +82,8 @@ class E extends Error {
 
     public static EP_THEME_NOT_LOADED: string = '主题数据尚未加载完成';
 
+    public static G_PARENT_NOT_FOUND: string = '画面父元素未绑定';
+
     /**
      * 信号。
      */
