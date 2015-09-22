@@ -24,6 +24,8 @@ namespace Core {
     // IGraphicElement:gO()
     // IGraphicElement:d()
     // IGraphicElement:p()
+    // IGraphicElement:i()
+    // IGraphicElement:gI()
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()
@@ -32,18 +34,18 @@ namespace Core {
         // constructor(bounds: IBounds, absolute: boolean = false);
 
         /**
-         * 追加元素。
+         * 添加元素。
          */
-        a(element: IGraphicElement): ISprite;
-
-        /**
-         * 插入元素。
-         */
-        i(element: IGraphicElement, before: IGraphicElement): ISprite;
+        a(element: IGraphicElement, before?: IGraphicElement): ISprite;
 
         /**
          * 删除元素。
          */
         e(element: IGraphicElement): ISprite;
+
+        /**
+         * 根据编号查找元素。
+         */
+        q(id: string): IGraphicElement[];
     }
 }

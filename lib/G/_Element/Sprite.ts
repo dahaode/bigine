@@ -17,7 +17,7 @@ namespace G {
         /**
          * 子元素集。
          */
-        private _d: Element[];
+        protected _d: Element[];
 
         /**
          * 事件监听。
@@ -82,9 +82,7 @@ namespace G {
          * 取消事件监听。
          */
         public removeEventListener<T>(type: string, listener: Core.IEventListener<T>): Sprite {
-            if (!(type in this._l))
-                return this;
-            Util.some(this._l[type], (reged: Core.IEventListener<any>, index: number) => {
+            Util.some(this._l[type] || [], (reged: Core.IEventListener<any>, index: number) => {
                 if (reged == listener) {
                     this._l[type].splice(index, 1);
                     return true;
@@ -99,30 +97,22 @@ namespace G {
          */
         public dispatchEvent<T>(event: Core.IEvent<T>): Sprite {
             var type: string = event.gT();
-            if (!(type in this._l))
-                return this;
-            Util.each(this._l[type], (listener: Core.IEventListener<T>) => {
+            Util.each(this._l[type] || [], (listener: Core.IEventListener<T>) => {
                 listener.call(this, event);
             });
             return this;
         }
 
         /**
-         * 追加元素。
+         * 添加元素。
          */
-        public a(element: Element): Sprite {
-            this._d.push(element.$p(this));
-            return this;
-        }
-
-        /**
-         * 插入元素。
-         */
-        public i(element: Element, before: Element): Sprite {
-            var index: number = Util.indexOf(this._d, before);
+        public a(element: Element, before?: Element): Sprite {
+            var index: number = -1;
+            if (before)
+                index = Util.indexOf(this._d, before);
             if (-1 == index)
                 index = this._d.length;
-            this._d.splice(index, 0, element);
+            this._d.splice(index, 0, element.$p(this));
             return this;
         }
 
@@ -134,6 +124,38 @@ namespace G {
             if (-1 != index)
                 this._d.splice(index, 1);
             return this;
+        }
+
+        /**
+         * 根据编号查找元素。
+         */
+        public q(id: string): Element[] {
+            var result: Element[] = [];
+            Util.each(this._d, (element: Element) => {
+                if ('q' in element) {
+                    result = result.concat((<Sprite> element).q(id));
+                } else if (element.gI() == id)
+                    result.push(element);
+            });
+            return result;
+        }
+
+        /**
+         * 根据座标查找元素。
+         */
+        protected $m(x: number, y: number): Sprite[] {
+            var el: Sprite[] = [],
+                bounds: Core.IBounds;
+            Util.some(Util.clone(this._d).reverse(), (element: Sprite) => {
+                if (!('$m' in element))
+                    return false;
+                bounds = element.gB();
+                if (bounds.x > x || bounds.y > y || bounds.x + bounds.w < x || bounds.y + bounds.h < y)
+                    return false;
+                el = element.$m(x, y).concat(this);
+                return true;
+            });
+            return el || [this];
         }
     }
 }

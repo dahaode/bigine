@@ -23,15 +23,20 @@ namespace Core {
     // IGraphicElement:gO()
     // IGraphicElement:d()
     // IGraphicElement:p()
+    // IGraphicElement:i()
+    // IGraphicElement:gI()
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()
     // ISprite:a()
-    // ISprite:i()
     // ISprite:e()
+    // ISprite:q()
     export interface IStage extends ISprite {
         // constructor(context: CanvasRenderingContext2D);
 
+        /**
+         * 绘制。
+         */
         d(): Promise<CanvasRenderingContext2D>;
 
         /**

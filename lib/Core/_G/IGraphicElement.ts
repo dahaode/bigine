@@ -72,5 +72,15 @@ namespace Core {
          * 执行动画。
          */
         p(animation: IAnimation): Promise<IGraphicElement>;
+
+        /**
+         * 设置编号。
+         */
+        i(id: string): IGraphicElement;
+
+        /**
+         * 获取编号。
+         */
+        gI(): string;
     }
 }

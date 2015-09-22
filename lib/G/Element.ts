@@ -7,7 +7,7 @@
  * @file      G/Element.ts
  */
 
-/// <reference path="../Core/_G/IGraphicElement.ts" />
+/// <reference path="../Core/_G/ISprite.ts" />
 
 namespace G {
     'use strict';
@@ -41,7 +41,12 @@ namespace G {
         /**
          * 父元素。
          */
-        protected _p: Element;
+        protected _p: Core.ISprite;
+
+        /**
+         * 编号。
+         */
+        private _i: string;
 
         /**
          * 构造函数。
@@ -64,6 +69,7 @@ namespace G {
             this._r = 0;
             this._s =
             this._o = 1;
+            this._i = '';
         }
 
         /**
@@ -191,9 +197,24 @@ namespace G {
         }
 
         /**
+         * 设置编号。
+         */
+        public i(id: string): Element {
+            this._i = id;
+            return this;
+        }
+
+        /**
+         * 获取编号。
+         */
+        public gI(): string {
+            return this._i;
+        }
+
+        /**
          * 设置父元素。
          */
-        public $p(parent: Element): Element {
+        public $p(parent: Core.ISprite): Element {
             this._p = parent;
             return this;
         }
