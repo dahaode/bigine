@@ -29,5 +29,12 @@ namespace Tag {
                 return Util.Q.every(this._s, (action: Action) => action.p(runtime));
             });
         }
+
+        /**
+         * 获取关键动作编号列表。
+         */
+        public a(): string[] {
+            return Loop.prototype.a.call(this);
+        }
     }
 }

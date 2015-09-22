@@ -52,6 +52,29 @@ namespace Tag {
         }
 
         /**
+         * 获取关键动作编号列表。
+         */
+        public a(): string[] {
+            var ids: string[] = [];
+            Util.each(this._s, (action: Action) => {
+                switch (action.gN()) {
+                    case 'Monolog':
+                    case 'Speak':
+                    case 'VoiceOver':
+                        ids.push((<Speak> action).gI());
+                        break;
+                    case 'Loop':
+                    case 'Otherwise':
+                    case 'Then':
+                    case 'When':
+                        ids = ids.concat((<Loop> action).a());
+                        break;
+                }
+            });
+            return ids;
+        }
+
+        /**
          * 获取使用资源列表。
          */
         public c(): Core.IResource<string | HTMLImageElement>[][] {
@@ -94,7 +117,7 @@ namespace Tag {
                     case 'Then':
                     case 'When':
                         pack();
-                        resources.concat((<Loop> action).c());
+                        resources = resources.concat((<Loop> action).c());
                         break;
                 }
             });

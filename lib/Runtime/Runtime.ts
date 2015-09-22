@@ -11,6 +11,7 @@
 /// <reference path="_Logger/ConsoleLogger.ts" />
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
+/// <reference path="Event/Scene.ts" />
 /// <reference path="../Tag/_pack.ts" />
 
 namespace Runtime {
@@ -122,6 +123,7 @@ namespace Runtime {
          */
         public dispatchEvent<T>(event: Event.Event<T>): Runtime {
             var type: string = event.gT();
+            this._l.d('[event]', event);
             if (!(type in this._a))
                 return this;
             Util.each(<Core.IEventListener<T>[]> this._a[type], (listener: Core.IEventListener<T>) => {
@@ -209,6 +211,17 @@ namespace Runtime {
             if (undefined !== volume)
                 this._d.v(this._fv = Math.min(1, Math.max(0, parseFloat(<any> volume))));
             return this._fv;
+        }
+
+        /**
+         * 播报当前事件。
+         */
+        public s(scene: Core.ISceneTag, title: string, actions: string[]): void {
+            this.dispatchEvent(new Event.Scene({
+                target: scene,
+                title: title,
+                actions: actions
+            }));
         }
     }
 }

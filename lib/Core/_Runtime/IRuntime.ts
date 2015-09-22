@@ -68,5 +68,10 @@ namespace Core {
          * 设置或获取音量。
          */
         volume(volume?: number): number;
+
+        /**
+         * 播报当前事件。
+         */
+        s(scene: ISceneTag, title: string, actions: string[]): void;
     }
 }

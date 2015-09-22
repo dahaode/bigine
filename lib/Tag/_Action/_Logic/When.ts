@@ -54,6 +54,13 @@ namespace Tag {
         }
 
         /**
+         * 获取关键动作编号列表。
+         */
+        public a(): string[] {
+            return Loop.prototype.a.call(this);
+        }
+
+        /**
          * 获取使用资源列表。
          */
         public c(): Core.IResource<string | HTMLImageElement>[][] {
