@@ -32,6 +32,7 @@ namespace G {
         constructor(x: any, y?: any, w?: any, h?: any, absolute?: boolean) {
             super(x, y, w, h, absolute);
             this._d = [];
+            this._f = false;
             this._l = {};
         }
 
@@ -63,8 +64,9 @@ namespace G {
                 context.rotate(this._r * Math.PI / 180);
             if (this._o) {
                 context.globalAlpha = this._o;
-                return Util.Q.every(this._d, (el: Element) => el.d(context))
-                    .then(() => super.d(context));
+                if (this._d.length)
+                    return Util.Q.every(this._d, (el: Element) => el.d(context))
+                        .then(() => super.d(context));
             }
             return super.d(context);
         }
@@ -106,8 +108,13 @@ namespace G {
         /**
          * 添加元素。
          */
-        public a(element: Element, before?: Element): Sprite {
+        public a(element: Element, before?: string): Sprite;
+        public a(element: Element, before?: Element): Sprite;
+        public a(element: Element, before?: any): Sprite {
+            this.$f();
             var index: number = -1;
+            if ('string' == typeof before)
+                before = this.q(before)[0];
             if (before)
                 index = Util.indexOf(this._d, before);
             if (-1 == index)
@@ -120,6 +127,7 @@ namespace G {
          * 删除元素。
          */
         public e(element: Element): Sprite {
+            this.$f();
             var index: number = Util.indexOf(this._d, element);
             if (-1 != index)
                 this._d.splice(index, 1);
@@ -132,9 +140,9 @@ namespace G {
         public q(id: string): Element[] {
             var result: Element[] = [];
             Util.each(this._d, (element: Element) => {
-                if ('q' in element) {
+                if ('q' in element)
                     result = result.concat((<Sprite> element).q(id));
-                } else if (element.gI() == id)
+                if (element.gI() == id)
                     result.push(element);
             });
             return result;
@@ -144,7 +152,7 @@ namespace G {
          * 根据座标查找元素。
          */
         protected $m(x: number, y: number): Sprite[] {
-            var el: Sprite[] = [],
+            var els: Sprite[] = [],
                 bounds: Core.IBounds;
             Util.some(Util.clone(this._d).reverse(), (element: Sprite) => {
                 if (!('$m' in element))
@@ -152,10 +160,10 @@ namespace G {
                 bounds = element.gB();
                 if (bounds.x > x || bounds.y > y || bounds.x + bounds.w < x || bounds.y + bounds.h < y)
                     return false;
-                el = element.$m(x, y).concat(this);
+                els = els.concat(element.$m(x, y));
                 return true;
             });
-            return el || [this];
+            return els.concat(this);
         }
     }
 }

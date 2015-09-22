@@ -46,9 +46,9 @@ namespace G {
             var x0: number = 0,
                 y0: number = 0,
                 canvas: HTMLCanvasElement = context.canvas,
-                autodraw: () => void = () => {
+                autodraw: (time: number) => void = (time: number) => {
                     this.d().then(() => {
-                        Animation.f(autodraw);
+                        Animation.f(autodraw, true);
                     });
                 },
                 metas: Event.IMouseEventMetas;
@@ -76,10 +76,10 @@ namespace G {
                             blured.push(element);
                     });
                     metas = {
-                        target: focused[0],
+                        target: focused[0] || moved[0],
                         x: x,
                         y: y,
-                        from: blured[0],
+                        from: blured[0] || moved[0],
                         fromX: x0,
                         fromY: y0
                     };
@@ -111,7 +111,7 @@ namespace G {
                 }
             ];
             this.b(context.canvas);
-            Animation.f(autodraw);
+            Animation.f(autodraw, true);
         }
 
         /**
@@ -146,7 +146,13 @@ namespace G {
          * 绘制。
          */
         public d(): Promise<CanvasRenderingContext2D> {
-            return Promise.resolve(super.d(this._c));
+            return new Promise((resolve: (value?: CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>) => void) => {
+                if (!this._f)
+                    return resolve(this._c);
+                this._f = false;
+                //this._c.clearRect(0, 0, this._b.w, this._b.h);
+                resolve(super.d(this._c));
+            });
         }
 
         /**

@@ -9,13 +9,14 @@
 
 /// <reference path="../Core/_G/IAnimation.ts" />
 /// <reference path="../Util/_raf.d.ts" />
+/// <reference path="../Util/ENV.ts" />
 
 namespace G {
     'use strict';
 
     export class Animation implements Core.IAnimation {
         /**
-         * 动画时长（单位：毫秒）。
+         * 动画时长（单位：帧）。
          */
         protected _d: number;
 
@@ -48,7 +49,7 @@ namespace G {
          * 构造函数。
          */
         constructor(duration: number, metas?: Util.IHashTable<any>) {
-            this._d = duration;
+            this._d = Math.round(duration * 60 / 1000);
             this._m = metas || {};
             this._c = [];
             this._l = 1;
@@ -82,14 +83,13 @@ namespace G {
                     if (this._h)
                         return r;
                     return new Promise((resolve: (value: Core.IGraphicElement) => void) => {
-                        var time: number,
-                            task: FrameRequestCallback = (now: number) => {
-                                time = time || now;
-                                if (this._h || time + this._d > now) {
+                        var index: number = 0,
+                            task: FrameRequestCallback = (time: number) => {
+                                if (this._h || index++ == this._d) {
                                     resolve(element);
                                     return;
                                 }
-                                this.$p(element, now - time);
+                                this.$p(element, index);
                                 Animation.f(task);
                             };
                         Animation.f(task);
@@ -102,6 +102,7 @@ namespace G {
                 q: Promise<Core.IGraphicElement>;
             if (this._p || this._h)
                 return r;
+            this._p = true;
             q = once();
             if (!this._c.length)
                 return q;
@@ -130,37 +131,37 @@ namespace G {
     export namespace Animation {
         'use strict';
 
-        var raf: typeof window.requestAnimationFrame = window.requestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame;
+        var jobs: FrameRequestCallback[] = [],
+            raf: typeof window.requestAnimationFrame,
+            proxy: FrameRequestCallback;
 
-        if (!raf) {
-            var jobs: FrameRequestCallback[] = [],
-                start: number = + new Date(),
-                counter: number = 0,
-                now: number;
-            window.setInterval(() => {
-                if (counter++ % 3) return;
-                if (100 == counter)
-                    counter = 0;
-                now = + new Date() - start;
-                Util.each(jobs.splice(0, jobs.length), (job: FrameRequestCallback) => {
-                    job(now);
-                });
-            }, 5);
-            raf = (callback: FrameRequestCallback) => {
-                jobs.push(callback);
-                return now;
-            };
-        }
+        if (Util.ENV.Window) {
+            raf = window.requestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame;
+            if (raf) {
+                proxy = (now: number) => {
+                    if (jobs.length)
+                        Util.each(jobs.splice(0, jobs.length), (job: FrameRequestCallback) => {
+                            job(now);
+                        });
+                    raf.call(window, proxy);
+                };
+                raf.call(window, proxy);
+            }
+        } else
+            raf = (callback: FrameRequestCallback) => 0;
 
         /**
          * 帧处理。
          */
-        export function f(callback: FrameRequestCallback): void {
-            raf.call(window, callback);
+        export function f(callback: FrameRequestCallback, draw?: boolean): void {
+            if (draw) {
+                jobs.unshift(callback);
+            } else
+                jobs.push(callback);
         }
     }
 }

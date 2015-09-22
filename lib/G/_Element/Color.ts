@@ -35,13 +35,13 @@ namespace G {
          * 绘制。
          */
         public d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D> {
-            if (this._r)
-                context.rotate(this._r * Math.PI / 180);
             if (this._o) {
+                context.save();
                 context.globalAlpha = this._o;
                 var bounds: Core.IBounds = this.gB();
                 context.fillStyle = this._d;
                 context.fillRect(bounds.x, bounds.y, bounds.w, bounds.h);
+                context.restore();
             }
             return super.d(context);
         }

@@ -39,6 +39,11 @@ namespace G {
         protected _o: number;
 
         /**
+         * 发生变更。
+         */
+        protected _f: boolean;
+
+        /**
          * 父元素。
          */
         protected _p: Core.ISprite;
@@ -46,7 +51,7 @@ namespace G {
         /**
          * 编号。
          */
-        private _i: string;
+        protected _i: string;
 
         /**
          * 构造函数。
@@ -69,6 +74,7 @@ namespace G {
             this._r = 0;
             this._s =
             this._o = 1;
+            this._f = false;
             this._i = '';
         }
 
@@ -80,7 +86,7 @@ namespace G {
                 r: number,
                 w: number,
                 h: number;
-            if (this._r) {
+            if (0 && this._r) {
                 r %= 180;
                 if (0 > r)
                     r += 180;
@@ -117,6 +123,7 @@ namespace G {
          * 移动 X 轴座标。
          */
         public x(distance: number): Element {
+            this.$f();
             this._b.x += distance;
             return this;
         }
@@ -125,6 +132,7 @@ namespace G {
          * 移动 Y 轴座标。
          */
         public y(distance: number): Element {
+            this.$f();
             this._b.y += distance;
             return this;
         }
@@ -133,6 +141,7 @@ namespace G {
          * 缩放。
          */
         public s(ratio: number): Element {
+            this.$f();
             this._b.w *= ratio;
             this._b.h *= ratio;
             this._s *= ratio;
@@ -150,6 +159,7 @@ namespace G {
          * 旋转。
          */
         public r(degrees: number): Element {
+            this.$f();
             this._r = degrees % 360;
             if (0 > this._r)
                 this._r += 360;
@@ -167,6 +177,7 @@ namespace G {
          * 透明度。
          */
         public o(value: number): Element {
+            this.$f();
             if (0 > value || 1 < value)
                 throw new E(E.G_INVALID_OPACITY);
             this._o = value;
@@ -184,8 +195,7 @@ namespace G {
          * 绘制。
          */
         public d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D> {
-            context.rotate(0);
-            context.globalAlpha = 1;
+            this._f = false;
             return context;
         }
 
@@ -209,6 +219,16 @@ namespace G {
          */
         public gI(): string {
             return this._i;
+        }
+
+        /**
+         * 发生变更。
+         */
+        public $f(): Element {
+            this._f = true;
+            if (this._p)
+                this._p.$f();
+            return this;
         }
 
         /**

@@ -36,12 +36,16 @@ namespace G {
          */
         public d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D> {
             return this._d.o().then((img: HTMLImageElement) => {
-                if (this._r)
-                    context.rotate(this._r * Math.PI / 180);
-                if (this._o) {
-                    context.globalAlpha = this._o;
+                var o: number = this._o;
+                if (o) {
+                    if (1 != o) {
+                        context.save();
+                        context.globalAlpha = o;
+                    }
                     var bounds: Core.IBounds = this.gB();
                     context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
+                    if (1 != o)
+                        context.restore();
                 }
                 return super.d(context);
             });

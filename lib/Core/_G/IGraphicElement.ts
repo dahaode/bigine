@@ -82,5 +82,10 @@ namespace Core {
          * 获取编号。
          */
         gI(): string;
+
+        /**
+         * 发生变更。
+         */
+        $f(): IGraphicElement;
     }
 }

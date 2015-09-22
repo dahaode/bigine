@@ -30,7 +30,7 @@ namespace G {
          * 帧执行。
          */
         protected $p(element: Core.IGraphicElement, elpased: number): void {
-            if (!elpased)
+            if (1 == elpased)
                 this._mo = element.gO();
             element.o(((<IFadeMetas> this._m).opacity - this._mo) * elpased / this._d + this._mo);
         }

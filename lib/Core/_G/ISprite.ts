@@ -36,6 +36,7 @@ namespace Core {
         /**
          * 添加元素。
          */
+        a(element: IGraphicElement, before?: string): ISprite;
         a(element: IGraphicElement, before?: IGraphicElement): ISprite;
 
         /**
