@@ -73,5 +73,10 @@ namespace Core {
          * 播报当前事件。
          */
         s(scene: ISceneTag, title: string, actions: string[]): void;
+
+        /**
+         * 播报当前关键帧。
+         */
+        a(action: IIdableTag): void;
     }
 }

@@ -12,6 +12,7 @@
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
 /// <reference path="Event/Scene.ts" />
+/// <reference path="Event/Action.ts" />
 /// <reference path="../Tag/_pack.ts" />
 
 namespace Runtime {
@@ -221,6 +222,15 @@ namespace Runtime {
                 target: scene,
                 title: title,
                 actions: actions
+            }));
+        }
+
+        /**
+         * 播报当前关键帧。
+         */
+        public a(action: Core.IIdableTag): void {
+            this.dispatchEvent(new Event.Action({
+                target: action
             }));
         }
     }

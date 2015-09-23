@@ -24,6 +24,7 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            runtime.a(this);
             return runtime.gD().words(runtime.gS().t(this._c), 'voiceover');
         }
     }
