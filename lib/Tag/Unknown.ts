@@ -149,6 +149,8 @@ namespace Tag {
          * 转化为（中文）剧本（代码）。
          */
         public toString(): string {
+            if (-1 == this._l)
+                return '';
             var clob: string = SCHEMA.T[this.gN()],
                 params: string[] = this._p.slice(0);
             if ('UNKNOWN' == clob)
@@ -168,6 +170,8 @@ namespace Tag {
          * 转化为运行时（Javascript）代码。
          */
         public toJsrn(): string {
+            if (-1 == this._l)
+                return '';
             var parts: any[] = [this.$i()],
                 params: (number | string)[] = [],
                 children: string[] = [],

@@ -12,10 +12,11 @@
 /// <reference path="../E.ts" />
 /// <reference path="_iterator.ts" />
 
-require('es6-promise').polyfill();
-
 namespace Util {
     'use strict';
+
+    if ('undefined' == typeof Promise)
+        require('es6-promise').polyfill();
 
     export namespace Q {
         /**

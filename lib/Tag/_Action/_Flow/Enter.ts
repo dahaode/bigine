@@ -83,6 +83,8 @@ namespace Tag {
                         .c(kcn, kdn)
                         .c(kco, kdo);
                     return this._mo.p(Core.ISceneTag.Type.PostEnter, runtime);
+                })['catch'](Util.Q.ignoreHalt)['catch']((reason?: any) => {
+                    runtime.gL().e(reason);
                 });
             return Util.Q.doHalt<Core.IRuntime>(); // 中断原有时序流。
         }

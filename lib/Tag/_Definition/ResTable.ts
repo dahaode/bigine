@@ -30,8 +30,8 @@ namespace Tag {
          * 获取资源。
          */
         public o(id: string): Core.IResource<HTMLImageElement> {
-            if (!this._b)
-                throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
+            if (!this._r)
+                throw new E(E.DEF_EPISODE_NOT_REGISTERED, this._l);
             return this._o[id] || this._o[''];
         }
     }

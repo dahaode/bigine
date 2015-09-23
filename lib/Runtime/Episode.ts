@@ -49,7 +49,7 @@ namespace Runtime {
                     var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
                         Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
                             Util.each(typed, (entity: Core.IEntityTag) => {
-                                this.f(entity);
+                                entity.r(this);
                             });
                         });
                         resolve();
@@ -99,6 +99,8 @@ namespace Runtime {
                         target: this
                     }));
                 return runtime;
+            })['catch'](Util.Q.ignoreHalt)['catch']((reason?: any) => {
+                runtime.gL().e(reason);
             });
         }
 
