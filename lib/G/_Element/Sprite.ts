@@ -155,7 +155,7 @@ namespace G {
             var els: Sprite[] = [],
                 bounds: Core.IBounds;
             Util.some(Util.clone(this._d).reverse(), (element: Sprite) => {
-                if (!('$m' in element))
+                if (!('$m' in element) || !element.gO())
                     return false;
                 bounds = element.gB();
                 if (bounds.x > x || bounds.y > y || bounds.x + bounds.w < x || bounds.y + bounds.h < y)

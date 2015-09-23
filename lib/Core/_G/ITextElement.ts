@@ -8,7 +8,7 @@
  */
 
 /// <reference path="IGraphicElement.ts" />
-/// <reference path="IGraphicText.ts" />
+/// <reference path="ITextPhrase.ts" />
 
 namespace Core {
     'use strict';
@@ -27,13 +27,18 @@ namespace Core {
     // IGraphicElement:i()
     // IGraphicElement:gI()
     export interface ITextElement extends IGraphicElement {
-        // constructor(x: number, y: number, w: number, h: number, absolute?: boolean);
-        // constructor(bounds: IBounds, absolute?: boolean);
+        // constructor(x: number, y: number, w: number, h: number, lineHeight: number, absolute?: boolean);
+        // constructor(bounds: IBounds, lineHeight: number, absolute?: boolean);
 
         /**
          * 添加文字。
          */
-        a(text: IGraphicText): ITextElement;
+        a(text: ITextPhrase): ITextElement;
+
+        /**
+         * 获取文字。
+         */
+        gT(): ITextPhrase[];
 
         /**
          * 清空所有已添加文字。
