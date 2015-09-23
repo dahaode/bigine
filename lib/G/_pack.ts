@@ -14,4 +14,4 @@
 /// <reference path="_Element/Color.ts" />
 /// <reference path="_Element/Button.ts" />
 /// <reference path="_Element/Stage.ts" />
-/// <reference path="_Animation/Wait.ts" />
+/// <reference path="_Animation/Delay.ts" />
