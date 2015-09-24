@@ -40,74 +40,58 @@ namespace G {
         private _h: ((event: MouseEvent) => void)[];
 
         /**
+         * 鼠标事件元信息。
+         */
+        private _m: Event.IMouseEventMetas;
+
+        /**
          * 构造函数。
          */
         constructor(context: CanvasRenderingContext2D) {
-            var x0: number = 0,
-                y0: number = 0,
-                canvas: HTMLCanvasElement = context.canvas,
+            var canvas: HTMLCanvasElement = context.canvas,
                 autodraw: (time: number) => void = (time: number) => {
                     this.d().then(() => {
                         Animation.f(autodraw, true);
                     });
-                },
-                metas: Event.IMouseEventMetas;
+                };
             super(0, 0, canvas.width, canvas.height, true);
             this._c = context;
-            this._z = canvas.width / canvas.scrollWidth;
+            this.z();
+            window.addEventListener('resize', () => {
+                this.z();
+            });
+            this._m = <Event.IMouseEventMetas> {
+                fromX: 0,
+                fromY: 0
+            };
             this._h = [
                 (event: MouseEvent) => {
                     event.stopPropagation();
-                    var x: number = event.offsetX * this._z,
-                        y: number = event.offsetY * this._z,
-                        els: Sprite[] = this.$m(x0, y0).slice(0, -1),
-                        focused: Sprite[] = [],
-                        blured: Sprite[] = [],
-                        moved: Sprite[] = [],
+                    var sprites: Sprite[][] = this.$s(event.offsetX * this._z, event.offsetY * this._z),
                         ev: Event.MouseEvent;
-                    Util.each(this.$m(x, y).slice(0, -1), (element: Sprite) => {
-                        if (-1 == Util.indexOf(els, element)) {
-                            focused.push(element);
-                        } else
-                            moved.push(element);
-                    });
-                    Util.each(els, (element: Sprite) => {
-                        if (-1 == Util.indexOf(moved, element))
-                            blured.push(element);
-                    });
-                    metas = {
-                        target: focused[0] || moved[0],
-                        x: x,
-                        y: y,
-                        from: blured[0] || moved[0],
-                        fromX: x0,
-                        fromY: y0
-                    };
-                    x0 = x;
-                    y0 = y;
-                    if (focused.length) {
-                        ev = new Event.Focus(metas);
-                        Util.each(focused, (element: Sprite) => {
+                    if (sprites[0].length) {
+                        ev = new Event.Focus(this._m);
+                        Util.each(sprites[0], (element: Sprite) => {
                             element.dispatchEvent(ev);
                         });
                     }
-                    if (blured.length) {
-                        ev = new Event.Blur(metas);
-                        Util.each(blured, (element: Sprite) => {
+                    if (sprites[2].length) {
+                        ev = new Event.Blur(this._m);
+                        Util.each(sprites[2], (element: Sprite) => {
                             element.dispatchEvent(ev);
                         });
                     }
-                    if (moved.length) {
-                        ev = new Event.MouseMove(metas);
-                        Util.each(moved, (element: Sprite) => {
+                    if (sprites[1].length) {
+                        ev = new Event.MouseMove(this._m);
+                        Util.each(sprites[1], (element: Sprite) => {
                             element.dispatchEvent(ev);
                         });
                     }
                     return false;
                 },
                 (event: MouseEvent) => {
-                    if (metas.target)
-                        metas.target.dispatchEvent(new Event.Click(metas));
+                    if (this._m.target)
+                        this._m.target.dispatchEvent(new Event.Click(this._m));
                 }
             ];
             this.b(context.canvas);
@@ -143,16 +127,34 @@ namespace G {
         }
 
         /**
+         * 发生变更。
+         */
+        public $f(): Element {
+            this._f = true;
+            this.$s(this._m.x, this._m.y);
+            return this;
+        }
+
+        /**
+         * 计算缩放比例。
+         */
+        public z(): Stage {
+            var canvas: HTMLCanvasElement = this._c.canvas;
+            this._z = canvas.width / canvas.scrollWidth;
+            return this;
+        }
+
+        /**
          * 绘制。
          */
         public d(): Promise<CanvasRenderingContext2D> {
-            return new Promise((resolve: (value?: CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>) => void) => {
-                if (!this._f)
-                    return resolve(this._c);
-                this._f = false;
-                //this._c.clearRect(0, 0, this._b.w, this._b.h);
-                resolve(super.d(this._c));
-            });
+            if (!this._f)
+                return Promise.resolve(this._c);
+            return Promise.all(this.$r())
+                .then(() => {
+                    this._f = false;
+                    return super.d(this._c);
+                });
         }
 
         /**
@@ -167,6 +169,37 @@ namespace G {
             this._v.addEventListener('mousemove', this._h[0]);
             this._v.addEventListener('click', this._h[1]);
             return this;
+        }
+
+        /**
+         * 根据座标查找元素。
+         */
+        protected $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]] {
+            x |= 0;
+            y |= 0;
+            var sprites: [Sprite[], Sprite[], Sprite[]] = [[], [], []],
+                els: Sprite[] = this.$m(x, y).slice(0, -1);
+            if (this._m.x == x && this._m.y == y) {
+                this._m.target = els[0];
+                this._m.from = undefined;
+                this._m.fromX = x;
+                this._m.fromY = y;
+                return [[], els, []];
+            }
+            Util.each(this.$m(this._m.x, this._m.y).slice(0, -1), (element: Sprite) => {
+                sprites[-1 == Util.indexOf(els, element) ? 2 : 1].push(element);
+            });
+            this._m.fromX = this._m.x;
+            this._m.fromY = this._m.y;
+            this._m.x = x;
+            this._m.y = y;
+            Util.each(els, (element: Sprite) => {
+                if (-1 == Util.indexOf(sprites[1], element))
+                    sprites[0].push(element);
+            });
+            this._m.target = sprites[0][0] || sprites[1][0];
+            this._m.from = sprites[2][0];
+            return sprites;
         }
     }
 }

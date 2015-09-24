@@ -32,9 +32,7 @@ namespace G {
         constructor(bounds: Core.IBounds, lineHeight: number, absolute?: boolean);
         constructor(x: any, y: any, w?: any, h?: any, lineHeight?: any, absolute?: boolean) {
             super(x, y, w, h, absolute);
-            this._h = 'number' == typeof x ?
-                lineHeight :
-                y;
+            this._h = 0 | ('number' == typeof x ? lineHeight : y);
             this._d = [];
         }
 
@@ -64,6 +62,7 @@ namespace G {
                             w -= progress[1];
                         }
                     }
+                    progress = [0, 0];
                 });
                 context.restore();
             }
@@ -75,7 +74,7 @@ namespace G {
          */
         public a(text: Core.ITextPhrase): Text {
             this._d.push(text);
-            return this;
+            return <Text> this.$f();
         }
 
         /**
@@ -90,7 +89,7 @@ namespace G {
          */
         public c(): Text {
             this._d = [];
-            return this;
+            return <Text> this.$f();
         }
     }
 }

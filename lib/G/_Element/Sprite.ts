@@ -100,7 +100,7 @@ namespace G {
         public dispatchEvent<T>(event: Core.IEvent<T>): Sprite {
             var type: string = event.gT();
             Util.each(this._l[type] || [], (listener: Core.IEventListener<T>) => {
-                listener.call(this, event);
+                listener.call(undefined, event);
             });
             return this;
         }
@@ -111,7 +111,6 @@ namespace G {
         public a(element: Element, before?: string): Sprite;
         public a(element: Element, before?: Element): Sprite;
         public a(element: Element, before?: any): Sprite {
-            this.$f();
             var index: number = -1;
             if ('string' == typeof before)
                 before = this.q(before)[0];
@@ -120,18 +119,25 @@ namespace G {
             if (-1 == index)
                 index = this._d.length;
             this._d.splice(index, 0, element.$p(this));
-            return this;
+            return <Sprite> this.$f();
         }
 
         /**
          * 删除元素。
          */
         public e(element: Element): Sprite {
-            this.$f();
             var index: number = Util.indexOf(this._d, element);
             if (-1 != index)
                 this._d.splice(index, 1);
-            return this;
+            return <Sprite> this.$f();
+        }
+
+        /**
+         * 删除所有元素。
+         */
+        public c(): Sprite {
+            this._d = [];
+            return <Sprite> this.$f();
         }
 
         /**
@@ -164,6 +170,18 @@ namespace G {
                 return true;
             });
             return els.concat(this);
+        }
+
+        /**
+         * 获取需绘制地图片集合。
+         */
+        protected $r(): Promise<HTMLImageElement>[] {
+            var resources: Promise<HTMLImageElement>[] = [];
+            Util.each(this._d, (element: Element) => {
+                if (!('$r' in element)) return;
+                resources = resources.concat((<Sprite> element).$r());
+            });
+            return resources;
         }
     }
 }

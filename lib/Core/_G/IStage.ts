@@ -35,6 +35,11 @@ namespace Core {
         // constructor(context: CanvasRenderingContext2D);
 
         /**
+         * 计算缩放比例。
+         */
+        z(): IStage;
+
+        /**
          * 绘制。
          */
         d(): Promise<CanvasRenderingContext2D>;

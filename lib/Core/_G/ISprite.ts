@@ -45,6 +45,11 @@ namespace Core {
         e(element: IGraphicElement): ISprite;
 
         /**
+         * 删除所有元素。
+         */
+        c(): ISprite;
+
+        /**
          * 根据编号查找元素。
          */
         q(id: string): IGraphicElement[];

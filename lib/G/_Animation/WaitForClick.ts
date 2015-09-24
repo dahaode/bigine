@@ -40,7 +40,7 @@ namespace G {
                         var listener: Core.IEventListener<Core.ISprite> = (event: Event.Click) => {
                             element.removeEventListener(event.gT(), listener);
                             if (this._f)
-                                this._f.call({}, event);
+                                this._f.call(undefined, event);
                             resolve(element);
                         };
                         element.addEventListener('$click', listener);

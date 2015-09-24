@@ -30,9 +30,9 @@ namespace G {
             if (!this._b.w || !this._b.h)
                 image.o().then((img: HTMLImageElement) => {
                     if (this._b.w) {
-                        this._b.h = (this._b.w * img.height / img.width) | 0;
+                        this._b.h = 0 | this._b.w * img.height / img.width;
                     } else if (this._b.h) {
-                        this._b.w = (this._b.h * img.width / img.height) | 0;
+                        this._b.w = 0 | this._b.h * img.width / img.height;
                     } else {
                         this._b.w = img.width;
                         this._b.h = img.height;
@@ -58,6 +58,13 @@ namespace G {
                 }
                 return super.d(context);
             });
+        }
+
+        /**
+         * 获取需绘制地图片集合。
+         */
+        protected $r(): Promise<HTMLImageElement>[] {
+            return [this._d.o()];
         }
     }
 }
