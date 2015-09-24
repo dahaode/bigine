@@ -27,6 +27,7 @@ namespace Core {
     // IGraphicElement:i()
     // IGraphicElement:gI()
     export interface IImageElement extends IGraphicElement {
-        // constructor(image: IResource, x?: number, y?: number, absolute?: boolean);
+        // constructor(image: IResource<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean);
+        // constructor(image: IResource<HTMLImageElement>, bounds?: IBounds, absolute?: boolean);
     }
 }

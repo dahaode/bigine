@@ -22,13 +22,22 @@ namespace G {
         /**
          * 构造函数。
          */
-        constructor(image: Core.IResource<HTMLImageElement>, x?: number, y?: number, absolute?: boolean) {
-            super(x || 0, y || 0, 0, 0, absolute);
+        constructor(image: Core.IResource<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean);
+        constructor(image: Core.IResource<HTMLImageElement>, bounds?: Core.IBounds, absolute?: boolean);
+        constructor(image: Core.IResource<HTMLImageElement>, x?: any, y?: any, w?: any, h?: any, absolute?: any) {
+            super(x, y, w, h, absolute);
             this._d = image;
-            image.o().then((img: HTMLImageElement) => {
-                this._b.w = img.width;
-                this._b.h = img.height;
-            });
+            if (!this._b.w || !this._b.h)
+                image.o().then((img: HTMLImageElement) => {
+                    if (this._b.w) {
+                        this._b.h = (this._b.w * img.height / img.width) | 0;
+                    } else if (this._b.h) {
+                        this._b.w = (this._b.h * img.width / img.height) | 0;
+                    } else {
+                        this._b.w = img.width;
+                        this._b.h = img.height;
+                    }
+                });
         }
 
         /**

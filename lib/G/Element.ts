@@ -59,7 +59,7 @@ namespace G {
         constructor(x: number, y: number, w: number, h: number, absolute?: boolean);
         constructor(bounds: Core.IBounds, absolute?: boolean);
         constructor(x: any, ...args: any[]) {
-            if ('number' == typeof x) {
+            if (!x || 'number' == typeof x) {
                 this._b = {
                     x: x,
                     y: args[0],
@@ -71,6 +71,10 @@ namespace G {
                 this._b = x;
                 this._a = !!args[0];
             }
+            this._b.x |= 0;
+            this._b.y |= 0;
+            this._b.w |= 0;
+            this._b.h |= 0;
             this._r = 0;
             this._s =
             this._o = 1;
