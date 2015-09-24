@@ -16,3 +16,4 @@
 /// <reference path="_Element/Stage.ts" />
 /// <reference path="_Animation/Delay.ts" />
 /// <reference path="_Element/Text.ts" />
+/// <reference path="_Animation/WaitForClick.ts" />
