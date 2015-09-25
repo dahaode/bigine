@@ -77,6 +77,8 @@ namespace SCHEMA {
         Compare: '对比数据',
         Increase: '增加数据',
         LoopBreak: '循环中止',
+        Maximum: '最大数据',
+        Minimum: '最小数据',
 
         And: '且',
         Or: '或',
@@ -100,7 +102,7 @@ namespace SCHEMA {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // 59
+    export var S: { [index: number]: any[] } = { // 61
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -232,7 +234,13 @@ namespace SCHEMA {
         58: ['Loop', 0, -1, {
             '-1': [1]
         }],
-        59: ['LoopBreak', 0, -1]
+        59: ['LoopBreak', 0, -1],
+        60: ['Maximum', [0, 1], -1, { // [变量名]
+            53: [1]
+        }],
+        61: ['Minimum', [0, 1], -1, { // [变量名]
+            53: [1]
+        }]
     };
     var ii: any,
         jj: any;
