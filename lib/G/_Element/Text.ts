@@ -26,13 +26,34 @@ namespace G {
         private _d: Core.ITextPhrase[];
 
         /**
+         * 对齐方式。
+         */
+        private _l: Core.ITextElement.Align;
+
+        /**
          * 构造函数。
          */
-        constructor(x: number, y: number, w: number, h: number, lineHeight: number, absolute?: boolean);
-        constructor(bounds: Core.IBounds, lineHeight: number, absolute?: boolean);
-        constructor(x: any, y: any, w?: any, h?: any, lineHeight?: any, absolute?: boolean) {
+        constructor(x: number, y: number, w: number, h: number, lineHeight: number, align?: Core.ITextElement.Align, absolute?: boolean);
+        constructor(bounds: Core.IBounds, lineHeight: number, align?: Core.ITextElement.Align, absolute?: boolean);
+        constructor(x: any, y: any, w?: any, h?: any, lineHeight?: any, align?: any, absolute?: boolean) {
             super(x, y, w, h, absolute);
-            this._h = 0 | ('number' == typeof x ? lineHeight : y);
+            if (!x || 'number' == typeof x) {
+                this._h = lineHeight;
+                this._l = align;
+            } else {
+                this._h = y;
+                this._l = w;
+            }
+            this._h |= 0;
+            var aligns: typeof Core.ITextElement.Align = Core.ITextElement.Align;
+            switch (this._l) {
+                case aligns.Left:
+                case aligns.Center:
+                case aligns.Right:
+                    break;
+                default:
+                    this._l = aligns.Left;
+            }
             this._d = [];
         }
 
@@ -43,26 +64,45 @@ namespace G {
             if (this._o) {
                 context.save();
                 context.globalAlpha = this._o;
-                var bounds: Core.IBounds = this.gB(),
-                    x: number = bounds.x,
-                    y: number = bounds.y,
-                    w: number = bounds.w,
-                    offset: number,
-                    progress: [number, number] = [0, 0];
+                var schedules: [number, Phrase, number, number][][] = [[]], // width, Phrase, offset, length
+                    line: [number, Phrase, number, number][] = schedules[0],
+                    aligns: typeof Core.ITextElement.Align = Core.ITextElement.Align,
+                    bounds: Core.IBounds = this.gB(),
+                    width: number = bounds.w,
+                    m: [number, number], // length, width
+                    offset: number;
                 Util.each(this._d, (phrase: Phrase) => {
-                    offset = this._h - phrase.gF();
-                    while (progress[0] != phrase.gL()) {
-                        progress = phrase.d(context, x, y + offset, w, progress[0]);
-                        if (!progress[1]) {
-                            x = bounds.x;
-                            y += this._h;
-                            w = bounds.w;
+                    offset = 0;
+                    while (offset != phrase.gL()) {
+                        m = phrase.m(context, width, offset);
+                        if (m[0]) {
+                            line.push([m[1], phrase, offset, m[0]]);
+                            width -= m[1];
+                            offset += m[0];
                         } else {
-                            x += progress[1];
-                            w -= progress[1];
+                            line = [];
+                            schedules.push(line);
+                            width = bounds.w;
                         }
                     }
-                    progress = [0, 0];
+                });
+                Util.each(schedules, (line2: [number, Phrase, number, number][], index: number) => {
+                    if (this._l != aligns.Left) {
+                        width = 0;
+                        Util.each(line2, (section: [number, Phrase, number, number]) => {
+                            width += section[0];
+                        });
+                        offset = bounds.w - width;
+                        if (this._l == aligns.Center)
+                            offset = 0 | offset / 2;
+                    } else
+                        offset = 0; // x
+                    offset += bounds.x;
+                    width = bounds.y + this._h * (1 + index); // y
+                    Util.each(line2, (section: [number, Phrase, number, number]) => {
+                        section[1].d(context, offset, width - section[1].gF(), section[2], section[3]);
+                        offset += section[0];
+                    });
                 });
                 context.restore();
             }

@@ -95,17 +95,33 @@ namespace G {
         }
 
         /**
-         * 绘制。
+         * 计算可绘制字符数。
          */
-        public d(context: CanvasRenderingContext2D, x: number, y: number, maxWidth: number, offset?: number, length?: number): [number, number] {
-            var clob: string = this._t,
-                width: number;
-            offset = offset || 0;
-            if (offset)
-                clob = clob.substr(offset, length || clob.length);
-            length = clob.length;
-            if (!length)
-                return [offset, 0];
+        public m(context: CanvasRenderingContext2D, maxWidth: number, offset?: number): [number, number] {
+            var clob: string = offset ?
+                    this._t.substr(offset) :
+                    this._t,
+                compare: (text: string, maxWidth2: number) => [number, number] = (text: string, maxWidth2: number) => {
+                    var length: number = text.length,
+                        result2: [number, number] = [length, context.measureText(text).width],
+                        result3: [number, number];
+                    if (result2[1] <= maxWidth2) // 可以完全绘制
+                        return result2;
+                    if (1 == length) // 完全无法绘制
+                        return [0, 0];
+                    length = 0 | length / 2; // 中分
+                    result2 = compare(text.substr(0, length), maxWidth2);
+                    if (length != result2[0]) // 前半段仍无法全部绘制
+                        return result2;
+                    result3 = compare(text.substr(length), maxWidth2 - result2[1]);
+                    result2[0] += result3[0];
+                    result2[1] += result3[1];
+                    return result2;
+                },
+                result: [number, number];
+            offset = clob.length;
+            if (!offset)
+                return [0, 0];
             context.save();
             context.fillStyle = this._c;
             context.font = this._f + 'px ' + Phrase.FONT;
@@ -116,16 +132,32 @@ namespace G {
                 context.shadowOffsetY = this._ss;
                 context.shadowColor = this._sc;
             }
-            for (; length > 0; length--) {
-                width = context.measureText(clob.substr(0, length)).width;
-                if (width <= maxWidth)
-                    break;
-            }
-            if (!length)
-                return [offset, 0];
-            context.fillText(clob.substr(0, length), x, y);
+            if (context.measureText(clob[0]).width > maxWidth) {
+                result = [0, 0];
+            } else
+                result = compare(clob, maxWidth);
             context.restore();
-            return [offset + length, width];
+            return result;
+        }
+
+        /**
+         * 绘制。
+         */
+        public d(context: CanvasRenderingContext2D, x: number, y: number, offset?: number, length?: number): void {
+            var clob: string = this._t.substr(offset || 0, length || this._t.length);
+            if (!clob.length) return;
+            context.save();
+            context.fillStyle = this._c;
+            context.font = this._f + 'px ' + Phrase.FONT;
+            context.textBaseline = 'top';
+            if (this._ss) {
+                context.shadowBlur =
+                context.shadowOffsetX =
+                context.shadowOffsetY = this._ss;
+                context.shadowColor = this._sc;
+            }
+            context.fillText(clob, Math.ceil(x), Math.ceil(y));
+            context.restore();
         }
 
         /**

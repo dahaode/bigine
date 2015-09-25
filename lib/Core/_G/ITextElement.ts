@@ -27,8 +27,8 @@ namespace Core {
     // IGraphicElement:i()
     // IGraphicElement:gI()
     export interface ITextElement extends IGraphicElement {
-        // constructor(x: number, y: number, w: number, h: number, lineHeight: number, absolute?: boolean);
-        // constructor(bounds: IBounds, lineHeight: number, absolute?: boolean);
+        // constructor(x: number, y: number, w: number, h: number, lineHeight: number, align?: ITextElement.Align, absolute?: boolean);
+        // constructor(bounds: IBounds, lineHeight: number, align?: ITextElement.Align, absolute?: boolean);
 
         /**
          * 添加文字。
@@ -44,5 +44,25 @@ namespace Core {
          * 清空所有已添加文字。
          */
         c(): ITextElement;
+    }
+
+    export namespace ITextElement {
+        /**
+         * 对齐方式。
+         */
+        export enum Align {
+            /**
+             * 左对齐。
+             */
+            Left,
+            /**
+             * 居中对齐。
+             */
+            Center,
+            /**
+             * 右对齐。
+             */
+            Right
+        };
     }
 }

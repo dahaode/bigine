@@ -39,9 +39,14 @@ namespace Core {
         s(size: number, color?: string): ITextPhrase;
 
         /**
+         * 计算可绘制字符数及所需宽度。
+         */
+        m(context: CanvasRenderingContext2D, maxWidth: number, offset?: number): [number, number];
+
+        /**
          * 绘制。
          */
-        d(context: CanvasRenderingContext2D, x: number, y: number, maxWidth: number, offset?: number, length?: number): [number, number];
+        d(context: CanvasRenderingContext2D, x: number, y: number, offset?: number, length?: number): void;
 
         /**
          * 获取长度。

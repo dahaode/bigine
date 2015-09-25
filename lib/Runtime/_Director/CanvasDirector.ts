@@ -468,7 +468,7 @@ namespace Runtime {
                                 option.p(this._r);
                                 resolve(gOptions);
                             }, new G.Image(this._i['ch']), new G.Image(this._i['c']))
-                            .a(new G.Text(0, 0, w, h, h / 2 + 16)
+                            .a(new G.Text(0, 0, w, h, h / 2 + 16, Core.ITextElement.Align.Center)
                                 .a(new G.Phrase()
                                     .t(option.gT())
                                     .f(32)
@@ -666,7 +666,7 @@ namespace Runtime {
             };
             ;
             // 文字区域
-            gTip.a(new G.Text(t2b(section), 32)
+            gTip.a(new G.Text(t2b(section), 32, Core.ITextElement.Align.Center)
                     .i('w')
                 );
             // -------- choose --------
