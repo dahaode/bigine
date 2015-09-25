@@ -15,6 +15,11 @@ namespace G {
 
     export class Type extends Animation {
         /**
+         * 速度（单位：帧／字）。
+         */
+        private _r: number;
+
+        /**
          * 对象。
          */
         private _o: Core.ITextElement;
@@ -27,8 +32,11 @@ namespace G {
         /**
          * 构造函数。
          */
-        constructor() {
+        constructor(rate?: number) {
             super(0);
+            this._r = rate || 1;
+            if (0 > this._r)
+                this._r = 1;
         }
 
         /**
@@ -39,9 +47,12 @@ namespace G {
                 return Promise.resolve(element);
             this._o = element;
             this._t = element.gT();
+            var length: number = 0;
             Util.each(this._t, (phrase: Core.ITextPhrase) => {
-                this._d += phrase.gL();
+                length += phrase.gL();
             });
+            this._d = 0 | length * this._r;
+            this._r = this._d / length;
             return super.p(element);
         }
 
@@ -50,6 +61,7 @@ namespace G {
          */
         protected $p(element: Core.ITextElement, elpased: number): void {
             var length: number;
+            elpased = 0 | elpased / this._r;
             element.c().o(1);
             Util.each(this._t, (phrase: Core.ITextPhrase) => {
                 length = phrase.gL();
