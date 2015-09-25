@@ -25,6 +25,7 @@ namespace Core {
     // IGraphicElement:p()
     // IGraphicElement:i()
     // IGraphicElement:gI()
+    // IGraphicElement:f()
     export interface IColorElement extends IGraphicElement {
         // constructor(x: number, y: number, w: number, h: number, color: string, absolute?: boolean);
         // constructor(bounds: IBounds, color: string, absolute?: boolean);

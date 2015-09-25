@@ -86,6 +86,6 @@ namespace Core {
         /**
          * 发生变更。
          */
-        $f(): IGraphicElement;
+        f(): IGraphicElement;
     }
 }

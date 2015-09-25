@@ -114,7 +114,7 @@ namespace G {
          */
         public a(text: Core.ITextPhrase): Text {
             this._d.push(text);
-            return <Text> this.$f();
+            return <Text> this.f();
         }
 
         /**
@@ -129,7 +129,7 @@ namespace G {
          */
         public c(): Text {
             this._d = [];
-            return <Text> this.$f();
+            return <Text> this.f();
         }
     }
 }

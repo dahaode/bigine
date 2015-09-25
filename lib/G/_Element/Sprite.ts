@@ -128,7 +128,7 @@ namespace G {
             if (-1 == index)
                 index = this._d.length;
             this._d.splice(index, 0, element.$p(this));
-            return <Sprite> this.$f();
+            return <Sprite> this.f();
         }
 
         /**
@@ -138,7 +138,7 @@ namespace G {
             var index: number = Util.indexOf(this._d, element);
             if (-1 != index)
                 this._d.splice(index, 1);
-            return <Sprite> this.$f();
+            return <Sprite> this.f();
         }
 
         /**
@@ -146,7 +146,7 @@ namespace G {
          */
         public c(): Sprite {
             this._d = [];
-            return <Sprite> this.$f();
+            return <Sprite> this.f();
         }
 
         /**

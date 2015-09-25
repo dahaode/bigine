@@ -23,13 +23,11 @@ namespace G {
             if (hover)
                 this.a(hover.o(0));
             return <Button> this.addEventListener('$focus', () => {
-                this.$f();
                 if (defaults)
                     defaults.o(0);
                 if (hover)
                     hover.o(1);
             }).addEventListener('$blur', () => {
-                this.$f();
                 if (defaults)
                     defaults.o(1);
                 if (hover)

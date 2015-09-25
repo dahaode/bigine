@@ -25,11 +25,13 @@ namespace Core {
     // IGraphicElement:p()
     // IGraphicElement:i()
     // IGraphicElement:gI()
+    // IGraphicElement:f()
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()
     // ISprite:a()
     // ISprite:e()
+    // ISprite:c()
     // ISprite:q()
     export interface IStage extends ISprite {
         // constructor(context: CanvasRenderingContext2D);

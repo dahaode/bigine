@@ -130,7 +130,7 @@ namespace G {
             if (!distance)
                 return this;
             this._b.x += distance;
-            return this.$f();
+            return this.f();
         }
 
         /**
@@ -140,7 +140,7 @@ namespace G {
             if (!distance)
                 return this;
             this._b.y += distance;
-            return this.$f();
+            return this.f();
         }
 
         /**
@@ -152,7 +152,7 @@ namespace G {
             this._b.w *= ratio;
             this._b.h *= ratio;
             this._s *= ratio;
-            return this.$f();
+            return this.f();
         }
 
         /**
@@ -171,7 +171,7 @@ namespace G {
             this._r = degrees % 360;
             if (0 > this._r)
                 this._r += 360;
-            return this.$f();
+            return this.f();
         }
 
         /**
@@ -190,7 +190,7 @@ namespace G {
             if (0 > value || 1 < value)
                 throw new E(E.G_INVALID_OPACITY);
             this._o = value;
-            return this.$f();
+            return this.f();
         }
 
         /**
@@ -233,10 +233,10 @@ namespace G {
         /**
          * 发生变更。
          */
-        public $f(): Element {
+        public f(): Element {
             this._f = true;
             if (this._p)
-                this._p.$f();
+                this._p.f();
             return this;
         }
 

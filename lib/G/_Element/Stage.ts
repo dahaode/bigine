@@ -90,17 +90,7 @@ namespace G {
                     return false;
                 },
                 (event: MouseEvent) => {
-                    if (!this._m.target) return;
-                    var sprites: Sprite[] = [<Sprite> this._m.target],
-                        parent: Sprite = sprites[0].$p(),
-                        ev: Event.Click = new Event.Click(this._m);
-                    while (parent && parent != this) {
-                        sprites.push(parent);
-                        parent = parent.$p();
-                    }
-                    Util.each(sprites, (element: Sprite) => {
-                        element.dispatchEvent(ev);
-                    });
+                    this.$c();
                 }
             ];
             this.b(context.canvas);
@@ -138,7 +128,7 @@ namespace G {
         /**
          * 发生变更。
          */
-        public $f(): Element {
+        public f(): Element {
             this._f = true;
             this.$s(this._m.x, this._m.y);
             return this;
@@ -209,6 +199,23 @@ namespace G {
             this._m.target = sprites[0][0] || sprites[1][0];
             this._m.from = sprites[2][0];
             return sprites;
+        }
+
+        /**
+         * 模拟点击。
+         */
+        protected $c(): void {
+            if (!this._m.target) return;
+            var sprites: Sprite[] = [<Sprite> this._m.target],
+                parent: Sprite = sprites[0].$p(),
+                ev: Event.Click = new Event.Click(this._m);
+            while (parent && parent != this) {
+                sprites.push(parent);
+                parent = parent.$p();
+            }
+            Util.each(sprites, (element: Sprite) => {
+                element.dispatchEvent(ev);
+            });
         }
     }
 }

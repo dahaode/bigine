@@ -26,6 +26,7 @@ namespace Core {
     // IGraphicElement:p()
     // IGraphicElement:i()
     // IGraphicElement:gI()
+    // IGraphicElement:f()
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()

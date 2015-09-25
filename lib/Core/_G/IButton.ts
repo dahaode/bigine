@@ -12,6 +12,27 @@
 namespace Core {
     'use strict';
 
+    // IGraphicElement:gB()
+    // IGraphicElement:x()
+    // IGraphicElement:y()
+    // IGraphicElement:s()
+    // IGraphicElement:gS()
+    // IGraphicElement:r()
+    // IGraphicElement:gR()
+    // IGraphicElement:o()
+    // IGraphicElement:gO()
+    // IGraphicElement:d()
+    // IGraphicElement:p()
+    // IGraphicElement:i()
+    // IGraphicElement:gI()
+    // IGraphicElement:f()
+    // IEmittable:addEventListener()
+    // IEmittable:removeEventListener()
+    // IEmittable:dispatchEvent()
+    // ISprite:a()
+    // ISprite:e()
+    // ISprite:c()
+    // ISprite:q()
     export interface IButton extends ISprite {
         /**
          * 绑定功能。

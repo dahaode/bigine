@@ -26,6 +26,7 @@ namespace Core {
     // IGraphicElement:p()
     // IGraphicElement:i()
     // IGraphicElement:gI()
+    // IGraphicElement:f()
     export interface ITextElement extends IGraphicElement {
         // constructor(x: number, y: number, w: number, h: number, lineHeight: number, align?: ITextElement.Align, absolute?: boolean);
         // constructor(bounds: IBounds, lineHeight: number, align?: ITextElement.Align, absolute?: boolean);
