@@ -72,6 +72,15 @@ namespace G {
         }
 
         /**
+         * 设置父元素。
+         */
+        public $p(parent?: Sprite): Sprite {
+            if (!parent && this._p)
+                return <Sprite> this._p;
+            return <Sprite> super.$p(parent);
+        }
+
+        /**
          * 新增事件监听。
          */
         public addEventListener<T>(type: string, listener: Core.IEventListener<T>): Sprite {

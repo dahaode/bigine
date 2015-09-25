@@ -90,8 +90,17 @@ namespace G {
                     return false;
                 },
                 (event: MouseEvent) => {
-                    if (this._m.target)
-                        this._m.target.dispatchEvent(new Event.Click(this._m));
+                    if (!this._m.target) return;
+                    var sprites: Sprite[] = [<Sprite> this._m.target],
+                        parent: Sprite = sprites[0].$p(),
+                        ev: Event.Click = new Event.Click(this._m);
+                    while (parent && parent != this) {
+                        sprites.push(parent);
+                        parent = parent.$p();
+                    }
+                    Util.each(sprites, (element: Sprite) => {
+                        element.dispatchEvent(ev);
+                    });
                 }
             ];
             this.b(context.canvas);

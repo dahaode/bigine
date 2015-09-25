@@ -456,7 +456,7 @@ namespace Runtime {
             ]).then((images: HTMLImageElement[]) => {
                 var w: number = images[0].width,
                     h: number = images[0].height,
-                    m: number = 5,
+                    m: number = 16,
                     t: number = 0 | (CanvasDirector.BOUNDS.h - options.length * (h + m) + m) / 2,
                     gChoose: G.Sprite = <G.Sprite> this._c.q('D')[0],
                     gOptions: G.Button[] = [],
