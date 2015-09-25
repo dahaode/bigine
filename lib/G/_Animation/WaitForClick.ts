@@ -20,6 +20,11 @@ namespace G {
         private _f: Core.IEventListener<Core.ISprite>;
 
         /**
+         * 中止函数。
+         */
+        private _r: () => void;
+
+        /**
          * 构造函数。
          */
         constructor(callback?: Core.IEventListener<Core.ISprite>) {
@@ -33,17 +38,21 @@ namespace G {
         public p(element: Core.ISprite): Promise<Core.ISprite> {
             var r: Promise<Core.ISprite> = Promise.resolve(element),
                 counter: number = 0,
+                type: string = '$click',
                 once: () => Promise<Core.ISprite> = () => {
                     if (this._h)
                         return r;
                     return new Promise((resolve: (value: Core.ISprite) => void) => {
                         var listener: Core.IEventListener<Core.ISprite> = (event: Event.Click) => {
-                            element.removeEventListener(event.gT(), listener);
                             if (this._f)
                                 this._f.call(undefined, event);
+                            this._r();
+                        };
+                        this._r = () => {
+                            element.removeEventListener(type, listener);
                             resolve(element);
                         };
-                        element.addEventListener('$click', listener);
+                        element.addEventListener(type, listener);
                     }).then(() => {
                         if (!this._h && ++counter < this._l)
                             return once();
@@ -58,6 +67,17 @@ namespace G {
             if (!this._c.length)
                 return q;
             return q.then(() => Util.Q.every(this._c, (anime: Animation) => anime.p(element)));
+        }
+
+        /**
+         * 中止。
+         */
+        public h(): WaitForClick {
+            if (this._h)
+                return this;
+            if (this._r)
+                this._r();
+            return <WaitForClick> super.h();
         }
     }
 }
