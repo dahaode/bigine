@@ -50,5 +50,10 @@ namespace Core {
          * 绑定视图。
          */
         b(viewport: HTMLElement): IStage;
+
+        /**
+         * 模拟点击。
+         */
+        t(x?: number, y?: number): IStage;
     }
 }

@@ -171,6 +171,20 @@ namespace G {
         }
 
         /**
+         * 模拟点击。
+         */
+        public t(x?: number, y?: number): Stage {
+            x = x || this._m.x;
+            y = y || this._m.y;
+            var real: Event.IMouseEventMetas = this._m;
+            if (x != this._m.x || y != this._m.y)
+                this.$s(x, y);
+            this.$c();
+            this._m = real;
+            return this;
+        }
+
+        /**
          * 根据座标查找元素。
          */
         protected $s(x: number, y: number): [Sprite[], Sprite[], Sprite[]] {
