@@ -1,5 +1,5 @@
 /**
- * 定义如果动作组件标签。
+ * 定义如果动作标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
@@ -27,7 +27,7 @@ namespace Tag {
             var depth: number = states.g('$d'),
                 kt: string = '$t' + depth,
                 kv: string = '$v' + depth;
-            if (states.g(kt) || states.g(kv) != this.$v(this._p[0]))
+            if (states.g(kt) || states.g(kv) != this.$v(states.g(this._p[0]) || this._p[0]))
                 return true;
             states.s(kt, true);
             return Util.every(this._s, (tag: Action) => tag.t(states));

@@ -1,5 +1,5 @@
 /**
- * 定义否则动作组件标签。
+ * 定义否则动作标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
