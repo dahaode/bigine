@@ -120,6 +120,8 @@ namespace G {
          * 中止。
          */
         public h(): Animation {
+            if (this._h)
+                return this;
             this._h = true;
             Util.each(this._c, (anime: Animation) => {
                 anime.h();

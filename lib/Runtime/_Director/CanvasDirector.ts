@@ -241,6 +241,7 @@ namespace Runtime {
                         .c(<string> this._f[code + 'n']['c'])
                         .s(<number> this._f[code + 'n']['s'])
                     );
+            gWords.o(0);
             for (ii = 0; ii < words.length; ii++) {
                 if ('【' == words[ii] && !hilite) {
                     gWords.a(new G.Phrase()
@@ -272,6 +273,10 @@ namespace Runtime {
                     );
             gFrame.o(1);
             return this.lightOn()
+                .then(() => {
+                    if ('tip' == theme) return gWords.o(1);
+                    return gWords.p(new G.Type());
+                })
                 .then(() => gFrame.p(new G.WaitForClick()))
                 .then(() => {
                     gFrame.o(0);
