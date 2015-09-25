@@ -18,3 +18,4 @@
 /// <reference path="_Element/Text.ts" />
 /// <reference path="_Animation/WaitForClick.ts" />
 /// <reference path="_Animation/Type.ts" />
+/// <reference path="_Animation/TypeDelay.ts" />
