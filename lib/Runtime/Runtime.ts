@@ -87,7 +87,14 @@ namespace Runtime {
                 }
             });
             this.addEventListener<Episode>('begin', () => {
+                this._d.playBGM();
+                this._d.playSE();
                 this._e.p(Core.ISceneTag.Type.Begin, this);
+            });
+            this.addEventListener<Episode>('resume', () => {
+                this._d.playBGM();
+                this._d.playSE();
+                console.warn('resume');
             });
             this.addEventListener<Episode>('end', () => {
                 this._fp = false;

@@ -61,12 +61,12 @@ namespace Core {
         /**
          * 播放背景音乐。
          */
-        playBGM(resource: IResource<string>): Promise<IRuntime>;
+        playBGM(resource?: IResource<string>): Promise<IRuntime>;
 
         /**
          * 播放音效。
          */
-        playSE(resource: IResource<string>): Promise<IRuntime>;
+        playSE(resource?: IResource<string>): Promise<IRuntime>;
 
         /**
          * 关闭特写。
@@ -101,7 +101,12 @@ namespace Core {
         /**
          * 选择。
          */
-        choose(options: Util.IHashTable<IOptionTag>): Promise<IRuntime>;
+        choose(options: IOptionTag[]): Promise<IRuntime>;
+
+        /**
+         * 重置。
+         */
+        reset(): Promise<IRuntime>;
     }
 
     export namespace IDirector {

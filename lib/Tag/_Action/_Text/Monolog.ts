@@ -30,7 +30,7 @@ namespace Tag {
          * 绑定（运行时）作品（实体）。
          */
         public $b(ep: Core.IEpisode): void {
-            this._mc = <DefChar> ep.q('', Core.IEpisode.Entity.Player);
+            this._mc = (<Player> ep.q('', Core.IEpisode.Entity.Player)).gC();
         }
 
         /**

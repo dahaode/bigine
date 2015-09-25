@@ -47,9 +47,11 @@ namespace Tag {
                 co: DefRoom = <DefRoom> states.g(kco),
                 kdo: string = '$rd',
                 kto: string = '$rt',
-                director: Core.IDirector = runtime.gD();
+                director: Core.IDirector = runtime.gD(),
+                type: typeof Core.ISceneTag.Type = Core.ISceneTag.Type;
             if (cn == this._p[0]) // 同房间二次进入，
                 return director.lightOff()
+                    .then(() => director.reset())
                     .then(() => {
                         if (states.a(kcn, kdn)) // 未修改背景直接开灯。
                             return director.lightOn();
@@ -59,15 +61,16 @@ namespace Tag {
                         return director.asRoom((<DefRoom> states.g(kdo)).o(states.g(kt)))
                             .then(() => director.lightOn());
                     });
-            director.lightOff() // 新建时序流，
+            Promise.resolve() // 新建时序流，
                 .then(() => { // 播放当前房间离开前事件
                     states.s(ktn, this._p[0])
                         .s(kto, this._mo);
                     if (!cn)
                         return runtime;
-                    return co.p(Core.ISceneTag.Type.PreLeave, runtime);
+                    return co.p(type.PreLeave, runtime);
                 })
-                .then(() => this._mo.p(Core.ISceneTag.Type.PreEnter, runtime)) // 播放关联（目标）房间进入前事件
+                .then(() => this._mo.p(type.PreEnter, runtime)) // 播放关联（目标）房间进入前事件
+                .then(() => director.lightOff())
                 .then(() => { // 播放当前房间离开后事件
                     states.d(kcn)
                         .d(kco)
@@ -75,14 +78,20 @@ namespace Tag {
                         .d(kdo);
                     if (!cn)
                         return runtime;
-                    return co.p(Core.ISceneTag.Type.PostLeave, runtime);
+                    return co.p(type.PostLeave, runtime);
                 })
                 .then(() => { // 播放关联房间（目标）房间进入后事件
                     states.m(kdn, kcn)
                         .m(kdo, kco)
                         .c(kcn, kdn)
                         .c(kco, kdo);
-                    return this._mo.p(Core.ISceneTag.Type.PostEnter, runtime);
+                    director.c([this._mo.d()]);
+                    var map: DefMap = this._mo.gM();
+                    return director.lightOff()
+                        .then(() => director.reset())
+                        .then(() => director.asRoom(this._mo.o(states.g(kt))))
+                        .then(() => director.asMap(map ? map.gP() : {}))
+                        .then(() => this._mo.p(type.PostEnter, runtime));
                 })['catch'](Util.Q.ignoreHalt)['catch']((reason?: any) => {
                     runtime.gL().e(reason);
                 });

@@ -42,7 +42,7 @@ namespace Tag {
                 cg: string = states.g(key);
             if (cg)
                 throw new E(E.ACT_CG_ALREADY_SHOWN, this._l);
-            states.s(key, this._c);
+            states.s(key, this._p[0]);
             return runtime.gD().showCG(this._mo.o());
         }
 

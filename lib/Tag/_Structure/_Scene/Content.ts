@@ -24,10 +24,10 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            var director: Core.IDirector = runtime.gD();
             runtime.gS().s('$d', 1);
-            return runtime.gD().c(<Core.IResource<string | HTMLImageElement>[][]> Loop.prototype.c.call(this)).then(() => {
-                return Util.Q.every(this._s, (action: Action) => action.p(runtime));
-            });
+            return director.c(<Core.IResource<string | HTMLImageElement>[][]> Loop.prototype.c.call(this))
+                .then(() => Util.Q.every(this._s, (action: Action) => action.p(runtime)));
         }
 
         /**

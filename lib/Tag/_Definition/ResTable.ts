@@ -32,7 +32,7 @@ namespace Tag {
         public o(id: string): Core.IResource<HTMLImageElement> {
             if (!this._r)
                 throw new E(E.DEF_EPISODE_NOT_REGISTERED, this._l);
-            return this._o[id] || this._o[''];
+            return this._o[id] || this._o['默认'];
         }
     }
 }

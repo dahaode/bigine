@@ -127,6 +127,8 @@ namespace G {
          * 移动 X 轴座标。
          */
         public x(distance: number): Element {
+            if (!distance)
+                return this;
             this._b.x += distance;
             return this.$f();
         }
@@ -135,6 +137,8 @@ namespace G {
          * 移动 Y 轴座标。
          */
         public y(distance: number): Element {
+            if (!distance)
+                return this;
             this._b.y += distance;
             return this.$f();
         }
@@ -143,6 +147,8 @@ namespace G {
          * 缩放。
          */
         public s(ratio: number): Element {
+            if (1 == ratio)
+                return this;
             this._b.w *= ratio;
             this._b.h *= ratio;
             this._s *= ratio;
@@ -160,6 +166,8 @@ namespace G {
          * 旋转。
          */
         public r(degrees: number): Element {
+            if (this._r == degrees)
+                return this;
             this._r = degrees % 360;
             if (0 > this._r)
                 this._r += 360;
@@ -177,6 +185,8 @@ namespace G {
          * 透明度。
          */
         public o(value: number): Element {
+            if (this._o == value)
+                return this;
             if (0 > value || 1 < value)
                 throw new E(E.G_INVALID_OPACITY);
             this._o = value;

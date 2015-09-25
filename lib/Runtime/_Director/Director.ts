@@ -18,32 +18,27 @@ namespace Runtime {
         /**
          * 运行时。
          */
-        private _r: Core.IRuntime;
+        protected _r: Core.IRuntime;
 
         /**
          * 反馈运行时的即时 Promise 。
          */
-        private _p: Promise<Core.IRuntime>;
+        protected _p: Promise<Core.IRuntime>;
 
         /**
          * 是否动态创建。
          */
-        private _d: boolean;
-
-        /**
-         * 主题。
-         */
-        private _t: Util.IHashTable<Util.IHashTable<any>>;
+        protected _d: boolean;
 
         /**
          * 自动播放标识。
          */
-        private _a: boolean;
+        protected _a: boolean;
 
         /**
          * 音量。
          */
-        private _v: number;
+        protected _v: number;
 
         /**
          * 构造函数。
@@ -62,7 +57,7 @@ namespace Runtime {
          * @param resources 一个（作品）事件所包含地所有资源
          */
         public c(resources: Resource<string | HTMLImageElement>[][]): Promise<void> {
-            return Prefecher.c(resources);
+            return Prefecher.c(resources, this._r.gL());
         }
 
         /**
@@ -130,7 +125,7 @@ namespace Runtime {
         /**
          * 播放背景音乐。
          */
-        public playBGM(resource: Resource<string>): Promise<Core.IRuntime> {
+        public playBGM(resource?: Resource<string>): Promise<Core.IRuntime> {
             this._r.gS().s('$b', resource);
             return this._p;
         }
@@ -138,7 +133,7 @@ namespace Runtime {
         /**
          * 播放音效。
          */
-        public playSE(resource: Resource<string>): Promise<Core.IRuntime> {
+        public playSE(resource?: Resource<string>): Promise<Core.IRuntime> {
             return this._p;
         }
 
@@ -190,7 +185,21 @@ namespace Runtime {
         /**
          * 选择。
          */
-        public choose(options: Util.IHashTable<Core.IOptionTag>): Promise<Core.IRuntime> {
+        public choose(options: Core.IOptionTag[]): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 重置人物及状态。
+         */
+        public reset(): Promise<Core.IRuntime> {
+            var posistion: typeof Core.IDirector.Position = Core.IDirector.Position;
+            this._r.gS().d('$c')
+                .d('$c' + posistion.Left)
+                .d('$c' + posistion.CLeft)
+                .d('$c' + posistion.Center)
+                .d('$c' + posistion.CRight)
+                .d('$c' + posistion.Right);
             return this._p;
         }
 
@@ -205,7 +214,6 @@ namespace Runtime {
          * 使用主题。
          */
         public t(theme: Util.IHashTable<Util.IHashTable<any>>): Director {
-            this._t = theme;
             return this;
         }
 
@@ -220,8 +228,8 @@ namespace Runtime {
         /**
          * 设置音量。
          */
-        public v(volumn: number): Director {
-            this._v = volumn;
+        public v(volume: number): Director {
+            this._v = volume;
             return this;
         }
     }

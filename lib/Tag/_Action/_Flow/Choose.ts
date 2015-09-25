@@ -25,10 +25,9 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            var opts: Util.IHashTable<Option> = {};
+            var opts: Option[] = [];
             Util.each(this._s, (tag: Unknown) => {
-                var opt: Option = Option.f(tag, this._p[0]);
-                opts[opt.gT()] = opt;
+                opts.push(Option.f(tag, this._p[0]));
             });
             return runtime.gD().choose(opts);
         }

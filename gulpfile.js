@@ -70,7 +70,7 @@ $gulp.task('watch', function () {
     return $gulp.watch([
         'lib/**/*.ts',
         '!lib/**/*.d.ts'
-    ], ['compile']);
+    ], ['lint', 'compile']);
 });
 
 $gulp.task('default', ['minify']);

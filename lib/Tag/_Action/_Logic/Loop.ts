@@ -39,7 +39,7 @@ namespace Tag {
             var states: Core.IStates = runtime.gS(),
                 kd: string = '$d',
                 depth: number = states.g(kd),
-                loop: () => Promise<Core.IRuntime> = function (): Promise<Core.IRuntime> {
+                loop: () => Promise<Core.IRuntime> = () => {
                     return Util.Q.every(<Action[]> this._s, (action: Action) => action.p(runtime))
                         .then(loop);
                 };
@@ -80,7 +80,7 @@ namespace Tag {
         public c(): Core.IResource<string | HTMLImageElement>[][] {
             var frame: Core.IResource<string | HTMLImageElement>[] = [],
                 resources: Core.IResource<string | HTMLImageElement>[][] = [],
-                pack: () => void = function(): void {
+                pack: () => void = () => {
                     if (frame.length) {
                         resources.push(frame);
                         frame = [];

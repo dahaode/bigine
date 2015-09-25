@@ -37,6 +37,7 @@ namespace Runtime {
          * 设置值。
          */
         public s(key: string, value: any): States {
+            this._r.gL().d('[state]', key, '=', '$' == key[0] ? value : JSON.stringify(value));
             this._d[key] = value;
             return this;
         }
@@ -52,6 +53,7 @@ namespace Runtime {
          * 删除值。
          */
         public d(key: string): States {
+            this._r.gL().d('[state]', key, '=');
             delete this._d[key];
             return this;
         }
@@ -67,6 +69,7 @@ namespace Runtime {
          * 复制值。
          */
         public c(src: string, dest: string): States {
+            this._r.gL().d('[state]', dest, '=', src);
             this._d[dest] = this._d[src];
             return this;
         }
@@ -93,10 +96,15 @@ namespace Runtime {
          * 此方法应触发 Save 事件。
          */
         public e(brief?: string): Util.IHashTable<any> {
+            var data: Util.IHashTable<any> = {};
+            Util.each(this._d, (value: any, key: string) => {
+                if ('.' != key[0] && '$' != key[0] && undefined != value)
+                    data[key] = value;
+            });
             this._r.dispatchEvent(new Event.Save(<Event.ISaveMetas> {
                 target: this,
                 title: brief || '',
-                data: this._d
+                data: data
             }));
             return this._d;
         }

@@ -68,9 +68,9 @@ namespace Util {
     ((env: IEnvType) => {
         if (env.Node.JS)
             env.Node.Webkit = !!(('node-webkit' in process.versions) || ('atom-shell' in process.versions) || ('electron' in process.versions));
-        var detect: () => [boolean, boolean] = function(): [boolean, boolean] {
+        var detect: () => [boolean, boolean] = () => {
             var ua: string = navigator.userAgent.toLowerCase(),
-                pick: (pattern: RegExp) => string = function(pattern: RegExp): string {
+                pick: (pattern: RegExp) => string = (pattern: RegExp) => {
                     var match: string[] = ua.match(pattern);
                     return (match && 1 < match.length) ? match[1] : '';
                 },

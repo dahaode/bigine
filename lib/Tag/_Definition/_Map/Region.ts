@@ -27,11 +27,11 @@ namespace Tag {
             var p: string[] = content.split('，');
             if (4 > p.length || 5 < p.length)
                 throw new E(E.DEF_MAP_REGION_BROKEN, lineNo);
-            this._a['x'] = parseFloat(p[3]);
-            this._a['y'] = parseFloat(p[0]);
-            this._a['w'] = 1920 - this._a['x'] - parseFloat(p[1]);
-            this._a['h'] = 1080 - this._a['y'] - parseFloat(p[2]);
-            this._a['z'] = p[4] ? parseFloat(p[4]) : 0;
+            this._a['x'] = 0 | (<any> p[3]) / 1.5;
+            this._a['y'] = 0 | (<any> p[0]) / 1.5;
+            this._a['w'] = 1280 - this._a['x'] - (0 | (<any> p[1]) / 1.5);
+            this._a['h'] = 720 - this._a['y'] - (0 | (<any> p[2]) / 1.5);
+            this._a['z'] = ((<any> p[4]) || 0) - 0;
         }
 
         /**
