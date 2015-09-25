@@ -68,6 +68,11 @@ namespace Runtime {
         private _f: Util.IHashTable<Util.IHashTable<string | number>>;
 
         /**
+         * 自动播放相关动画。
+         */
+        private _t: Core.IAnimation;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -145,6 +150,8 @@ namespace Runtime {
             return Prefecher.c([[this._i['e']]])
                 .then(() => {
                     var gED: G.Image = new G.Image(this._i['e'], CanvasDirector.BOUNDS);
+                    this.playBGM();
+                    this.playSE();
                     return this.lightOff()
                         .then(() => {
                             this._c.a(gED, 'C');
@@ -275,10 +282,26 @@ namespace Runtime {
             return this.lightOn()
                 .then(() => {
                     if ('tip' == theme) return gWords.o(1);
-                    return gWords.p(new G.Type());
-                })
-                .then(() => gFrame.p(new G.WaitForClick()))
-                .then(() => {
+                    var aType: G.Type = new G.Type(1),
+                        aWFC: G.WaitForClick;
+                    if (this._a)
+                        return gWords.p(aType);
+                    aWFC = new G.WaitForClick(() => {
+                        aType.h();
+                    });
+                    return Promise.race<any>([
+                        gWords.p(aType).then(() => aWFC.h()),
+                        gFrame.p(aWFC)
+                    ]);
+                }).then(() => {
+                    if (this._a) {
+                        this._t = new G.TypeDelay(9);
+                        return gWords.p(this._t);
+                    }
+                    this._t = new G.WaitForClick();
+                    return gFrame.p(this._t);
+                }).then(() => {
+                    this._t = undefined;
                     gFrame.o(0);
                     if (gAvatar)
                         gAvatar.c();
@@ -698,13 +721,23 @@ namespace Runtime {
         }
 
         /**
+         * 设置自动播放。
+         */
+        public a(auto: boolean): CanvasDirector {
+            if (this._t) {
+                this._t.h();
+                this._t = undefined;
+            }
+            return <CanvasDirector> super.a(auto);
+        }
+
+        /**
          * 设置音量。
          */
-        public v(volume: number): Director {
-            this._v = volume;
+        public v(volume: number): CanvasDirector {
             this._s['b'].volume = volume;
             this._s['e'].volume = volume;
-            return this;
+            return <CanvasDirector> super.v(volume);
         }
     }
 }
