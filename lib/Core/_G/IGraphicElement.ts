@@ -12,8 +12,6 @@
 /// <reference path="IAnimation.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IGraphicElement {
         // constructor(x: number, y: number, w: number, h: number, absolute?: boolean);
         // constructor(bounds: IBounds, absolute?: boolean);

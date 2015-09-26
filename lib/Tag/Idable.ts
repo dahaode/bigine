@@ -11,8 +11,6 @@
 /// <reference path="../Core/_Tag/IIdableTag.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Idable extends Action implements Core.IIdableTag {
         /**
          * 唯一编号。

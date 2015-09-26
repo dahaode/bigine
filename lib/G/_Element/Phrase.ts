@@ -10,8 +10,6 @@
 /// <reference path="../../Core/_G/ITextPhrase.ts" />
 
 namespace G {
-    'use strict';
-
     export class Phrase implements Core.ITextPhrase {
         /**
          * 字体。

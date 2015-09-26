@@ -11,8 +11,6 @@
 /// <reference path="../Core/_Tag/IPerformableTag.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Action extends Unknown implements Core.IPerformableTag {
         /**
          * 获取代号。

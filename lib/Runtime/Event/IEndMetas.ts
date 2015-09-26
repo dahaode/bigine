@@ -11,8 +11,6 @@
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export interface IEndMetas extends Core.IEventMetas<Core.IEpisode> {
         }

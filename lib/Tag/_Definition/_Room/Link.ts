@@ -11,8 +11,6 @@
 /// <reference path="../_Map/DefMap.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Link extends Unknown {
         /**
          * 关联地图。

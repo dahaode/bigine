@@ -10,8 +10,6 @@
 /// <reference path="../ResTable.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Times extends ResTable {
 
         /**

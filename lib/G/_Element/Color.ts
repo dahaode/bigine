@@ -11,8 +11,6 @@
 /// <reference path="../../Core/_G/IColorElement.ts" />
 
 namespace G {
-    'use strict';
-
     export class Color extends Element implements Core.IColorElement {
         /**
          * 颜色值。

@@ -12,8 +12,6 @@
 /// <reference path="../Event/Begin.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export class Director implements Core.IDirector {
         /**
          * 运行时。

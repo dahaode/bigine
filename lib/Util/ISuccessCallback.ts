@@ -10,8 +10,6 @@
 /// <reference path="IHashTable.ts" />
 
 namespace Util {
-    'use strict';
-
     export interface ISuccessCallback<T> {
         (data: IHashTable<T>): void;
     }

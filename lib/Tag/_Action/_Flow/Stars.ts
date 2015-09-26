@@ -11,8 +11,6 @@
 /// <reference path="../../../Core/_Runtime/IDirector.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Stars extends Action {
         /**
          * 星级。

@@ -10,8 +10,6 @@
 /// <reference path="TagLine.ts" />
 
 namespace Lex {
-    'use strict';
-
     export namespace Parser {
         /**
          * 解析。

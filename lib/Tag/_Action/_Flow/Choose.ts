@@ -11,8 +11,6 @@
 /// <reference path="Option.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Choose extends Action {
         /**
          * 获取标签名称。

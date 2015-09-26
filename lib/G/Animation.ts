@@ -12,8 +12,6 @@
 /// <reference path="../Util/ENV.ts" />
 
 namespace G {
-    'use strict';
-
     export class Animation implements Core.IAnimation {
         /**
          * 动画时长（单位：帧）。
@@ -145,8 +143,6 @@ namespace G {
     }
 
     export namespace Animation {
-        'use strict';
-
         var jobs: FrameRequestCallback[] = [],
             raf: typeof window.requestAnimationFrame,
             proxy: FrameRequestCallback;

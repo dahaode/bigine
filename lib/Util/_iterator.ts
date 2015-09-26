@@ -11,8 +11,6 @@
 /// <reference path="IObjectIterator.ts" />
 
 namespace Util {
-    'use strict';
-
     /**
      * 无条件遍历整个数组或对象。
      */

@@ -11,8 +11,6 @@
 /// <reference path="../../Core/_G/IImageElement.ts" />
 
 namespace G {
-    'use strict';
-
     export class Image extends Element implements Core.IImageElement {
         /**
          * 数据。

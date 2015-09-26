@@ -11,8 +11,6 @@
 /// <reference path="IErrorMetas.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export class Error extends Event<any> {
             /**

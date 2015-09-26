@@ -10,8 +10,6 @@
 /// <reference path="../../Idable.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class VoiceOver extends Idable {
         /**
          * 获取标签名称。

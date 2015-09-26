@@ -14,8 +14,6 @@
 /// <reference path="_iterator.ts" />
 
 namespace Util {
-    'use strict';
-
     export namespace Remote {
         /**
          * 格式化。

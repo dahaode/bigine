@@ -11,8 +11,6 @@
 /// <reference path="Audio.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class DefBGM extends Entity {
         /**
          * 获取标签名称。

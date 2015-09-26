@@ -11,8 +11,6 @@
 /// <reference path="IReadyMetas.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export class Ready extends Event<Core.IEpisode> {
             /**

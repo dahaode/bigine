@@ -8,8 +8,6 @@
  */
 
 namespace Util {
-    'use strict';
-
     export interface IFailureCallback {
         (error: Error, status?: number): void;
     }

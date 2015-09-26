@@ -11,8 +11,6 @@
 /// <reference path="../Event/Click.ts" />
 
 namespace G {
-    'use strict';
-
     export class WaitForClick extends Animation {
         /**
          * 功能函数。

@@ -10,8 +10,6 @@
 /// <reference path="../../Core/_Event/IEvent.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export class Event<T> implements Core.IEvent<T> {
             /**

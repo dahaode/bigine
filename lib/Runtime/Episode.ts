@@ -13,8 +13,6 @@
 /// <reference path="_Resource/Resource.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export class Episode implements Core.IEpisode {
         /**
          * 已添加地事件。

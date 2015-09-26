@@ -10,8 +10,6 @@
 /// <reference path="../Unknown.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Image extends Unknown {
         /**
          * 图片资源。

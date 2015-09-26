@@ -6,10 +6,6 @@
  * @license   GPL-3.0
  * @file      Util/IHashTable.ts
  */
-var Util;
-(function (Util) {
-    'use strict';
-})(Util || (Util = {}));
 /**
  * 声明（运行时）事件元信息接口规范。
  *
@@ -19,10 +15,6 @@ var Util;
  * @file      Core/_Event/IEventMetas.ts
  */
 /// <reference path="../../Util/IHashTable.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（运行时）事件接口规范。
  *
@@ -32,10 +24,6 @@ var Core;
  * @file      Core/_Event/IEvent.ts
  */
 /// <reference path="IEventMetas.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 定义（运行时）抽象事件组件。
  *
@@ -47,7 +35,6 @@ var Core;
 /// <reference path="../../Core/_Event/IEvent.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Event;
     (function (Event_1) {
         var Event = (function () {
@@ -77,10 +64,6 @@ var Runtime;
  * @file      Core/_Tag/ITag.ts
  */
 /// <reference path="../_Runtime/IEpisode.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明带唯一标识标签接口规范。
  *
@@ -90,10 +73,6 @@ var Core;
  * @file      Core/_Tag/IIdableTag.ts
  */
 /// <reference path="ITag.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（运行时）事件监听函数接口规范。
  *
@@ -103,10 +82,6 @@ var Core;
  * @file      Core/_Event/IEventListener.ts
  */
 /// <reference path="IEvent.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（运行时）事件宿主接口规范。
  *
@@ -116,10 +91,6 @@ var Core;
  * @file      Core/_Event/IEmittable.ts
  */
 /// <reference path="IEventListener.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明实体定义标签接口规范。
  *
@@ -129,10 +100,6 @@ var Core;
  * @file      Core/_Tag/IEntityTag.ts
  */
 /// <reference path="ITag.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明成功回调函数接口规范。
  *
@@ -142,10 +109,6 @@ var Core;
  * @file      Util/ISuccessCallback.ts
  */
 /// <reference path="IHashTable.ts" />
-var Util;
-(function (Util) {
-    'use strict';
-})(Util || (Util = {}));
 /**
  * 声明根标签接口规范。
  *
@@ -156,10 +119,6 @@ var Util;
  */
 /// <reference path="IEntityTag.ts" />
 /// <reference path="../../Util/ISuccessCallback.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（运行时）日志接口规范。
  *
@@ -170,7 +129,6 @@ var Core;
  */
 var Core;
 (function (Core) {
-    'use strict';
     var ILogger;
     (function (ILogger) {
         /**
@@ -206,36 +164,6 @@ var Core;
  * @file      Core/_Runtime/IStates.ts
  */
 /// <reference path="../../Util/IHashTable.ts" />
-/**
- * 1. `_` 表明为场效相关信息，需要被存档记录；
- *     * `_b` - 背景音乐名 - Tag
- *     * `_c` - 特写名 - Tag
- *     * `_c<站位>` - 人物名 - Tag
- *     * `_s<站位>` - 人物神态名 - Tag
- *     * `_rc` - （所在）房间名 - Tag
- *     * `_rd` - （显示）房间名 - Tag
- *     * `_rt` - （移动目标）房间名 - Tag
- *     * `_t` - 时刻名 - Tag
- *     * `_w` - 天气名 - Tag
- * 2. `.` 表明为会话持久信息，不能被存档记录；
- *     * `.p<人物名>` - 人物站位 - Tag
- * 3. `$` 表明为注册对象，不能被存档记录；
- *     * `$b` - 背景音乐资源对象 - Runtime
- *     * `$c` - 特写图片资源对象 - Runtime
- *     * `$c<站位>` - 人物神态资源对象 - Runtime
- *     * `$d` - 事件逻辑层深度 - Tag
- *     * `$rc` - （所在）房间对象 - Tag
- *     * `$rd` - （显示）房间对象 - Tag
- *     * `$rt` - （移动目标）房间对象 - Tag
- *     * `$t` - 房间时刻资源对象 - Runtime
- *     * `$t<深度>` - 比较是否完成 - Tag
- *     * `$v<深度>` - 当前比较值 - Tag
- * 4. 其它为作品运行信息，需要被存档记录。
- */
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 定义引擎异常。
  *
@@ -309,7 +237,6 @@ var E = (function (_super) {
 })(Error);
 var E;
 (function (E) {
-    'use strict';
     (function (Signal) {
         /**
          * 中断循环。
@@ -334,10 +261,6 @@ var E;
  * @license   GPL-3.0
  * @file      Util/IArrayIterator.ts
  */
-var Util;
-(function (Util) {
-    'use strict';
-})(Util || (Util = {}));
 /**
  * 声明对象遍历函数接口规范。
  *
@@ -347,10 +270,6 @@ var Util;
  * @file      Util/IObjectIterator.ts
  */
 /// <reference path="IHashTable.ts" />
-var Util;
-(function (Util) {
-    'use strict';
-})(Util || (Util = {}));
 /**
  * 定义数组类工具方法。
  *
@@ -363,7 +282,6 @@ var Util;
 /// <reference path="IObjectIterator.ts" />
 var Util;
 (function (Util) {
-    'use strict';
     function each(obj, cb, $this) {
         $this = $this || {};
         var ii;
@@ -457,7 +375,6 @@ var Util;
 /// <reference path="_iterator.ts" />
 var Util;
 (function (Util) {
-    'use strict';
     if ('undefined' == typeof Promise)
         require('es6-promise').polyfill();
     var Q;
@@ -523,7 +440,6 @@ var Util;
 /// <reference path="../../Util/Q.ts" />
 var Core;
 (function (Core) {
-    'use strict';
     var IResource;
     (function (IResource) {
         /**
@@ -576,10 +492,6 @@ var Core;
  */
 /// <reference path="IEntityTag.ts" />
 /// <reference path="IPointTag.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明房间（定义）标签接口规范。
  *
@@ -591,10 +503,6 @@ var Core;
 /// <reference path="IMapTag.ts" />
 /// <reference path="ISceneHost.ts" />
 /// <reference path="../_Runtime/IResource.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（运行时场效）交互按钮接口规范。
  *
@@ -604,10 +512,6 @@ var Core;
  * @file      Core/_Runtime/IButtonable.ts
  */
 /// <reference path="IRuntime.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（地图）交互点标签接口规范。
  *
@@ -619,10 +523,6 @@ var Core;
 /// <reference path="IRoomTag.ts" />
 /// <reference path="../_Runtime/IButtonable.ts" />
 /// <reference path="../_Runtime/IResource.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明选项动作标签接口规范。
  *
@@ -633,10 +533,6 @@ var Core;
  */
 /// <reference path="ITag.ts" />
 /// <reference path="../_Runtime/IButtonable.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（运行时）场效调度器接口规范。
  *
@@ -651,7 +547,6 @@ var Core;
 /// <reference path="../_Tag/IOptionTag.ts" />
 var Core;
 (function (Core) {
-    'use strict';
     var IDirector;
     (function (IDirector) {
         /**
@@ -713,10 +608,6 @@ var Core;
 /// <reference path="ILogger.ts" />
 /// <reference path="IStates.ts" />
 /// <reference path="IDirector.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明可执行标签接口规范。
  *
@@ -728,10 +619,6 @@ var Core;
 /// <reference path="ITag.ts" />
 /// <reference path="../_Runtime/IRuntime.ts" />
 /// <reference path="../../Util/Q.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（作品）事件标签接口规范。
  *
@@ -744,7 +631,6 @@ var Core;
 /// <reference path="IPerformableTag.ts" />
 var Core;
 (function (Core) {
-    'use strict';
     var ISceneTag;
     (function (ISceneTag) {
         /**
@@ -793,10 +679,6 @@ var Core;
  * @file      Core/_Tag/ISceneHost.ts
  */
 /// <reference path="ISceneTag.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（运行时）作品接口规范。
  *
@@ -811,7 +693,6 @@ var Core;
 /// <reference path="IResource.ts" />
 var Core;
 (function (Core) {
-    'use strict';
     var IEpisode;
     (function (IEpisode) {
         /**
@@ -864,10 +745,6 @@ var Core;
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
-var Runtime;
-(function (Runtime) {
-    'use strict';
-})(Runtime || (Runtime = {}));
 /**
  * 定义（运行时）（播放准备）就绪事件。
  *
@@ -880,7 +757,6 @@ var Runtime;
 /// <reference path="IReadyMetas.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Event;
     (function (Event) {
         var Ready = (function (_super) {
@@ -911,10 +787,6 @@ var Runtime;
  * @file      Runtime/Event/IErrorMetas.ts
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    'use strict';
-})(Runtime || (Runtime = {}));
 /**
  * 定义（运行时）异常事件。
  *
@@ -927,7 +799,6 @@ var Runtime;
 /// <reference path="IErrorMetas.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Event;
     (function (Event) {
         var Error = (function (_super) {
@@ -960,10 +831,6 @@ var Runtime;
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
-var Runtime;
-(function (Runtime) {
-    'use strict';
-})(Runtime || (Runtime = {}));
 /**
  * 定义（运行时）完结事件。
  *
@@ -976,7 +843,6 @@ var Runtime;
 /// <reference path="IEndMetas.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Event;
     (function (Event) {
         var End = (function (_super) {
@@ -1010,7 +876,6 @@ var Runtime;
 /// <reference path="../E.ts" />
 var Util;
 (function (Util) {
-    'use strict';
     Util.ENV = {
         /**
          * 是否存在 Window 对象。
@@ -1095,7 +960,6 @@ var Util;
 /// <reference path="../../Util/Q.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Resource = (function () {
         /**
          * 构造函数。
@@ -1191,7 +1055,6 @@ var Runtime;
 /// <reference path="_Resource/Resource.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Episode = (function () {
         /**
          * 构造函数。
@@ -1313,7 +1176,6 @@ var Runtime;
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var ConsoleLogger = (function () {
         /**
          * 构造函数。
@@ -1392,10 +1254,6 @@ var Runtime;
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IStates.ts" />
-var Runtime;
-(function (Runtime) {
-    'use strict';
-})(Runtime || (Runtime = {}));
 /**
  * 定义（运行时）存档事件。
  *
@@ -1408,7 +1266,6 @@ var Runtime;
 /// <reference path="ISaveMetas.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Event;
     (function (Event) {
         var Save = (function (_super) {
@@ -1445,7 +1302,6 @@ var Runtime;
 /// <reference path="Event/Save.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var States = (function () {
         /**
          * 构造函数。
@@ -1546,7 +1402,6 @@ var Runtime;
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Prefecher;
     (function (Prefecher) {
         /**
@@ -1591,10 +1446,6 @@ var Runtime;
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
-var Runtime;
-(function (Runtime) {
-    'use strict';
-})(Runtime || (Runtime = {}));
 /**
  * 定义（运行时）开场事件。
  *
@@ -1607,7 +1458,6 @@ var Runtime;
 /// <reference path="IBeginMetas.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Event;
     (function (Event) {
         var Begin = (function (_super) {
@@ -1642,7 +1492,6 @@ var Runtime;
 /// <reference path="../Event/Begin.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Director = (function () {
         /**
          * 构造函数。
@@ -1830,7 +1679,6 @@ var Runtime;
 /// <reference path="Director.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var NodeDirector = (function (_super) {
         __extends(NodeDirector, _super);
         function NodeDirector() {
@@ -1848,10 +1696,6 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Core/_G/IBounds.ts
  */
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明画面元素接口规范。
  *
@@ -1863,10 +1707,6 @@ var Core;
 /// <reference path="IBounds.ts" />
 /// <reference path="../../Util/Q.ts" />
 /// <reference path="IAnimation.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明画面动画接口规范。
  *
@@ -1876,10 +1716,6 @@ var Core;
  * @file      Core/_G/IAnimation.ts
  */
 /// <reference path="IGraphicElement.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 定义抽象画面动画组件。
  *
@@ -1893,7 +1729,6 @@ var Core;
 /// <reference path="../Util/ENV.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Animation = (function () {
         /**
          * 构造函数。
@@ -1983,7 +1818,6 @@ var G;
     G.Animation = Animation;
     var Animation;
     (function (Animation) {
-        'use strict';
         var jobs = [], raf, proxy;
         if (Util.ENV.Window) {
             raf = window.requestAnimationFrame ||
@@ -2026,10 +1860,6 @@ var G;
  * @file      Core/_G/IComboAnimation.ts
  */
 /// <reference path="IAnimation.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 定义画面组合动画组件。
  *
@@ -2042,7 +1872,6 @@ var Core;
 /// <reference path="../../Core/_G/IComboAnimation.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Combo = (function (_super) {
         __extends(Combo, _super);
         /**
@@ -2099,10 +1928,6 @@ var G;
  * @file      G/_Animation/IFadeMetas.ts
  */
 /// <reference path="../../Util/IHashTable.ts" />
-var G;
-(function (G) {
-    'use strict';
-})(G || (G = {}));
 /**
  * 定义透明度渐变动画组件。
  *
@@ -2115,7 +1940,6 @@ var G;
 /// <reference path="IFadeMetas.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Fade = (function (_super) {
         __extends(Fade, _super);
         /**
@@ -2147,7 +1971,6 @@ var G;
 /// <reference path="Fade.ts" />
 var G;
 (function (G) {
-    'use strict';
     var FadeIn = (function (_super) {
         __extends(FadeIn, _super);
         /**
@@ -2173,7 +1996,6 @@ var G;
 /// <reference path="Fade.ts" />
 var G;
 (function (G) {
-    'use strict';
     var FadeOut = (function (_super) {
         __extends(FadeOut, _super);
         /**
@@ -2198,10 +2020,6 @@ var G;
  */
 /// <reference path="IGraphicElement.ts" />
 /// <reference path="../_Event/IEmittable.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 定义抽象画面元素组件。
  *
@@ -2213,7 +2031,6 @@ var Core;
 /// <reference path="../Core/_G/ISprite.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Element = (function () {
         function Element(x) {
             var args = [];
@@ -2406,10 +2223,6 @@ var G;
  */
 /// <reference path="IGraphicElement.ts" />
 /// <reference path="../_Runtime/IResource.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 定义图像画面元素组件。
  *
@@ -2422,7 +2235,6 @@ var Core;
 /// <reference path="../../Core/_G/IImageElement.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Image = (function (_super) {
         __extends(Image, _super);
         function Image(image, x, y, w, h, absolute) {
@@ -2482,10 +2294,6 @@ var G;
  * @file      Core/_G/IColorElement.ts
  */
 /// <reference path="IGraphicElement.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 定义色块画面元素组件。
  *
@@ -2498,7 +2306,6 @@ var Core;
 /// <reference path="../../Core/_G/IColorElement.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Color = (function (_super) {
         __extends(Color, _super);
         function Color(x, y, w, h, color, absolute) {
@@ -2537,7 +2344,6 @@ var G;
 /// <reference path="../../Core/_G/ISprite.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Sprite = (function (_super) {
         __extends(Sprite, _super);
         function Sprite(x, y, w, h, absolute) {
@@ -2700,10 +2506,6 @@ var G;
  * @file      Core/_G/IButton.ts
  */
 /// <reference path="ISprite.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明全画面舞台接口规范。
  *
@@ -2713,10 +2515,6 @@ var Core;
  * @file      Core/_G/IStage.ts
  */
 /// <reference path="ISprite.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明（画面）鼠标事件元信息接口规范。
  *
@@ -2727,10 +2525,6 @@ var Core;
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_G/IStage.ts" />
-var G;
-(function (G) {
-    'use strict';
-})(G || (G = {}));
 /**
  * 定义画面抽象鼠标事件组件。
  *
@@ -2743,7 +2537,6 @@ var G;
 /// <reference path="IMouseEventMetas.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Event;
     (function (Event) {
         var MouseEvent = (function () {
@@ -2785,7 +2578,6 @@ var G;
 /// <reference path="../_Animation/FadeOut.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Button = (function (_super) {
         __extends(Button, _super);
         function Button() {
@@ -2856,7 +2648,6 @@ var G;
 /// <reference path="MouseEvent.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Event;
     (function (Event) {
         var Focus = (function (_super) {
@@ -2886,7 +2677,6 @@ var G;
 /// <reference path="MouseEvent.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Event;
     (function (Event) {
         var Blur = (function (_super) {
@@ -2916,7 +2706,6 @@ var G;
 /// <reference path="MouseEvent.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Event;
     (function (Event) {
         var MouseMove = (function (_super) {
@@ -2946,7 +2735,6 @@ var G;
 /// <reference path="MouseEvent.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Event;
     (function (Event) {
         var Click = (function (_super) {
@@ -2982,7 +2770,6 @@ var G;
 /// <reference path="../_pack.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Stage = (function (_super) {
         __extends(Stage, _super);
         /**
@@ -3183,7 +2970,6 @@ var G;
 /// <reference path="../Animation.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Delay = (function (_super) {
         __extends(Delay, _super);
         function Delay() {
@@ -3202,10 +2988,6 @@ var G;
  * @file      Core/_G/ITextPhrase.ts
  */
 /// <reference path="../../Util/Q.ts" />
-var Core;
-(function (Core) {
-    'use strict';
-})(Core || (Core = {}));
 /**
  * 声明画面文字元素接口规范。
  *
@@ -3218,7 +3000,6 @@ var Core;
 /// <reference path="ITextPhrase.ts" />
 var Core;
 (function (Core) {
-    'use strict';
     var ITextElement;
     (function (ITextElement) {
         /**
@@ -3253,7 +3034,6 @@ var Core;
 /// <reference path="../../Core/_G/ITextPhrase.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Phrase = (function () {
         /**
          * 构造函数。
@@ -3399,7 +3179,6 @@ var G;
 /// <reference path="Phrase.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Text = (function (_super) {
         __extends(Text, _super);
         function Text(x, y, w, h, lineHeight, align, absolute) {
@@ -3510,7 +3289,6 @@ var G;
 /// <reference path="../Event/Click.ts" />
 var G;
 (function (G) {
-    'use strict';
     var WaitForClick = (function (_super) {
         __extends(WaitForClick, _super);
         /**
@@ -3576,7 +3354,6 @@ var G;
 /// <reference path="../../Core/_G/ITextElement.ts" />
 var G;
 (function (G) {
-    'use strict';
     var Type = (function (_super) {
         __extends(Type, _super);
         /**
@@ -3648,7 +3425,6 @@ var G;
 /// <reference path="../../Core/_G/ITextElement.ts" />
 var G;
 (function (G) {
-    'use strict';
     var TypeDelay = (function (_super) {
         __extends(TypeDelay, _super);
         /**
@@ -3707,10 +3483,6 @@ var G;
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
-var Runtime;
-(function (Runtime) {
-    'use strict';
-})(Runtime || (Runtime = {}));
 /**
  * 定义（运行时）读档继续事件。
  *
@@ -3723,7 +3495,6 @@ var Runtime;
 /// <reference path="IResumeMetas.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Event;
     (function (Event) {
         var Resume = (function (_super) {
@@ -3780,7 +3551,6 @@ var Runtime;
  */
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var CanvasDirector = (function (_super) {
         __extends(CanvasDirector, _super);
         /**
@@ -4408,7 +4178,6 @@ var Runtime;
 /// <reference path="CanvasDirector.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var DirectorFactory;
     (function (DirectorFactory) {
         function c(runtime) {
@@ -4429,10 +4198,6 @@ var Runtime;
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Tag/ISceneTag.ts" />
-var Runtime;
-(function (Runtime) {
-    'use strict';
-})(Runtime || (Runtime = {}));
 /**
  * 定义（运行时）剧情事件播报事件。
  *
@@ -4445,7 +4210,6 @@ var Runtime;
 /// <reference path="ISceneMetas.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Event;
     (function (Event) {
         var Scene = (function (_super) {
@@ -4480,10 +4244,6 @@ var Runtime;
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Tag/IIdableTag.ts" />
-var Runtime;
-(function (Runtime) {
-    'use strict';
-})(Runtime || (Runtime = {}));
 /**
  * 定义（运行时）关键帧播报事件。
  *
@@ -4496,7 +4256,6 @@ var Runtime;
 /// <reference path="IActionMetas.ts" />
 var Runtime;
 (function (Runtime) {
-    'use strict';
     var Event;
     (function (Event) {
         var Action = (function (_super) {
@@ -4530,7 +4289,6 @@ var Runtime;
  */
 var Tag;
 (function (Tag) {
-    'use strict';
     /**
      * 类到标签映射。
      */
@@ -4783,7 +4541,6 @@ var Tag;
 /// <reference path="../E.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Unknown = (function () {
         /**
          * 构造函数。
@@ -4993,7 +4750,6 @@ var Tag;
 /// <reference path="../Core/_Tag/IEntityTag.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Entity = (function (_super) {
         __extends(Entity, _super);
         function Entity() {
@@ -5032,7 +4788,6 @@ var Tag;
 /// <reference path="../Unknown.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Image = (function (_super) {
         __extends(Image, _super);
         function Image() {
@@ -5073,7 +4828,6 @@ var Tag;
 /// <reference path="../Image.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Avatar = (function (_super) {
         __extends(Avatar, _super);
         function Avatar() {
@@ -5106,7 +4860,6 @@ var Tag;
 /// <reference path="../Unknown.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var ResTable = (function (_super) {
         __extends(ResTable, _super);
         /**
@@ -5139,7 +4892,6 @@ var Tag;
 /// <reference path="../ResTable.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Poses = (function (_super) {
         __extends(Poses, _super);
         function Poses() {
@@ -5191,7 +4943,6 @@ var Tag;
 /// <reference path="Poses.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var DefChar = (function (_super) {
         __extends(DefChar, _super);
         /**
@@ -5260,7 +5011,6 @@ var Tag;
 /// <reference path="../Unknown.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Audio = (function (_super) {
         __extends(Audio, _super);
         function Audio() {
@@ -5302,7 +5052,6 @@ var Tag;
 /// <reference path="Audio.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var DefBGM = (function (_super) {
         __extends(DefBGM, _super);
         function DefBGM() {
@@ -5342,7 +5091,6 @@ var Tag;
 /// <reference path="Image.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var DefCG = (function (_super) {
         __extends(DefCG, _super);
         function DefCG() {
@@ -5376,7 +5124,6 @@ var Tag;
 /// <reference path="Audio.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var DefSE = (function (_super) {
         __extends(DefSE, _super);
         function DefSE() {
@@ -5415,7 +5162,6 @@ var Tag;
 /// <reference path="../Image.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var BGImage = (function (_super) {
         __extends(BGImage, _super);
         function BGImage() {
@@ -5448,7 +5194,6 @@ var Tag;
 /// <reference path="../Image.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var HLImage = (function (_super) {
         __extends(HLImage, _super);
         function HLImage() {
@@ -5481,7 +5226,6 @@ var Tag;
 /// <reference path="../../Unknown.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Region = (function (_super) {
         __extends(Region, _super);
         /**
@@ -5551,7 +5295,6 @@ var Tag;
 /// <reference path="../_Room/DefRoom.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Target = (function (_super) {
         __extends(Target, _super);
         function Target() {
@@ -5593,7 +5336,6 @@ var Tag;
 /// <reference path="../Core/_Tag/IPerformableTag.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Action = (function (_super) {
         __extends(Action, _super);
         function Action() {
@@ -5633,7 +5375,6 @@ var Tag;
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Enter = (function (_super) {
         __extends(Enter, _super);
         function Enter() {
@@ -5725,7 +5466,6 @@ var Tag;
 /// <reference path="../../_Action/_Flow/Enter.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Point = (function (_super) {
         __extends(Point, _super);
         /**
@@ -5838,7 +5578,6 @@ var Tag;
 /// <reference path="Point.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var DefMap = (function (_super) {
         __extends(DefMap, _super);
         /**
@@ -5914,7 +5653,6 @@ var Tag;
 /// <reference path="../_Map/DefMap.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Link = (function (_super) {
         __extends(Link, _super);
         function Link() {
@@ -5955,7 +5693,6 @@ var Tag;
 /// <reference path="../ResTable.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Times = (function (_super) {
         __extends(Times, _super);
         function Times() {
@@ -6008,7 +5745,6 @@ var Tag;
 /// <reference path="Times.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var DefRoom = (function (_super) {
         __extends(DefRoom, _super);
         /**
@@ -6096,7 +5832,6 @@ var Tag;
 /// <reference path="../Unknown.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Auto = (function (_super) {
         __extends(Auto, _super);
         function Auto() {
@@ -6124,7 +5859,6 @@ var Tag;
 /// <reference path="_Char/DefChar.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Player = (function (_super) {
         __extends(Player, _super);
         function Player() {
@@ -6175,10 +5909,6 @@ var Tag;
  * @license   GPL-3.0
  * @file      Util/IFailureCallback.ts
  */
-var Util;
-(function (Util) {
-    'use strict';
-})(Util || (Util = {}));
 /**
  * 定义远端通信组件。
  *
@@ -6194,7 +5924,6 @@ var Util;
 /// <reference path="_iterator.ts" />
 var Util;
 (function (Util) {
-    'use strict';
     var Remote;
     (function (Remote) {
         /**
@@ -6278,7 +6007,6 @@ var Util;
 /// <reference path="../../Util/Remote.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Theme = (function (_super) {
         __extends(Theme, _super);
         function Theme() {
@@ -6319,7 +6047,6 @@ var Tag;
 /// <reference path="../_Definition/DefSE.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Resources = (function (_super) {
         __extends(Resources, _super);
         function Resources() {
@@ -6413,7 +6140,6 @@ var Tag;
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Type = (function (_super) {
         __extends(Type, _super);
         /**
@@ -6509,7 +6235,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Conditions = (function (_super) {
         __extends(Conditions, _super);
         function Conditions() {
@@ -6543,7 +6268,6 @@ var Tag;
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var AsRoom = (function (_super) {
         __extends(AsRoom, _super);
         function AsRoom() {
@@ -6599,7 +6323,6 @@ var Tag;
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var CharOn = (function (_super) {
         __extends(CharOn, _super);
         /**
@@ -6671,7 +6394,6 @@ var Tag;
 /// <reference path="../../_Definition/DefBGM.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var PlayBGM = (function (_super) {
         __extends(PlayBGM, _super);
         function PlayBGM() {
@@ -6721,7 +6443,6 @@ var Tag;
 /// <reference path="../../_Definition/DefSE.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var PlaySE = (function (_super) {
         __extends(PlaySE, _super);
         function PlaySE() {
@@ -6767,7 +6488,6 @@ var Tag;
 /// <reference path="../../_Definition/DefCG.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var ShowCG = (function (_super) {
         __extends(ShowCG, _super);
         function ShowCG() {
@@ -6817,7 +6537,6 @@ var Tag;
 /// <reference path="../Core/_Tag/IIdableTag.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Idable = (function (_super) {
         __extends(Idable, _super);
         function Idable() {
@@ -6858,7 +6577,6 @@ var Tag;
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Speak = (function (_super) {
         __extends(Speak, _super);
         function Speak() {
@@ -6909,7 +6627,6 @@ var Tag;
 /// <reference path="../../_Action/_Text/Speak.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Loop = (function (_super) {
         __extends(Loop, _super);
         function Loop() {
@@ -7029,7 +6746,6 @@ var Tag;
 /// <reference path="../../_Action/_Logic/Loop.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Content = (function (_super) {
         __extends(Content, _super);
         function Content() {
@@ -7074,7 +6790,6 @@ var Tag;
 /// <reference path="Content.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Scene = (function (_super) {
         __extends(Scene, _super);
         function Scene() {
@@ -7146,7 +6861,6 @@ var Tag;
 /// <reference path="Theme.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Root = (function (_super) {
         __extends(Root, _super);
         /**
@@ -7292,7 +7006,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var CharOff = (function (_super) {
         __extends(CharOff, _super);
         /**
@@ -7345,7 +7058,6 @@ var Tag;
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var CharSet = (function (_super) {
         __extends(CharSet, _super);
         /**
@@ -7417,7 +7129,6 @@ var Tag;
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var CharPose = (function (_super) {
         __extends(CharPose, _super);
         /**
@@ -7466,7 +7177,6 @@ var Tag;
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Monolog = (function (_super) {
         __extends(Monolog, _super);
         function Monolog() {
@@ -7512,7 +7222,6 @@ var Tag;
 /// <reference path="../../Idable.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var VoiceOver = (function (_super) {
         __extends(VoiceOver, _super);
         function VoiceOver() {
@@ -7546,7 +7255,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Save = (function (_super) {
         __extends(Save, _super);
         function Save() {
@@ -7586,7 +7294,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var End = (function (_super) {
         __extends(End, _super);
         function End() {
@@ -7620,7 +7327,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Fail = (function (_super) {
         __extends(Fail, _super);
         function Fail() {
@@ -7655,7 +7361,6 @@ var Tag;
 /// <reference path="../../../Core/_Runtime/IDirector.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Stars = (function (_super) {
         __extends(Stars, _super);
         /**
@@ -7705,7 +7410,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var HideCG = (function (_super) {
         __extends(HideCG, _super);
         function HideCG() {
@@ -7742,7 +7446,6 @@ var Tag;
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var AsTime = (function (_super) {
         __extends(AsTime, _super);
         function AsTime() {
@@ -7785,7 +7488,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Freeze = (function (_super) {
         __extends(Freeze, _super);
         function Freeze() {
@@ -7818,7 +7520,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Weather = (function (_super) {
         __extends(Weather, _super);
         function Weather() {
@@ -7852,7 +7553,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Assert = (function (_super) {
         __extends(Assert, _super);
         function Assert() {
@@ -7918,7 +7618,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Assign = (function (_super) {
         __extends(Assign, _super);
         function Assign() {
@@ -7962,7 +7661,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Compare = (function (_super) {
         __extends(Compare, _super);
         function Compare() {
@@ -8005,7 +7703,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Increase = (function (_super) {
         __extends(Increase, _super);
         function Increase() {
@@ -8053,7 +7750,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var LoopBreak = (function (_super) {
         __extends(LoopBreak, _super);
         function LoopBreak() {
@@ -8086,7 +7782,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var And = (function (_super) {
         __extends(And, _super);
         function And() {
@@ -8129,7 +7824,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Or = (function (_super) {
         __extends(Or, _super);
         function Or() {
@@ -8172,7 +7866,6 @@ var Tag;
 /// <reference path="Loop.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Otherwise = (function (_super) {
         __extends(Otherwise, _super);
         function Otherwise() {
@@ -8236,7 +7929,6 @@ var Tag;
 /// <reference path="Loop.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Then = (function (_super) {
         __extends(Then, _super);
         function Then() {
@@ -8300,7 +7992,6 @@ var Tag;
 /// <reference path="Loop.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var When = (function (_super) {
         __extends(When, _super);
         function When() {
@@ -8365,7 +8056,6 @@ var Tag;
 /// <reference path="../../../Core/_Tag/IOptionTag.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Option = (function (_super) {
         __extends(Option, _super);
         function Option() {
@@ -8413,7 +8103,6 @@ var Tag;
 /// <reference path="Option.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Choose = (function (_super) {
         __extends(Choose, _super);
         function Choose() {
@@ -8451,7 +8140,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Tip = (function (_super) {
         __extends(Tip, _super);
         function Tip() {
@@ -8484,7 +8172,6 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
-    'use strict';
     var Maximum = (function (_super) {
         __extends(Maximum, _super);
         function Maximum() {
@@ -8594,7 +8281,6 @@ var Tag;
 /// <reference path="../Tag/_pack.ts" />
 var Runtime;
 (function (Runtime_1) {
-    'use strict';
     var Runtime = (function () {
         /**
          * 构造函数。
@@ -8774,7 +8460,6 @@ var Runtime;
 /// <reference path="../Tag/_pack.ts" />
 var Lex;
 (function (Lex) {
-    'use strict';
     var TagLine = (function () {
         /**
          * 构造函数。
@@ -8860,7 +8545,6 @@ var Lex;
      * 创建 UUID 。
      */
     function u() {
-        'use strict';
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, u_);
     }
     /**
@@ -8884,7 +8568,6 @@ var Lex;
 /// <reference path="TagLine.ts" />
 var Lex;
 (function (Lex) {
-    'use strict';
     var Parser;
     (function (Parser) {
         function c(source) {
@@ -8924,7 +8607,6 @@ var Lex;
 /// <reference path="Runtime/Runtime.ts" />
 /// <reference path="Lex/Parser.ts" />
 function Bigine(code) {
-    'use strict';
     var args = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         args[_i - 1] = arguments[_i];
@@ -8965,7 +8647,6 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    'use strict';
     Bigine.version = '0.11.0';
 })(Bigine || (Bigine = {}));
 //export = Bigine;

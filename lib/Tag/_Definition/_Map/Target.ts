@@ -11,8 +11,6 @@
 /// <reference path="../_Room/DefRoom.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Target extends Unknown {
         /**
          * 关联对象。

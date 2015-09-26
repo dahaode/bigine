@@ -34,8 +34,6 @@
  * * C - 幕帘
  */
 namespace Runtime {
-    'use strict';
-
     export class CanvasDirector extends Director {
         /**
          * 尺寸。

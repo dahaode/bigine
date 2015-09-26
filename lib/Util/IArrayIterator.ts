@@ -8,8 +8,6 @@
  */
 
 namespace Util {
-    'use strict';
-
     export interface IArrayIterator<T, U> {
         (element: T, index?: number, array?: T[]): U;
     }

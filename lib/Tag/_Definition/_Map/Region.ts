@@ -10,8 +10,6 @@
 /// <reference path="../../Unknown.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Region extends Unknown {
         /**
          * 座标。

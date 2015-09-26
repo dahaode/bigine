@@ -11,8 +11,6 @@
 /// <reference path="IBeginMetas.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export class Begin extends Event<Core.IEpisode> {
             /**

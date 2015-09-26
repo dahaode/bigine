@@ -10,8 +10,6 @@
 /// <reference path="Director.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export class NodeDirector extends Director {
     }
 }

@@ -11,8 +11,6 @@
 /// <reference path="../_Event/IEmittable.ts" />
 
 namespace Core {
-    'use strict';
-
     // IGraphicElement:gB()
     // IGraphicElement:x()
     // IGraphicElement:y()

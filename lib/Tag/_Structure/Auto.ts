@@ -10,8 +10,6 @@
 /// <reference path="../Unknown.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Auto extends Unknown {
         /**
          * 获取标签名称。

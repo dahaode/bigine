@@ -11,8 +11,6 @@
 /// <reference path="../../Core/_G/ISprite.ts" />
 
 namespace G {
-    'use strict';
-
     export class Sprite extends Element implements Core.ISprite {
         /**
          * 子元素集。

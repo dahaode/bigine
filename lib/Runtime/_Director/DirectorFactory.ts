@@ -12,8 +12,6 @@
 /// <reference path="CanvasDirector.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace DirectorFactory {
         export function c(runtime: Core.IRuntime): Director {
             if (!Util.ENV.Window)

@@ -16,8 +16,6 @@
 /// <reference path="../Tag/_pack.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export class Runtime implements Core.IRuntime {
         /**
          * 事件监听函数池。

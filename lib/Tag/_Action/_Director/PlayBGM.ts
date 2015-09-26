@@ -11,8 +11,6 @@
 /// <reference path="../../_Definition/DefBGM.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class PlayBGM extends Action {
         /**
          * 使用音乐。

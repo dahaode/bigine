@@ -10,8 +10,6 @@
 /// <reference path="ISceneTag.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface ISceneHost {
         /**
          * 添加事件。

@@ -10,8 +10,6 @@
 /// <reference path="MouseEvent.ts" />
 
 namespace G {
-    'use strict';
-
     export namespace Event {
         export class Focus extends MouseEvent {
             /**

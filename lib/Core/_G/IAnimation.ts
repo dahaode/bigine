@@ -10,8 +10,6 @@
 /// <reference path="IGraphicElement.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IAnimation {
         // constructor(duration: number, metas?: Util.IHashTable<any>);
 

@@ -16,8 +16,6 @@
 /// <reference path="../_pack.ts" />
 
 namespace G {
-    'use strict';
-
     export class Stage extends Sprite implements Core.IStage {
         /**
          * 画板上下文。

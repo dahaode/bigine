@@ -8,8 +8,6 @@
  */
 
 namespace Util {
-    'use strict';
-
     export interface IHashTable<T> {
         [index: string]: T;
     }

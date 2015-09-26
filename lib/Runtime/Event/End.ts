@@ -11,8 +11,6 @@
 /// <reference path="IEndMetas.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export class End extends Event<Core.IEpisode> {
             /**

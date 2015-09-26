@@ -11,8 +11,6 @@
 /// <reference path="IActionMetas.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export class Action extends Event<Core.IIdableTag> {
             /**

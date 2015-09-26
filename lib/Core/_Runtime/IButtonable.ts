@@ -10,8 +10,6 @@
 /// <reference path="IRuntime.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IButtonable {
         /**
          * 交互逻辑。

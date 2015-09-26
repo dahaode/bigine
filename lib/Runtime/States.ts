@@ -12,8 +12,6 @@
 /// <reference path="Event/Save.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export class States implements Core.IStates {
         /**
          * 数据池。

@@ -10,8 +10,6 @@
 /// <reference path="Loop.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class When extends Action {
         /**
          * 获取标签名称。

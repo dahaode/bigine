@@ -13,8 +13,6 @@
 /// <reference path="IResource.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IEpisode extends ISceneHost {
         // new (ep: Tag.IRoot, runtime: IRuntime): IEpisode;
 

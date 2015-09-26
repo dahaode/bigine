@@ -11,8 +11,6 @@
 /// <reference path="../../Core/_G/ITextElement.ts" />
 
 namespace G {
-    'use strict';
-
     export class Type extends Animation {
         /**
          * 速度（单位：帧／字）。

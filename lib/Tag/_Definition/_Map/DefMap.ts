@@ -13,8 +13,6 @@
 /// <reference path="Point.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class DefMap extends Entity implements Core.IMapTag {
         /**
          * 交互点集合。

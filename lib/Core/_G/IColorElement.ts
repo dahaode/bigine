@@ -10,8 +10,6 @@
 /// <reference path="IGraphicElement.ts" />
 
 namespace Core {
-    'use strict';
-
     // IGraphicElement:gB()
     // IGraphicElement:x()
     // IGraphicElement:y()

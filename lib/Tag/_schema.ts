@@ -8,8 +8,6 @@
  */
 
 namespace Tag {
-    'use strict';
-
     /**
      * 类到标签映射。
      */

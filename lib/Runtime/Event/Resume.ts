@@ -11,8 +11,6 @@
 /// <reference path="IResumeMetas.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export class Resume extends Event<Core.IEpisode> {
             /**

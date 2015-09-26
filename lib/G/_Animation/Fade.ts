@@ -11,8 +11,6 @@
 /// <reference path="IFadeMetas.ts" />
 
 namespace G {
-    'use strict';
-
     export class Fade extends Animation {
         /**
          * 原始透明度。

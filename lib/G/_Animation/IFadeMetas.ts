@@ -10,8 +10,6 @@
 /// <reference path="../../Util/IHashTable.ts" />
 
 namespace G {
-    'use strict';
-
     export interface IFadeMetas extends Util.IHashTable<any> {
         /**
          * 透明度。

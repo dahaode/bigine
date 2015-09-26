@@ -11,8 +11,6 @@
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class AsTime extends Action {
         /**
          * 获取标签名称。

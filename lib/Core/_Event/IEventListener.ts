@@ -10,8 +10,6 @@
 /// <reference path="IEvent.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IEventListener<T> {
         (event: IEvent<T>): void;
     }

@@ -10,8 +10,6 @@
 /// <reference path="Fade.ts" />
 
 namespace G {
-    'use strict';
-
     export class FadeIn extends Fade {
         /**
          * 构造函数。

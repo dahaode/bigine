@@ -11,8 +11,6 @@
 /// <reference path="../E.ts" />
 
 namespace Util {
-    'use strict';
-
     interface IEnvType {
         Window: boolean;
         Node: {

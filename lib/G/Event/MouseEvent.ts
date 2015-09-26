@@ -11,8 +11,6 @@
 /// <reference path="IMouseEventMetas.ts" />
 
 namespace G {
-    'use strict';
-
     export namespace Event {
         export class MouseEvent implements Core.IEvent<Core.ISprite> {
             /**

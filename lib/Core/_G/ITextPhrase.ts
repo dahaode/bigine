@@ -10,8 +10,6 @@
 /// <reference path="../../Util/Q.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface ITextPhrase {
         /**
          * 设置文本内容。

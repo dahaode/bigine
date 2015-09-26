@@ -12,8 +12,6 @@
 /// <reference path="Phrase.ts" />
 
 namespace G {
-    'use strict';
-
     export class Text extends Element implements Core.ITextElement {
         /**
          * 行高。

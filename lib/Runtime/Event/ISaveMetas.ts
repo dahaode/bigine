@@ -11,8 +11,6 @@
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export interface ISaveMetas extends Core.IEventMetas<Core.IStates> {
             /**

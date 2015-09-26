@@ -16,8 +16,6 @@
 /// <reference path="../_Definition/DefSE.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Resources extends Unknown {
         /**
          * 获取标签名称。

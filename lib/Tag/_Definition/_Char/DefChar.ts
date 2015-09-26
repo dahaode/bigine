@@ -12,8 +12,6 @@
 /// <reference path="Poses.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class DefChar extends Entity {
         /**
          * 原型。

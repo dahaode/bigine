@@ -11,8 +11,6 @@
 /// <reference path="../_Runtime/IButtonable.ts" />
 
 namespace Core {
-    'use strict';
-
     // ITag:gL()
     // ITag:gN()
     // ITag:r()

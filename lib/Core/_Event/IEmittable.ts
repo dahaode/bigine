@@ -10,8 +10,6 @@
 /// <reference path="IEventListener.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IEmittable {
         /**
          * 新增事件监听。

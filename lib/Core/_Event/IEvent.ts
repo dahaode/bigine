@@ -10,8 +10,6 @@
 /// <reference path="IEventMetas.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IEvent<T> {
         /**
          * 事件触发对象。

@@ -10,8 +10,6 @@
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export interface IErrorMetas extends Core.IEventMetas<any> {
             /**

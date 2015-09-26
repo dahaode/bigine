@@ -11,8 +11,6 @@
 /// <reference path="../../_Definition/DefCG.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class ShowCG extends Action {
         /**
          * 使用特写。

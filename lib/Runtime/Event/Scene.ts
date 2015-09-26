@@ -11,8 +11,6 @@
 /// <reference path="ISceneMetas.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export class Scene extends Event<Core.ISceneTag> {
             /**

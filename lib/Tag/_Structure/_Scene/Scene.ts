@@ -12,8 +12,6 @@
 /// <reference path="Content.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Scene extends Unknown implements Core.ISceneTag {
         /**
          * 唯一编号。

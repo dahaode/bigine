@@ -10,8 +10,6 @@
 /// <reference path="../Animation.ts" />
 
 namespace G {
-    'use strict';
-
     export class Delay extends Animation {
     }
 }

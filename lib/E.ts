@@ -109,8 +109,6 @@ class E extends Error {
 }
 
 namespace E {
-    'use strict';
-
     export enum Signal {
         /**
          * 中断循环。

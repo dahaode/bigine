@@ -10,8 +10,6 @@
 /// <reference path="../Core/_G/ISprite.ts" />
 
 namespace G {
-    'use strict';
-
     export class Element implements Core.IGraphicElement {
         /**
          * 区域。

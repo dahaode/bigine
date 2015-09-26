@@ -11,8 +11,6 @@
 /// <reference path="Audio.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class DefSE extends Entity {
         /**
          * 获取标签名称。

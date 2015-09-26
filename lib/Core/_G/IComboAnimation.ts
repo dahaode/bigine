@@ -10,8 +10,6 @@
 /// <reference path="IAnimation.ts" />
 
 namespace Core {
-    'use strict';
-
     // IAnimation:c()
     // IAnimation:l()
     // IAnimation:p()

@@ -13,8 +13,6 @@
 /// <reference path="_iterator.ts" />
 
 namespace Util {
-    'use strict';
-
     if ('undefined' == typeof Promise)
         require('es6-promise').polyfill();
 

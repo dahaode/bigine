@@ -11,8 +11,6 @@
 /// <reference path="../../_Definition/DefSE.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class PlaySE extends Action {
         /**
          * 使用音效。

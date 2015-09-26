@@ -11,8 +11,6 @@
 /// <reference path="../Core/_Tag/IEntityTag.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Entity extends Unknown implements Core.IEntityTag {
         /**
          * 注册（自身实体）至（运行时）作品。

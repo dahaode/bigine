@@ -10,8 +10,6 @@
 /// <reference path="ITag.ts" />
 
 namespace Core {
-    'use strict';
-
     // ITag:gL()
     // ITag:gN()
     // ITag:r()

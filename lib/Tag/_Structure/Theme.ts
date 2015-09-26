@@ -11,8 +11,6 @@
 /// <reference path="../../Util/Remote.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Theme extends Unknown {
         /**
          * 获取标签名称。

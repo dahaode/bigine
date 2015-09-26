@@ -11,8 +11,6 @@
 /// <reference path="../../Core/_G/IStage.ts" />
 
 namespace G {
-    'use strict';
-
     export namespace Event {
         export interface IMouseEventMetas extends Core.IEventMetas<Core.ISprite> {
             /**

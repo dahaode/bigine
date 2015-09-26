@@ -11,8 +11,6 @@
 /// <reference path="IPointTag.ts" />
 
 namespace Core {
-    'use strict';
-
     // ITag:gL()
     // ITag:gN()
     // ITag:r()

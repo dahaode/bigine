@@ -36,8 +36,6 @@
  * 4. 其它为作品运行信息，需要被存档记录。
  */
 namespace Core {
-    'use strict';
-
     export interface IStates {
         /**
          * 设置值。

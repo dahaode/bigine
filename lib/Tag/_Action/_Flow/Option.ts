@@ -11,8 +11,6 @@
 /// <reference path="../../../Core/_Tag/IOptionTag.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Option extends Unknown implements Core.IOptionTag {
         /**
          * 关联状态名称。

@@ -16,8 +16,6 @@ function Bigine(lines: string[]): Core.IRootTag;
 function Bigine(children: Core.ITag[]): Core.IRuntime;
 function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Core.ITag[], id?: string): Core.ITag;
 function Bigine(code: any, ...args: any[]): any {
-    'use strict';
-
     if ('string' == typeof code)
         return Lex.Parser.c(code);
     if (code instanceof Tag.Root)
@@ -61,8 +59,6 @@ function Bigine(code: any, ...args: any[]): any {
 }
 
 namespace Bigine {
-    'use strict';
-
     export var version: string = '${BIGINE_VERSION}';
 }
 

@@ -14,8 +14,6 @@
 /// <reference path="../_Animation/FadeOut.ts" />
 
 namespace G {
-    'use strict';
-
     export class Button extends Sprite implements Core.IButton {
         /**
          * 绑定功能。

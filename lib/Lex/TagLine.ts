@@ -10,8 +10,6 @@
 /// <reference path="../Tag/_pack.ts" />
 
 namespace Lex {
-    'use strict';
-
     export class TagLine {
         /**
          * 语法。
@@ -127,8 +125,6 @@ namespace Lex {
      * 创建 UUID 。
      */
     function u(): string {
-        'use strict';
-
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, u_);
     }
 

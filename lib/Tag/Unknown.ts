@@ -12,8 +12,6 @@
 /// <reference path="../E.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Unknown implements Core.ITag {
         /**
          * 参数。

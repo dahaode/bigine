@@ -11,8 +11,6 @@
 /// <reference path="ISaveMetas.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Event {
         export class Save extends Event<Core.IStates> {
             /**

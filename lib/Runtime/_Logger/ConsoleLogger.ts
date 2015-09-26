@@ -10,8 +10,6 @@
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export class ConsoleLogger implements Core.ILogger {
         /**
          * 日志级别。

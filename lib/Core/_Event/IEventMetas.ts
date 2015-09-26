@@ -10,8 +10,6 @@
 /// <reference path="../../Util/IHashTable.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IEventMetas<T> extends Util.IHashTable<any> {
         /**
          * 触发对象。

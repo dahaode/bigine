@@ -15,8 +15,6 @@
 /// <reference path="../../_Action/_Flow/Enter.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Point extends Unknown implements Core.IPointTag {
         /**
          * 原型。

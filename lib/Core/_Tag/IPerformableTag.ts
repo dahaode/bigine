@@ -12,8 +12,6 @@
 /// <reference path="../../Util/Q.ts" />
 
 namespace Core {
-    'use strict';
-
     // ITag:gL()
     // ITag:gN()
     // ITag:r()

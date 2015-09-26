@@ -10,8 +10,6 @@
 /// <reference path="../../Action.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class End extends Action {
         /**
          * 获取标签名称。

@@ -10,8 +10,6 @@
 /// <reference path="../../Action.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class CharOff extends Action {
         /**
          * 人物名称。

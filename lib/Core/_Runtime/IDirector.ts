@@ -13,8 +13,6 @@
 /// <reference path="../_Tag/IOptionTag.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IDirector {
         /**
          * 预加载指定资源组。

@@ -12,8 +12,6 @@
 /// <reference path="../_Runtime/IResource.ts" />
 
 namespace Core {
-    'use strict';
-
     // ITag:gL()
     // ITag:gN()
     // ITag:r()

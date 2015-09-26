@@ -10,8 +10,6 @@
 /// <reference path="../Image.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class BGImage extends Image {
         /**
          * 获取标签名称。

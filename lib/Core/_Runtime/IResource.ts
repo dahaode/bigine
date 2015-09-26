@@ -10,8 +10,6 @@
 /// <reference path="../../Util/Q.ts" />
 
 namespace Core {
-    'use strict';
-
     export interface IResource<T> {
         // new (uri: string, type: IResource.Type): IResource;
 

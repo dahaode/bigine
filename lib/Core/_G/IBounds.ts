@@ -8,8 +8,6 @@
  */
 
 namespace Core {
-    'use strict';
-
     export interface IBounds {
         /**
          * X 轴座标。

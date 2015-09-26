@@ -8,8 +8,6 @@
  */
 
 namespace Core {
-    'use strict';
-
     export interface ILogger {
         /**
          * 调试。

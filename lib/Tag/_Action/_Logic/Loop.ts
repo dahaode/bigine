@@ -15,8 +15,6 @@
 /// <reference path="../../_Action/_Text/Speak.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Loop extends Action {
         /**
          * 获取标签名称。

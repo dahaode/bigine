@@ -12,8 +12,6 @@
 /// <reference path="../../Util/Q.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export class Resource<T> implements Core.IResource<T> {
         /**
          * 真实 URL 。

@@ -11,8 +11,6 @@
 /// <reference path="../../_Definition/_Char/DefChar.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class CharPose extends Action {
         /**
          * 人物名称。

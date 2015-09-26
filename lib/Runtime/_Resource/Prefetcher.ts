@@ -11,8 +11,6 @@
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
 
 namespace Runtime {
-    'use strict';
-
     export namespace Prefecher {
         /**
          * 预加载资源。

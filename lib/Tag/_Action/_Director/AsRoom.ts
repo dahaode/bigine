@@ -11,8 +11,6 @@
 /// <reference path="../../_Definition/_Room/DefRoom.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class AsRoom extends Action {
         /**
          * 使用房间。

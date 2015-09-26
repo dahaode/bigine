@@ -11,8 +11,6 @@
 /// <reference path="Image.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class DefCG extends Entity {
         /**
          * 获取标签名称。

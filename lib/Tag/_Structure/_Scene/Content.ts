@@ -10,8 +10,6 @@
 /// <reference path="../../_Action/_Logic/Loop.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Content extends Unknown implements Core.IPerformableTag {
         /**
          * 获取标签名称。

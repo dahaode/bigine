@@ -10,8 +10,6 @@
 /// <reference path="../ResTable.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Poses extends ResTable {
         /**
          * 获取标签名称。

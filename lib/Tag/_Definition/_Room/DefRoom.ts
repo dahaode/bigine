@@ -13,8 +13,6 @@
 /// <reference path="Times.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class DefRoom extends Entity implements Core.IRoomTag {
         /**
          * 已添加地事件。

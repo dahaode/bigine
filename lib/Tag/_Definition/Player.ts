@@ -11,8 +11,6 @@
 /// <reference path="_Char/DefChar.ts" />
 
 namespace Tag {
-    'use strict';
-
     export class Player extends Unknown {
         /**
          * 关联对象。
