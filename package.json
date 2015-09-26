@@ -1,0 +1,39 @@
+{
+  "name": "bigine",
+  "version": "0.11.0",
+  "description": "DaHao.de 播放引擎（TypeScript 版）",
+  "keywords": [
+    "dahao",
+    "bigine",
+    "avg"
+  ],
+  "license": "GPL-3.0",
+  "author": "郑煜宇 <yzheng@atfacg.com>",
+  "files": [
+    "var/build/bigine.js"
+  ],
+  "main": "var/build/bigine.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bigine/bigine"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "es6-promise": "^3.0.2"
+  },
+  "devDependencies": {
+    "browserify": "^11.1.0",
+    "gulp": "^3.9.0",
+    "gulp-insert": "^0.5.0",
+    "gulp-replace": "^0.5.4",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-tslint": "^3.2.0",
+    "gulp-typescript": "^2.8.3",
+    "gulp-uglify": "^1.4.1",
+    "typescript": "^1.6.0-dev.20150915",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "newLine": "LF",
+        "target": "es3",
+        "noImplicitAny": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "noEmitOnError": true,
+        "outFile": "var/build/bigine.js",
+        "sourceMap": false
+    },
+    "files": [
+        "lib/Bigine.ts"
+    ]
+}
