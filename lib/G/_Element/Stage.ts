@@ -45,6 +45,11 @@ namespace G {
         private _m: Event.IMouseEventMetas;
 
         /**
+         * 鼠标座标对应组合元素树。
+         */
+        private _t: Sprite[];
+
+        /**
          * 构造函数。
          */
         constructor(context: CanvasRenderingContext2D) {
@@ -192,17 +197,21 @@ namespace G {
             x |= 0;
             y |= 0;
             var sprites: [Sprite[], Sprite[], Sprite[]] = [[], [], []],
-                els: Sprite[] = this.$m(x, y).slice(0, -1);
-            if (this._m.x == x && this._m.y == y) {
-                this._m.target = els[0];
-                this._m.from = undefined;
-                this._m.fromX = x;
-                this._m.fromY = y;
-                return [[], els, []];
-            }
-            Util.each(this.$m(this._m.x, this._m.y).slice(0, -1), (element: Sprite) => {
-                sprites[-1 == Util.indexOf(els, element) ? 2 : 1].push(element);
+                els: Sprite[] = this.$m(x, y).slice(0, -1), // 查找新座标点新树
+                bounds: Core.IBounds,
+                inside: boolean,
+                out: boolean;
+            Util.each(this._t, (element: Sprite) => {
+                bounds = element.gB();
+                inside = -1 != Util.indexOf(els, element);
+                out = x < bounds.x || y < bounds.y || x > bounds.x + bounds.w || y > bounds.y + bounds.h;
+                if (!inside && !out) {
+                    inside = true;
+                    els.push(element);
+                }
+                sprites[inside ? 1 : 2].push(element);
             });
+            this._t = els;
             this._m.fromX = this._m.x;
             this._m.fromY = this._m.y;
             this._m.x = x;

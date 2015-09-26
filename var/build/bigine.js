@@ -3122,17 +3122,19 @@ var G;
         Stage.prototype.$s = function (x, y) {
             x |= 0;
             y |= 0;
-            var sprites = [[], [], []], els = this.$m(x, y).slice(0, -1);
-            if (this._m.x == x && this._m.y == y) {
-                this._m.target = els[0];
-                this._m.from = undefined;
-                this._m.fromX = x;
-                this._m.fromY = y;
-                return [[], els, []];
-            }
-            Util.each(this.$m(this._m.x, this._m.y).slice(0, -1), function (element) {
-                sprites[-1 == Util.indexOf(els, element) ? 2 : 1].push(element);
+            var sprites = [[], [], []], els = this.$m(x, y).slice(0, -1), // 查找新座标点新树
+            bounds, inside, out;
+            Util.each(this._t, function (element) {
+                bounds = element.gB();
+                inside = -1 != Util.indexOf(els, element);
+                out = x < bounds.x || y < bounds.y || x > bounds.x + bounds.w || y > bounds.y + bounds.h;
+                if (!inside && !out) {
+                    inside = true;
+                    els.push(element);
+                }
+                sprites[inside ? 1 : 2].push(element);
             });
+            this._t = els;
             this._m.fromX = this._m.x;
             this._m.fromY = this._m.y;
             this._m.x = x;
