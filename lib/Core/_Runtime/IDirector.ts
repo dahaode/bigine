@@ -52,6 +52,11 @@ namespace Core {
         words(words: string, theme: string, who?: string, avatar?: IResource<HTMLImageElement>): Promise<IRuntime>;
 
         /**
+         * 提示。
+         */
+        tip(words: string): Promise<IRuntime>;
+
+        /**
          * 评分动画。
          */
         stars(rank: IDirector.Stars): Promise<IRuntime>;

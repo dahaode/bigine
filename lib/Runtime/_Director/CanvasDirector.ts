@@ -233,10 +233,7 @@ namespace Runtime {
                 gFrame: G.Sprite = <G.Sprite> this._c.q(code)[0],
                 gAvatar: G.Sprite = <G.Sprite> gFrame.q('a')[0],
                 gName: G.Text = <G.Text> gFrame.q('n')[0],
-                gWords: G.Text = <G.Text> gFrame.q('w')[0],
-                hilite: boolean = false,
-                buffer: string = '',
-                ii: number;
+                gWords: G.Text = <G.Text> gFrame.q('w')[0];
             if (avatar && gAvatar)
                 gAvatar.a(new G.Image(avatar, gAvatar.gB(), true));
             if (who && gName)
@@ -246,41 +243,10 @@ namespace Runtime {
                         .c(<string> this._f[code + 'n']['c'])
                         .s(<number> this._f[code + 'n']['s'])
                     );
-            gWords.o(0);
-            for (ii = 0; ii < words.length; ii++) {
-                if ('【' == words[ii] && !hilite) {
-                    gWords.a(new G.Phrase()
-                            .t(buffer)
-                            .f(28)
-                            .c(<string> this._f[code]['c'])
-                            .s(<number> this._f[code]['s'])
-                        );
-                    buffer = '';
-                    hilite = true;
-                } else if ('】' == words[ii] && hilite) {
-                    gWords.a(new G.Phrase()
-                            .t(buffer)
-                            .f(28)
-                            .c(<string> this._f[code]['h'])
-                            .s(<number> this._f[code]['s'])
-                        );
-                    buffer = '';
-                    hilite = false;
-                } else
-                    buffer += words[ii];
-            }
-            if (buffer)
-                gWords.a(new G.Phrase()
-                        .t(buffer)
-                        .f(28)
-                        .c(<string> this._f[code][hilite ? 'h' : 'c'])
-                        .s(<number> this._f[code]['s'])
-                    );
+            this.$w(<G.Text> gWords.o(0), words, this._f[code]);
             gFrame.o(1);
             return this.lightOn()
                 .then(() => {
-                    if ('tip' == theme)
-                        return gWords.p(new G.FadeIn(250));
                     var aType: G.Type = new G.Type(1),
                         aWFC: G.WaitForClick;
                     if (this._a)
@@ -293,12 +259,9 @@ namespace Runtime {
                         gFrame.p(aWFC)
                     ]);
                 }).then(() => {
-                    if (this._a && 'tip' != theme) {
-                        this._t = new G.TypeDelay(9);
-                        return gWords.p(this._t);
-                    }
-                    this._t = new G.WaitForClick();
-                    return gFrame.p(this._t);
+                    if (this._a)
+                        return gWords.p(this._t = new G.TypeDelay(9));
+                    return gFrame.p(this._t = new G.WaitForClick());
                 }).then(() => {
                     this._t = undefined;
                     gFrame.o(0);
@@ -310,6 +273,24 @@ namespace Runtime {
                     return this._r;
                 });
         }
+
+        /**
+         * 提示。
+         */
+        public tip(words: string): Promise<Core.IRuntime> {
+            var gTip: G.Sprite = <G.Sprite> this._c.q('t')[0],
+                gWords: G.Text = <G.Text> gTip.q('w')[0];
+            this.$w(gWords, words, this._f['t']);
+            return this.lightOn()
+                .then(() => gTip.p(new G.FadeIn(250)
+                        .c(new G.WaitForClick())
+                        .c(new G.FadeOut(250))
+                    )
+                ).then(() => {
+                    gWords.c();
+                    return this._r;
+                });
+        };
 
         /**
          * 评分动画。
@@ -743,6 +724,46 @@ namespace Runtime {
             this._s['b'].volume = volume;
             this._s['e'].volume = volume;
             return <CanvasDirector> super.v(volume);
+        }
+
+        /**
+         * 将文本添加至画面文字元素中。
+         */
+        private $w(element: G.Text, words: string, font: Util.IHashTable<string | number>): G.Text {
+            var buffer: string = '',
+                hilite: boolean = false,
+                ii: number;
+            element.c();
+            for (ii = 0; ii < words.length; ii++) {
+                if ('【' == words[ii] && !hilite) {
+                    element.a(new G.Phrase()
+                            .t(buffer)
+                            .f(28)
+                            .c(<string> font['c'])
+                            .s(<number> font['s'])
+                        );
+                    buffer = '';
+                    hilite = true;
+                } else if ('】' == words[ii] && hilite) {
+                    element.a(new G.Phrase()
+                            .t(buffer)
+                            .f(28)
+                            .c(<string> font['h'])
+                            .s(<number> font['s'])
+                        );
+                    buffer = '';
+                    hilite = false;
+                } else
+                    buffer += words[ii];
+            }
+            if (buffer)
+                element.a(new G.Phrase()
+                        .t(buffer)
+                        .f(28)
+                        .c(<string> font[hilite ? 'h' : 'c'])
+                        .s(<number> font['s'])
+                    );
+            return element;
         }
     }
 }

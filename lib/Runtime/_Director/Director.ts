@@ -114,6 +114,13 @@ namespace Runtime {
         }
 
         /**
+         * 提示。
+         */
+        public tip(words: string): Promise<Core.IRuntime> {
+            return this._p;
+        };
+
+        /**
          * 评分动画。
          */
         public stars(rank: Core.IDirector.Stars): Promise<Core.IRuntime> {

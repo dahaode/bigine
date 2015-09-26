@@ -1562,6 +1562,13 @@ var Runtime;
             return this._p;
         };
         /**
+         * 提示。
+         */
+        Director.prototype.tip = function (words) {
+            return this._p;
+        };
+        ;
+        /**
          * 评分动画。
          */
         Director.prototype.stars = function (rank) {
@@ -3711,7 +3718,7 @@ var Runtime;
          */
         CanvasDirector.prototype.words = function (words, theme, who, avatar) {
             var _this = this;
-            var code = theme[0], gFrame = this._c.q(code)[0], gAvatar = gFrame.q('a')[0], gName = gFrame.q('n')[0], gWords = gFrame.q('w')[0], hilite = false, buffer = '', ii;
+            var code = theme[0], gFrame = this._c.q(code)[0], gAvatar = gFrame.q('a')[0], gName = gFrame.q('n')[0], gWords = gFrame.q('w')[0];
             if (avatar && gAvatar)
                 gAvatar.a(new G.Image(avatar, gAvatar.gB(), true));
             if (who && gName)
@@ -3720,40 +3727,10 @@ var Runtime;
                     .f(42)
                     .c(this._f[code + 'n']['c'])
                     .s(this._f[code + 'n']['s']));
-            gWords.o(0);
-            for (ii = 0; ii < words.length; ii++) {
-                if ('【' == words[ii] && !hilite) {
-                    gWords.a(new G.Phrase()
-                        .t(buffer)
-                        .f(28)
-                        .c(this._f[code]['c'])
-                        .s(this._f[code]['s']));
-                    buffer = '';
-                    hilite = true;
-                }
-                else if ('】' == words[ii] && hilite) {
-                    gWords.a(new G.Phrase()
-                        .t(buffer)
-                        .f(28)
-                        .c(this._f[code]['h'])
-                        .s(this._f[code]['s']));
-                    buffer = '';
-                    hilite = false;
-                }
-                else
-                    buffer += words[ii];
-            }
-            if (buffer)
-                gWords.a(new G.Phrase()
-                    .t(buffer)
-                    .f(28)
-                    .c(this._f[code][hilite ? 'h' : 'c'])
-                    .s(this._f[code]['s']));
+            this.$w(gWords.o(0), words, this._f[code]);
             gFrame.o(1);
             return this.lightOn()
                 .then(function () {
-                if ('tip' == theme)
-                    return gWords.p(new G.FadeIn(250));
                 var aType = new G.Type(1), aWFC;
                 if (_this._a)
                     return gWords.p(aType);
@@ -3765,12 +3742,9 @@ var Runtime;
                     gFrame.p(aWFC)
                 ]);
             }).then(function () {
-                if (_this._a && 'tip' != theme) {
-                    _this._t = new G.TypeDelay(9);
-                    return gWords.p(_this._t);
-                }
-                _this._t = new G.WaitForClick();
-                return gFrame.p(_this._t);
+                if (_this._a)
+                    return gWords.p(_this._t = new G.TypeDelay(9));
+                return gFrame.p(_this._t = new G.WaitForClick());
             }).then(function () {
                 _this._t = undefined;
                 gFrame.o(0);
@@ -3782,6 +3756,22 @@ var Runtime;
                 return _this._r;
             });
         };
+        /**
+         * 提示。
+         */
+        CanvasDirector.prototype.tip = function (words) {
+            var _this = this;
+            var gTip = this._c.q('t')[0], gWords = gTip.q('w')[0];
+            this.$w(gWords, words, this._f['t']);
+            return this.lightOn()
+                .then(function () { return gTip.p(new G.FadeIn(250)
+                .c(new G.WaitForClick())
+                .c(new G.FadeOut(250))); }).then(function () {
+                gWords.c();
+                return _this._r;
+            });
+        };
+        ;
         /**
          * 评分动画。
          */
@@ -4166,6 +4156,42 @@ var Runtime;
             this._s['b'].volume = volume;
             this._s['e'].volume = volume;
             return _super.prototype.v.call(this, volume);
+        };
+        /**
+         * 将文本添加至画面文字元素中。
+         */
+        CanvasDirector.prototype.$w = function (element, words, font) {
+            var buffer = '', hilite = false, ii;
+            element.c();
+            for (ii = 0; ii < words.length; ii++) {
+                if ('【' == words[ii] && !hilite) {
+                    element.a(new G.Phrase()
+                        .t(buffer)
+                        .f(28)
+                        .c(font['c'])
+                        .s(font['s']));
+                    buffer = '';
+                    hilite = true;
+                }
+                else if ('】' == words[ii] && hilite) {
+                    element.a(new G.Phrase()
+                        .t(buffer)
+                        .f(28)
+                        .c(font['h'])
+                        .s(font['s']));
+                    buffer = '';
+                    hilite = false;
+                }
+                else
+                    buffer += words[ii];
+            }
+            if (buffer)
+                element.a(new G.Phrase()
+                    .t(buffer)
+                    .f(28)
+                    .c(font[hilite ? 'h' : 'c'])
+                    .s(font['s']));
+            return element;
         };
         /**
          * 尺寸。
@@ -8170,7 +8196,7 @@ var Tag;
          * 执行。
          */
         Tip.prototype.p = function (runtime) {
-            return runtime.gD().words(runtime.gS().t(this._c), 'tip');
+            return runtime.gD().tip(runtime.gS().t(this._c));
         };
         return Tip;
     })(Tag.Action);

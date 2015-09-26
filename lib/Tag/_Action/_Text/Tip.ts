@@ -22,7 +22,7 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            return runtime.gD().words(runtime.gS().t(this._c), 'tip');
+            return runtime.gD().tip(runtime.gS().t(this._c));
         }
     }
 }
