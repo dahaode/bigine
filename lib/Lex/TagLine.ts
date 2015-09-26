@@ -111,11 +111,11 @@ namespace Lex {
             });
             if (-1 == this._i)
                 return new Tag.Root(children);
-            if (!(name in SCHEMA.C)) {
+            if (!(name in Tag.C)) {
                 params.unshift(name);
                 name = 'UNKNOWN';
             }
-            proto = eval('Tag.' + SCHEMA.C[name]);
+            proto = eval('Tag.' + Tag.C[name]);
             tag = new proto(params, content, children, this._l[0]);
             if (tag instanceof Tag.Idable || 'Scene' == tag.gN())
                 (<Tag.Idable> tag).i(u());

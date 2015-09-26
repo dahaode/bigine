@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Core/_Tag/ITag.ts" />
-/// <reference path="../SCHEMA.ts" />
+/// <reference path="_schema.ts" />
 /// <reference path="../E.ts" />
 
 namespace Tag {
@@ -63,7 +63,7 @@ namespace Tag {
             this._r =
             this._b = false;
             this._q = {};
-            var schema: any[] = SCHEMA.S[this.$i()],
+            var schema: any[] = S[this.$i()],
                 contraints: Util.IHashTable<number[]> = {};
             if (params.length < schema[1][0]) {
                 throw new E(E.TAG_PARAMS_TOO_FEW, lineNo);
@@ -151,7 +151,7 @@ namespace Tag {
         public toString(): string {
             if (-1 == this._l)
                 return '';
-            var clob: string = SCHEMA.T[this.gN()],
+            var clob: string = T[this.gN()],
                 params: string[] = this._p.slice(0);
             if ('UNKNOWN' == clob)
                 clob = params.shift();
@@ -224,7 +224,7 @@ namespace Tag {
          * 获取标签索引号。
          */
         protected $i(abstract?: boolean): number {
-            var index: number = SCHEMA.I[this.gN()];
+            var index: number = I[this.gN()];
             if (undefined === index)
                 throw new E(E.SCHEMA_TAG_NOT_DECLARED, this._l);
             return index - 0;
@@ -248,7 +248,7 @@ namespace Tag {
          * 过滤名称符合要求地子标签。
          */
         protected $q(name: string): Unknown[] {
-            if (!(name in SCHEMA.I))
+            if (!(name in I))
                 throw new E(E.SCHEMA_TAG_NOT_DECLARED);
             if (!(name in this._q)) {
                 this._q[name] = [];

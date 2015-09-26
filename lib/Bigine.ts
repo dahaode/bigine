@@ -27,9 +27,9 @@ function Bigine(code: any, ...args: any[]): any {
             return Lex.Parser.c(code);
         return new Runtime.Runtime(new Tag.Root(<Tag.Unknown[]> code));
     }
-    if (!(code in SCHEMA.S))
+    if (!(code in Tag.S))
         throw new E(E.SCHEMA_TAG_NOT_DECLARED);
-    var proto: typeof Tag.Unknown = eval('Tag.' + SCHEMA.S[code][0]),
+    var proto: typeof Tag.Unknown = eval('Tag.' + Tag.S[code][0]),
         content: string = '',
         params: string[] = [],
         children: Tag.Unknown[] = [],

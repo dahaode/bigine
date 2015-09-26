@@ -4526,15 +4526,15 @@ var Runtime;
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
- * @file      SCHEMA.ts
+ * @file      Tag/_schema.ts
  */
-var SCHEMA;
-(function (SCHEMA) {
+var Tag;
+(function (Tag) {
     'use strict';
     /**
      * 类到标签映射。
      */
-    SCHEMA.T = {
+    Tag.T = {
         Unknown: 'UNKNOWN',
         Root: 'ROOT',
         DefBGM: '音乐',
@@ -4613,7 +4613,7 @@ var SCHEMA;
      *     }
      * }
      */
-    SCHEMA.S = {
+    Tag.S = {
         '-1': ['Root', 0, -1, {
                 54: [0, 1],
                 55: [0, 1],
@@ -4741,35 +4741,35 @@ var SCHEMA;
             }]
     };
     var ii, jj;
-    for (ii in SCHEMA.S)
-        if (SCHEMA.S.hasOwnProperty(ii)) {
-            if (!(SCHEMA.S[ii][1] instanceof Array))
-                SCHEMA.S[ii][1] = [SCHEMA.S[ii][1], SCHEMA.S[ii][1]];
-            if (SCHEMA.S[ii][3])
-                for (jj in SCHEMA.S[ii][3])
-                    if (!(SCHEMA.S[ii][3][jj] instanceof Array))
-                        SCHEMA.S[ii][3][jj] = [SCHEMA.S[ii][3][jj], SCHEMA.S[ii][3][jj]];
+    for (ii in Tag.S)
+        if (Tag.S.hasOwnProperty(ii)) {
+            if (!(Tag.S[ii][1] instanceof Array))
+                Tag.S[ii][1] = [Tag.S[ii][1], Tag.S[ii][1]];
+            if (Tag.S[ii][3])
+                for (jj in Tag.S[ii][3])
+                    if (!(Tag.S[ii][3][jj] instanceof Array))
+                        Tag.S[ii][3][jj] = [Tag.S[ii][3][jj], Tag.S[ii][3][jj]];
         }
     /**
      * 标签到类映射。
      */
-    SCHEMA.C = {
+    Tag.C = {
         游戏结束: 'End',
         当线索: 'Assert',
         设置线索: 'Assign',
         对比线索: 'Compare'
     };
-    for (ii in SCHEMA.T)
-        if (SCHEMA.T.hasOwnProperty(ii) && !(SCHEMA.T[ii] in SCHEMA.C))
-            SCHEMA.C[SCHEMA.T[ii]] = ii;
+    for (ii in Tag.T)
+        if (Tag.T.hasOwnProperty(ii) && !(Tag.T[ii] in Tag.C))
+            Tag.C[Tag.T[ii]] = ii;
     /**
      * 标签索引。
      */
-    SCHEMA.I = {};
-    for (ii in SCHEMA.S)
-        if (SCHEMA.S.hasOwnProperty(ii))
-            SCHEMA.I[SCHEMA.S[ii][0]] = ii;
-})(SCHEMA || (SCHEMA = {}));
+    Tag.I = {};
+    for (ii in Tag.S)
+        if (Tag.S.hasOwnProperty(ii))
+            Tag.I[Tag.S[ii][0]] = ii;
+})(Tag || (Tag = {}));
 /**
  * 定义未知标签组件。
  *
@@ -4779,7 +4779,7 @@ var SCHEMA;
  * @file      Tag/Unknown.ts
  */
 /// <reference path="../Core/_Tag/ITag.ts" />
-/// <reference path="../SCHEMA.ts" />
+/// <reference path="_schema.ts" />
 /// <reference path="../E.ts" />
 var Tag;
 (function (Tag) {
@@ -4794,7 +4794,7 @@ var Tag;
             this._r =
                 this._b = false;
             this._q = {};
-            var schema = SCHEMA.S[this.$i()], contraints = {};
+            var schema = Tag.S[this.$i()], contraints = {};
             if (params.length < schema[1][0]) {
                 throw new E(E.TAG_PARAMS_TOO_FEW, lineNo);
             }
@@ -4878,7 +4878,7 @@ var Tag;
         Unknown.prototype.toString = function () {
             if (-1 == this._l)
                 return '';
-            var clob = SCHEMA.T[this.gN()], params = this._p.slice(0);
+            var clob = Tag.T[this.gN()], params = this._p.slice(0);
             if ('UNKNOWN' == clob)
                 clob = params.shift();
             if (params.length)
@@ -4944,7 +4944,7 @@ var Tag;
          * 获取标签索引号。
          */
         Unknown.prototype.$i = function (abstract) {
-            var index = SCHEMA.I[this.gN()];
+            var index = Tag.I[this.gN()];
             if (undefined === index)
                 throw new E(E.SCHEMA_TAG_NOT_DECLARED, this._l);
             return index - 0;
@@ -4966,7 +4966,7 @@ var Tag;
          */
         Unknown.prototype.$q = function (name) {
             var _this = this;
-            if (!(name in SCHEMA.I))
+            if (!(name in Tag.I))
                 throw new E(E.SCHEMA_TAG_NOT_DECLARED);
             if (!(name in this._q)) {
                 this._q[name] = [];
@@ -8839,11 +8839,11 @@ var Lex;
             });
             if (-1 == this._i)
                 return new Tag.Root(children);
-            if (!(name in SCHEMA.C)) {
+            if (!(name in Tag.C)) {
                 params.unshift(name);
                 name = 'UNKNOWN';
             }
-            proto = eval('Tag.' + SCHEMA.C[name]);
+            proto = eval('Tag.' + Tag.C[name]);
             tag = new proto(params, content, children, this._l[0]);
             if (tag instanceof Tag.Idable || 'Scene' == tag.gN())
                 tag.i(u());
@@ -8938,9 +8938,9 @@ function Bigine(code) {
             return Lex.Parser.c(code);
         return new Runtime.Runtime(new Tag.Root(code));
     }
-    if (!(code in SCHEMA.S))
+    if (!(code in Tag.S))
         throw new E(E.SCHEMA_TAG_NOT_DECLARED);
-    var proto = eval('Tag.' + SCHEMA.S[code][0]), content = '', params = [], children = [], id = '', arg = args.shift(), type = typeof arg, tag;
+    var proto = eval('Tag.' + Tag.S[code][0]), content = '', params = [], children = [], id = '', arg = args.shift(), type = typeof arg, tag;
     if ('string' == type || 'number' == type) {
         content += arg;
         arg = args.shift();
