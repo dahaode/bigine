@@ -2796,7 +2796,7 @@ var G;
          */
         Button.prototype.b = function (callback, hover, defaults) {
             if (defaults)
-                this.a(defaults);
+                this.a(defaults.o(1));
             if (hover)
                 this.a(hover.o(0));
             var animes = [], anime;
@@ -3065,8 +3065,14 @@ var G;
          * 发生变更。
          */
         Stage.prototype.f = function () {
+            var _this = this;
             this._f = true;
-            this.$s(this._m.x, this._m.y);
+            var event;
+            Util.each(this.$s(this._m.x, this._m.y)[0], function (element) {
+                if (!event)
+                    event = new G.Event.Focus(_this._m);
+                element.dispatchEvent(event);
+            });
             return this;
         };
         /**

@@ -136,7 +136,12 @@ namespace G {
          */
         public f(): Element {
             this._f = true;
-            this.$s(this._m.x, this._m.y);
+            var event: Event.Focus;
+            Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
+                if (!event)
+                    event = new Event.Focus(this._m);
+                element.dispatchEvent(event);
+            });
             return this;
         }
 

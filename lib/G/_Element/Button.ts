@@ -22,7 +22,7 @@ namespace G {
          */
         public b(callback: Core.IEventListener<Button>, hover?: Element, defaults?: Element): Button {
             if (defaults)
-                this.a(defaults);
+                this.a(defaults.o(1));
             if (hover)
                 this.a(hover.o(0));
             var animes: Fade[] = [],
