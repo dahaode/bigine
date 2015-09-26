@@ -17,6 +17,11 @@ namespace Core {
          * 获取 DOM 对象。
          */
         o(): Promise<T>;
+
+        /**
+         * 加载完成时通知。
+         */
+        w(callback: (value: T) => void): IResource<T>;
     }
 
     export namespace IResource {

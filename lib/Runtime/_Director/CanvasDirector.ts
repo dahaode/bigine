@@ -32,6 +32,8 @@
  * * D - 选择
  * * S - 开始菜单
  * * C - 幕帘
+ * * L - 加载进度条
+ *     * e - 完成进度条
  */
 namespace Runtime {
     export class CanvasDirector extends Director {
@@ -71,6 +73,11 @@ namespace Runtime {
         private _t: Core.IAnimation;
 
         /**
+         * 预加载进度。
+         */
+        private _e: [number, number];
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -99,7 +106,8 @@ namespace Runtime {
                 .a(new G.Sprite(bounds).i('v').o(0))
                 .a(new G.Sprite(bounds).i('t').o(0))
                 .a(new G.Sprite(bounds).i('S').o(0))
-                .a(new G.Color(bounds, '#000').i('C'));
+                .a(new G.Color(bounds, '#000').i('C'))
+                .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, 'red').i('e')).i('L').o(0));
             this._s = {
                 b: new Audio(),
                 e: new Audio()
@@ -117,27 +125,60 @@ namespace Runtime {
                 s1: new Resource<HTMLImageElement>('//s.dahao.de/lib/bigine/1star.png', raw)
             };
             this._f = {};
-            this.c([[this._i['o']]]);
+            this._e = [0, 0];
+        }
+
+        /**
+         * 预加载指定资源组。
+         *
+         * @param resources 一个（作品）事件所包含地所有资源
+         */
+        public c(resources: Resource<string | HTMLImageElement>[][]): Promise<void> {
+            var gLoading: G.Sprite = <G.Sprite> this._c.q('L')[0],
+                gElapsed: G.Element = gLoading.q('e')[0],
+                bounds: Core.IBounds = CanvasDirector.BOUNDS,
+                progress: (done: boolean) => void = (done: boolean) => {
+                    var e: [number, number] = this._e;
+                    e[0 + <any> done]++;
+                    if (e[0] == e[1]) {
+                        this._e = [0, 0];
+                        return gLoading.o(0);
+                    }
+                    gElapsed.x((e[1] / e[0] - 1) * bounds.w);
+                    gLoading.o(1);
+                };
+            Util.each(resources, (frame: Resource<string | HTMLImageElement>[]) => {
+                Util.each(frame, (resource: Resource<string | HTMLImageElement>) => {
+                    progress(false);
+                    resource.w((value: string | HTMLImageElement) => {
+                        progress(true);
+                    });
+                });
+            });
+            return Prefecher.c(resources, this._r.gL());
         }
 
         /**
          * 开始动画。
          */
         public OP(start: boolean): Promise<Core.IRuntime> {
-            var gLogo: G.Image = new G.Image(this._i['o'], CanvasDirector.BOUNDS);
-            this._c.z()
-                .a(gLogo, 'C');
-            return this.lightOn()
-                .then(() => gLogo.p(new G.Delay(2000)))
-                .then(() => this.lightOff())
+            return this.c([[this._i['o']]])
                 .then(() => {
-                    this._c.e(gLogo);
-                    return super.OP(start);
-                }).then((runtime: Core.IRuntime) => {
-                    if (!start)
-                        return runtime;
-                    this._c.q('S')[0].o(1);
-                    return this.lightOn();
+                    var gLogo: G.Image = new G.Image(this._i['o'], CanvasDirector.BOUNDS);
+                    this._c.z()
+                        .a(gLogo, 'C');
+                    return this.lightOn()
+                        .then(() => gLogo.p(new G.Delay(2000)))
+                        .then(() => this.lightOff())
+                        .then(() => {
+                            this._c.e(gLogo);
+                            return super.OP(start);
+                        }).then((runtime: Core.IRuntime) => {
+                            if (!start)
+                                return runtime;
+                            this._c.q('S')[0].o(1);
+                            return this.lightOn();
+                        });
                 });
         }
 
@@ -145,7 +186,7 @@ namespace Runtime {
          * 完结动画。
          */
         public ED(): Promise<Core.IRuntime> {
-            return Prefecher.c([[this._i['e']]])
+            return this.c([[this._i['e']]])
                 .then(() => {
                     var gED: G.Image = new G.Image(this._i['e'], CanvasDirector.BOUNDS);
                     this.playBGM();
@@ -309,7 +350,7 @@ namespace Runtime {
                     key += '1';
                     break;
             }
-            return Prefecher.c([[this._i[key]]])
+            return this.c([[this._i[key]]])
                 .then(() => {
                     var gStars: G.Image = new G.Image(this._i[key], CanvasDirector.BOUNDS);
                     return this.lightOff()

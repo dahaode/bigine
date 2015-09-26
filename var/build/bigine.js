@@ -1000,6 +1000,7 @@ var Runtime;
                     this._l = '//dahao.de/a' + this._l.substr(13);
             }
             this._l = env.Protocol + this._l;
+            this._w = [];
         }
         /**
          * 获取 DOM 对象。
@@ -1035,7 +1036,19 @@ var Runtime;
                     };
                     img.src = _this._l;
                 });
+            if (this._w.length) {
+                Util.each(this._w.splice(0), function (callback) {
+                    _this._q.then(callback);
+                });
+            }
             return this._q;
+        };
+        /**
+         * 加载完成时通知。
+         */
+        Resource.prototype.w = function (callback) {
+            this._w.push(callback);
+            return this;
         };
         return Resource;
     })();
@@ -1410,17 +1423,17 @@ var Runtime;
         function c(resources, logger) {
             if (!resources.length)
                 return Promise.resolve();
-            var total = resources.slice(0), first = [];
+            var total = resources.slice(0), first = [], required;
             Util.each(total[0], function (resource) {
                 first.push(resource.o());
             });
             if (logger)
-                logger.d('[cache]', total[0]);
-            return Promise.all(first).then(function () {
-                total.shift();
+                logger.d('[cache]', total.shift());
+            required = Promise.all(first);
+            required.then(function () {
                 if (!total.length)
                     return;
-                return Util.Q.every(total, function (group) {
+                Util.Q.every(total, function (group) {
                     var step = [];
                     Util.each(group, function (resource) {
                         step.push(resource.o());
@@ -1428,9 +1441,10 @@ var Runtime;
                     if (logger)
                         logger.d('[cache]', group);
                     return Promise.all(step);
-                }).then(function () {
-                    return;
                 });
+            });
+            return required.then(function () {
+                return;
             });
         }
         Prefecher.c = c;
@@ -2108,19 +2122,15 @@ var G;
         /**
          * 移动 X 轴座标。
          */
-        Element.prototype.x = function (distance) {
-            if (!distance)
-                return this;
-            this._b.x += distance;
+        Element.prototype.x = function (value) {
+            this._b.x = value;
             return this.f();
         };
         /**
          * 移动 Y 轴座标。
          */
-        Element.prototype.y = function (distance) {
-            if (!distance)
-                return this;
-            this._b.y += distance;
+        Element.prototype.y = function (value) {
+            this._b.y = value;
             return this.f();
         };
         /**
@@ -3564,6 +3574,8 @@ var Runtime;
  * * D - 选择
  * * S - 开始菜单
  * * C - 幕帘
+ * * L - 加载进度条
+ *     * e - 完成进度条
  */
 var Runtime;
 (function (Runtime) {
@@ -3594,7 +3606,8 @@ var Runtime;
                 .a(new G.Sprite(bounds).i('v').o(0))
                 .a(new G.Sprite(bounds).i('t').o(0))
                 .a(new G.Sprite(bounds).i('S').o(0))
-                .a(new G.Color(bounds, '#000').i('C'));
+                .a(new G.Color(bounds, '#000').i('C'))
+                .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, 'red').i('e')).i('L').o(0));
             this._s = {
                 b: new Audio(),
                 e: new Audio()
@@ -3612,27 +3625,57 @@ var Runtime;
                 s1: new Runtime.Resource('//s.dahao.de/lib/bigine/1star.png', raw)
             };
             this._f = {};
-            this.c([[this._i['o']]]);
+            this._e = [0, 0];
         }
+        /**
+         * 预加载指定资源组。
+         *
+         * @param resources 一个（作品）事件所包含地所有资源
+         */
+        CanvasDirector.prototype.c = function (resources) {
+            var _this = this;
+            var gLoading = this._c.q('L')[0], gElapsed = gLoading.q('e')[0], bounds = CanvasDirector.BOUNDS, progress = function (done) {
+                var e = _this._e;
+                e[0 + done]++;
+                if (e[0] == e[1]) {
+                    _this._e = [0, 0];
+                    return gLoading.o(0);
+                }
+                gElapsed.x((e[1] / e[0] - 1) * bounds.w);
+                gLoading.o(1);
+            };
+            Util.each(resources, function (frame) {
+                Util.each(frame, function (resource) {
+                    progress(false);
+                    resource.w(function (value) {
+                        progress(true);
+                    });
+                });
+            });
+            return Runtime.Prefecher.c(resources, this._r.gL());
+        };
         /**
          * 开始动画。
          */
         CanvasDirector.prototype.OP = function (start) {
             var _this = this;
-            var gLogo = new G.Image(this._i['o'], CanvasDirector.BOUNDS);
-            this._c.z()
-                .a(gLogo, 'C');
-            return this.lightOn()
-                .then(function () { return gLogo.p(new G.Delay(2000)); })
-                .then(function () { return _this.lightOff(); })
+            return this.c([[this._i['o']]])
                 .then(function () {
-                _this._c.e(gLogo);
-                return _super.prototype.OP.call(_this, start);
-            }).then(function (runtime) {
-                if (!start)
-                    return runtime;
-                _this._c.q('S')[0].o(1);
-                return _this.lightOn();
+                var gLogo = new G.Image(_this._i['o'], CanvasDirector.BOUNDS);
+                _this._c.z()
+                    .a(gLogo, 'C');
+                return _this.lightOn()
+                    .then(function () { return gLogo.p(new G.Delay(2000)); })
+                    .then(function () { return _this.lightOff(); })
+                    .then(function () {
+                    _this._c.e(gLogo);
+                    return _super.prototype.OP.call(_this, start);
+                }).then(function (runtime) {
+                    if (!start)
+                        return runtime;
+                    _this._c.q('S')[0].o(1);
+                    return _this.lightOn();
+                });
             });
         };
         /**
@@ -3640,7 +3683,7 @@ var Runtime;
          */
         CanvasDirector.prototype.ED = function () {
             var _this = this;
-            return Runtime.Prefecher.c([[this._i['e']]])
+            return this.c([[this._i['e']]])
                 .then(function () {
                 var gED = new G.Image(_this._i['e'], CanvasDirector.BOUNDS);
                 _this.playBGM();
@@ -3789,7 +3832,7 @@ var Runtime;
                     key += '1';
                     break;
             }
-            return Runtime.Prefecher.c([[this._i[key]]])
+            return this.c([[this._i[key]]])
                 .then(function () {
                 var gStars = new G.Image(_this._i[key], CanvasDirector.BOUNDS);
                 return _this.lightOff()

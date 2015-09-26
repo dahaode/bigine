@@ -19,16 +19,17 @@ namespace Runtime {
             if (!resources.length)
                 return Promise.resolve();
             var total: Resource<string | HTMLImageElement>[][] = resources.slice(0),
-                first: Promise<string | HTMLImageElement>[] = [];
+                first: Promise<string | HTMLImageElement>[] = [],
+                required: Promise<(string | HTMLImageElement)[]>;
             Util.each(total[0], (resource: Resource<string | HTMLImageElement>) => {
                 first.push(resource.o());
             });
             if (logger)
-                logger.d('[cache]', total[0]);
-            return Promise.all(first).then(() => {
-                total.shift();
+                logger.d('[cache]', total.shift());
+            required = Promise.all(first);
+            required.then(() => {
                 if (!total.length) return;
-                return Util.Q.every(total, (group: Resource<string | HTMLImageElement>[]) => {
+                Util.Q.every(total, (group: Resource<string | HTMLImageElement>[]) => {
                     var step: Promise<string | HTMLImageElement>[] = [];
                     Util.each(group, (resource: Resource<string | HTMLImageElement>) => {
                         step.push(resource.o());
@@ -36,9 +37,10 @@ namespace Runtime {
                     if (logger)
                         logger.d('[cache]', group);
                     return Promise.all(step);
-                }).then(() => {
-                    return;
                 });
+            });
+            return required.then(() => {
+                return;
             });
         }
     }

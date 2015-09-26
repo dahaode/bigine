@@ -24,6 +24,11 @@ namespace Runtime {
         private _q: Promise<T>;
 
         /**
+         * 加载完成时回调。
+         */
+        private _w: ((value: T) => void)[];
+
+        /**
          * 构造函数。
          */
         constructor(uri: string, type: Core.IResource.Type) {
@@ -65,6 +70,7 @@ namespace Runtime {
                     this._l = '//dahao.de/a' + this._l.substr(13);
             }
             this._l = env.Protocol + this._l;
+            this._w = [];
         }
 
         /**
@@ -102,7 +108,20 @@ namespace Runtime {
                     };
                     img.src = this._l;
                 });
+            if (this._w.length) {
+                Util.each(this._w.splice(0), (callback: (value: T) => void) => {
+                    this._q.then(callback);
+                });
+            }
             return this._q;
+        }
+
+        /**
+         * 加载完成时通知。
+         */
+        public w(callback: (value: T) => void): Resource<T> {
+            this._w.push(callback);
+            return this;
         }
     }
 }

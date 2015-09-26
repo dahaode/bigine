@@ -124,20 +124,16 @@ namespace G {
         /**
          * 移动 X 轴座标。
          */
-        public x(distance: number): Element {
-            if (!distance)
-                return this;
-            this._b.x += distance;
+        public x(value: number): Element {
+            this._b.x = value;
             return this.f();
         }
 
         /**
          * 移动 Y 轴座标。
          */
-        public y(distance: number): Element {
-            if (!distance)
-                return this;
-            this._b.y += distance;
+        public y(value: number): Element {
+            this._b.y = value;
             return this.f();
         }
 

@@ -24,12 +24,12 @@ namespace Core {
         /**
          * 移动 X 轴座标。
          */
-        x(distance: number): IGraphicElement;
+        x(value: number): IGraphicElement;
 
         /**
          * 移动 Y 轴座标。
          */
-        y(distance: number): IGraphicElement;
+        y(value: number): IGraphicElement;
 
         /**
          * 缩放。
