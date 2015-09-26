@@ -1947,6 +1947,7 @@ var G;
             if (this._p || this._h)
                 return r;
             this._p = true;
+            this._t = element;
             q = once();
             if (!this._c.length)
                 return q;
@@ -1965,10 +1966,17 @@ var G;
             if (this._h)
                 return this;
             this._h = true;
+            this.$h();
             Util.each(this._c, function (anime) {
                 anime.h();
             });
             return this;
+        };
+        /**
+         * 中止处理。
+         */
+        Animation.prototype.$h = function () {
+            //
         };
         return Animation;
     })();
@@ -2121,8 +2129,8 @@ var G;
          */
         Fade.prototype.$p = function (element, elpased) {
             if (1 == elpased)
-                this._mo = element.gO();
-            element.o((this._m.opacity - this._mo) * elpased / this._d + this._mo);
+                this._o = element.gO();
+            element.o((this._m.opacity - this._o) * elpased / this._d + this._o);
         };
         return Fade;
     })(G.Animation);
@@ -2697,48 +2705,6 @@ var Core;
     'use strict';
 })(Core || (Core = {}));
 /**
- * 定义画面按钮元素组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Element/Stage.ts
- */
-/// <reference path="Sprite.ts" />
-/// <reference path="../../Core/_G/IButton.ts" />
-var G;
-(function (G) {
-    'use strict';
-    var Button = (function (_super) {
-        __extends(Button, _super);
-        function Button() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 绑定功能。
-         */
-        Button.prototype.b = function (callback, hover, defaults) {
-            if (defaults)
-                this.a(defaults);
-            if (hover)
-                this.a(hover.o(0));
-            return this.addEventListener('$focus', function () {
-                if (defaults)
-                    defaults.o(0);
-                if (hover)
-                    hover.o(1);
-            }).addEventListener('$blur', function () {
-                if (defaults)
-                    defaults.o(1);
-                if (hover)
-                    hover.o(0);
-            }).addEventListener('$click', callback);
-        };
-        return Button;
-    })(G.Sprite);
-    G.Button = Button;
-})(G || (G = {}));
-/**
  * 声明全画面舞台接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2760,7 +2726,7 @@ var Core;
  * @file      G/Event/IMouseEventMetas.ts
  */
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
-/// <reference path="../../Core/_G/ISprite.ts" />
+/// <reference path="../../Core/_G/IStage.ts" />
 var G;
 (function (G) {
     'use strict';
@@ -2791,6 +2757,7 @@ var G;
                 this.from = metas.from;
                 this.fromX = metas.fromX;
                 this.fromY = metas.fromY;
+                this.stage = metas.stage;
             }
             /**
              * 获取类型。
@@ -2802,6 +2769,81 @@ var G;
         })();
         Event.MouseEvent = MouseEvent;
     })(Event = G.Event || (G.Event = {}));
+})(G || (G = {}));
+/**
+ * 定义画面按钮元素组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      G/_Element/Stage.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../../Core/_G/IButton.ts" />
+/// <reference path="../Event/MouseEvent.ts" />
+/// <reference path="../_Animation/FadeIn.ts" />
+/// <reference path="../_Animation/FadeOut.ts" />
+var G;
+(function (G) {
+    'use strict';
+    var Button = (function (_super) {
+        __extends(Button, _super);
+        function Button() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 绑定功能。
+         */
+        Button.prototype.b = function (callback, hover, defaults) {
+            if (defaults)
+                this.a(defaults);
+            if (hover)
+                this.a(hover.o(0));
+            var animes = [], anime;
+            return this.addEventListener('$focus', function () {
+                Util.each(animes, function (animation) {
+                    animation.h();
+                });
+                animes = [];
+                if (hover) {
+                    anime = new G.FadeIn(250);
+                    animes.push(anime);
+                    hover.p(anime);
+                }
+                if (defaults) {
+                    anime = new G.FadeOut(250);
+                    animes.push(anime);
+                    defaults.p(anime);
+                }
+            }).addEventListener('$blur', function () {
+                Util.each(animes, function (animation) {
+                    animation.h();
+                });
+                animes = [];
+                if (hover) {
+                    anime = new G.FadeOut(250);
+                    animes.push(anime);
+                    hover.p(anime);
+                }
+                if (defaults) {
+                    anime = new G.FadeIn(250);
+                    animes.push(anime);
+                    defaults.p(anime);
+                }
+            }).addEventListener('$click', function (event) {
+                Util.each(animes, function (animation) {
+                    animation.h();
+                });
+                if (hover)
+                    hover.o(1);
+                if (defaults)
+                    defaults.o(0);
+                callback(event);
+            });
+        };
+        return Button;
+    })(G.Sprite);
+    G.Button = Button;
 })(G || (G = {}));
 /**
  * 定义画面聚焦（鼠标移入）事件组件。
@@ -2961,7 +3003,8 @@ var G;
             });
             this._m = {
                 fromX: 0,
-                fromY: 0
+                fromY: 0,
+                stage: this
             };
             this._h = [
                 function (event) {
@@ -3505,12 +3548,9 @@ var G;
         /**
          * 中止。
          */
-        WaitForClick.prototype.h = function () {
-            if (this._h)
-                return this;
+        WaitForClick.prototype.$h = function () {
             if (this._r)
                 this._r();
-            return _super.prototype.h.call(this);
         };
         return WaitForClick;
     })(G.Animation);
@@ -3546,10 +3586,9 @@ var G;
         Type.prototype.p = function (element) {
             if (this._p || this._h)
                 return Promise.resolve(element);
-            this._o = element;
-            this._t = element.gT();
+            this._t = element;
             var length = 0;
-            Util.each(this._t, function (phrase) {
+            Util.each(this._s = element.gT(), function (phrase) {
                 length += phrase.gL();
             });
             this._d = 0 | length * this._r;
@@ -3563,7 +3602,7 @@ var G;
             var length;
             elpased = 0 | elpased / this._r;
             element.c().o(1);
-            Util.each(this._t, function (phrase) {
+            Util.each(this._s, function (phrase) {
                 length = phrase.gL();
                 if (length < elpased) {
                     element.a(phrase);
@@ -3578,16 +3617,12 @@ var G;
         /**
          * 中止。
          */
-        Type.prototype.h = function () {
+        Type.prototype.$h = function () {
             var _this = this;
-            if (this._h)
-                return this;
-            _super.prototype.h.call(this);
-            this._o.c();
-            Util.each(this._t, function (phrase) {
-                _this._o.a(phrase);
+            this._t.c();
+            Util.each(this._s, function (phrase) {
+                _this._t.a(phrase);
             });
-            return this;
         };
         return Type;
     })(G.Animation);

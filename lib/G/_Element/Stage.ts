@@ -62,7 +62,8 @@ namespace G {
             });
             this._m = <Event.IMouseEventMetas> {
                 fromX: 0,
-                fromY: 0
+                fromY: 0,
+                stage: <Core.IStage> this
             };
             this._h = [
                 (event: MouseEvent) => {

@@ -46,6 +46,11 @@ namespace G {
             public fromY: number;
 
             /**
+             * 舞台对象。
+             */
+            public stage: Core.IStage;
+
+            /**
              * 构造函数。
              */
             constructor(metas: IMouseEventMetas) {
@@ -55,6 +60,7 @@ namespace G {
                 this.from = metas.from;
                 this.fromX = metas.fromX;
                 this.fromY = metas.fromY;
+                this.stage = metas.stage;
             }
 
             /**

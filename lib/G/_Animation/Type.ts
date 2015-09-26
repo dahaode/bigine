@@ -20,14 +20,9 @@ namespace G {
         private _r: number;
 
         /**
-         * 对象。
-         */
-        private _o: Core.ITextElement;
-
-        /**
          * 文字集合。
          */
-        private _t: Core.ITextPhrase[];
+        private _s: Core.ITextPhrase[];
 
         /**
          * 构造函数。
@@ -45,10 +40,9 @@ namespace G {
         public p(element: Core.ITextElement): Promise<Core.ITextElement> {
             if (this._p || this._h)
                 return Promise.resolve(element);
-            this._o = element;
-            this._t = element.gT();
+            this._t = element;
             var length: number = 0;
-            Util.each(this._t, (phrase: Core.ITextPhrase) => {
+            Util.each(this._s = element.gT(), (phrase: Core.ITextPhrase) => {
                 length += phrase.gL();
             });
             this._d = 0 | length * this._r;
@@ -63,7 +57,7 @@ namespace G {
             var length: number;
             elpased = 0 | elpased / this._r;
             element.c().o(1);
-            Util.each(this._t, (phrase: Core.ITextPhrase) => {
+            Util.each(this._s, (phrase: Core.ITextPhrase) => {
                 length = phrase.gL();
                 if (length < elpased) {
                     element.a(phrase);
@@ -78,15 +72,11 @@ namespace G {
         /**
          * 中止。
          */
-        public h(): Type {
-            if (this._h)
-                return this;
-            super.h();
-            this._o.c();
-            Util.each(this._t, (phrase: Core.ITextPhrase) => {
-                this._o.a(phrase);
+        public $h(): void {
+            (<Core.ITextElement> this._t).c();
+            Util.each(this._s, (phrase: Core.ITextPhrase) => {
+                (<Core.ITextElement> this._t).a(phrase);
             });
-            return this;
         }
     }
 }

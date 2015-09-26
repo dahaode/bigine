@@ -9,6 +9,9 @@
 
 /// <reference path="Sprite.ts" />
 /// <reference path="../../Core/_G/IButton.ts" />
+/// <reference path="../Event/MouseEvent.ts" />
+/// <reference path="../_Animation/FadeIn.ts" />
+/// <reference path="../_Animation/FadeOut.ts" />
 
 namespace G {
     'use strict';
@@ -17,22 +20,53 @@ namespace G {
         /**
          * 绑定功能。
          */
-        public b(callback: () => void, hover?: Element, defaults?: Element): Button {
+        public b(callback: Core.IEventListener<Button>, hover?: Element, defaults?: Element): Button {
             if (defaults)
                 this.a(defaults);
             if (hover)
                 this.a(hover.o(0));
+            var animes: Fade[] = [],
+                anime: Fade;
             return <Button> this.addEventListener('$focus', () => {
-                if (defaults)
-                    defaults.o(0);
+                Util.each(animes, (animation: Animation) => {
+                    animation.h();
+                });
+                animes = [];
+                if (hover) {
+                    anime = new FadeIn(250);
+                    animes.push(anime);
+                    hover.p(anime);
+                }
+                if (defaults) {
+                    anime = new FadeOut(250);
+                    animes.push(anime);
+                    defaults.p(anime);
+                }
+            }).addEventListener('$blur', () => {
+                Util.each(animes, (animation: Animation) => {
+                    animation.h();
+                });
+                animes = [];
+                if (hover) {
+                    anime = new FadeOut(250);
+                    animes.push(anime);
+                    hover.p(anime);
+                }
+                if (defaults) {
+                    anime = new FadeIn(250);
+                    animes.push(anime);
+                    defaults.p(anime);
+                }
+            }).addEventListener('$click', (event: Core.IEvent<Button>) => {
+                Util.each(animes, (animation: Animation) => {
+                    animation.h();
+                });
                 if (hover)
                     hover.o(1);
-            }).addEventListener('$blur', () => {
                 if (defaults)
-                    defaults.o(1);
-                if (hover)
-                    hover.o(0);
-            }).addEventListener('$click', callback);
+                    defaults.o(0);
+                callback(event);
+            });
         }
     }
 }

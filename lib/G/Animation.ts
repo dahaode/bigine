@@ -46,6 +46,11 @@ namespace G {
         protected _h: boolean;
 
         /**
+         * 对象。
+         */
+        protected _t: Core.IGraphicElement;
+
+        /**
          * 构造函数。
          */
         constructor(duration: number, metas?: Util.IHashTable<any>) {
@@ -103,6 +108,7 @@ namespace G {
             if (this._p || this._h)
                 return r;
             this._p = true;
+            this._t = element;
             q = once();
             if (!this._c.length)
                 return q;
@@ -123,10 +129,18 @@ namespace G {
             if (this._h)
                 return this;
             this._h = true;
+            this.$h();
             Util.each(this._c, (anime: Animation) => {
                 anime.h();
             });
             return this;
+        }
+
+        /**
+         * 中止处理。
+         */
+        protected $h(): void {
+            //
         }
     }
 

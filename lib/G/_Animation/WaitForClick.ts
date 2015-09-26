@@ -72,12 +72,9 @@ namespace G {
         /**
          * 中止。
          */
-        public h(): WaitForClick {
-            if (this._h)
-                return this;
+        public $h(): void {
             if (this._r)
                 this._r();
-            return <WaitForClick> super.h();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace G {
         /**
          * 原始透明度。
          */
-        private _mo: number;
+        private _o: number;
 
         /**
          * 构造函数。
@@ -31,8 +31,8 @@ namespace G {
          */
         protected $p(element: Core.IGraphicElement, elpased: number): void {
             if (1 == elpased)
-                this._mo = element.gO();
-            element.o(((<IFadeMetas> this._m).opacity - this._mo) * elpased / this._d + this._mo);
+                this._o = element.gO();
+            element.o(((<IFadeMetas> this._m).opacity - this._o) * elpased / this._d + this._o);
         }
     }
 }

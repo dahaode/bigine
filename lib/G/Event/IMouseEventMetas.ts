@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../../Core/_Event/IEventMetas.ts" />
-/// <reference path="../../Core/_G/ISprite.ts" />
+/// <reference path="../../Core/_G/IStage.ts" />
 
 namespace G {
     'use strict';
@@ -39,6 +39,11 @@ namespace G {
              * 源 Y 轴座标。
              */
             fromY: number;
+
+            /**
+             * 舞台对象。
+             */
+            stage: Core.IStage;
         }
     }
 }
