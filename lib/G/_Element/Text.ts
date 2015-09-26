@@ -59,16 +59,15 @@ namespace G {
          * 绘制。
          */
         public d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D> {
-            if (this._o) {
-                context.save();
-                context.globalAlpha = this._o;
-                var schedules: [number, Phrase, number, number][][] = [[]], // width, Phrase, offset, length
-                    line: [number, Phrase, number, number][] = schedules[0],
-                    aligns: typeof Core.ITextElement.Align = Core.ITextElement.Align,
-                    bounds: Core.IBounds = this.gB(),
-                    width: number = bounds.w,
-                    m: [number, number], // length, width
-                    offset: number;
+            var opacity: number = this.gO(),
+                schedules: [number, Phrase, number, number][][] = [[]], // width, Phrase, offset, length
+                line: [number, Phrase, number, number][] = schedules[0],
+                aligns: typeof Core.ITextElement.Align = Core.ITextElement.Align,
+                bounds: Core.IBounds = this.gB(),
+                width: number = bounds.w,
+                m: [number, number], // length, width
+                offset: number;
+            if (opacity && this._d.length) {
                 Util.each(this._d, (phrase: Phrase) => {
                     offset = 0;
                     while (offset != phrase.gL()) {
@@ -84,6 +83,10 @@ namespace G {
                         }
                     }
                 });
+                if (1 != opacity) {
+                    context.save();
+                    context.globalAlpha = opacity;
+                }
                 Util.each(schedules, (line2: [number, Phrase, number, number][], index: number) => {
                     if (this._l != aligns.Left) {
                         width = 0;
@@ -102,7 +105,8 @@ namespace G {
                         offset += section[0];
                     });
                 });
-                context.restore();
+                if (1 != opacity)
+                    context.restore();
             }
             return super.d(context);
         }

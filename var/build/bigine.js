@@ -2165,7 +2165,7 @@ var G;
          * 获取透明度。
          */
         Element.prototype.gO = function () {
-            return this._o;
+            return this._o * (this._p ? this._p.gO() : 1);
         };
         /**
          * 绘制。
@@ -2261,15 +2261,15 @@ var G;
         Image.prototype.d = function (context) {
             var _this = this;
             return this._d.o().then(function (img) {
-                var o = _this._o;
-                if (o) {
-                    if (1 != o) {
+                var opacity = _this.gO();
+                if (opacity) {
+                    if (1 != opacity) {
                         context.save();
-                        context.globalAlpha = o;
+                        context.globalAlpha = opacity;
                     }
                     var bounds = _this.gB();
                     context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
-                    if (1 != o)
+                    if (1 != opacity)
                         context.restore();
                 }
                 return _super.prototype.d.call(_this, context);
@@ -2318,9 +2318,10 @@ var G;
          * 绘制。
          */
         Color.prototype.d = function (context) {
-            if (this._o) {
+            var opacity = this.gO();
+            if (opacity) {
                 context.save();
-                context.globalAlpha = this._o;
+                context.globalAlpha = opacity;
                 var bounds = this.gB();
                 context.fillStyle = this._d;
                 context.fillRect(bounds.x, bounds.y, bounds.w, bounds.h);
@@ -2375,13 +2376,18 @@ var G;
          */
         Sprite.prototype.d = function (context) {
             var _this = this;
-            if (this._r)
-                context.rotate(this._r * Math.PI / 180);
-            if (this._o) {
-                context.globalAlpha = this._o;
-                if (this._d.length)
-                    return Util.Q.every(this._d, function (el) { return el.d(context); })
-                        .then(function () { return _super.prototype.d.call(_this, context); });
+            var opacity = this.gO();
+            if (opacity && this._d.length) {
+                if (1 != opacity) {
+                    context.save();
+                    context.globalAlpha = opacity;
+                }
+                return Util.Q.every(this._d, function (el) { return el.d(context); })
+                    .then(function () {
+                    if (1 != opacity)
+                        context.restore();
+                    return _super.prototype.d.call(_this, context);
+                });
             }
             return _super.prototype.d.call(this, context);
         };
@@ -3208,12 +3214,10 @@ var G;
          */
         Text.prototype.d = function (context) {
             var _this = this;
-            if (this._o) {
-                context.save();
-                context.globalAlpha = this._o;
-                var schedules = [[]], // width, Phrase, offset, length
-                line = schedules[0], aligns = Core.ITextElement.Align, bounds = this.gB(), width = bounds.w, m, // length, width
-                offset;
+            var opacity = this.gO(), schedules = [[]], // width, Phrase, offset, length
+            line = schedules[0], aligns = Core.ITextElement.Align, bounds = this.gB(), width = bounds.w, m, // length, width
+            offset;
+            if (opacity && this._d.length) {
                 Util.each(this._d, function (phrase) {
                     offset = 0;
                     while (offset != phrase.gL()) {
@@ -3230,6 +3234,10 @@ var G;
                         }
                     }
                 });
+                if (1 != opacity) {
+                    context.save();
+                    context.globalAlpha = opacity;
+                }
                 Util.each(schedules, function (line2, index) {
                     if (_this._l != aligns.Left) {
                         width = 0;
@@ -3249,7 +3257,8 @@ var G;
                         offset += section[0];
                     });
                 });
-                context.restore();
+                if (1 != opacity)
+                    context.restore();
             }
             return _super.prototype.d.call(this, context);
         };
@@ -3744,7 +3753,7 @@ var Runtime;
             return this.lightOn()
                 .then(function () {
                 if ('tip' == theme)
-                    return gWords.o(1);
+                    return gWords.p(new G.FadeIn(250));
                 var aType = new G.Type(1), aWFC;
                 if (_this._a)
                     return gWords.p(aType);
@@ -3756,7 +3765,7 @@ var Runtime;
                     gFrame.p(aWFC)
                 ]);
             }).then(function () {
-                if (_this._a) {
+                if (_this._a && 'tip' != theme) {
                     _this._t = new G.TypeDelay(9);
                     return gWords.p(_this._t);
                 }
@@ -3935,9 +3944,14 @@ var Runtime;
             ]).then(function (images) {
                 var w = images[0].width, h = images[0].height, m = 16, t = 0 | (CanvasDirector.BOUNDS.h - options.length * (h + m) + m) / 2, gChoose = _this._c.q('D')[0], gOptions = [], gOption;
                 return new Promise(function (resolve) {
+                    var anime = new G.FadeIn(250), clicked = false;
                     Util.each(options, function (option, index) {
                         gOption = new G.Button(0, t + index * (h + m), w, h)
                             .b(function () {
+                            if (clicked)
+                                return;
+                            clicked = true;
+                            anime.h();
                             option.p(_this._r);
                             resolve(gOptions);
                         }, new G.Image(_this._i['ch']), new G.Image(_this._i['c']))
@@ -3950,12 +3964,13 @@ var Runtime;
                         gOptions.push(gOption);
                         gChoose.a(gOption);
                     });
-                    gChoose.o(1);
-                    _this.lightOn();
+                    gChoose.o(0);
+                    _this.lightOn()
+                        .then(function () { return gChoose.p(anime); });
                 }).then(function () {
-                    gChoose.c()
-                        .o(0);
-                    return _this._r;
+                    return gChoose.p(new G.FadeOut(250))
+                        .then(function () { return gChoose.c(); })
+                        .then(function () { return _this._r; });
                 });
             });
         };

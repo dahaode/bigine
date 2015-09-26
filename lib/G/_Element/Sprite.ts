@@ -58,13 +58,18 @@ namespace G {
          * 绘制。
          */
         public d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D> {
-            if (this._r)
-                context.rotate(this._r * Math.PI / 180);
-            if (this._o) {
-                context.globalAlpha = this._o;
-                if (this._d.length)
-                    return Util.Q.every(this._d, (el: Element) => el.d(context))
-                        .then(() => super.d(context));
+            var opacity: number = this.gO();
+            if (opacity && this._d.length) {
+                if (1 != opacity) {
+                    context.save();
+                    context.globalAlpha = opacity;
+                }
+                return Util.Q.every(this._d, (el: Element) => el.d(context))
+                    .then(() => {
+                        if (1 != opacity)
+                            context.restore();
+                        return super.d(context);
+                    });
             }
             return super.d(context);
         }

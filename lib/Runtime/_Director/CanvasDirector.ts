@@ -279,7 +279,8 @@ namespace Runtime {
             gFrame.o(1);
             return this.lightOn()
                 .then(() => {
-                    if ('tip' == theme) return gWords.o(1);
+                    if ('tip' == theme)
+                        return gWords.p(new G.FadeIn(250));
                     var aType: G.Type = new G.Type(1),
                         aWFC: G.WaitForClick;
                     if (this._a)
@@ -292,7 +293,7 @@ namespace Runtime {
                         gFrame.p(aWFC)
                     ]);
                 }).then(() => {
-                    if (this._a) {
+                    if (this._a && 'tip' != theme) {
                         this._t = new G.TypeDelay(9);
                         return gWords.p(this._t);
                     }
@@ -488,9 +489,14 @@ namespace Runtime {
                     gOptions: G.Button[] = [],
                     gOption: G.Button;
                 return new Promise((resolve: (value?: G.Button[] | Thenable<G.Button[]>) => void) => {
+                    var anime: G.FadeIn = new G.FadeIn(250),
+                        clicked: boolean = false;
                     Util.each(options, (option: Core.IOptionTag, index: number) => {
                         gOption = <G.Button> new G.Button(0, t + index * (h + m), w, h)
                             .b(() => {
+                                if (clicked) return;
+                                clicked = true;
+                                anime.h();
                                 option.p(this._r);
                                 resolve(gOptions);
                             }, new G.Image(this._i['ch']), new G.Image(this._i['c']))
@@ -505,12 +511,13 @@ namespace Runtime {
                         gOptions.push(gOption);
                         gChoose.a(gOption);
                     });
-                    gChoose.o(1);
-                    this.lightOn();
+                    gChoose.o(0);
+                    this.lightOn()
+                        .then(() => gChoose.p(anime));
                 }).then(() => {
-                    gChoose.c()
-                        .o(0);
-                    return this._r;
+                    return gChoose.p(new G.FadeOut(250))
+                        .then(() => gChoose.c())
+                        .then(() => this._r);
                 });
             });
         }

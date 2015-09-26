@@ -33,9 +33,10 @@ namespace G {
          * 绘制。
          */
         public d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D> {
-            if (this._o) {
+            var opacity: number = this.gO();
+            if (opacity) {
                 context.save();
-                context.globalAlpha = this._o;
+                context.globalAlpha = opacity;
                 var bounds: Core.IBounds = this.gB();
                 context.fillStyle = this._d;
                 context.fillRect(bounds.x, bounds.y, bounds.w, bounds.h);

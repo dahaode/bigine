@@ -195,7 +195,7 @@ namespace G {
          * 获取透明度。
          */
         public gO(): number {
-            return this._o;
+            return this._o * (this._p ? this._p.gO() : 1);
         }
 
         /**

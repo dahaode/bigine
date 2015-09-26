@@ -43,15 +43,15 @@ namespace G {
          */
         public d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D> {
             return this._d.o().then((img: HTMLImageElement) => {
-                var o: number = this._o;
-                if (o) {
-                    if (1 != o) {
+                var opacity: number = this.gO();
+                if (opacity) {
+                    if (1 != opacity) {
                         context.save();
-                        context.globalAlpha = o;
+                        context.globalAlpha = opacity;
                     }
                     var bounds: Core.IBounds = this.gB();
                     context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
-                    if (1 != o)
+                    if (1 != opacity)
                         context.restore();
                 }
                 return super.d(context);
