@@ -42,7 +42,7 @@ namespace Tag {
                 kv: string = '$v' + depth,
                 kid: string = '.a',
                 id: string = states.g(kid);
-            if (!id && (states.g(kt) || states.g(kv) != this.$v(this._p[0])))
+            if (!id && (states.g(kt) || states.g(kv) != this.$v(states.g(this._p[0]) || this._p[0])))
                 return runtime;
             states.s(kt, true)
                 .s(kd, 1 + depth);

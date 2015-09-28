@@ -8428,7 +8428,7 @@ var Tag;
          */
         When.prototype.p = function (runtime) {
             var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
-            if (!id && (states.g(kt) || states.g(kv) != this.$v(this._p[0])))
+            if (!id && (states.g(kt) || states.g(kv) != this.$v(states.g(this._p[0]) || this._p[0])))
                 return runtime;
             states.s(kt, true)
                 .s(kd, 1 + depth);
