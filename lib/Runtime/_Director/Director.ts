@@ -73,14 +73,14 @@ namespace Runtime {
          * 完结动画。
          */
         public ED(): Promise<Core.IRuntime> {
-            return this._p.then(() => this._r.gE().p(Core.ISceneTag.Type.End, this._r));
+            return this._p;
         }
 
         /**
          * 失败动画。
          */
         public FAIL(): Promise<Core.IRuntime> {
-            return this._p.then(() => this._r.gE().p(Core.ISceneTag.Type.Fail, this._r));
+            return this._p;
         }
 
         /**
@@ -247,6 +247,13 @@ namespace Runtime {
 
         /**
          * 自我销毁。
+         */
+        public d(): void {
+            //
+        }
+
+        /**
+         * 取消阻塞。
          */
         public h(): void {
             //

@@ -70,11 +70,21 @@ namespace Core {
         /**
          * 播报当前事件。
          */
-        s(scene: ISceneTag, title: string, actions: string[]): void;
+        s(scene: ISceneTag, title: string, actions: string[]): IRuntime;
 
         /**
          * 播报当前关键帧。
          */
-        a(action: IIdableTag): void;
+        a(action: IIdableTag): IRuntime;
+
+        /**
+         * 是否中止播放。
+         */
+        gH(): boolean;
+
+        /**
+         * 声明时序流。
+         */
+        t(flow: Promise<IRuntime>): IRuntime;
     }
 }

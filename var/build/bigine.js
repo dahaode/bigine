@@ -1126,14 +1126,17 @@ var Runtime;
             var _this = this;
             if (!(type in this._a))
                 return Promise.resolve(runtime);
-            return Util.Q.every(this._a[type], function (scene) { return scene.p(runtime); }).then(function () {
+            runtime.gS().s('_p', type);
+            return Util.Q.every(this._a[type], function (scene) {
+                if (runtime.gH())
+                    return Util.Q.doHalt();
+                return scene.p(runtime);
+            }).then(function () {
                 if (Core.ISceneTag.Type.End == type)
                     runtime.dispatchEvent(new Runtime.Event.End({
                         target: _this
                     }));
                 return runtime;
-            })['catch'](Util.Q.ignoreHalt)['catch'](function (reason) {
-                runtime.gL().e(reason);
             });
         };
         /**
@@ -1539,15 +1542,13 @@ var Runtime;
          * 完结动画。
          */
         Director.prototype.ED = function () {
-            var _this = this;
-            return this._p.then(function () { return _this._r.gE().p(Core.ISceneTag.Type.End, _this._r); });
+            return this._p;
         };
         /**
          * 失败动画。
          */
         Director.prototype.FAIL = function () {
-            var _this = this;
-            return this._p.then(function () { return _this._r.gE().p(Core.ISceneTag.Type.Fail, _this._r); });
+            return this._p;
         };
         /**
          * 人物出场。
@@ -1693,6 +1694,12 @@ var Runtime;
         };
         /**
          * 自我销毁。
+         */
+        Director.prototype.d = function () {
+            //
+        };
+        /**
+         * 取消阻塞。
          */
         Director.prototype.h = function () {
             //
@@ -3805,10 +3812,9 @@ var Runtime;
                 ]);
             }).then(function () {
                 if (_this._a)
-                    return gWords.p(_this._t = new G.TypeDelay(9));
-                return gFrame.p(_this._t = new G.WaitForClick());
+                    return gWords.p(_this._h = _this._t = new G.TypeDelay(9));
+                return gFrame.p(_this._h = _this._t = new G.WaitForClick());
             }).then(function () {
-                _this._t = undefined;
                 gFrame.o(0);
                 if (gAvatar)
                     gAvatar.c();
@@ -3826,7 +3832,7 @@ var Runtime;
             var gTip = this._c.q('t')[0], gWords = gTip.q('w')[0];
             this.$w(gWords, words, this._f['t']);
             return this.lightOn()
-                .then(function () { return gTip.p(new G.FadeIn(250)
+                .then(function () { return gTip.p(_this._h = new G.FadeIn(250)
                 .c(new G.WaitForClick())
                 .c(new G.FadeOut(250))); }).then(function () {
                 gWords.c();
@@ -3918,7 +3924,7 @@ var Runtime;
                     return Promise.all([
                         gChars.p(new G.FadeOut(500)),
                         gCG.p(new G.FadeIn(500))
-                    ]).then(function () { return gCG.p(new G.WaitForClick()); });
+                    ]).then(function () { return gCG.p(_this._h = new G.WaitForClick()); });
                 }).then(function () { return _this._r; });
             });
         };
@@ -3995,8 +4001,13 @@ var Runtime;
                 this._i['ch'].o()
             ]).then(function (images) {
                 var w = images[0].width, h = images[0].height, m = 16, t = 0 | (CanvasDirector.BOUNDS.h - options.length * (h + m) + m) / 2, gChoose = _this._c.q('D')[0], gOptions = [], gOption;
-                return new Promise(function (resolve) {
+                return new Promise(function (resolve, reject) {
                     var anime = new G.FadeIn(250), clicked = false;
+                    _this._q = function () {
+                        Util.Q.doHalt()['catch'](function (error) {
+                            reject(error);
+                        });
+                    };
                     Util.each(options, function (option, index) {
                         gOption = new G.Button(0, t + index * (h + m), w, h)
                             .b(function () {
@@ -4240,12 +4251,28 @@ var Runtime;
         /**
          * 自我销毁。
          */
-        CanvasDirector.prototype.h = function () {
+        CanvasDirector.prototype.d = function () {
             this._c.h();
             this._c = undefined;
             this._s['b'].pause();
             this._s['e'].pause();
             this._s = {};
+        };
+        /**
+         * 取消阻塞。
+         */
+        CanvasDirector.prototype.h = function () {
+            if (this._h) {
+                this._h.h();
+                this._h = undefined;
+            }
+            if (this._q) {
+                this._c.q('D')[0].c().o(0);
+                this._q();
+                this._q = undefined;
+            }
+            this.playBGM();
+            this.playSE();
         };
         /**
          * 将文本添加至画面文字元素中。
@@ -4318,6 +4345,50 @@ var Runtime;
         }
         DirectorFactory.c = c;
     })(DirectorFactory = Runtime.DirectorFactory || (Runtime.DirectorFactory = {}));
+})(Runtime || (Runtime = {}));
+/**
+ * 声明（运行时）读档事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Runtime/Event/ILoadMetas.ts
+ */
+/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）读档事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Runtime/Event/Load.ts
+ */
+/// <reference path="Event.ts" />
+/// <reference path="ILoadMetas.ts" />
+var Runtime;
+(function (Runtime) {
+    var Event;
+    (function (Event) {
+        var Load = (function (_super) {
+            __extends(Load, _super);
+            /**
+             * 构造函数。
+             */
+            function Load(metas) {
+                _super.call(this, metas);
+                this.callback = metas.callback;
+            }
+            /**
+             * 获取类型。
+             */
+            Load.prototype.gT = function () {
+                return 'load';
+            };
+            return Load;
+        })(Event.Event);
+        Event.Load = Load;
+    })(Event = Runtime.Event || (Runtime.Event = {}));
 })(Runtime || (Runtime = {}));
 /**
  * 声明（运行时）剧情事件播报事件元信息接口规范。
@@ -5541,7 +5612,7 @@ var Tag;
                     return director.asRoom(states.g(kdo).o(states.g(kt)))
                         .then(function () { return director.lightOn(); });
                 });
-            Promise.resolve() // 新建时序流，
+            runtime.t(Promise.resolve() // 新建时序流，
                 .then(function () {
                 states.s(ktn, _this._p[0])
                     .s(kto, _this._mo);
@@ -5561,8 +5632,10 @@ var Tag;
                 return co.p(type.PostLeave, runtime);
             })
                 .then(function () {
-                states.m(kdn, kcn)
-                    .m(kdo, kco)
+                if (runtime.gH())
+                    return Util.Q.doHalt();
+                states.m(ktn, kcn)
+                    .m(kto, kco)
                     .c(kcn, kdn)
                     .c(kco, kdo);
                 director.c([_this._mo.d()]);
@@ -5572,9 +5645,7 @@ var Tag;
                     .then(function () { return director.asRoom(_this._mo.o(states.g(kt))); })
                     .then(function () { return director.asMap(map ? map.gP() : {}); })
                     .then(function () { return _this._mo.p(type.PostEnter, runtime); });
-            })['catch'](Util.Q.ignoreHalt)['catch'](function (reason) {
-                runtime.gL().e(reason);
-            });
+            }));
             return Util.Q.doHalt(); // 中断原有时序流。
         };
         return Enter;
@@ -5914,8 +5985,11 @@ var Tag;
         DefRoom.prototype.p = function (type, runtime) {
             if (!(type in this._a))
                 return Promise.resolve(runtime);
-            return Util.Q.every(this._a[type], function (scene) { return scene.p(runtime); })
-                .then(function () {
+            return Util.Q.every(this._a[type], function (scene) {
+                if (runtime.gH())
+                    return Util.Q.doHalt();
+                return scene.p(runtime);
+            }).then(function () {
                 if (Core.ISceneTag.Type.PostEnter == type)
                     return runtime.gD().lightOn();
                 return runtime;
@@ -6729,8 +6803,8 @@ var Tag;
          * 执行。
          */
         Speak.prototype.p = function (runtime) {
-            runtime.a(this);
-            return runtime.gD().words(runtime.gS().t(this._c), 'speak', this._p[2] || this._mc.gI(), this._mc.o());
+            return runtime.a(this).gD()
+                .words(runtime.gS().t(this._c), 'speak', this._p[2] || this._mc.gI(), this._mc.o());
         };
         /**
          * 获取关联人物。
@@ -6780,9 +6854,24 @@ var Tag;
          */
         Loop.prototype.p = function (runtime) {
             var _this = this;
-            var states = runtime.gS(), kd = '$d', depth = states.g(kd), loop = function () {
-                return Util.Q.every(_this._s, function (action) { return action.p(runtime); })
-                    .then(loop);
+            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kid = '.a', id = states.g(kid), loop = function () {
+                return Util.Q.every(_this._s, function (action) {
+                    if (id) {
+                        if ('gI' in action) {
+                            if (action.gI() != id)
+                                return runtime;
+                            states.d(kid);
+                        }
+                        else if ('gA' in action) {
+                            if (-1 == Util.indexOf(action.gA(), id))
+                                return runtime;
+                        }
+                        else
+                            return runtime;
+                        id = undefined;
+                    }
+                    return action.p(runtime);
+                }).then(loop);
             };
             states.s(kd, 1 + depth);
             return loop()['catch'](Util.Q.ignoreBreak)
@@ -6794,7 +6883,7 @@ var Tag;
         /**
          * 获取关键动作编号列表。
          */
-        Loop.prototype.a = function () {
+        Loop.prototype.gA = function () {
             var ids = [];
             Util.each(this._s, function (action) {
                 switch (action.gN()) {
@@ -6807,7 +6896,7 @@ var Tag;
                     case 'Otherwise':
                     case 'Then':
                     case 'When':
-                        ids = ids.concat(action.a());
+                        ids = ids.concat(action.gA());
                         break;
                 }
             });
@@ -6893,16 +6982,34 @@ var Tag;
          */
         Content.prototype.p = function (runtime) {
             var _this = this;
-            var director = runtime.gD();
-            runtime.gS().s('$d', 1);
+            var director = runtime.gD(), states = runtime.gS(), kid = '.a', id = states.g(kid);
+            states.s('$d', 1);
             return director.c(Tag.Loop.prototype.c.call(this))
-                .then(function () { return Util.Q.every(_this._s, function (action) { return action.p(runtime); }); });
+                .then(function () { return Util.Q.every(_this._s, function (action) {
+                if (runtime.gH())
+                    return Util.Q.doHalt();
+                if (id) {
+                    if ('gI' in action) {
+                        if (action.gI() != id)
+                            return runtime;
+                        states.d(kid);
+                    }
+                    else if ('gA' in action) {
+                        if (-1 == Util.indexOf(action.gA(), id))
+                            return runtime;
+                    }
+                    else
+                        return runtime;
+                    id = undefined;
+                }
+                return action.p(runtime);
+            }); });
         };
         /**
          * 获取关键动作编号列表。
          */
-        Content.prototype.a = function () {
-            return Tag.Loop.prototype.a.call(this);
+        Content.prototype.gA = function () {
+            return Tag.Loop.prototype.gA.call(this);
         };
         return Content;
     })(Tag.Unknown);
@@ -6961,12 +7068,16 @@ var Tag;
          * 执行。
          */
         Scene.prototype.p = function (runtime) {
-            var conds = this.$q('Conditions')[0], content;
-            if (conds && !conds.t(runtime.gS()))
+            var states = runtime.gS(), kid = '.s', id = states.g(kid), conds = this.$q('Conditions')[0], content;
+            if (id) {
+                if (id != this._i)
+                    return runtime;
+                states.d(kid);
+            }
+            else if (conds && !conds.t(runtime.gS()))
                 return runtime;
             content = this.$q('Content')[0];
-            runtime.s(this, this._c, content.a());
-            return content.p(runtime);
+            return content.p(runtime.s(this, this._c, content.gA()));
         };
         /**
          * 获取类型。
@@ -7329,8 +7440,8 @@ var Tag;
          * 执行。
          */
         Monolog.prototype.p = function (runtime) {
-            runtime.a(this);
-            return runtime.gD().words(runtime.gS().t(this._c), 'monolog', this._mc.gI(), this._mc.o());
+            return runtime.a(this).gD()
+                .words(runtime.gS().t(this._c), 'monolog', this._mc.gI(), this._mc.o());
         };
         /**
          * 获取关联人物。
@@ -7368,8 +7479,8 @@ var Tag;
          * 执行。
          */
         VoiceOver.prototype.p = function (runtime) {
-            runtime.a(this);
-            return runtime.gD().words(runtime.gS().t(this._c), 'voiceover');
+            return runtime.a(this).gD()
+                .words(runtime.gS().t(this._c), 'voiceover');
         };
         return VoiceOver;
     })(Tag.Idable);
@@ -7440,7 +7551,12 @@ var Tag;
          * 执行。
          */
         End.prototype.p = function (runtime) {
-            runtime.gD().ED();
+            runtime.gS().d('_rc')
+                .d('_rd')
+                .d('$rc')
+                .d('$rd');
+            runtime.t(runtime.gD().ED()
+                .then(function () { return runtime.gE().p(Core.ISceneTag.Type.End, runtime); }));
             return Util.Q.doHalt();
         };
         return End;
@@ -7473,7 +7589,12 @@ var Tag;
          * 执行。
          */
         Fail.prototype.p = function (runtime) {
-            runtime.gD().FAIL();
+            runtime.gS().d('_rc')
+                .d('_rd')
+                .d('$rc')
+                .d('$rd');
+            runtime.t(runtime.gD().FAIL()
+                .then(function () { return runtime.gE().p(Core.ISceneTag.Type.Fail, runtime); }));
             return Util.Q.doHalt();
         };
         return Fail;
@@ -7559,6 +7680,7 @@ var Tag;
             var states = runtime.gS(), key = '_c', cg = states.g(key);
             if (!cg)
                 throw new E(E.ACT_CG_NOT_SHOWN, this._l);
+            states.d(key);
             return runtime.gD().hideCG();
         };
         return HideCG;
@@ -8022,13 +8144,28 @@ var Tag;
          * 执行。
          */
         Otherwise.prototype.p = function (runtime) {
-            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth;
-            if (states.g(kt))
+            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth, kid = '.a', id = states.g(kid);
+            if (!id && states.g(kt))
                 return runtime;
             states.s(kt, true)
                 .s(kd, 1 + depth);
-            return Util.Q.every(this._s, function (tag) { return tag.p(runtime); })
-                .then(function () {
+            return Util.Q.every(this._s, function (action) {
+                if (id) {
+                    if ('gI' in action) {
+                        if (action.gI() != id)
+                            return runtime;
+                        states.d(kid);
+                    }
+                    else if ('gA' in action) {
+                        if (-1 == Util.indexOf(action.gA(), id))
+                            return runtime;
+                    }
+                    else
+                        return runtime;
+                    id = undefined;
+                }
+                return action.p(runtime);
+            }).then(function () {
                 states.s(kd, depth);
                 return runtime;
             });
@@ -8036,8 +8173,8 @@ var Tag;
         /**
          * 获取关键动作编号列表。
          */
-        Otherwise.prototype.a = function () {
-            return Tag.Loop.prototype.a.call(this);
+        Otherwise.prototype.gA = function () {
+            return Tag.Loop.prototype.gA.call(this);
         };
         /**
          * 获取使用资源列表。
@@ -8085,13 +8222,28 @@ var Tag;
          * 执行。
          */
         Then.prototype.p = function (runtime) {
-            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth;
-            if (states.g(kt) || !states.g(kv))
+            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
+            if (!id && (states.g(kt) || !states.g(kv)))
                 return runtime;
             states.s(kt, true)
                 .s(kd, 1 + depth);
-            return Util.Q.every(this._s, function (tag) { return tag.p(runtime); })
-                .then(function () {
+            return Util.Q.every(this._s, function (action) {
+                if (id) {
+                    if ('gI' in action) {
+                        if (action.gI() != id)
+                            return runtime;
+                        states.d(kid);
+                    }
+                    else if ('gA' in action) {
+                        if (-1 == Util.indexOf(action.gA(), id))
+                            return runtime;
+                    }
+                    else
+                        return runtime;
+                    id = undefined;
+                }
+                return action.p(runtime);
+            }).then(function () {
                 states.s(kd, depth);
                 return runtime;
             });
@@ -8099,8 +8251,8 @@ var Tag;
         /**
          * 获取关键动作编号列表。
          */
-        Then.prototype.a = function () {
-            return Tag.Loop.prototype.a.call(this);
+        Then.prototype.gA = function () {
+            return Tag.Loop.prototype.gA.call(this);
         };
         /**
          * 获取使用资源列表。
@@ -8148,13 +8300,28 @@ var Tag;
          * 执行。
          */
         When.prototype.p = function (runtime) {
-            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth;
-            if (states.g(kt) || states.g(kv) != this.$v(this._p[0]))
+            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
+            if (!id && (states.g(kt) || states.g(kv) != this.$v(this._p[0])))
                 return runtime;
             states.s(kt, true)
                 .s(kd, 1 + depth);
-            return Util.Q.every(this._s, function (tag) { return tag.p(runtime); })
-                .then(function () {
+            return Util.Q.every(this._s, function (action) {
+                if (id) {
+                    if ('gI' in action) {
+                        if (action.gI() != id)
+                            return runtime;
+                        states.d(kid);
+                    }
+                    else if ('gA' in action) {
+                        if (-1 == Util.indexOf(action.gA(), id))
+                            return runtime;
+                    }
+                    else
+                        return runtime;
+                    id = undefined;
+                }
+                return action.p(runtime);
+            }).then(function () {
                 states.s(kd, depth);
                 return runtime;
             });
@@ -8162,8 +8329,8 @@ var Tag;
         /**
          * 获取关键动作编号列表。
          */
-        When.prototype.a = function () {
-            return Tag.Loop.prototype.a.call(this);
+        When.prototype.gA = function () {
+            return Tag.Loop.prototype.gA.call(this);
         };
         /**
          * 获取使用资源列表。
@@ -8407,6 +8574,8 @@ var Tag;
 /// <reference path="_Logger/ConsoleLogger.ts" />
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
+/// <reference path="Event/Begin.ts" />
+/// <reference path="Event/Load.ts" />
 /// <reference path="Event/Scene.ts" />
 /// <reference path="Event/Action.ts" />
 /// <reference path="../Tag/_pack.ts" />
@@ -8423,7 +8592,8 @@ var Runtime;
             this._l = new Runtime_1.ConsoleLogger();
             this._s = new Runtime_1.States(this);
             this._d = Runtime_1.DirectorFactory.c(this);
-            this._fr = false;
+            this._fr =
+                this._fh = false;
             this._fp = this._d.gD();
             this._fv = 1;
             this._fa = this._e.gA();
@@ -8439,12 +8609,48 @@ var Runtime;
             this.addEventListener('begin', function () {
                 _this._d.playBGM();
                 _this._d.playSE();
-                _this._e.p(Core.ISceneTag.Type.Begin, _this);
+                _this.t(_this._e.p(Core.ISceneTag.Type.Begin, _this));
             });
             this.addEventListener('resume', function () {
+                var callback = function (data) {
+                    var fresh = !data, episode = _this._e, states = _this._s, ks = '_s', ktn = '_rt', kcn = '_rc', kco = '$rc', tn, cn, enter;
+                    if (!fresh)
+                        states.i(data);
+                    if (fresh || !states.g(ks))
+                        return _this.dispatchEvent(new Runtime_1.Event.Begin({
+                            target: episode
+                        }));
+                    states.m('_a', '.a')
+                        .m(ks, '.s');
+                    _this._fh = true; // 中止现有时序流
+                    _this._d.h();
+                    _this.t((_this._t || Promise.resolve(_this)).then(function (runtime) {
+                        runtime._fh = false;
+                        tn = states.g(ktn);
+                        cn = states.g(kcn);
+                        if (tn || cn) {
+                            if (cn) {
+                                if (tn) {
+                                    states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                                }
+                                else {
+                                    tn = cn;
+                                    states.d(kcn);
+                                }
+                            }
+                            enter = new Tag.Enter([tn || cn], '', [], -1);
+                            enter.b(episode);
+                            return enter.p(runtime);
+                        }
+                        return episode.p(states.g('_p'), runtime);
+                    }));
+                };
                 _this._d.playBGM();
                 _this._d.playSE();
-                console.warn('resume');
+                _this.dispatchEvent(new Runtime_1.Event.Load({
+                    target: _this._s,
+                    callback: callback
+                }));
             });
             this.addEventListener('end', function () {
                 _this._fp = false;
@@ -8534,7 +8740,7 @@ var Runtime;
          * 销毁。
          */
         Runtime.prototype.destroy = function () {
-            this._d.h();
+            this._d.d();
         };
         /**
          * DOM 定位修正。
@@ -8562,19 +8768,40 @@ var Runtime;
          * 播报当前事件。
          */
         Runtime.prototype.s = function (scene, title, actions) {
+            this._s.s('_s', scene.gI())
+                .d('_a');
             this.dispatchEvent(new Runtime_1.Event.Scene({
                 target: scene,
                 title: title,
                 actions: actions
             }));
+            return this;
         };
         /**
          * 播报当前关键帧。
          */
         Runtime.prototype.a = function (action) {
+            this._s.s('_a', action.gI());
             this.dispatchEvent(new Runtime_1.Event.Action({
                 target: action
             }));
+            return this;
+        };
+        /**
+         * 是否中止播放。
+         */
+        Runtime.prototype.gH = function () {
+            return this._fh;
+        };
+        /**
+         * 声明时序流。
+         */
+        Runtime.prototype.t = function (flow) {
+            var _this = this;
+            this._t = flow['catch'](Util.Q.ignoreHalt)['catch'](function (reason) {
+                _this._l.e(reason);
+            });
+            return this;
         };
         return Runtime;
     })();

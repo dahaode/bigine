@@ -27,6 +27,7 @@ namespace Tag {
                 cg: string = states.g(key);
             if (!cg)
                 throw new E(E.ACT_CG_NOT_SHOWN, this._l);
+            states.d(key);
             return runtime.gD().hideCG();
         }
     }

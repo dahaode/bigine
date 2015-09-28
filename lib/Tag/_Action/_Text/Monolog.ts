@@ -35,8 +35,8 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            runtime.a(this);
-            return runtime.gD().words(runtime.gS().t(this._c), 'monolog', this._mc.gI(), this._mc.o());
+            return runtime.a(this).gD()
+                .words(runtime.gS().t(this._c), 'monolog', this._mc.gI(), this._mc.o());
         }
 
         /**

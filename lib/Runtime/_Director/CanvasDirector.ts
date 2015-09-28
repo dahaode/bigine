@@ -73,6 +73,16 @@ namespace Runtime {
         private _t: Core.IAnimation;
 
         /**
+         * 阻塞类相关动画。
+         */
+        private _h: Core.IAnimation;
+
+        /**
+         * 阻塞类 Promise 。
+         */
+        private _q: () => void;
+
+        /**
          * 预加载进度。
          */
         private _e: [number, number];
@@ -302,10 +312,9 @@ namespace Runtime {
                     ]);
                 }).then(() => {
                     if (this._a)
-                        return gWords.p(this._t = new G.TypeDelay(9));
-                    return gFrame.p(this._t = new G.WaitForClick());
+                        return gWords.p(this._h = this._t = new G.TypeDelay(9));
+                    return gFrame.p(this._h = this._t = new G.WaitForClick());
                 }).then(() => {
-                    this._t = undefined;
                     gFrame.o(0);
                     if (gAvatar)
                         gAvatar.c();
@@ -324,7 +333,7 @@ namespace Runtime {
                 gWords: G.Text = <G.Text> gTip.q('w')[0];
             this.$w(gWords, words, this._f['t']);
             return this.lightOn()
-                .then(() => gTip.p(new G.FadeIn(250)
+                .then(() => gTip.p(this._h = new G.FadeIn(250)
                         .c(new G.WaitForClick())
                         .c(new G.FadeOut(250))
                     )
@@ -423,7 +432,7 @@ namespace Runtime {
                         return Promise.all([
                             gChars.p(new G.FadeOut(500)),
                             gCG.p(new G.FadeIn(500))
-                        ]).then(() => gCG.p(new G.WaitForClick()));
+                        ]).then(() => gCG.p(this._h = new G.WaitForClick()));
                     }).then(() => this._r);
             });
         }
@@ -511,9 +520,14 @@ namespace Runtime {
                     gChoose: G.Sprite = <G.Sprite> this._c.q('D')[0],
                     gOptions: G.Button[] = [],
                     gOption: G.Button;
-                return new Promise((resolve: (value?: G.Button[] | Thenable<G.Button[]>) => void) => {
+                return new Promise((resolve: (value?: G.Button[] | Thenable<G.Button[]>) => void, reject: (reason?: any) => void) => {
                     var anime: G.FadeIn = new G.FadeIn(250),
                         clicked: boolean = false;
+                    this._q = () => {
+                        Util.Q.doHalt<Core.IRuntime>()['catch']((error: any) => {
+                            reject(error);
+                        });
+                    };
                     Util.each(options, (option: Core.IOptionTag, index: number) => {
                         gOption = <G.Button> new G.Button(0, t + index * (h + m), w, h)
                             .b(() => {
@@ -795,12 +809,29 @@ namespace Runtime {
         /**
          * 自我销毁。
          */
-        public h(): void {
+        public d(): void {
             this._c.h();
             this._c = undefined;
             this._s['b'].pause();
             this._s['e'].pause();
             this._s = {};
+        }
+
+        /**
+         * 取消阻塞。
+         */
+        public h(): void {
+            if (this._h) {
+                this._h.h();
+                this._h = undefined;
+            }
+            if (this._q) {
+                (<G.Sprite> this._c.q('D')[0]).c().o(0);
+                this._q();
+                this._q = undefined;
+            }
+            this.playBGM();
+            this.playSE();
         }
 
         /**

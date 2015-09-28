@@ -22,7 +22,13 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            runtime.gD().ED();
+            runtime.gS().d('_rc')
+                .d('_rd')
+                .d('$rc')
+                .d('$rd');
+            runtime.t(runtime.gD().ED()
+                .then(() => runtime.gE().p(Core.ISceneTag.Type.End, runtime))
+            );
             return Util.Q.doHalt<Core.IRuntime>();
         }
     }

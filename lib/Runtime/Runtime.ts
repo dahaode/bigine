@@ -11,6 +11,8 @@
 /// <reference path="_Logger/ConsoleLogger.ts" />
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
+/// <reference path="Event/Begin.ts" />
+/// <reference path="Event/Load.ts" />
 /// <reference path="Event/Scene.ts" />
 /// <reference path="Event/Action.ts" />
 /// <reference path="../Tag/_pack.ts" />
@@ -63,6 +65,16 @@ namespace Runtime {
         private _fa: boolean;
 
         /**
+         * 是否中止播放。
+         */
+        private _fh: boolean;
+
+        /**
+         * 当前时序流。
+         */
+        private _t: Promise<Runtime>;
+
+        /**
          * 构造函数。
          */
         constructor(ep: Core.IRootTag) {
@@ -71,7 +83,8 @@ namespace Runtime {
             this._l = new ConsoleLogger();
             this._s = new States(this);
             this._d = DirectorFactory.c(this);
-            this._fr = false;
+            this._fr =
+            this._fh = false;
             this._fp = this._d.gD();
             this._fv = 1;
             this._fa = this._e.gA();
@@ -87,12 +100,57 @@ namespace Runtime {
             this.addEventListener<Episode>('begin', () => {
                 this._d.playBGM();
                 this._d.playSE();
-                this._e.p(Core.ISceneTag.Type.Begin, this);
+                this.t(this._e.p(Core.ISceneTag.Type.Begin, this));
             });
             this.addEventListener<Episode>('resume', () => {
+                var callback: (data: Util.IHashTable<any>) => void = (data: Util.IHashTable<any>) => {
+                    var fresh: boolean = !data,
+                        episode: Episode = this._e,
+                        states: States = this._s,
+                        ks: string = '_s',
+                        ktn: string = '_rt',
+                        kcn: string = '_rc',
+                        kco: string = '$rc',
+                        tn: string,
+                        cn: string,
+                        enter: Tag.Enter;
+                    if (!fresh)
+                        states.i(data);
+                    if (fresh || !states.g(ks)) // 无存档或存档无事件特征
+                        return this.dispatchEvent(new Event.Begin({
+                            target: episode
+                        }));
+                    states.m('_a', '.a')
+                        .m(ks, '.s');
+                    this._fh = true; // 中止现有时序流
+                    this._d.h();
+                    this.t((this._t || Promise.resolve(this)).then((runtime: Runtime) => {
+                        runtime._fh = false;
+                        tn = states.g(ktn);
+                        cn = states.g(kcn);
+                        if (tn || cn) {
+                            if (cn) {
+                                if (tn) {
+                                    states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                                } else {
+                                    tn = cn;
+                                    states.d(kcn);
+                                }
+                            }
+                            enter = new Tag.Enter([tn || cn], '', [], -1);
+                            enter.b(episode);
+                            return enter.p(runtime);
+                        }
+                        return episode.p(states.g('_p'), runtime);
+                    })
+                    );
+                };
                 this._d.playBGM();
                 this._d.playSE();
-                console.warn('resume');
+                this.dispatchEvent(new Event.Load({
+                    target: this._s,
+                    callback: callback
+                }));
             });
             this.addEventListener<Episode>('end', () => {
                 this._fp = false;
@@ -191,7 +249,7 @@ namespace Runtime {
          * 销毁。
          */
         public destroy(): void {
-            this._d.h();
+            this._d.d();
         }
 
         /**
@@ -222,21 +280,43 @@ namespace Runtime {
         /**
          * 播报当前事件。
          */
-        public s(scene: Core.ISceneTag, title: string, actions: string[]): void {
+        public s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime {
+            this._s.s('_s', scene.gI())
+                .d('_a');
             this.dispatchEvent(new Event.Scene({
                 target: scene,
                 title: title,
                 actions: actions
             }));
+            return this;
         }
 
         /**
          * 播报当前关键帧。
          */
-        public a(action: Core.IIdableTag): void {
+        public a(action: Core.IIdableTag): Runtime {
+            this._s.s('_a', action.gI());
             this.dispatchEvent(new Event.Action({
                 target: action
             }));
+            return this;
+        }
+
+        /**
+         * 是否中止播放。
+         */
+        public gH(): boolean {
+            return this._fh;
+        }
+
+        /**
+         * 声明时序流。
+         */
+        public t(flow: Promise<Runtime>): Runtime {
+            this._t = flow['catch'](Util.Q.ignoreHalt)['catch']((reason?: any) => {
+                this._l.e(reason);
+            });
+            return this;
         }
     }
 }

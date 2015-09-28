@@ -59,12 +59,15 @@ namespace Tag {
         public p(type: Core.ISceneTag.Type, runtime: Core.IRuntime): Promise<Core.IRuntime> {
             if (!(type in this._a))
                 return Promise.resolve(runtime);
-            return Util.Q.every(this._a[type], (scene: Core.ISceneTag) => scene.p(runtime))
-                .then(() => {
-                    if (Core.ISceneTag.Type.PostEnter == type)
-                        return runtime.gD().lightOn();
-                    return runtime;
-                });
+            return Util.Q.every(this._a[type], (scene: Core.ISceneTag) => {
+                if (runtime.gH())
+                    return Util.Q.doHalt<Core.IRuntime>();
+                return scene.p(runtime);
+            }).then(() => {
+                if (Core.ISceneTag.Type.PostEnter == type)
+                    return runtime.gD().lightOn();
+                return runtime;
+            });
         }
 
         /**

@@ -58,13 +58,19 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            var conds: Conditions = <Conditions> this.$q('Conditions')[0],
+            var states: Core.IStates = runtime.gS(),
+                kid: string = '.s',
+                id: string = states.g(kid),
+                conds: Conditions = <Conditions> this.$q('Conditions')[0],
                 content: Content;
-            if (conds && !conds.t(runtime.gS()))
+            if (id) {
+                if (id != this._i)
+                    return runtime;
+                states.d(kid);
+            } else if (conds && !conds.t(runtime.gS()))
                 return runtime;
             content = <Content> this.$q('Content')[0];
-            runtime.s(this, this._c, content.a());
-            return content.p(runtime);
+            return content.p(runtime.s(this, this._c, content.gA()));
         }
 
         /**

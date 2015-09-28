@@ -22,17 +22,36 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            var director: Core.IDirector = runtime.gD();
-            runtime.gS().s('$d', 1);
+            var director: Core.IDirector = runtime.gD(),
+                states: Core.IStates = runtime.gS(),
+                kid: string = '.a',
+                id: string = states.g(kid);
+            states.s('$d', 1);
             return director.c(<Core.IResource<string | HTMLImageElement>[][]> Loop.prototype.c.call(this))
-                .then(() => Util.Q.every(this._s, (action: Action) => action.p(runtime)));
+                .then(() => Util.Q.every(this._s, (action: Action) => {
+                    if (runtime.gH())
+                        return Util.Q.doHalt<Core.IRuntime>();
+                    if (id) {
+                        if ('gI' in action) {
+                            if ((<Speak> action).gI() != id)
+                                return runtime;
+                            states.d(kid);
+                        } else if ('gA' in action) {
+                            if (-1 == Util.indexOf((<Loop> action).gA(), id))
+                                return runtime;
+                        } else
+                            return runtime;
+                        id = undefined;
+                    }
+                    return action.p(runtime);
+                }));
         }
 
         /**
          * 获取关键动作编号列表。
          */
-        public a(): string[] {
-            return Loop.prototype.a.call(this);
+        public gA(): string[] {
+            return Loop.prototype.gA.call(this);
         }
     }
 }

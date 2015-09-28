@@ -59,7 +59,7 @@ namespace Tag {
                         return director.asRoom((<DefRoom> states.g(kdo)).o(states.g(kt)))
                             .then(() => director.lightOn());
                     });
-            Promise.resolve() // 新建时序流，
+            runtime.t(Promise.resolve() // 新建时序流，
                 .then(() => { // 播放当前房间离开前事件
                     states.s(ktn, this._p[0])
                         .s(kto, this._mo);
@@ -79,8 +79,10 @@ namespace Tag {
                     return co.p(type.PostLeave, runtime);
                 })
                 .then(() => { // 播放关联房间（目标）房间进入后事件
-                    states.m(kdn, kcn)
-                        .m(kdo, kco)
+                    if (runtime.gH())
+                        return Util.Q.doHalt<Core.IRuntime>();
+                    states.m(ktn, kcn)
+                        .m(kto, kco)
                         .c(kcn, kdn)
                         .c(kco, kdo);
                     director.c([this._mo.d()]);
@@ -90,9 +92,8 @@ namespace Tag {
                         .then(() => director.asRoom(this._mo.o(states.g(kt))))
                         .then(() => director.asMap(map ? map.gP() : {}))
                         .then(() => this._mo.p(type.PostEnter, runtime));
-                })['catch'](Util.Q.ignoreHalt)['catch']((reason?: any) => {
-                    runtime.gL().e(reason);
-                });
+                })
+            );
             return Util.Q.doHalt<Core.IRuntime>(); // 中断原有时序流。
         }
     }

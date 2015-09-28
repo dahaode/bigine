@@ -37,9 +37,24 @@ namespace Tag {
             var states: Core.IStates = runtime.gS(),
                 kd: string = '$d',
                 depth: number = states.g(kd),
+                kid: string = '.a',
+                id: string = states.g(kid),
                 loop: () => Promise<Core.IRuntime> = () => {
-                    return Util.Q.every(<Action[]> this._s, (action: Action) => action.p(runtime))
-                        .then(loop);
+                    return Util.Q.every(<Action[]> this._s, (action: Action) => {
+                        if (id) {
+                            if ('gI' in action) {
+                                if ((<Speak> action).gI() != id)
+                                    return runtime;
+                                states.d(kid);
+                            } else if ('gA' in action) {
+                                if (-1 == Util.indexOf((<Loop> action).gA(), id))
+                                    return runtime;
+                            } else
+                                return runtime;
+                            id = undefined;
+                        }
+                        return action.p(runtime);
+                    }).then(loop);
                 };
             states.s(kd, 1 + depth);
             return loop()['catch'](Util.Q.ignoreBreak)
@@ -52,7 +67,7 @@ namespace Tag {
         /**
          * 获取关键动作编号列表。
          */
-        public a(): string[] {
+        public gA(): string[] {
             var ids: string[] = [];
             Util.each(this._s, (action: Action) => {
                 switch (action.gN()) {
@@ -65,7 +80,7 @@ namespace Tag {
                     case 'Otherwise':
                     case 'Then':
                     case 'When':
-                        ids = ids.concat((<Loop> action).a());
+                        ids = ids.concat((<Loop> action).gA());
                         break;
                 }
             });

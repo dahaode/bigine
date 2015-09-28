@@ -36,23 +36,38 @@ namespace Tag {
             var states: Core.IStates = runtime.gS(),
                 kd: string = '$d',
                 depth: number = states.g(kd),
-                kt: string = '$t' + depth;
-            if (states.g(kt))
+                kt: string = '$t' + depth,
+                kid: string = '.a',
+                id: string = states.g(kid);
+            if (!id && states.g(kt))
                 return runtime;
             states.s(kt, true)
                 .s(kd, 1 + depth);
-            return Util.Q.every(this._s, (tag: Action) => tag.p(runtime))
-                .then(() => {
-                    states.s(kd, depth);
-                    return runtime;
-                });
+            return Util.Q.every(this._s, (action: Action) => {
+                if (id) {
+                    if ('gI' in action) {
+                        if ((<Speak> action).gI() != id)
+                            return runtime;
+                        states.d(kid);
+                    } else if ('gA' in action) {
+                        if (-1 == Util.indexOf((<Loop> action).gA(), id))
+                            return runtime;
+                    } else
+                        return runtime;
+                    id = undefined;
+                }
+                return action.p(runtime);
+            }).then(() => {
+                states.s(kd, depth);
+                return runtime;
+            });
         }
 
         /**
          * 获取关键动作编号列表。
          */
-        public a(): string[] {
-            return Loop.prototype.a.call(this);
+        public gA(): string[] {
+            return Loop.prototype.gA.call(this);
         }
 
         /**
