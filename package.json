@@ -10,7 +10,9 @@
   "license": "GPL-3.0",
   "author": "郑煜宇 <yzheng@atfacg.com>",
   "files": [
-    "var/build/bigine.js"
+    "bin",
+    "var/build/bigine.js*",
+    "var/build/xhr.js"
   ],
   "main": "var/build/bigine.js",
   "repository": {
