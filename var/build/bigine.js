@@ -1568,6 +1568,12 @@ var Runtime;
             return this._p;
         };
         /**
+         * 人物移动。
+         */
+        Director.prototype.charMove = function (from, to) {
+            return this._p;
+        };
+        /**
          * 某白。
          */
         Director.prototype.words = function (words, theme, who, avatar) {
@@ -3495,6 +3501,51 @@ var G;
     G.TypeDelay = TypeDelay;
 })(G || (G = {}));
 /**
+ * 声明位移动画元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      G/_Animation/IMoveMetas.ts
+ */
+/// <reference path="../../Util/IHashTable.ts" />
+/**
+ * 定义位移动画组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      G/_Animation/Move.ts
+ */
+/// <reference path="../Animation.ts" />
+/// <reference path="IMoveMetas.ts" />
+var G;
+(function (G) {
+    var Move = (function (_super) {
+        __extends(Move, _super);
+        /**
+         * 构造函数。
+         */
+        function Move(duration, metas) {
+            _super.call(this, duration, metas);
+        }
+        /**
+         * 帧执行。
+         */
+        Move.prototype.$p = function (element, elpased) {
+            if (1 == elpased) {
+                var bounds = element.gB();
+                this._x = bounds.x;
+                this._y = bounds.y;
+            }
+            element.x((this._m.x - this._x) * elpased / this._d + this._x)
+                .y((this._m.y - this._y) * elpased / this._d + this._y);
+        };
+        return Move;
+    })(G.Animation);
+    G.Move = Move;
+})(G || (G = {}));
+/**
  * 打包所有已定义地画面调度（含：元素、动画）组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -3514,6 +3565,7 @@ var G;
 /// <reference path="_Animation/WaitForClick.ts" />
 /// <reference path="_Animation/Type.ts" />
 /// <reference path="_Animation/TypeDelay.ts" />
+/// <reference path="_Animation/Move.ts" />
 /**
  * 声明（运行时）读档继续事件元信息接口规范。
  *
@@ -3760,6 +3812,39 @@ var Runtime;
             gChar = this.$c(resource, position).o(1).i(position);
             gChars.a(gChar).o(1);
             return this._p;
+        };
+        /**
+         * 人物移动。
+         */
+        CanvasDirector.prototype.charMove = function (from, to) {
+            var _this = this;
+            var gChars = this._c.q('c')[0], gChar = gChars.q(from)[0], pos = Core.IDirector.Position, x;
+            if (!gChar)
+                return this._p;
+            switch (to) {
+                case pos.Left:
+                    x = 0;
+                    break;
+                case pos.CLeft:
+                    x = 200;
+                    break;
+                case pos.Center:
+                    x = 400;
+                    break;
+                case pos.CRight:
+                    x = 600;
+                    break;
+                case pos.Right:
+                    x = 800;
+                    break;
+            }
+            return gChar.p(new G.Move(500, {
+                x: x,
+                y: gChar.gB().y
+            })).then(function () {
+                gChar.i(to);
+                return _this._r;
+            });
         };
         /**
          * 创建立绘。
@@ -4551,6 +4636,7 @@ var Tag;
         CharOff: '人物离场',
         CharSet: '设置人物',
         CharPose: '改变神态',
+        CharMove: '人物移动',
         Monolog: '独白',
         Speak: '对白',
         Tip: '提示',
@@ -4722,7 +4808,8 @@ var Tag;
             }],
         61: ['Minimum', [0, 1], -1, {
                 53: [1]
-            }]
+            }],
+        62: ['CharMove', 1, 1] // [人物] 新位置
     };
     var ii, jj;
     for (ii in Tag.S)
@@ -8533,6 +8620,75 @@ var Tag;
     Tag.Maximum = Maximum;
 })(Tag || (Tag = {}));
 /**
+ * 定义人物移动动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/CharMove.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var CharMove = (function (_super) {
+        __extends(CharMove, _super);
+        /**
+         * 构造函数。
+         */
+        function CharMove(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            this._mc = params[0];
+            var pos = Core.IDirector.Position;
+            switch (content) {
+                case '左':
+                    this._mp = pos.Left;
+                    break;
+                case '右':
+                    this._mp = pos.Right;
+                    break;
+                case '中':
+                case undefined:
+                    this._mp = pos.Center;
+                    break;
+                default:
+                    throw new E(E.ACT_ILLEGAL_POSITION, lineNo);
+            }
+        }
+        /**
+         * 获取标签名称。
+         */
+        CharMove.prototype.gN = function () {
+            return 'CharMove';
+        };
+        /**
+         * 绑定（运行时）作品（实体）。
+         */
+        CharMove.prototype.$b = function (ep) {
+            ep.q(this._mc, Core.IEpisode.Entity.Chr, this._l);
+        };
+        /**
+         * 执行。
+         */
+        CharMove.prototype.p = function (runtime) {
+            var _this = this;
+            var states = runtime.gS(), kpos = '.p' + this._mc, pos = states.g(kpos);
+            if (!pos)
+                throw new E(E.ACT_CHAR_NOT_ON, this._l);
+            if (pos == this._mp)
+                return runtime;
+            return runtime.gD().charMove(pos, this._mp)
+                .then(function () {
+                states.s(kpos, _this._mp);
+                states.m('_c' + pos, '_c' + _this._mp);
+                states.m('_s' + pos, '_s' + _this._mp);
+                return runtime;
+            });
+        };
+        return CharMove;
+    })(Tag.Action);
+    Tag.CharMove = CharMove;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -8586,6 +8742,7 @@ var Tag;
 /// <reference path="_Action/_Flow/Choose.ts" />
 /// <reference path="_Action/_Text/Tip.ts" />
 /// <reference path="_Action/_Logic/Maximum.ts" />
+/// <reference path="_Action/_Director/CharMove.ts" />
 /**
  * 定义（作品）运行时组件。
  *

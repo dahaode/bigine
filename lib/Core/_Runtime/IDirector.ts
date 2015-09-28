@@ -47,6 +47,11 @@ namespace Core {
         charSet(resource: IResource<HTMLImageElement>, position: IDirector.Position): Promise<IRuntime>;
 
         /**
+         * 人物移动。
+         */
+        charMove(from: IDirector.Position, to: IDirector.Position): Promise<IRuntime>;
+
+        /**
          * 某白。
          */
         words(words: string, theme: string, who?: string, avatar?: IResource<HTMLImageElement>): Promise<IRuntime>;

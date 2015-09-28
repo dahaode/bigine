@@ -48,6 +48,7 @@ namespace Tag {
         CharOff: '人物离场',
         CharSet: '设置人物',
         CharPose: '改变神态',
+        CharMove: '人物移动',
 
         Monolog: '独白',
         Speak: '对白',
@@ -100,7 +101,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // 61
+    export var S: { [index: number]: any[] } = { // 62
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -238,7 +239,8 @@ namespace Tag {
         }],
         61: ['Minimum', [0, 1], -1, { // [变量名]
             53: [1]
-        }]
+        }],
+        62: ['CharMove', 1, 1] // [人物] 新位置
     };
     var ii: any,
         jj: any;

@@ -53,3 +53,4 @@
 /// <reference path="_Action/_Flow/Choose.ts" />
 /// <reference path="_Action/_Text/Tip.ts" />
 /// <reference path="_Action/_Logic/Maximum.ts" />
+/// <reference path="_Action/_Director/CharMove.ts" />

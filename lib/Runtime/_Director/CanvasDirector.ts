@@ -270,6 +270,42 @@ namespace Runtime {
         }
 
         /**
+         * 人物移动。
+         */
+        public charMove(from: Core.IDirector.Position, to: Core.IDirector.Position): Promise<Core.IRuntime> {
+            var gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
+                gChar: G.Element = gChars.q(<any> from)[0],
+                pos: typeof Core.IDirector.Position = Core.IDirector.Position,
+                x: number;
+            if (!gChar)
+                return this._p;
+            switch (to) {
+                case pos.Left:
+                    x = 0;
+                    break;
+                case pos.CLeft:
+                    x = 200;
+                    break;
+                case pos.Center:
+                    x = 400;
+                    break;
+                case pos.CRight:
+                    x = 600;
+                    break;
+                case pos.Right:
+                    x = 800;
+                    break;
+            }
+            return gChar.p(new G.Move(500, {
+                x: x,
+                y: gChar.gB().y
+            })).then(() => {
+                gChar.i(<any> to);
+                return this._r;
+            });
+        }
+
+        /**
          * 创建立绘。
          */
         protected $c(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image {

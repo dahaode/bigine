@@ -105,6 +105,13 @@ namespace Runtime {
         }
 
         /**
+         * 人物移动。
+         */
+        public charMove(from: Core.IDirector.Position, to: Core.IDirector.Position): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
          * 某白。
          */
         public words(words: string, theme: string, who?: string, avatar?: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
