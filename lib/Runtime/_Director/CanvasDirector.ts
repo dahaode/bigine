@@ -117,7 +117,7 @@ namespace Runtime {
                 .a(new G.Sprite(bounds).i('t').o(0))
                 .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Color(bounds, '#000').i('C'))
-                .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, 'red').i('e')).i('L').o(0));
+                .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
             this._s = {
                 b: new Audio(),
@@ -133,7 +133,9 @@ namespace Runtime {
                 s: new Resource<string>('//s.dahao.de/lib/bigine/oops.mp3', raw),
                 s3: new Resource<HTMLImageElement>('//s.dahao.de/lib/bigine/3stars.png', raw),
                 s2: new Resource<HTMLImageElement>('//s.dahao.de/lib/bigine/2stars.png', raw),
-                s1: new Resource<HTMLImageElement>('//s.dahao.de/lib/bigine/1star.png', raw)
+                s1: new Resource<HTMLImageElement>('//s.dahao.de/lib/bigine/1star.png', raw),
+                f: new Resource<string>('//s.dahao.de/lib/bigine/focus.mp3', raw),
+                c: new Resource<string>('//s.dahao.de/lib/bigine/click.mp3', raw)
             };
             this._f = {};
             this._e = [0, 0];
@@ -464,8 +466,12 @@ namespace Runtime {
                 z = point.gZ();
                 gPoint = <G.Button> new G.Button(point.gX(), point.gY(), point.gW(), point.gH())
                     .b(() => {
+                        this.playSE(this._i['c']);
                         point.p(this._r);
-                    }, new G.Image(point.o(), bounds, true));
+                    }, new G.Image(point.o(), bounds, true))
+                    .addEventListener('$focus', () => {
+                        this.playSE(this._i['f']);
+                    });
                 added = Util.some(gPoints, (item: [number, G.Button], index: number) => {
                     if (z >= item[0])
                         return false;
@@ -510,7 +516,7 @@ namespace Runtime {
          */
         public choose(options: Core.IOptionTag[]): Promise<Core.IRuntime> {
             return Promise.all([
-                this._i['c'].o(),
+                this._i['cn'].o(),
                 this._i['ch'].o()
             ]).then((images: HTMLImageElement[]) => {
                 var w: number = images[0].width,
@@ -533,11 +539,14 @@ namespace Runtime {
                             .b(() => {
                                 if (clicked) return;
                                 clicked = true;
+                                this.playSE(this._i['c']);
                                 anime.h();
                                 option.p(this._r);
                                 resolve(gOptions);
-                            }, new G.Image(this._i['ch']), new G.Image(this._i['c']))
-                            .a(new G.Text(0, 0, w, h, h / 2 + 16, Core.ITextElement.Align.Center)
+                            }, new G.Image(this._i['ch']), new G.Image(this._i['cn']))
+                            .addEventListener('$focus', () => {
+                                this.playSE(this._i['f']);
+                            }).a(new G.Text(0, 0, w, h, h / 2 + 16, Core.ITextElement.Align.Center)
                                 .a(new G.Phrase()
                                     .t(option.gT())
                                     .f(32)
@@ -595,26 +604,32 @@ namespace Runtime {
                         h: config['height']
                     };
                 },
-                imgs: Resource<HTMLImageElement>[][] = [
+                resources: Resource<string | HTMLImageElement>[][] = [
                     [
                         new Resource<HTMLImageElement>(chapter['image'], raw),
                         new Resource<HTMLImageElement>(section['image'], raw),
-                        new Resource<HTMLImageElement>(section['hover'], raw)
+                        new Resource<HTMLImageElement>(section['hover'], raw),
+                        this._i['f'],
+                        this._i['c']
                     ]
                 ],
                 gStart: G.Sprite = (<G.Sprite> this._c.q('S')[0])
                     // 背景图
-                    .a(new G.Image(imgs[0][0], bounds))
+                    .a(new G.Image(resources[0][0], bounds))
                     // 开始按钮
                     .a(new G.Button(t2b(section))
                         .b(() => {
+                            this.playBGM(resources[0][4]);
                             this.lightOff().then(() => {
                                 gStart.o(0);
                                 this._r.dispatchEvent(new Event.Begin({
                                     target: this._r.gE()
                                 }));
                             });
-                        }, new G.Image(imgs[0][2]), new G.Image(imgs[0][1]))
+                        }, new G.Image(resources[0][2]), new G.Image(resources[0][1]))
+                        .addEventListener('$focus', () => {
+                            this.playSE(resources[0][3]);
+                        })
                     ),
                 gVoiceOver: G.Sprite = <G.Sprite> this._c.q('v')[0],
                 gMonolog: G.Sprite = <G.Sprite> this._c.q('m')[0],
@@ -622,29 +637,33 @@ namespace Runtime {
                 gTip: G.Sprite = <G.Sprite> this._c.q('t')[0],
                 gChoose: G.Sprite;
             section = chapter['load'];
-            imgs[0].push(
+            resources[0].push(
                 new Resource<HTMLImageElement>(section['image'], raw),
                 new Resource<HTMLImageElement>(section['hover'], raw)
             );
             // 读档按钮
             gStart.a(new G.Button(t2b(section))
                     .b(() => {
+                        this.playBGM(resources[0][4]);
                         this.lightOff().then(() => {
                             gStart.o(0);
                             this._r.dispatchEvent(new Event.Resume({
                                 target: this._r.gE()
                             }));
                         });
-                    }, new G.Image(imgs[0][4]), new G.Image(imgs[0][3]))
+                    }, new G.Image(resources[0][6]), new G.Image(resources[0][5]))
+                    .addEventListener('$focus', () => {
+                        this.playSE(resources[0][3]);
+                    })
                 );
             // -------- voiceover --------
             chapter = theme['voiceover'];
             section = chapter['back'];
-            imgs.push([
+            resources.push([
                 new Resource<HTMLImageElement>(section['image'], raw)
             ]);
             // 背景图
-            gVoiceOver.a(new G.Image(imgs[1][0], t2b(section)));
+            gVoiceOver.a(new G.Image(resources[1][0], t2b(section)));
             section = chapter['text'];
             this._f['v'] = {
                 s: section['shadow'],
@@ -659,11 +678,11 @@ namespace Runtime {
             // -------- monolog --------
             chapter = theme['monolog'];
             section = chapter['back'];
-            imgs.push([
+            resources.push([
                 new Resource<HTMLImageElement>(section['image'], raw)
             ]);
             // 背景图
-            gMonolog.a(new G.Image(imgs[2][0], t2b(section)))
+            gMonolog.a(new G.Image(resources[2][0], t2b(section)))
                 // 头像区域
                 .a(new G.Sprite(t2b(chapter['avatar']))
                     .i('a')
@@ -691,11 +710,11 @@ namespace Runtime {
             // -------- speak --------
             chapter = theme['speak'];
             section = chapter['back'];
-            imgs.push([
+            resources.push([
                 new Resource<HTMLImageElement>(section['image'], raw)
             ]);
             // 背景图
-            gSpeak.a(new G.Image(imgs[3][0], t2b(section)))
+            gSpeak.a(new G.Image(resources[3][0], t2b(section)))
                 // 头像区域
                 .a(new G.Sprite(t2b(chapter['avatar']))
                     .i('a')
@@ -723,11 +742,11 @@ namespace Runtime {
             // -------- tip --------
             chapter = theme['tip'];
             section = chapter['back'];
-            imgs.push([
+            resources.push([
                 new Resource<HTMLImageElement>(section['image'], raw)
             ]);
             // 背景图
-            gTip.a(new G.Image(imgs[4][0], t2b(section)));
+            gTip.a(new G.Image(resources[4][0], t2b(section)));
             section = chapter['text'];
             this._f['t'] = {
                 s: section['shadow'],
@@ -746,19 +765,19 @@ namespace Runtime {
                 .o(0);
             chapter = chapter['option'];
             section = chapter['back'];
-            imgs.push([
+            resources.push([
                 new Resource<HTMLImageElement>(section['image'], raw),
                 new Resource<HTMLImageElement>(section['hover'], raw)
             ]);
-            this._i['c'] = imgs[5][0];
-            this._i['ch'] = imgs[5][1];
+            this._i['cn'] = resources[5][0];
+            this._i['ch'] = resources[5][1];
             section = chapter['text'];
             this._f['c'] = {
                 s: section['shadow'],
                 c: section['color']
             };
             this._c.a(gChoose, 'S');
-            this.c(imgs);
+            this.c(resources);
             return this;
         }
 

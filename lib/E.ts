@@ -84,8 +84,6 @@ class E extends Error {
 
     public static G_PARENT_NOT_FOUND: string = '画面父元素未绑定';
 
-    public static G_INVALID_OPACITY: string = '无效的透明度值';
-
     /**
      * 信号。
      */

@@ -181,8 +181,10 @@ namespace G {
         public o(value: number): Element {
             if (this._o == value)
                 return this;
-            if (0 > value || 1 < value)
-                throw new E(E.G_INVALID_OPACITY);
+            if (0 > value) {
+                value = 0;
+            } else if (1 < value)
+                value = 1;
             this._o = value;
             return this.f();
         }
