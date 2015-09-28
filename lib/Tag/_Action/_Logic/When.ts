@@ -24,8 +24,9 @@ namespace Tag {
         public t(states: Core.IStates): boolean {
             var depth: number = states.g('$d'),
                 kt: string = '$t' + depth,
-                kv: string = '$v' + depth;
-            if (states.g(kt) || states.g(kv) != this.$v(states.g(this._p[0]) || this._p[0]))
+                kv: string = '$v' + depth,
+                value: any = states.g(this._p[0]);
+            if (states.g(kt) || states.g(kv) != this.$v(undefined === value ? this._p[0] : value))
                 return true;
             states.s(kt, true);
             return Util.every(this._s, (tag: Action) => tag.t(states));
@@ -41,8 +42,9 @@ namespace Tag {
                 kt: string = '$t' + depth,
                 kv: string = '$v' + depth,
                 kid: string = '.a',
-                id: string = states.g(kid);
-            if (!id && (states.g(kt) || states.g(kv) != this.$v(states.g(this._p[0]) || this._p[0])))
+                id: string = states.g(kid),
+                value: any = states.g(this._p[0]);
+            if (!id && (states.g(kt) || states.g(kv) != this.$v(undefined === value ? this._p[0] : value)))
                 return runtime;
             states.s(kt, true)
                 .s(kd, 1 + depth);
