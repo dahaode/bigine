@@ -51,7 +51,18 @@ namespace Runtime {
          * 删除值。
          */
         public d(key: string): States {
-            this._r.gL().d('[state]', key, '=');
+            var length: number = key.length - 1,
+                logger: Core.ILogger = this._r.gL();
+            if ('*' == key[length]) {
+                key = key.substr(0, length);
+                Util.each(this._d, (value: any, index: string) => {
+                    if (index.substr(0, length) != key) return;
+                    logger.d('[state]', index, '=');
+                    delete this._d[index];
+                });
+                return this;
+            }
+            logger.d('[state]', key, '=');
             delete this._d[key];
             return this;
         }

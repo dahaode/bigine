@@ -199,7 +199,8 @@ namespace Runtime {
          * 重置人物及状态。
          */
         public reset(): Promise<Core.IRuntime> {
-            this._r.gS().s('$c', 0);
+            this._r.gS().s('$c', 0)
+                .d('.p*');
             return this._p;
         }
 

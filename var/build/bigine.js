@@ -1346,7 +1346,19 @@ var Runtime;
          * 删除值。
          */
         States.prototype.d = function (key) {
-            this._r.gL().d('[state]', key, '=');
+            var _this = this;
+            var length = key.length - 1, logger = this._r.gL();
+            if ('*' == key[length]) {
+                key = key.substr(0, length);
+                Util.each(this._d, function (value, index) {
+                    if (index.substr(0, length) != key)
+                        return;
+                    logger.d('[state]', index, '=');
+                    delete _this._d[index];
+                });
+                return this;
+            }
+            logger.d('[state]', key, '=');
             delete this._d[key];
             return this;
         };
@@ -1653,7 +1665,8 @@ var Runtime;
          * 重置人物及状态。
          */
         Director.prototype.reset = function () {
-            this._r.gS().s('$c', 0);
+            this._r.gS().s('$c', 0)
+                .d('.p*');
             return this._p;
         };
         /**
