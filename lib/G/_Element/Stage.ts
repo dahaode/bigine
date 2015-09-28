@@ -51,12 +51,7 @@ namespace G {
          * 构造函数。
          */
         constructor(context: CanvasRenderingContext2D) {
-            var canvas: HTMLCanvasElement = context.canvas,
-                autodraw: (time: number) => void = (time: number) => {
-                    this.d().then(() => {
-                        Animation.f(autodraw, true);
-                    });
-                };
+            var canvas: HTMLCanvasElement = context.canvas;
             super(0, 0, canvas.width, canvas.height, true);
             this._c = context;
             this.z();
@@ -95,7 +90,6 @@ namespace G {
                 }
             ];
             this.b(context.canvas);
-            Animation.f(autodraw, true);
         }
 
         /**
@@ -129,14 +123,19 @@ namespace G {
         /**
          * 发生变更。
          */
-        public f(): Element {
+        public f(): Stage {
+            var fresh: boolean = !this._f,
+                event: Event.Focus;
             this._f = true;
-            var event: Event.Focus;
             Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
                 if (!event)
                     event = new Event.Focus(this._m);
                 element.dispatchEvent(event);
             });
+            if (fresh)
+                Animation.f(() => {
+                    this.d();
+                }, true);
             return this;
         }
 
@@ -188,6 +187,16 @@ namespace G {
             this.$c();
             this._m = real;
             return this;
+        }
+
+        /**
+         * 停止工作。
+         */
+        public h(): void {
+            this.f = () => this;
+            this._f = false;
+            this._v.removeEventListener('mousemove', this._h[0]);
+            this._v.removeEventListener('click', this._h[1]);
         }
 
         /**

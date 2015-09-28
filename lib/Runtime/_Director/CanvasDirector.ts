@@ -793,6 +793,17 @@ namespace Runtime {
         }
 
         /**
+         * 自我销毁。
+         */
+        public h(): void {
+            this._c.h();
+            this._c = undefined;
+            this._s['b'].pause();
+            this._s['e'].pause();
+            this._s = {};
+        }
+
+        /**
          * 将文本添加至画面文字元素中。
          */
         private $w(element: G.Text, words: string, font: Util.IHashTable<string | number>): G.Text {

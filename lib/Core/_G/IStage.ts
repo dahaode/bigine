@@ -53,5 +53,10 @@ namespace Core {
          * 模拟点击。
          */
         t(x?: number, y?: number): IStage;
+
+        /**
+         * 停止工作。
+         */
+        h(): void;
     }
 }

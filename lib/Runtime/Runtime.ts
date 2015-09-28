@@ -191,7 +191,7 @@ namespace Runtime {
          * 销毁。
          */
         public destroy(): void {
-            //
+            this._d.h();
         }
 
         /**

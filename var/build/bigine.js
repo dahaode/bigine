@@ -1691,6 +1691,12 @@ var Runtime;
         Director.prototype.f = function () {
             //
         };
+        /**
+         * 自我销毁。
+         */
+        Director.prototype.h = function () {
+            //
+        };
         return Director;
     })();
     Runtime.Director = Director;
@@ -2806,11 +2812,7 @@ var G;
          */
         function Stage(context) {
             var _this = this;
-            var canvas = context.canvas, autodraw = function (time) {
-                _this.d().then(function () {
-                    G.Animation.f(autodraw, true);
-                });
-            };
+            var canvas = context.canvas;
             _super.call(this, 0, 0, canvas.width, canvas.height, true);
             this._c = context;
             this.z();
@@ -2848,7 +2850,6 @@ var G;
                 }
             ];
             this.b(context.canvas);
-            G.Animation.f(autodraw, true);
         }
         /**
          * 移动 X 轴座标。
@@ -2879,13 +2880,17 @@ var G;
          */
         Stage.prototype.f = function () {
             var _this = this;
+            var fresh = !this._f, event;
             this._f = true;
-            var event;
             Util.each(this.$s(this._m.x, this._m.y)[0], function (element) {
                 if (!event)
                     event = new G.Event.Focus(_this._m);
                 element.dispatchEvent(event);
             });
+            if (fresh)
+                G.Animation.f(function () {
+                    _this.d();
+                }, true);
             return this;
         };
         /**
@@ -2934,6 +2939,16 @@ var G;
             this.$c();
             this._m = real;
             return this;
+        };
+        /**
+         * 停止工作。
+         */
+        Stage.prototype.h = function () {
+            var _this = this;
+            this.f = function () { return _this; };
+            this._f = false;
+            this._v.removeEventListener('mousemove', this._h[0]);
+            this._v.removeEventListener('click', this._h[1]);
         };
         /**
          * 根据座标查找元素。
@@ -4221,6 +4236,16 @@ var Runtime;
             canvas.style.marginLeft = l + 'px';
             canvas.style.height = h + 'px';
             canvas.style.marginTop = t + 'px';
+        };
+        /**
+         * 自我销毁。
+         */
+        CanvasDirector.prototype.h = function () {
+            this._c.h();
+            this._c = undefined;
+            this._s['b'].pause();
+            this._s['e'].pause();
+            this._s = {};
         };
         /**
          * 将文本添加至画面文字元素中。
@@ -8509,7 +8534,7 @@ var Runtime;
          * 销毁。
          */
         Runtime.prototype.destroy = function () {
-            //
+            this._d.h();
         };
         /**
          * DOM 定位修正。

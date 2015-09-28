@@ -244,5 +244,12 @@ namespace Runtime {
         public f(): void {
             //
         }
+
+        /**
+         * 自我销毁。
+         */
+        public h(): void {
+            //
+        }
     }
 }
