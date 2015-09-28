@@ -78,6 +78,8 @@ class E extends Error {
 
     public static ENV_NOT_AVAILABLE: string = '环境不满足播放条件';
 
+    public static EP_DUPLICATE_ENTITY: string = '实体编号重复';
+
     public static EP_ENTITY_NOT_FOUND: string = '实体不存在';
 
     public static EP_THEME_NOT_LOADED: string = '主题数据尚未加载完成';

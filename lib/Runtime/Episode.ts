@@ -109,9 +109,12 @@ namespace Runtime {
          * 注册实体。
          */
         public f(tag: Core.IEntityTag): Episode {
-            var type: Core.IEpisode.Entity = tag.gT();
+            var type: Core.IEpisode.Entity = tag.gT(),
+                id: string = tag.gI();
             this._e[type] = this._e[type] || {};
-            this._e[type][tag.gI()] = tag;
+            if (id in this._e[type])
+                throw new E(E.EP_DUPLICATE_ENTITY, this._e[type][id].gL());
+            this._e[type][id] = tag;
             return this;
         }
 

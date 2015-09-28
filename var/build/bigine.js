@@ -229,6 +229,7 @@ var E = (function (_super) {
     E.ACT_OPTION_CAST_FAILURE = '无法转化为选项';
     E.RES_INVALID_URI = '无效的资源地址';
     E.ENV_NOT_AVAILABLE = '环境不满足播放条件';
+    E.EP_DUPLICATE_ENTITY = '实体编号重复';
     E.EP_ENTITY_NOT_FOUND = '实体不存在';
     E.EP_THEME_NOT_LOADED = '主题数据尚未加载完成';
     E.G_PARENT_NOT_FOUND = '画面父元素未绑定';
@@ -1142,9 +1143,11 @@ var Runtime;
          * 注册实体。
          */
         Episode.prototype.f = function (tag) {
-            var type = tag.gT();
+            var type = tag.gT(), id = tag.gI();
             this._e[type] = this._e[type] || {};
-            this._e[type][tag.gI()] = tag;
+            if (id in this._e[type])
+                throw new E(E.EP_DUPLICATE_ENTITY, this._e[type][id].gL());
+            this._e[type][id] = tag;
             return this;
         };
         /**
