@@ -24,7 +24,7 @@ namespace Core {
         /**
          * 查询实体。
          */
-        q(id: string, type?: IEpisode.Entity): IEntityTag;
+        q(id: string, type?: IEpisode.Entity, lineNo?: number): IEntityTag;
 
         /**
          * 注册资源。

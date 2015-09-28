@@ -28,7 +28,7 @@ namespace Tag {
          * 绑定（运行时）作品（实体）。
          */
         public $b(ep: Core.IEpisode): void {
-            this._mo = <DefRoom> ep.q(this._p[0], Core.IEpisode.Entity.Room);
+            this._mo = <DefRoom> ep.q(this._p[0], Core.IEpisode.Entity.Room, this._l);
         }
 
         /**

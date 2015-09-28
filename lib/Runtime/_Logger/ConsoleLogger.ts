@@ -25,7 +25,7 @@ namespace Runtime {
          * 构造函数。
          */
         constructor() {
-            this._l = Core.ILogger.Level.Debug;
+            this._l = Core.ILogger.Level.Error;
             this._c = 'undefined' != typeof console ?
                 console :
                 undefined;

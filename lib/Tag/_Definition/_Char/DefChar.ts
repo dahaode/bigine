@@ -39,7 +39,7 @@ namespace Tag {
          */
         public $b(ep: Core.IEpisode): void {
             if (this._p[0])
-                this._o = <DefChar> ep.q(this._p[0], Core.IEpisode.Entity.Chr);
+                this._o = <DefChar> ep.q(this._p[0], Core.IEpisode.Entity.Chr, this._l);
         }
 
         /**

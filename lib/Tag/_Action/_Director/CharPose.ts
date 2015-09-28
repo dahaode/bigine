@@ -47,7 +47,7 @@ namespace Tag {
          * 绑定（运行时）作品（实体）。
          */
         public $b(ep: Core.IEpisode): void {
-            this._mo = (<DefChar> ep.q(this._mc, Core.IEpisode.Entity.Chr)).o(this._ms);
+            this._mo = (<DefChar> ep.q(this._mc, Core.IEpisode.Entity.Chr, this._l)).o(this._ms);
         }
 
         /**

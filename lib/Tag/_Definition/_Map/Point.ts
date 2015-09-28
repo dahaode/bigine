@@ -50,7 +50,7 @@ namespace Tag {
          */
         public $b(ep: Core.IEpisode): void {
             if (this._m && this._p[0])
-                this._o = (<DefMap> ep.q(this._m, Core.IEpisode.Entity.Map)).gP(this._p[0]);
+                this._o = (<DefMap> ep.q(this._m, Core.IEpisode.Entity.Map, this._l)).gP(this._p[0]);
         }
 
         /**

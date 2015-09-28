@@ -34,8 +34,17 @@ $q.resolve($p.argv)
         });
     })
     .then(function (source) {
-        $p.stdout.write($b(source).toJsrn());
-        throw 0;
+        return new $q(function (resolve, reject) {
+            var tags = $b(source);
+            $b(tags)
+                .addEventListener('ready', function () {
+                    $p.stdout.write(tags.toJsrn());
+                    reject(0);
+                })
+                .addEventListener('error', function (event) {
+                    reject(event.error);
+                });
+        });
     })
     .catch(function (error) {
         var msg;

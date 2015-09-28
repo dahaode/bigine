@@ -87,7 +87,7 @@ namespace Tag {
          */
         public $b(ep: Core.IEpisode): void {
             if (this._o)
-                this._o = <DefRoom> ep.q(<string> this._o, Core.IEpisode.Entity.Room);
+                this._o = <DefRoom> ep.q(<string> this._o, Core.IEpisode.Entity.Room, this._l);
         }
 
         /**

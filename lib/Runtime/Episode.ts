@@ -118,10 +118,10 @@ namespace Runtime {
         /**
          * 查询实体。
          */
-        public q(id: string, type: Core.IEpisode.Entity): Core.IEntityTag {
+        public q(id: string, type: Core.IEpisode.Entity, lineNo?: number): Core.IEntityTag {
             this._e[type] = this._e[type] || {};
             if (!(id in this._e[type]))
-                throw new E(E.EP_ENTITY_NOT_FOUND);
+                throw new E(E.EP_ENTITY_NOT_FOUND, lineNo || 0);
             return this._e[type][id];
         }
 

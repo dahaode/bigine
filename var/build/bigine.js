@@ -1150,10 +1150,10 @@ var Runtime;
         /**
          * 查询实体。
          */
-        Episode.prototype.q = function (id, type) {
+        Episode.prototype.q = function (id, type, lineNo) {
             this._e[type] = this._e[type] || {};
             if (!(id in this._e[type]))
-                throw new E(E.EP_ENTITY_NOT_FOUND);
+                throw new E(E.EP_ENTITY_NOT_FOUND, lineNo || 0);
             return this._e[type][id];
         };
         /**
@@ -1196,7 +1196,7 @@ var Runtime;
          * 构造函数。
          */
         function ConsoleLogger() {
-            this._l = Core.ILogger.Level.Debug;
+            this._l = Core.ILogger.Level.Error;
             this._c = 'undefined' != typeof console ?
                 console :
                 undefined;
@@ -5187,7 +5187,7 @@ var Tag;
          */
         DefChar.prototype.$b = function (ep) {
             if (this._p[0])
-                this._o = ep.q(this._p[0], Core.IEpisode.Entity.Chr);
+                this._o = ep.q(this._p[0], Core.IEpisode.Entity.Chr, this._l);
         };
         /**
          * 获取类型。
@@ -5533,7 +5533,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         Target.prototype.$b = function (ep) {
-            this._o = ep.q(this._c, Core.IEpisode.Entity.Room);
+            this._o = ep.q(this._c, Core.IEpisode.Entity.Room, this._l);
         };
         /**
          * 获取关联对象。
@@ -5613,7 +5613,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         Enter.prototype.$b = function (ep) {
-            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.Room);
+            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.Room, this._l);
         };
         /**
          * 执行。
@@ -5714,7 +5714,7 @@ var Tag;
          */
         Point.prototype.$b = function (ep) {
             if (this._m && this._p[0])
-                this._o = ep.q(this._m, Core.IEpisode.Entity.Map).gP(this._p[0]);
+                this._o = ep.q(this._m, Core.IEpisode.Entity.Map, this._l).gP(this._p[0]);
         };
         /**
          * 交互逻辑。
@@ -5828,7 +5828,7 @@ var Tag;
          */
         DefMap.prototype.$b = function (ep) {
             if (this._p[0])
-                this._o = ep.q(this._p[0], Core.IEpisode.Entity.Map);
+                this._o = ep.q(this._p[0], Core.IEpisode.Entity.Map, this._l);
         };
         /**
          * 获取类型。
@@ -5891,7 +5891,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         Link.prototype.$b = function (ep) {
-            this._o = ep.q(this._c, Core.IEpisode.Entity.Map);
+            this._o = ep.q(this._c, Core.IEpisode.Entity.Map, this._l);
         };
         /**
          * 获取关联地图。
@@ -6100,7 +6100,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         Player.prototype.$b = function (ep) {
-            this._o = ep.q(this._c, Core.IEpisode.Entity.Chr);
+            this._o = ep.q(this._c, Core.IEpisode.Entity.Chr, this._l);
             ep.f(this);
         };
         /**
@@ -6430,7 +6430,7 @@ var Tag;
          */
         Type.prototype.$b = function (ep) {
             if (this._o)
-                this._o = ep.q(this._o, Core.IEpisode.Entity.Room);
+                this._o = ep.q(this._o, Core.IEpisode.Entity.Room, this._l);
         };
         /**
          * 获取类型。
@@ -6509,7 +6509,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         AsRoom.prototype.$b = function (ep) {
-            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.Room);
+            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.Room, this._l);
         };
         /**
          * 执行。
@@ -6584,7 +6584,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         CharOn.prototype.$b = function (ep) {
-            this._mo = ep.q(this._mc, Core.IEpisode.Entity.Chr);
+            this._mo = ep.q(this._mc, Core.IEpisode.Entity.Chr, this._l);
         };
         /**
          * 执行。
@@ -6635,7 +6635,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         PlayBGM.prototype.$b = function (ep) {
-            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.BGM);
+            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.BGM, this._l);
         };
         /**
          * 执行。
@@ -6684,7 +6684,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         PlaySE.prototype.$b = function (ep) {
-            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.SE);
+            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.SE, this._l);
         };
         /**
          * 执行。
@@ -6729,7 +6729,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         ShowCG.prototype.$b = function (ep) {
-            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.CG);
+            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.CG, this._l);
         };
         /**
          * 执行。
@@ -6818,7 +6818,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         Speak.prototype.$b = function (ep) {
-            this._mc = ep.q(this._p[0], Core.IEpisode.Entity.Chr);
+            this._mc = ep.q(this._p[0], Core.IEpisode.Entity.Chr, this._l);
         };
         /**
          * 执行。
@@ -7288,7 +7288,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         CharOff.prototype.$b = function (ep) {
-            ep.q(this._mc, Core.IEpisode.Entity.Chr);
+            ep.q(this._mc, Core.IEpisode.Entity.Chr, this._l);
         };
         /**
          * 执行。
@@ -7356,7 +7356,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         CharSet.prototype.$b = function (ep) {
-            this._mo = ep.q(this._mc, Core.IEpisode.Entity.Chr);
+            this._mo = ep.q(this._mc, Core.IEpisode.Entity.Chr, this._l);
         };
         /**
          * 执行。
@@ -7412,7 +7412,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         CharPose.prototype.$b = function (ep) {
-            this._mo = ep.q(this._mc, Core.IEpisode.Entity.Chr).o(this._ms);
+            this._mo = ep.q(this._mc, Core.IEpisode.Entity.Chr, this._l).o(this._ms);
         };
         /**
          * 执行。
@@ -7455,7 +7455,7 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         Monolog.prototype.$b = function (ep) {
-            this._mc = ep.q('', Core.IEpisode.Entity.Player).gC();
+            this._mc = ep.q('', Core.IEpisode.Entity.Player, this._l).gC();
         };
         /**
          * 执行。
