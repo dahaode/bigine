@@ -221,19 +221,34 @@ namespace Runtime {
          * 人物出场。
          */
         public charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
-            return super.charSet(resource, position).then(() => {
-                var gChar: G.Image = this.$c(resource, position);
-                (<G.Sprite> this._c.q('c')[0]).a(gChar)
-                    .o(1);
-                return gChar.p(new G.FadeIn(500));
-            }).then(() => this._r);
+            var states: Core.IStates = this._r.gS(),
+                kamount: string = '$c',
+                gChar: G.Image = this.$c(resource, position);
+            states.s(kamount, 1 + (<number> states.g(kamount) || 0));
+            (<G.Sprite> this._c.q('c')[0]).a(gChar.i(<any> position))
+                .o(1);
+            return gChar.p(new G.FadeIn(500))
+                .then(() => this._r);
         }
 
         /**
          * 人物离场。
          */
         public charOff(position: Core.IDirector.Position): Promise<Core.IRuntime> {
-            this._r.gS().d('$c' + position);
+            var states: Core.IStates = this._r.gS(),
+                kamount: string = '$c',
+                amount: number = states.g(kamount),
+                gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
+                gChar: G.Element = gChars.q(<any> position)[0];
+            if (gChar) {
+                states.s(kamount, --amount);
+                return gChar.p(new G.FadeOut(500)).then(() => {
+                    gChars.e(gChar);
+                    if (!amount)
+                        gChars.o(0);
+                    return this._r;
+                });
+            }
             return this._p;
         }
 
@@ -241,12 +256,17 @@ namespace Runtime {
          * 设置人物。
          */
         public charSet(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
-            return super.charSet(resource, position).then((runtime: Core.IRuntime) => {
-                (<G.Sprite> this._c.q('c')[0]).a(this.$c(resource, position)
-                        .o(1)
-                    ).o(1);
-                return runtime;
-            });
+            var states: Core.IStates = this._r.gS(),
+                kamount: string = '$c',
+                gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
+                gChar: G.Element = gChars.q(<any> position)[0];
+            if (gChar) {
+                gChars.e(gChar);
+            } else
+                states.s(kamount, 1 + <number> states.g(kamount));
+            gChar = this.$c(resource, position).o(1).i(<any> position);
+            gChars.a(gChar).o(1);
+            return this._p;
         }
 
         /**
@@ -413,6 +433,8 @@ namespace Runtime {
                     gChars.p(new G.FadeIn(500)),
                     gCG.p(new G.FadeOut(500))
                 ]).then(() => {
+                    if (!this._r.gS().g('$c'))
+                        gChars.o(0);
                     gCG.e(gImage);
                     return runtime;
                 });

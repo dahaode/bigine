@@ -94,7 +94,6 @@ namespace Runtime {
          * 人物离场。
          */
         public charOff(position: Core.IDirector.Position): Promise<Core.IRuntime> {
-            this._r.gS().d('$c' + position);
             return this._p;
         }
 
@@ -102,7 +101,6 @@ namespace Runtime {
          * 设置人物。
          */
         public charSet(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
-            this._r.gS().s('$c' + position, resource);
             return this._p;
         }
 
@@ -131,7 +129,6 @@ namespace Runtime {
          * 播放背景音乐。
          */
         public playBGM(resource?: Resource<string>): Promise<Core.IRuntime> {
-            this._r.gS().s('$b', resource);
             return this._p;
         }
 
@@ -146,7 +143,6 @@ namespace Runtime {
          * 关闭特写。
          */
         public hideCG(): Promise<Core.IRuntime> {
-            this._r.gS().d('$c');
             return this._p;
         }
 
@@ -154,7 +150,6 @@ namespace Runtime {
          * 展示特写。
          */
         public showCG(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
-            this._r.gS().s('$c', resource);
             return this._p;
         }
 
@@ -162,7 +157,6 @@ namespace Runtime {
          * 设置房间。
          */
         public asRoom(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
-            this._r.gS().s('$t', resource);
             return this._p;
         }
 
@@ -198,13 +192,7 @@ namespace Runtime {
          * 重置人物及状态。
          */
         public reset(): Promise<Core.IRuntime> {
-            var posistion: typeof Core.IDirector.Position = Core.IDirector.Position;
-            this._r.gS().d('$c')
-                .d('$c' + posistion.Left)
-                .d('$c' + posistion.CLeft)
-                .d('$c' + posistion.Center)
-                .d('$c' + posistion.CRight)
-                .d('$c' + posistion.Right);
+            this._r.gS().s('$c', 0);
             return this._p;
         }
 

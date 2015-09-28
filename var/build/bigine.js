@@ -1559,14 +1559,12 @@ var Runtime;
          * 人物离场。
          */
         Director.prototype.charOff = function (position) {
-            this._r.gS().d('$c' + position);
             return this._p;
         };
         /**
          * 设置人物。
          */
         Director.prototype.charSet = function (resource, position) {
-            this._r.gS().s('$c' + position, resource);
             return this._p;
         };
         /**
@@ -1592,7 +1590,6 @@ var Runtime;
          * 播放背景音乐。
          */
         Director.prototype.playBGM = function (resource) {
-            this._r.gS().s('$b', resource);
             return this._p;
         };
         /**
@@ -1605,21 +1602,18 @@ var Runtime;
          * 关闭特写。
          */
         Director.prototype.hideCG = function () {
-            this._r.gS().d('$c');
             return this._p;
         };
         /**
          * 展示特写。
          */
         Director.prototype.showCG = function (resource) {
-            this._r.gS().s('$c', resource);
             return this._p;
         };
         /**
          * 设置房间。
          */
         Director.prototype.asRoom = function (resource) {
-            this._r.gS().s('$t', resource);
             return this._p;
         };
         /**
@@ -1650,13 +1644,7 @@ var Runtime;
          * 重置人物及状态。
          */
         Director.prototype.reset = function () {
-            var posistion = Core.IDirector.Position;
-            this._r.gS().d('$c')
-                .d('$c' + posistion.Left)
-                .d('$c' + posistion.CLeft)
-                .d('$c' + posistion.Center)
-                .d('$c' + posistion.CRight)
-                .d('$c' + posistion.Right);
+            this._r.gS().s('$c', 0);
             return this._p;
         };
         /**
@@ -3735,30 +3723,43 @@ var Runtime;
          */
         CanvasDirector.prototype.charOn = function (resource, position) {
             var _this = this;
-            return _super.prototype.charSet.call(this, resource, position).then(function () {
-                var gChar = _this.$c(resource, position);
-                _this._c.q('c')[0].a(gChar)
-                    .o(1);
-                return gChar.p(new G.FadeIn(500));
-            }).then(function () { return _this._r; });
+            var states = this._r.gS(), kamount = '$c', gChar = this.$c(resource, position);
+            states.s(kamount, 1 + (states.g(kamount) || 0));
+            this._c.q('c')[0].a(gChar.i(position))
+                .o(1);
+            return gChar.p(new G.FadeIn(500))
+                .then(function () { return _this._r; });
         };
         /**
          * 人物离场。
          */
         CanvasDirector.prototype.charOff = function (position) {
-            this._r.gS().d('$c' + position);
+            var _this = this;
+            var states = this._r.gS(), kamount = '$c', amount = states.g(kamount), gChars = this._c.q('c')[0], gChar = gChars.q(position)[0];
+            if (gChar) {
+                states.s(kamount, --amount);
+                return gChar.p(new G.FadeOut(500)).then(function () {
+                    gChars.e(gChar);
+                    if (!amount)
+                        gChars.o(0);
+                    return _this._r;
+                });
+            }
             return this._p;
         };
         /**
          * 设置人物。
          */
         CanvasDirector.prototype.charSet = function (resource, position) {
-            var _this = this;
-            return _super.prototype.charSet.call(this, resource, position).then(function (runtime) {
-                _this._c.q('c')[0].a(_this.$c(resource, position)
-                    .o(1)).o(1);
-                return runtime;
-            });
+            var states = this._r.gS(), kamount = '$c', gChars = this._c.q('c')[0], gChar = gChars.q(position)[0];
+            if (gChar) {
+                gChars.e(gChar);
+            }
+            else
+                states.s(kamount, 1 + states.g(kamount));
+            gChar = this.$c(resource, position).o(1).i(position);
+            gChars.a(gChar).o(1);
+            return this._p;
         };
         /**
          * 创建立绘。
@@ -3910,6 +3911,8 @@ var Runtime;
                     gChars.p(new G.FadeIn(500)),
                     gCG.p(new G.FadeOut(500))
                 ]).then(function () {
+                    if (!_this._r.gS().g('$c'))
+                        gChars.o(0);
                     gCG.e(gImage);
                     return runtime;
                 });
