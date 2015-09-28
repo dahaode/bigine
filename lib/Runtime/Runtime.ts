@@ -198,7 +198,7 @@ namespace Runtime {
          * DOM 定位修正。
          */
         public fix(): void {
-            //
+            this._d.f();
         }
 
         /**

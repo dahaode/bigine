@@ -1685,6 +1685,12 @@ var Runtime;
             this._v = volume;
             return this;
         };
+        /**
+         * 修正 DOM 定位。
+         */
+        Director.prototype.f = function () {
+            //
+        };
         return Director;
     })();
     Runtime.Director = Director;
@@ -2808,9 +2814,6 @@ var G;
             _super.call(this, 0, 0, canvas.width, canvas.height, true);
             this._c = context;
             this.z();
-            window.addEventListener('resize', function () {
-                _this.z();
-            });
             this._m = {
                 fromX: 0,
                 fromY: 0,
@@ -3608,6 +3611,7 @@ var Runtime;
                 .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Color(bounds, '#000').i('C'))
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, 'red').i('e')).i('L').o(0));
+            this.f();
             this._s = {
                 b: new Audio(),
                 e: new Audio()
@@ -4199,6 +4203,24 @@ var Runtime;
             this._s['b'].volume = volume;
             this._s['e'].volume = volume;
             return _super.prototype.v.call(this, volume);
+        };
+        /**
+         * 修正 DOM 定位。
+         */
+        CanvasDirector.prototype.f = function () {
+            this._c.z();
+            var canvas = document.querySelectorAll('.bg-work .viewport')[0], w0 = window.innerWidth, h0 = window.innerHeight, w = (h0 * 16 / 9) | 0, h = h0, l = 0, t = 0;
+            if (w > w0) {
+                w = w0;
+                h = (w0 * 9 / 16) | 0;
+                t = ((h0 - h) / 2) | 0;
+            }
+            else if (w < w0)
+                l = ((w0 - w) / 2) | 0;
+            canvas.style.width = w + 'px';
+            canvas.style.marginLeft = l + 'px';
+            canvas.style.height = h + 'px';
+            canvas.style.marginTop = t + 'px';
         };
         /**
          * 将文本添加至画面文字元素中。
@@ -8493,7 +8515,7 @@ var Runtime;
          * DOM 定位修正。
          */
         Runtime.prototype.fix = function () {
-            //
+            this._d.f();
         };
         /**
          * 设置或获取自动播放设置。

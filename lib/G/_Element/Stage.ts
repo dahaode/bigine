@@ -60,9 +60,6 @@ namespace G {
             super(0, 0, canvas.width, canvas.height, true);
             this._c = context;
             this.z();
-            window.addEventListener('resize', () => {
-                this.z();
-            });
             this._m = <Event.IMouseEventMetas> {
                 fromX: 0,
                 fromY: 0,

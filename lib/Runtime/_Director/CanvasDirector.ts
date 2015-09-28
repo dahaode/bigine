@@ -108,6 +108,7 @@ namespace Runtime {
                 .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Color(bounds, '#000').i('C'))
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, 'red').i('e')).i('L').o(0));
+            this.f();
             this._s = {
                 b: new Audio(),
                 e: new Audio()
@@ -765,6 +766,30 @@ namespace Runtime {
             this._s['b'].volume = volume;
             this._s['e'].volume = volume;
             return <CanvasDirector> super.v(volume);
+        }
+
+        /**
+         * 修正 DOM 定位。
+         */
+        public f(): void {
+            this._c.z();
+            var canvas: HTMLElement = <HTMLElement> document.querySelectorAll('.bg-work .viewport')[0],
+                w0: number = window.innerWidth,
+                h0: number = window.innerHeight,
+                w: number = (h0 * 16 / 9) | 0,
+                h: number = h0,
+                l: number = 0,
+                t: number = 0;
+            if (w > w0) {
+                w = w0;
+                h = (w0 * 9 / 16) | 0;
+                t = ((h0 - h) / 2) | 0;
+            } else if (w < w0)
+                l = ((w0 - w) / 2) | 0;
+            canvas.style.width = w + 'px';
+            canvas.style.marginLeft = l + 'px';
+            canvas.style.height = h + 'px';
+            canvas.style.marginTop = t + 'px';
         }
 
         /**

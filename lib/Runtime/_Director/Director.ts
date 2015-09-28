@@ -237,5 +237,12 @@ namespace Runtime {
             this._v = volume;
             return this;
         }
+
+        /**
+         * 修正 DOM 定位。
+         */
+        public f(): void {
+            //
+        }
     }
 }
