@@ -4360,7 +4360,7 @@ var Runtime;
          */
         CanvasDirector.prototype.f = function () {
             this._c.z();
-            var canvas = document.querySelectorAll('.bg-work .viewport')[0], w0 = window.innerWidth, h0 = window.innerHeight, w = (h0 * 16 / 9) | 0, h = h0, l = 0, t = 0;
+            var work = document.querySelectorAll('.bg-work')[0], canvas = work.firstChild, w0 = work.offsetWidth, h0 = work.offsetHeight, w = (h0 * 16 / 9) | 0, h = h0, l = 0, t = 0;
             if (w > w0) {
                 w = w0;
                 h = (w0 * 9 / 16) | 0;

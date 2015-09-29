@@ -864,9 +864,10 @@ namespace Runtime {
          */
         public f(): void {
             this._c.z();
-            var canvas: HTMLElement = <HTMLElement> document.querySelectorAll('.bg-work .viewport')[0],
-                w0: number = window.innerWidth,
-                h0: number = window.innerHeight,
+            var work: HTMLElement = <HTMLElement> document.querySelectorAll('.bg-work')[0],
+                canvas: HTMLElement = <HTMLElement> work.firstChild,
+                w0: number = work.offsetWidth,
+                h0: number = work.offsetHeight,
                 w: number = (h0 * 16 / 9) | 0,
                 h: number = h0,
                 l: number = 0,
