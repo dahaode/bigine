@@ -30,8 +30,18 @@ namespace Core {
         l(callback: Util.ISuccessCallback<Util.IHashTable<IEntityTag>>): boolean;
 
         /**
+         * 获取资源包名称。
+         */
+        gS(): string;
+
+        /**
          * 加载主题。
          */
         t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
+
+        /**
+         * 获取主题名称。
+         */
+        gT(): string;
     }
 }

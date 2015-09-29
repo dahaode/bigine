@@ -1077,6 +1077,8 @@ var Runtime;
             this._a = {};
             this._e = {};
             this._p = ep.a();
+            this._s = ep.gS();
+            this._t = ep.gT();
             ep.r(this);
             Promise.all([
                 new Promise(function (resolve) {
@@ -1095,7 +1097,7 @@ var Runtime;
                 }),
                 new Promise(function (resolve) {
                     ep.t(function (data) {
-                        _this._t = data;
+                        _this._c = data;
                         resolve();
                     });
                 })
@@ -1170,6 +1172,18 @@ var Runtime;
             return new Runtime.Resource(uri, type);
         };
         /**
+         * 获取素材包名称。
+         */
+        Episode.prototype.gS = function () {
+            return this._s;
+        };
+        /**
+         * 获取主题名称。
+         */
+        Episode.prototype.gT = function () {
+            return this._t;
+        };
+        /**
          * 是否自动播放。
          */
         Episode.prototype.gA = function () {
@@ -1178,10 +1192,10 @@ var Runtime;
         /**
          * 获取主题信息。
          */
-        Episode.prototype.gT = function () {
-            if (!this._t)
+        Episode.prototype.gC = function () {
+            if (!this._c)
                 throw new E(E.EP_THEME_NOT_LOADED);
-            return this._t;
+            return this._c;
         };
         return Episode;
     })();
@@ -7402,10 +7416,22 @@ var Tag;
             return true;
         };
         /**
+         * 获取资源包名称。
+         */
+        Root.prototype.gS = function () {
+            return this.$q('Resources')[0].$c();
+        };
+        /**
          * 加载主题。
          */
         Root.prototype.t = function (callback) {
             this.$q('Theme')[0].l(callback);
+        };
+        /**
+         * 获取主题名称。
+         */
+        Root.prototype.gT = function () {
+            return this.$q('Theme')[0].$c();
         };
         /**
          * 压缩键名序列。
@@ -8856,7 +8882,7 @@ var Runtime;
             this._fa = this._e.gA();
             this._d.a(this._fa);
             this.addEventListener('ready', function () {
-                _this._d.t(_this._e.gT());
+                _this._d.t(_this._e.gC());
                 _this._fr = true;
                 if (_this._fp) {
                     _this._fp = false;

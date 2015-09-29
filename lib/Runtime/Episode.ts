@@ -27,12 +27,22 @@ namespace Runtime {
         /**
          * 主题。
          */
-        private _t: Util.IHashTable<Util.IHashTable<any>>;
+        private _c: Util.IHashTable<Util.IHashTable<any>>;
 
         /**
          * 是否自动播放标识。
          */
         private _p: boolean;
+
+        /**
+         * 素材包名称。
+         */
+        private _s: string;
+
+        /**
+         * 主题名称。
+         */
+        private _t: string;
 
         /**
          * 构造函数。
@@ -41,6 +51,8 @@ namespace Runtime {
             this._a = {};
             this._e = {};
             this._p = ep.a();
+            this._s = ep.gS();
+            this._t = ep.gT();
             ep.r(this);
             Promise.all([
                 new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
@@ -59,7 +71,7 @@ namespace Runtime {
                 }),
                 new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
                     ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
-                        this._t = data;
+                        this._c = data;
                         resolve();
                     });
                 })
@@ -139,6 +151,20 @@ namespace Runtime {
         }
 
         /**
+         * 获取素材包名称。
+         */
+        public gS(): string {
+            return this._s;
+        }
+
+        /**
+         * 获取主题名称。
+         */
+        public gT(): string {
+            return this._t;
+        }
+
+        /**
          * 是否自动播放。
          */
         public gA(): boolean {
@@ -148,10 +174,10 @@ namespace Runtime {
         /**
          * 获取主题信息。
          */
-        public gT(): Util.IHashTable<Util.IHashTable<any>> {
-            if (!this._t)
+        public gC(): Util.IHashTable<Util.IHashTable<any>> {
+            if (!this._c)
                 throw new E(E.EP_THEME_NOT_LOADED);
-            return this._t;
+            return this._c;
         }
     }
 }

@@ -156,10 +156,24 @@ namespace Tag {
         }
 
         /**
+         * 获取资源包名称。
+         */
+        public gS(): string {
+            return this.$q('Resources')[0].$c();
+        }
+
+        /**
          * 加载主题。
          */
         public t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
             (<Theme> this.$q('Theme')[0]).l(callback);
+        }
+
+        /**
+         * 获取主题名称。
+         */
+        public gT(): string {
+            return this.$q('Theme')[0].$c();
         }
     }
 }

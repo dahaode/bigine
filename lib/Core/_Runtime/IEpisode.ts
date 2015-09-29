@@ -13,6 +13,8 @@
 /// <reference path="IResource.ts" />
 
 namespace Core {
+    // ISceneHost:a()
+    // ISceneHost:p()
     export interface IEpisode extends ISceneHost {
         // new (ep: Tag.IRoot, runtime: IRuntime): IEpisode;
 
@@ -30,6 +32,16 @@ namespace Core {
          * 注册资源。
          */
         r(uri: string, type: IResource.Type): IResource<string | HTMLImageElement>;
+
+        /**
+         * 获取素材包名称。
+         */
+        gS(): string;
+
+        /**
+         * 获取主题名称。
+         */
+        gT(): string;
     }
 
     export namespace IEpisode {

@@ -90,7 +90,7 @@ namespace Runtime {
             this._fa = this._e.gA();
             this._d.a(this._fa);
             this.addEventListener<Episode>('ready', () => {
-                this._d.t(this._e.gT());
+                this._d.t(this._e.gC());
                 this._fr = true;
                 if (this._fp) {
                     this._fp = false;

@@ -14,6 +14,9 @@
 /// <reference path="IDirector.ts" />
 
 namespace Core {
+    // IEmittable:addEventListener()
+    // IEmittable:removeEventListener()
+    // IEmittable:dispatchEvent()
     export interface IRuntime extends IEmittable {
         // new (ep: Tag.IRoot): IRuntime;
 
