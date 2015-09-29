@@ -61,7 +61,11 @@ namespace Tag {
             logger.o(title);
             states.s(kd, 1 + depth);
             return loop()['catch'](Util.Q.ignoreBreak)
-                .then(() => {
+                ['catch']((error?: E) => {
+                    if (error && E.Signal.HALT == error.signal)
+                        logger.c(title);
+                    throw error;
+                }).then(() => {
                     states.s(kd, depth);
                     logger.c(title);
                     return runtime;

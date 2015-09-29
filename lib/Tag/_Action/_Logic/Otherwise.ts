@@ -60,6 +60,10 @@ namespace Tag {
                     id = undefined;
                 }
                 return action.p(runtime);
+            })['catch']((error?: E) => {
+                if (error && E.Signal.HALT == error.signal)
+                    logger.c(title);
+                throw error;
             }).then(() => {
                 states.s(kd, depth);
                 logger.c(title);

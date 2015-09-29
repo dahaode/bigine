@@ -24,9 +24,8 @@ namespace Tag {
         public t(states: Core.IStates): boolean {
             var depth: number = states.g('$d'),
                 kt: string = '$t' + depth,
-                kv: string = '$v' + depth,
-                value: any = states.g(this._p[0]);
-            if (states.g(kt) || states.g(kv) != this.$v(undefined === value ? this._p[0] : value))
+                kv: string = '$v' + depth;
+            if (states.g(kt) || states.g(kv) != this.$v(this._p[0]))
                 return true;
             states.s(kt, true);
             return Util.every(this._s, (tag: Action) => tag.t(states));
@@ -38,17 +37,14 @@ namespace Tag {
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
                 logger: Core.ILogger = runtime.gL(),
-                title: string = 'WHEN ' + this._p[0],
+                value: string | number = this.$v(this._p[0]),
+                title: string = 'WHEN ' + <any> value,
                 kd: string = '$d',
                 depth: number = states.g(kd),
                 kt: string = '$t' + depth,
                 kv: string = '$v' + depth,
                 kid: string = '.a',
-                id: string = states.g(kid),
-                value: any = states.g(this._p[0]);
-            value = this.$v(undefined === value ? this._p[0] : value);
-            if (value != this._p[0])
-                title += ' (' + value + ')';
+                id: string = states.g(kid);
             if (!id && (states.g(kt) || states.g(kv) != value))
                 return runtime;
             logger.o(title);
@@ -68,6 +64,10 @@ namespace Tag {
                     id = undefined;
                 }
                 return action.p(runtime);
+            })['catch']((error?: E) => {
+                if (error && E.Signal.HALT == error.signal)
+                    logger.c(title);
+                throw error;
             }).then(() => {
                 states.s(kd, depth);
                 logger.c(title);

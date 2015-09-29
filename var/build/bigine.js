@@ -7045,8 +7045,11 @@ var Tag;
             };
             logger.o(title);
             states.s(kd, 1 + depth);
-            return loop()['catch'](Util.Q.ignoreBreak)
-                .then(function () {
+            return loop()['catch'](Util.Q.ignoreBreak)['catch'](function (error) {
+                if (error && E.Signal.HALT == error.signal)
+                    logger.c(title);
+                throw error;
+            }).then(function () {
                 states.s(kd, depth);
                 logger.c(title);
                 return runtime;
@@ -8028,7 +8031,7 @@ var Tag;
          * （执行）检查。
          */
         Assert.prototype.t = function (states) {
-            var real = this.$v(states.g(this._p[0])), value = states.g(this._p[1]), expected = this.$v(undefined === value ? this._p[1] : value), depth = states.g('$d'), ret;
+            var real = this.$v(states.g(this._p[0])), expected = this.$v(this._p[1]), depth = states.g('$d'), ret;
             switch (this._p[2] || '等于') {
                 case '等于':
                     this._p.splice(2);
@@ -8373,6 +8376,10 @@ var Tag;
                     id = undefined;
                 }
                 return action.p(runtime);
+            })['catch'](function (error) {
+                if (error && E.Signal.HALT == error.signal)
+                    logger.c(title);
+                throw error;
             }).then(function () {
                 states.s(kd, depth);
                 logger.c(title);
@@ -8453,6 +8460,10 @@ var Tag;
                     id = undefined;
                 }
                 return action.p(runtime);
+            })['catch'](function (error) {
+                if (error && E.Signal.HALT == error.signal)
+                    logger.c(title);
+                throw error;
             }).then(function () {
                 states.s(kd, depth);
                 logger.c(title);
@@ -8501,8 +8512,8 @@ var Tag;
          * （执行）检查。
          */
         When.prototype.t = function (states) {
-            var depth = states.g('$d'), kt = '$t' + depth, kv = '$v' + depth, value = states.g(this._p[0]);
-            if (states.g(kt) || states.g(kv) != this.$v(undefined === value ? this._p[0] : value))
+            var depth = states.g('$d'), kt = '$t' + depth, kv = '$v' + depth;
+            if (states.g(kt) || states.g(kv) != this.$v(this._p[0]))
                 return true;
             states.s(kt, true);
             return Util.every(this._s, function (tag) { return tag.t(states); });
@@ -8511,10 +8522,7 @@ var Tag;
          * 执行。
          */
         When.prototype.p = function (runtime) {
-            var states = runtime.gS(), logger = runtime.gL(), title = 'WHEN ' + this._p[0], kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid), value = states.g(this._p[0]);
-            value = this.$v(undefined === value ? this._p[0] : value);
-            if (value != this._p[0])
-                title += ' (' + value + ')';
+            var states = runtime.gS(), logger = runtime.gL(), value = this.$v(this._p[0]), title = 'WHEN ' + value, kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
             if (!id && (states.g(kt) || states.g(kv) != value))
                 return runtime;
             logger.o(title);
@@ -8536,6 +8544,10 @@ var Tag;
                     id = undefined;
                 }
                 return action.p(runtime);
+            })['catch'](function (error) {
+                if (error && E.Signal.HALT == error.signal)
+                    logger.c(title);
+                throw error;
             }).then(function () {
                 states.s(kd, depth);
                 logger.c(title);
