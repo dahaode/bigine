@@ -1256,6 +1256,20 @@ var Runtime;
                 this._c.error.apply(this._c, 1 < parts.length ? parts : [parts[0]['stack'] || parts[0]]);
         };
         /**
+         * 分组。
+         */
+        ConsoleLogger.prototype.o = function (title) {
+            if (this._c && 'function' == typeof this._c.group)
+                this._c.group.call(this._c, title);
+        };
+        /**
+         * 分组结束。
+         */
+        ConsoleLogger.prototype.c = function (title) {
+            if (this._c && 'function' == typeof this._c.groupEnd)
+                this._c.groupEnd.call(this._c, title);
+        };
+        /**
          * 设置日志等级。
          */
         ConsoleLogger.prototype.l = function (level) {
@@ -6991,7 +7005,7 @@ var Tag;
          */
         Loop.prototype.p = function (runtime) {
             var _this = this;
-            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kid = '.a', id = states.g(kid), loop = function () {
+            var states = runtime.gS(), logger = runtime.gL(), title = 'LOOP', kd = '$d', depth = states.g(kd), kid = '.a', id = states.g(kid), loop = function () {
                 return Util.Q.every(_this._s, function (action) {
                     if (id) {
                         if ('gI' in action) {
@@ -7010,10 +7024,12 @@ var Tag;
                     return action.p(runtime);
                 }).then(loop);
             };
+            logger.o(title);
             states.s(kd, 1 + depth);
             return loop()['catch'](Util.Q.ignoreBreak)
                 .then(function () {
                 states.s(kd, depth);
+                logger.c(title);
                 return runtime;
             });
         };
@@ -7119,7 +7135,8 @@ var Tag;
          */
         Content.prototype.p = function (runtime) {
             var _this = this;
-            var director = runtime.gD(), states = runtime.gS(), kid = '.a', id = states.g(kid);
+            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', id = states.g(kid);
+            logger.o(title);
             states.s('$d', 1);
             return director.c(Tag.Loop.prototype.c.call(this))
                 .then(function () { return Util.Q.every(_this._s, function (action) {
@@ -7140,7 +7157,10 @@ var Tag;
                     id = undefined;
                 }
                 return action.p(runtime);
-            }); });
+            }); }).then(function () {
+                logger.c(title);
+                return runtime;
+            });
         };
         /**
          * 获取关键动作编号列表。
@@ -7205,16 +7225,26 @@ var Tag;
          * 执行。
          */
         Scene.prototype.p = function (runtime) {
-            var states = runtime.gS(), kid = '.s', id = states.g(kid), conds = this.$q('Conditions')[0], content;
+            var states = runtime.gS(), logger = runtime.gL(), title = 'SCENE ' + this._c, tconds = 'CONDITIONS', kid = '.s', id = states.g(kid), conds = this.$q('Conditions')[0], rconds, content;
+            logger.o(title);
             if (id) {
                 if (id != this._i)
                     return runtime;
                 states.d(kid);
             }
-            else if (conds && !conds.t(runtime.gS()))
-                return runtime;
+            else if (conds) {
+                logger.o(tconds);
+                rconds = conds.t(runtime.gS());
+                logger.c(tconds);
+                if (!rconds)
+                    return runtime;
+            }
             content = this.$q('Content')[0];
-            return content.p(runtime.s(this, this._c, content.gA()));
+            return Promise.resolve(content.p(runtime.s(this, this._c, content.gA())))
+                .then(function () {
+                logger.c(title);
+                return runtime;
+            });
         };
         /**
          * 获取类型。
@@ -8281,9 +8311,10 @@ var Tag;
          * 执行。
          */
         Otherwise.prototype.p = function (runtime) {
-            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth, kid = '.a', id = states.g(kid);
+            var states = runtime.gS(), logger = runtime.gL(), title = 'OTHERWISE', kd = '$d', depth = states.g(kd), kt = '$t' + depth, kid = '.a', id = states.g(kid);
             if (!id && states.g(kt))
                 return runtime;
+            logger.o(title);
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, function (action) {
@@ -8304,6 +8335,7 @@ var Tag;
                 return action.p(runtime);
             }).then(function () {
                 states.s(kd, depth);
+                logger.c(title);
                 return runtime;
             });
         };
@@ -8359,9 +8391,10 @@ var Tag;
          * 执行。
          */
         Then.prototype.p = function (runtime) {
-            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
+            var states = runtime.gS(), logger = runtime.gL(), title = 'THEN', kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
             if (!id && (states.g(kt) || !states.g(kv)))
                 return runtime;
+            logger.o(title);
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, function (action) {
@@ -8382,6 +8415,7 @@ var Tag;
                 return action.p(runtime);
             }).then(function () {
                 states.s(kd, depth);
+                logger.c(title);
                 return runtime;
             });
         };
@@ -8437,9 +8471,13 @@ var Tag;
          * 执行。
          */
         When.prototype.p = function (runtime) {
-            var states = runtime.gS(), kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid), value = states.g(this._p[0]);
-            if (!id && (states.g(kt) || states.g(kv) != this.$v(undefined === value ? this._p[0] : value)))
+            var states = runtime.gS(), logger = runtime.gL(), title = 'WHEN ' + this._p[0], kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid), value = states.g(this._p[0]);
+            value = this.$v(undefined === value ? this._p[0] : value);
+            if (value != this._p[0])
+                title += ' (' + value + ')';
+            if (!id && (states.g(kt) || states.g(kv) != value))
                 return runtime;
+            logger.o(title);
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, function (action) {
@@ -8460,6 +8498,7 @@ var Tag;
                 return action.p(runtime);
             }).then(function () {
                 states.s(kd, depth);
+                logger.c(title);
                 return runtime;
             });
         };

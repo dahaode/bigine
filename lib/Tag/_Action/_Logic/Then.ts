@@ -36,6 +36,8 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
+                logger: Core.ILogger = runtime.gL(),
+                title: string = 'THEN',
                 kd: string = '$d',
                 depth: number = states.g(kd),
                 kt: string = '$t' + depth,
@@ -44,6 +46,7 @@ namespace Tag {
                 id: string = states.g(kid);
             if (!id && (states.g(kt) || !states.g(kv)))
                 return runtime;
+            logger.o(title);
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, (action: Action) => {
@@ -62,6 +65,7 @@ namespace Tag {
                 return action.p(runtime);
             }).then(() => {
                 states.s(kd, depth);
+                logger.c(title);
                 return runtime;
             });
         }

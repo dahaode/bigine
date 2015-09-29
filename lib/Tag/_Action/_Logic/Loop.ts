@@ -35,6 +35,8 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
+                logger: Core.ILogger = runtime.gL(),
+                title: string = 'LOOP',
                 kd: string = '$d',
                 depth: number = states.g(kd),
                 kid: string = '.a',
@@ -56,10 +58,12 @@ namespace Tag {
                         return action.p(runtime);
                     }).then(loop);
                 };
+            logger.o(title);
             states.s(kd, 1 + depth);
             return loop()['catch'](Util.Q.ignoreBreak)
                 .then(() => {
                     states.s(kd, depth);
+                    logger.c(title);
                     return runtime;
                 });
         }

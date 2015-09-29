@@ -59,18 +59,32 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
+                logger: Core.ILogger = runtime.gL(),
+                title: string = 'SCENE ' + this._c,
+                tconds: string = 'CONDITIONS',
                 kid: string = '.s',
                 id: string = states.g(kid),
                 conds: Conditions = <Conditions> this.$q('Conditions')[0],
+                rconds: boolean,
                 content: Content;
+            logger.o(title);
             if (id) {
                 if (id != this._i)
                     return runtime;
                 states.d(kid);
-            } else if (conds && !conds.t(runtime.gS()))
-                return runtime;
+            } else if (conds) {
+                logger.o(tconds);
+                rconds = conds.t(runtime.gS());
+                logger.c(tconds);
+                if (!rconds)
+                    return runtime;
+            }
             content = <Content> this.$q('Content')[0];
-            return content.p(runtime.s(this, this._c, content.gA()));
+            return Promise.resolve(content.p(runtime.s(this, this._c, content.gA())))
+                .then(() => {
+                    logger.c(title);
+                    return runtime;
+                });
         }
 
         /**

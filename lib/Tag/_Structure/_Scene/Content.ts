@@ -24,8 +24,11 @@ namespace Tag {
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var director: Core.IDirector = runtime.gD(),
                 states: Core.IStates = runtime.gS(),
+                logger: Core.ILogger = runtime.gL(),
+                title: string = 'CONTENT',
                 kid: string = '.a',
                 id: string = states.g(kid);
+            logger.o(title);
             states.s('$d', 1);
             return director.c(<Core.IResource<string | HTMLImageElement>[][]> Loop.prototype.c.call(this))
                 .then(() => Util.Q.every(this._s, (action: Action) => {
@@ -44,7 +47,10 @@ namespace Tag {
                         id = undefined;
                     }
                     return action.p(runtime);
-                }));
+                })).then(() => {
+                    logger.c(title);
+                    return runtime;
+                });
         }
 
         /**

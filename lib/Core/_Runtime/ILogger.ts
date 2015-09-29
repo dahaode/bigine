@@ -30,6 +30,16 @@ namespace Core {
         e(...parts: any[]): void;
 
         /**
+         * 分组。
+         */
+        o(title: string): void;
+
+        /**
+         * 分组结束。
+         */
+        c(title: string): void;
+
+        /**
          * 设置日志等级。
          */
         l(level: ILogger.Level): ILogger;

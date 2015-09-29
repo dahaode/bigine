@@ -64,6 +64,22 @@ namespace Runtime {
         }
 
         /**
+         * 分组。
+         */
+        public o(title: string): void {
+            if (this._c && 'function' == typeof this._c.group)
+                this._c.group.call(this._c, title);
+        }
+
+        /**
+         * 分组结束。
+         */
+        public c(title: string): void {
+            if (this._c && 'function' == typeof this._c.groupEnd)
+                this._c.groupEnd.call(this._c, title);
+        }
+
+        /**
          * 设置日志等级。
          */
         public l(level: Core.ILogger.Level): ConsoleLogger {

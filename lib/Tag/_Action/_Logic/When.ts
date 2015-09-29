@@ -37,6 +37,8 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
+                logger: Core.ILogger = runtime.gL(),
+                title: string = 'WHEN ' + this._p[0],
                 kd: string = '$d',
                 depth: number = states.g(kd),
                 kt: string = '$t' + depth,
@@ -44,8 +46,12 @@ namespace Tag {
                 kid: string = '.a',
                 id: string = states.g(kid),
                 value: any = states.g(this._p[0]);
-            if (!id && (states.g(kt) || states.g(kv) != this.$v(undefined === value ? this._p[0] : value)))
+            value = this.$v(undefined === value ? this._p[0] : value);
+            if (value != this._p[0])
+                title += ' (' + value + ')';
+            if (!id && (states.g(kt) || states.g(kv) != value))
                 return runtime;
+            logger.o(title);
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, (action: Action) => {
@@ -64,6 +70,7 @@ namespace Tag {
                 return action.p(runtime);
             }).then(() => {
                 states.s(kd, depth);
+                logger.c(title);
                 return runtime;
             });
         }
