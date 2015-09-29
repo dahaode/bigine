@@ -84,7 +84,8 @@ namespace Tag {
         Otherwise: '否则',
         Then: '那么',
         When: '如果',
-        Loop: '循环'
+        Loop: '循环',
+        WhenVar: '如果数据'
     };
 
     /**
@@ -101,7 +102,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // 62
+    export var S: { [index: number]: any[] } = { // 63
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -240,7 +241,10 @@ namespace Tag {
         61: ['Minimum', [0, 1], -1, { // [变量名]
             53: [1]
         }],
-        62: ['CharMove', 1, 1] // [人物] 新位置
+        62: ['CharMove', 1, 1], // [人物] 新位置
+        63: ['WhenVar', 1, -1, { // [比较数据]
+            '-1': [1]
+        }]
     };
     var ii: any,
         jj: any;

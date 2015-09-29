@@ -88,6 +88,7 @@ namespace Tag {
                     case 'Otherwise':
                     case 'Then':
                     case 'When':
+                    case 'WhenVar':
                         ids = ids.concat((<Loop> action).gA());
                         break;
                 }
@@ -137,6 +138,7 @@ namespace Tag {
                     case 'Otherwise':
                     case 'Then':
                     case 'When':
+                    case 'WhenVar':
                         pack();
                         resources = resources.concat((<Loop> action).c());
                         break;

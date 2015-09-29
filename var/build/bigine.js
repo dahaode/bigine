@@ -4726,7 +4726,8 @@ var Tag;
         Otherwise: '否则',
         Then: '那么',
         When: '如果',
-        Loop: '循环'
+        Loop: '循环',
+        WhenVar: '如果数据'
     };
     /**
      * 语法规则。
@@ -4868,7 +4869,10 @@ var Tag;
         61: ['Minimum', [0, 1], -1, {
                 53: [1]
             }],
-        62: ['CharMove', 1, 1] // [人物] 新位置
+        62: ['CharMove', 1, 1],
+        63: ['WhenVar', 1, -1, {
+                '-1': [1]
+            }]
     };
     var ii, jj;
     for (ii in Tag.S)
@@ -7071,6 +7075,7 @@ var Tag;
                     case 'Otherwise':
                     case 'Then':
                     case 'When':
+                    case 'WhenVar':
                         ids = ids.concat(action.gA());
                         break;
                 }
@@ -7117,6 +7122,7 @@ var Tag;
                     case 'Otherwise':
                     case 'Then':
                     case 'When':
+                    case 'WhenVar':
                         pack();
                         resources = resources.concat(action.c());
                         break;
@@ -8806,6 +8812,90 @@ var Tag;
     Tag.CharMove = CharMove;
 })(Tag || (Tag = {}));
 /**
+ * 定义如果数据动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/WhenVar.ts
+ */
+/// <reference path="Loop.ts" />
+var Tag;
+(function (Tag) {
+    var WhenVar = (function (_super) {
+        __extends(WhenVar, _super);
+        function WhenVar() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        WhenVar.prototype.gN = function () {
+            return 'WhenVar';
+        };
+        /**
+         * （执行）检查。
+         */
+        WhenVar.prototype.t = function (states) {
+            var depth = states.g('$d'), kt = '$t' + depth, kv = '$v' + depth;
+            if (states.g(kt) || states.g(kv) != this.$v(states.g(this._p[0])))
+                return true;
+            states.s(kt, true);
+            return Util.every(this._s, function (tag) { return tag.t(states); });
+        };
+        /**
+         * 执行。
+         */
+        WhenVar.prototype.p = function (runtime) {
+            var states = runtime.gS(), logger = runtime.gL(), value = this.$v(states.g(this._p[0])), title = 'WHENVAR ' + this._p[0], kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
+            if (!id && (states.g(kt) || states.g(kv) != value))
+                return runtime;
+            logger.o(title);
+            states.s(kt, true)
+                .s(kd, 1 + depth);
+            return Util.Q.every(this._s, function (action) {
+                if (id) {
+                    if ('gI' in action) {
+                        if (action.gI() != id)
+                            return runtime;
+                        states.d(kid);
+                    }
+                    else if ('gA' in action) {
+                        if (-1 == Util.indexOf(action.gA(), id))
+                            return runtime;
+                    }
+                    else
+                        return runtime;
+                    id = undefined;
+                }
+                return action.p(runtime);
+            })['catch'](function (error) {
+                if (error && E.Signal.HALT == error.signal)
+                    logger.c(title);
+                throw error;
+            }).then(function () {
+                states.s(kd, depth);
+                logger.c(title);
+                return runtime;
+            });
+        };
+        /**
+         * 获取关键动作编号列表。
+         */
+        WhenVar.prototype.gA = function () {
+            return Tag.Loop.prototype.gA.call(this);
+        };
+        /**
+         * 获取使用资源列表。
+         */
+        WhenVar.prototype.c = function () {
+            return Tag.Loop.prototype.c.call(this);
+        };
+        return WhenVar;
+    })(Tag.Action);
+    Tag.WhenVar = WhenVar;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -8860,6 +8950,7 @@ var Tag;
 /// <reference path="_Action/_Text/Tip.ts" />
 /// <reference path="_Action/_Logic/Maximum.ts" />
 /// <reference path="_Action/_Director/CharMove.ts" />
+/// <reference path="_Action/_Logic/WhenVar.ts" />
 /**
  * 定义（作品）运行时组件。
  *
