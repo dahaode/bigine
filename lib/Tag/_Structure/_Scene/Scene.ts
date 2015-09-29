@@ -76,8 +76,10 @@ namespace Tag {
                 logger.o(tconds);
                 rconds = conds.t(runtime.gS());
                 logger.c(tconds);
-                if (!rconds)
+                if (!rconds) {
+                    logger.c(title);
                     return runtime;
+                }
             }
             content = <Content> this.$q('Content')[0];
             return Promise.resolve(content.p(runtime.s(this, this._c, content.gA())))
