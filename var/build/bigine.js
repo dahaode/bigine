@@ -2884,14 +2884,9 @@ var G;
                 },
                 function (event) {
                     _this.$c();
-                },
-                function (event) {
-                    if (13 == event.keyCode)
-                        return _this.$c();
                 }
             ];
             this.b(context.canvas);
-            window.addEventListener('keydown', this._h[2]);
         }
         /**
          * 移动 X 轴座标。
@@ -2991,7 +2986,6 @@ var G;
             this._f = false;
             this._v.removeEventListener('mousemove', this._h[0]);
             this._v.removeEventListener('click', this._h[1]);
-            window.removeEventListener('keydown', this._h[2]);
         };
         /**
          * 根据座标查找元素。
@@ -3692,6 +3686,7 @@ var Runtime;
          * 构造函数。
          */
         function CanvasDirector(runtime) {
+            var _this = this;
             _super.call(this, runtime);
             var doc = document, els = doc.querySelectorAll('.bg-work'), canvas = doc.createElement('canvas'), raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS;
             canvas.width = bounds.w;
@@ -3736,6 +3731,11 @@ var Runtime;
             };
             this._f = {};
             this._e = [0, 0];
+            this._l = function (event) {
+                if (13 == event.keyCode && !_this._a && _this._t)
+                    _this._t.h();
+            };
+            window.addEventListener('keydown', this._l);
         }
         /**
          * 预加载指定资源组。
@@ -3933,7 +3933,7 @@ var Runtime;
                 var aType = new G.Type(1), aWFC;
                 if (_this._a)
                     return gWords.p(aType);
-                aWFC = new G.WaitForClick(function () {
+                _this._t = aWFC = new G.WaitForClick(function () {
                     aType.h();
                 });
                 return Promise.race([
@@ -4078,11 +4078,14 @@ var Runtime;
          */
         CanvasDirector.prototype.asMap = function (points) {
             var _this = this;
-            var gMap = this._c.q('M')[0], gPoints = [], bounds = CanvasDirector.BOUNDS, gPoint, z, added;
+            var gMap = this._c.q('M')[0], gPoints = [], bounds = CanvasDirector.BOUNDS, clicked = false, gPoint, z, added;
             Util.each(points, function (point) {
                 z = point.gZ();
                 gPoint = new G.Button(point.gX(), point.gY(), point.gW(), point.gH())
                     .b(function () {
+                    if (clicked)
+                        return;
+                    clicked = true;
                     _this.playSE(_this._i['c']);
                     point.p(_this._r);
                 }, new G.Image(point.o(), bounds, true))
@@ -4406,6 +4409,7 @@ var Runtime;
             this._s['b'].pause();
             this._s['e'].pause();
             this._s = {};
+            window.removeEventListener('keydown', this._l);
         };
         /**
          * 取消阻塞。

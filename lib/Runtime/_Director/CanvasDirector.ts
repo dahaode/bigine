@@ -88,6 +88,11 @@ namespace Runtime {
         private _e: [number, number];
 
         /**
+         * 键盘事件监听函数。
+         */
+        private _l: (event: KeyboardEvent) => void;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -139,6 +144,11 @@ namespace Runtime {
             };
             this._f = {};
             this._e = [0, 0];
+            this._l = (event: KeyboardEvent) => {
+                if (13 == event.keyCode && !this._a && this._t)
+                    this._t.h();
+            };
+            window.addEventListener('keydown', this._l);
         }
 
         /**
@@ -361,7 +371,7 @@ namespace Runtime {
                         aWFC: G.WaitForClick;
                     if (this._a)
                         return gWords.p(aType);
-                    aWFC = new G.WaitForClick(() => {
+                    this._t = aWFC = new G.WaitForClick(() => {
                         aType.h();
                     });
                     return Promise.race<any>([
@@ -517,6 +527,7 @@ namespace Runtime {
             var gMap: G.Sprite = <G.Sprite> this._c.q('M')[0],
                 gPoints: [number, G.Button][] = [],
                 bounds: Core.IBounds = CanvasDirector.BOUNDS,
+                clicked: boolean = false,
                 gPoint: G.Button,
                 z: number,
                 added: boolean;
@@ -524,6 +535,8 @@ namespace Runtime {
                 z = point.gZ();
                 gPoint = <G.Button> new G.Button(point.gX(), point.gY(), point.gW(), point.gH())
                     .b(() => {
+                        if (clicked) return;
+                        clicked = true;
                         this.playSE(this._i['c']);
                         point.p(this._r);
                     }, new G.Image(point.o(), bounds, true))
@@ -893,6 +906,7 @@ namespace Runtime {
             this._s['b'].pause();
             this._s['e'].pause();
             this._s = {};
+            window.removeEventListener('keydown', this._l);
         }
 
         /**

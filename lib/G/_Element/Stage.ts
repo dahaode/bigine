@@ -35,7 +35,7 @@ namespace G {
         /**
          * DOM 事件处理函数集合。
          */
-        private _h: ((event: Event) => void)[];
+        private _h: ((event: MouseEvent) => void)[];
 
         /**
          * 鼠标事件元信息。
@@ -87,14 +87,9 @@ namespace G {
                 },
                 (event: MouseEvent) => {
                     this.$c();
-                },
-                (event: KeyboardEvent) => {
-                    if (13 == event.keyCode)
-                        return this.$c();
                 }
             ];
             this.b(context.canvas);
-            window.addEventListener('keydown', this._h[2]);
         }
 
         /**
@@ -202,7 +197,6 @@ namespace G {
             this._f = false;
             this._v.removeEventListener('mousemove', this._h[0]);
             this._v.removeEventListener('click', this._h[1]);
-            window.removeEventListener('keydown', this._h[2]);
         }
 
         /**
