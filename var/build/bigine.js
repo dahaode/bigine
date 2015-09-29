@@ -1124,14 +1124,18 @@ var Runtime;
          */
         Episode.prototype.p = function (type, runtime) {
             var _this = this;
-            if (!(type in this._a))
-                return Promise.resolve(runtime);
-            runtime.gS().s('_p', type);
-            return Util.Q.every(this._a[type], function (scene) {
-                if (runtime.gH())
-                    return Util.Q.doHalt();
-                return scene.p(runtime);
-            }).then(function () {
+            var q;
+            if (type in this._a) {
+                runtime.gS().s('_p', type);
+                q = Util.Q.every(this._a[type], function (scene) {
+                    if (runtime.gH())
+                        return Util.Q.doHalt();
+                    return scene.p(runtime);
+                });
+            }
+            else
+                q = Promise.resolve(runtime);
+            return q.then(function () {
                 if (Core.ISceneTag.Type.End == type)
                     runtime.dispatchEvent(new Runtime.Event.End({
                         target: _this

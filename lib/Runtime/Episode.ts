@@ -89,14 +89,17 @@ namespace Runtime {
          * 播放。
          */
         public p(type: Core.ISceneTag.Type, runtime: Core.IRuntime): Promise<Core.IRuntime> {
-            if (!(type in this._a))
-                return Promise.resolve(runtime);
-            runtime.gS().s('_p', type);
-            return Util.Q.every(this._a[type], (scene: Core.ISceneTag) => {
-                if (runtime.gH())
-                    return Util.Q.doHalt<Core.IRuntime>();
-                return scene.p(runtime);
-            }).then(() => {
+            var q: Promise<Core.IRuntime>;
+            if (type in this._a) {
+                runtime.gS().s('_p', type);
+                q = Util.Q.every(this._a[type], (scene: Core.ISceneTag) => {
+                    if (runtime.gH())
+                        return Util.Q.doHalt<Core.IRuntime>();
+                    return scene.p(runtime);
+                });
+            } else
+                q = Promise.resolve(runtime);
+            return q.then(() => {
                 if (Core.ISceneTag.Type.End == type)
                     runtime.dispatchEvent(new Event.End({
                         target: this
