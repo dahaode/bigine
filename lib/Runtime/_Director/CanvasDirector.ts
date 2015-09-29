@@ -186,6 +186,7 @@ namespace Runtime {
          */
         public OP(start: boolean): Promise<Core.IRuntime> {
             return this.c([[this._i['o']]])
+                .then(() => this.reset())
                 .then(() => {
                     var gLogo: G.Image = new G.Image(this._i['o'], CanvasDirector.BOUNDS);
                     this._c.z()

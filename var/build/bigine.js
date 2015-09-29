@@ -3784,6 +3784,7 @@ var Runtime;
         CanvasDirector.prototype.OP = function (start) {
             var _this = this;
             return this.c([[this._i['o']]])
+                .then(function () { return _this.reset(); })
                 .then(function () {
                 var gLogo = new G.Image(_this._i['o'], CanvasDirector.BOUNDS);
                 _this._c.z()
