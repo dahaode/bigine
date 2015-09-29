@@ -2870,9 +2870,14 @@ var G;
                 },
                 function (event) {
                     _this.$c();
+                },
+                function (event) {
+                    if (13 == event.keyCode)
+                        return _this.$c();
                 }
             ];
             this.b(context.canvas);
+            window.addEventListener('keydown', this._h[2]);
         }
         /**
          * 移动 X 轴座标。
@@ -2972,6 +2977,7 @@ var G;
             this._f = false;
             this._v.removeEventListener('mousemove', this._h[0]);
             this._v.removeEventListener('click', this._h[1]);
+            window.removeEventListener('keydown', this._h[2]);
         };
         /**
          * 根据座标查找元素。
