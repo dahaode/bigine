@@ -100,7 +100,7 @@ namespace Runtime {
             this.addEventListener<Episode>('begin', () => {
                 this._d.playBGM();
                 this._d.playSE();
-                this.t(this._e.p(Core.ISceneTag.Type.Begin, this));
+                this.t(() => this._e.p(Core.ISceneTag.Type.Begin, this));
             });
             this.addEventListener<Episode>('resume', () => {
                 var callback: (data: Util.IHashTable<any>) => void = (data: Util.IHashTable<any>) => {
@@ -124,8 +124,8 @@ namespace Runtime {
                         .m(ks, '.s');
                     this._fh = true; // 中止现有时序流
                     this._d.h();
-                    this.t((this._t || Promise.resolve(this)).then((runtime: Runtime) => {
-                        runtime._fh = false;
+                    this.t(() => {
+                        this._fh = false;
                         tn = states.g(ktn);
                         cn = states.g(kcn);
                         if (tn || cn) {
@@ -139,11 +139,10 @@ namespace Runtime {
                             }
                             enter = new Tag.Enter([tn || cn], '', [], -1);
                             enter.b(episode);
-                            return enter.p(runtime);
+                            return <Runtime | Thenable<Runtime>> enter.p(this);
                         }
-                        return episode.p(states.g('_p'), runtime);
-                    })
-                    );
+                        return episode.p(states.g('_p'), this);
+                    });
                 };
                 this._d.playBGM();
                 this._d.playSE();
@@ -312,10 +311,18 @@ namespace Runtime {
         /**
          * 声明时序流。
          */
-        public t(flow: Promise<Runtime>): Runtime {
-            this._t = flow['catch'](Util.Q.ignoreHalt)['catch']((reason?: any) => {
-                this._l.e(reason);
-            });
+        public t(flow: () => Runtime | Thenable<Runtime>): Runtime {
+            var timeline: () => Promise<Runtime> = () => {
+                return Promise.resolve()
+                    .then(() => flow())
+                    ['catch'](Util.Q.ignoreHalt)
+                    ['catch']((reason?: any) => {
+                        this._l.e(reason);
+                    });
+            };
+            this._t = this._t ?
+                this._t.then(timeline) :
+                timeline();
             return this;
         }
     }

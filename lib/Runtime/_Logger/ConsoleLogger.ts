@@ -67,7 +67,7 @@ namespace Runtime {
          * 分组。
          */
         public o(title: string): void {
-            if (this._c && 'function' == typeof this._c.group)
+            if (Core.ILogger.Level.Debug == this._l && this._c && 'function' == typeof this._c.group)
                 this._c.group.call(this._c, title);
         }
 
@@ -75,7 +75,7 @@ namespace Runtime {
          * 分组结束。
          */
         public c(title: string): void {
-            if (this._c && 'function' == typeof this._c.groupEnd)
+            if (Core.ILogger.Level.Debug == this._l && this._c && 'function' == typeof this._c.groupEnd)
                 this._c.groupEnd.call(this._c, title);
         }
 

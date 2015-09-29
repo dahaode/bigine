@@ -26,7 +26,7 @@ namespace Tag {
                 .d('_rd')
                 .d('$rc')
                 .d('$rd');
-            runtime.t(runtime.gD().FAIL()
+            runtime.t(() => runtime.gD().FAIL()
                 .then(() => runtime.gE().p(Core.ISceneTag.Type.Fail, runtime))
             );
             return Util.Q.doHalt<Core.IRuntime>();

@@ -85,6 +85,6 @@ namespace Core {
         /**
          * 声明时序流。
          */
-        t(flow: Promise<IRuntime>): IRuntime;
+        t(flow: () => IRuntime | Thenable<IRuntime>): IRuntime;
     }
 }

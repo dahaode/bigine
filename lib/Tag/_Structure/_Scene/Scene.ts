@@ -81,7 +81,11 @@ namespace Tag {
             }
             content = <Content> this.$q('Content')[0];
             return Promise.resolve(content.p(runtime.s(this, this._c, content.gA())))
-                .then(() => {
+                ['catch']((error?: E) => {
+                    if (error && E.Signal.HALT == error.signal)
+                        logger.c(title);
+                    throw error;
+                }).then(() => {
                     logger.c(title);
                     return runtime;
                 });

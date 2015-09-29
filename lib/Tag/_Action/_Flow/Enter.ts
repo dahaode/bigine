@@ -59,7 +59,7 @@ namespace Tag {
                         return director.asRoom((<DefRoom> states.g(kdo)).o(states.g(kt)))
                             .then(() => director.lightOn());
                     });
-            runtime.t(Promise.resolve() // 新建时序流，
+            runtime.t(() => Promise.resolve() // 新建时序流，
                 .then(() => { // 播放当前房间离开前事件
                     states.s(ktn, this._p[0])
                         .s(kto, this._mo);

@@ -47,7 +47,11 @@ namespace Tag {
                         id = undefined;
                     }
                     return action.p(runtime);
-                })).then(() => {
+                }))['catch']((error?: E) => {
+                    if (error && E.Signal.HALT == error.signal)
+                        logger.c(title);
+                    throw error;
+                }).then(() => {
                     logger.c(title);
                     return runtime;
                 });

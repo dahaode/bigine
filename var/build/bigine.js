@@ -1259,14 +1259,14 @@ var Runtime;
          * 分组。
          */
         ConsoleLogger.prototype.o = function (title) {
-            if (this._c && 'function' == typeof this._c.group)
+            if (Core.ILogger.Level.Debug == this._l && this._c && 'function' == typeof this._c.group)
                 this._c.group.call(this._c, title);
         };
         /**
          * 分组结束。
          */
         ConsoleLogger.prototype.c = function (title) {
-            if (this._c && 'function' == typeof this._c.groupEnd)
+            if (Core.ILogger.Level.Debug == this._l && this._c && 'function' == typeof this._c.groupEnd)
                 this._c.groupEnd.call(this._c, title);
         };
         /**
@@ -5767,7 +5767,7 @@ var Tag;
                     return director.asRoom(states.g(kdo).o(states.g(kt)))
                         .then(function () { return director.lightOn(); });
                 });
-            runtime.t(Promise.resolve() // 新建时序流，
+            runtime.t(function () { return Promise.resolve() // 新建时序流，
                 .then(function () {
                 states.s(ktn, _this._p[0])
                     .s(kto, _this._mo);
@@ -5800,7 +5800,7 @@ var Tag;
                     .then(function () { return director.asRoom(_this._mo.o(states.g(kt))); })
                     .then(function () { return director.asMap(map ? map.gP() : {}); })
                     .then(function () { return _this._mo.p(type.PostEnter, runtime); });
-            }));
+            }); });
             return Util.Q.doHalt(); // 中断原有时序流。
         };
         return Enter;
@@ -7161,7 +7161,11 @@ var Tag;
                     id = undefined;
                 }
                 return action.p(runtime);
-            }); }).then(function () {
+            }); })['catch'](function (error) {
+                if (error && E.Signal.HALT == error.signal)
+                    logger.c(title);
+                throw error;
+            }).then(function () {
                 logger.c(title);
                 return runtime;
             });
@@ -7244,8 +7248,11 @@ var Tag;
                     return runtime;
             }
             content = this.$q('Content')[0];
-            return Promise.resolve(content.p(runtime.s(this, this._c, content.gA())))
-                .then(function () {
+            return Promise.resolve(content.p(runtime.s(this, this._c, content.gA())))['catch'](function (error) {
+                if (error && E.Signal.HALT == error.signal)
+                    logger.c(title);
+                throw error;
+            }).then(function () {
                 logger.c(title);
                 return runtime;
             });
@@ -7726,8 +7733,8 @@ var Tag;
                 .d('_rd')
                 .d('$rc')
                 .d('$rd');
-            runtime.t(runtime.gD().ED()
-                .then(function () { return runtime.gE().p(Core.ISceneTag.Type.End, runtime); }));
+            runtime.t(function () { return runtime.gD().ED()
+                .then(function () { return runtime.gE().p(Core.ISceneTag.Type.End, runtime); }); });
             return Util.Q.doHalt();
         };
         return End;
@@ -7764,8 +7771,8 @@ var Tag;
                 .d('_rd')
                 .d('$rc')
                 .d('$rd');
-            runtime.t(runtime.gD().FAIL()
-                .then(function () { return runtime.gE().p(Core.ISceneTag.Type.Fail, runtime); }));
+            runtime.t(function () { return runtime.gD().FAIL()
+                .then(function () { return runtime.gE().p(Core.ISceneTag.Type.Fail, runtime); }); });
             return Util.Q.doHalt();
         };
         return Fail;
@@ -8859,7 +8866,7 @@ var Runtime;
             this.addEventListener('begin', function () {
                 _this._d.playBGM();
                 _this._d.playSE();
-                _this.t(_this._e.p(Core.ISceneTag.Type.Begin, _this));
+                _this.t(function () { return _this._e.p(Core.ISceneTag.Type.Begin, _this); });
             });
             this.addEventListener('resume', function () {
                 var callback = function (data) {
@@ -8874,8 +8881,8 @@ var Runtime;
                         .m(ks, '.s');
                     _this._fh = true; // 中止现有时序流
                     _this._d.h();
-                    _this.t((_this._t || Promise.resolve(_this)).then(function (runtime) {
-                        runtime._fh = false;
+                    _this.t(function () {
+                        _this._fh = false;
                         tn = states.g(ktn);
                         cn = states.g(kcn);
                         if (tn || cn) {
@@ -8890,10 +8897,10 @@ var Runtime;
                             }
                             enter = new Tag.Enter([tn || cn], '', [], -1);
                             enter.b(episode);
-                            return enter.p(runtime);
+                            return enter.p(_this);
                         }
-                        return episode.p(states.g('_p'), runtime);
-                    }));
+                        return episode.p(states.g('_p'), _this);
+                    });
                 };
                 _this._d.playBGM();
                 _this._d.playSE();
@@ -9048,9 +9055,15 @@ var Runtime;
          */
         Runtime.prototype.t = function (flow) {
             var _this = this;
-            this._t = flow['catch'](Util.Q.ignoreHalt)['catch'](function (reason) {
-                _this._l.e(reason);
-            });
+            var timeline = function () {
+                return Promise.resolve()
+                    .then(function () { return flow(); })['catch'](Util.Q.ignoreHalt)['catch'](function (reason) {
+                    _this._l.e(reason);
+                });
+            };
+            this._t = this._t ?
+                this._t.then(timeline) :
+                timeline();
             return this;
         };
         return Runtime;
