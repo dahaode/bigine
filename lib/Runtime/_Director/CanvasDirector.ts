@@ -528,7 +528,6 @@ namespace Runtime {
             var gMap: G.Sprite = <G.Sprite> this._c.q('M')[0],
                 gPoints: [number, G.Button][] = [],
                 bounds: Core.IBounds = CanvasDirector.BOUNDS,
-                clicked: boolean = false,
                 gPoint: G.Button,
                 z: number,
                 added: boolean;
@@ -536,8 +535,6 @@ namespace Runtime {
                 z = point.gZ();
                 gPoint = <G.Button> new G.Button(point.gX(), point.gY(), point.gW(), point.gH())
                     .b(() => {
-                        if (clicked) return;
-                        clicked = true;
                         this.playSE(this._i['c']);
                         point.p(this._r);
                     }, new G.Image(point.o(), bounds, true))

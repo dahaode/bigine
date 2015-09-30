@@ -4093,14 +4093,11 @@ var Runtime;
          */
         CanvasDirector.prototype.asMap = function (points) {
             var _this = this;
-            var gMap = this._c.q('M')[0], gPoints = [], bounds = CanvasDirector.BOUNDS, clicked = false, gPoint, z, added;
+            var gMap = this._c.q('M')[0], gPoints = [], bounds = CanvasDirector.BOUNDS, gPoint, z, added;
             Util.each(points, function (point) {
                 z = point.gZ();
                 gPoint = new G.Button(point.gX(), point.gY(), point.gW(), point.gH())
                     .b(function () {
-                    if (clicked)
-                        return;
-                    clicked = true;
                     _this.playSE(_this._i['c']);
                     point.p(_this._r);
                 }, new G.Image(point.o(), bounds, true))
