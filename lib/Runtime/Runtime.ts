@@ -98,8 +98,6 @@ namespace Runtime {
                 }
             });
             this.addEventListener<Episode>('begin', () => {
-                this._d.playBGM();
-                this._d.playSE();
                 this.t(() => this._e.p(Core.ISceneTag.Type.Begin, this));
             });
             this.addEventListener<Episode>('resume', () => {
@@ -144,8 +142,6 @@ namespace Runtime {
                         return episode.p(states.g('_p'), this);
                     });
                 };
-                this._d.playBGM();
-                this._d.playSE();
                 this.dispatchEvent(new Event.Load({
                     target: this._s,
                     callback: callback
@@ -233,6 +229,8 @@ namespace Runtime {
             if (!this._fr)
                 return this;
             this._s.i({});
+            this._d.playBGM();
+            this._d.playSE();
             this._d.OP(!this._e.gA());
             return this;
         }

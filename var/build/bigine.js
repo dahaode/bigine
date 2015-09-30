@@ -8993,8 +8993,6 @@ var Runtime;
                 }
             });
             this.addEventListener('begin', function () {
-                _this._d.playBGM();
-                _this._d.playSE();
                 _this.t(function () { return _this._e.p(Core.ISceneTag.Type.Begin, _this); });
             });
             this.addEventListener('resume', function () {
@@ -9031,8 +9029,6 @@ var Runtime;
                         return episode.p(states.g('_p'), _this);
                     });
                 };
-                _this._d.playBGM();
-                _this._d.playSE();
                 _this.dispatchEvent(new Runtime_1.Event.Load({
                     target: _this._s,
                     callback: callback
@@ -9113,6 +9109,8 @@ var Runtime;
             if (!this._fr)
                 return this;
             this._s.i({});
+            this._d.playBGM();
+            this._d.playSE();
             this._d.OP(!this._e.gA());
             return this;
         };
