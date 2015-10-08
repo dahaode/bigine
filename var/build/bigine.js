@@ -3830,10 +3830,12 @@ var Runtime;
          */
         CanvasDirector.prototype.charOn = function (resource, position) {
             var _this = this;
-            var states = this._r.gS(), kamount = '$c', gChar = this.$c(resource, position);
+            var states = this._r.gS(), gChars = this._c.q('c')[0], gCG = this._c.q('g')[0], kamount = '$c', gChar = this.$c(resource, position);
             states.s(kamount, 1 + (states.g(kamount) || 0));
-            this._c.q('c')[0].a(gChar.i(position))
-                .o(1);
+            gChars.a(gChar.i(position));
+            if (gCG.gO())
+                return this._p;
+            gChars.o(1);
             return gChar.p(new G.FadeIn(500))
                 .then(function () { return _this._r; });
         };
@@ -3858,14 +3860,16 @@ var Runtime;
          * 设置人物。
          */
         CanvasDirector.prototype.charSet = function (resource, position) {
-            var states = this._r.gS(), kamount = '$c', gChars = this._c.q('c')[0], gChar = gChars.q(position)[0];
+            var states = this._r.gS(), kamount = '$c', gChars = this._c.q('c')[0], gCG = this._c.q('g')[0], gChar = gChars.q(position)[0];
             if (gChar) {
                 gChars.e(gChar);
             }
             else
                 states.s(kamount, 1 + states.g(kamount));
             gChar = this.$c(resource, position).o(1).i(position);
-            gChars.a(gChar).o(1);
+            gChars.a(gChar);
+            if (!gCG.gO())
+                gChars.o(1);
             return this._p;
         };
         /**
@@ -9024,7 +9028,7 @@ var Runtime;
                             }
                             enter = new Tag.Enter([tn || cn], '', [], -1);
                             enter.b(episode);
-                            return enter.p(_this);
+                            return enter.p(_this)['catch'](Util.Q.ignoreHalt);
                         }
                         return episode.p(states.g('_p'), _this);
                     });

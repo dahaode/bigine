@@ -233,11 +233,15 @@ namespace Runtime {
          */
         public charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             var states: Core.IStates = this._r.gS(),
+                gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
+                gCG: Core.IGraphicElement = this._c.q('g')[0],
                 kamount: string = '$c',
                 gChar: G.Image = this.$c(resource, position);
             states.s(kamount, 1 + (<number> states.g(kamount) || 0));
-            (<G.Sprite> this._c.q('c')[0]).a(gChar.i(<any> position))
-                .o(1);
+            gChars.a(gChar.i(<any> position));
+            if (gCG.gO())
+                return this._p;
+            gChars.o(1);
             return gChar.p(new G.FadeIn(500))
                 .then(() => this._r);
         }
@@ -270,13 +274,16 @@ namespace Runtime {
             var states: Core.IStates = this._r.gS(),
                 kamount: string = '$c',
                 gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
+                gCG: Core.IGraphicElement = this._c.q('g')[0],
                 gChar: G.Element = gChars.q(<any> position)[0];
             if (gChar) {
                 gChars.e(gChar);
             } else
                 states.s(kamount, 1 + <number> states.g(kamount));
             gChar = this.$c(resource, position).o(1).i(<any> position);
-            gChars.a(gChar).o(1);
+            gChars.a(gChar);
+            if (!gCG.gO())
+                gChars.o(1);
             return this._p;
         }
 

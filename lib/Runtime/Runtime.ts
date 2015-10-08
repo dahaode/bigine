@@ -137,7 +137,8 @@ namespace Runtime {
                             }
                             enter = new Tag.Enter([tn || cn], '', [], -1);
                             enter.b(episode);
-                            return <Runtime | Thenable<Runtime>> enter.p(this);
+                            return <Runtime | Thenable<Runtime>> enter.p(this)
+                                ['catch'](Util.Q.ignoreHalt);
                         }
                         return episode.p(states.g('_p'), this);
                     });
