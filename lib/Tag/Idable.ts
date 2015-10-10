@@ -43,7 +43,9 @@ namespace Tag {
                 episode: Core.IEpisode = runtime.gE(),
                 kid: string = '_c',
                 kpose: string = '_s',
+                kpos: string = '.p',
                 q: Promise<Core.IRuntime> = Promise.resolve(runtime),
+                bgm: string = states.g('_b'),
                 cg: string = states.g(kid),
                 l: Core.IDirector.Position = pos.Left,
                 lChar: string = states.g(kid + l),
@@ -56,18 +58,37 @@ namespace Tag {
                 r: Core.IDirector.Position = pos.Right,
                 rChar: string = states.g(kid + r),
                 ctype: Core.IEpisode.Entity = type.Chr;
+            if (bgm)
+                q = q.then(() => director.playBGM((<DefBGM> episode.q(bgm, type.BGM)).o()));
+            if (!states.g('_rc'))
+                q = q.then(() => director.asRoom((<DefRoom> episode.q(states.g('_rd'), type.Room)).o(states.g('_t'))));
             if (cg)
                 q = q.then(() => director.setCG((<DefCG> episode.q(cg, type.CG)).o()));
             if (lChar)
-                q = q.then(() => director.charSet((<DefChar> episode.q(lChar, ctype)).o(states.g(kpose + l)), l));
+                q = q.then(() => {
+                    states.s(kpos + lChar, l);
+                    return director.charSet((<DefChar> episode.q(lChar, ctype)).o(states.g(kpose + l)), l);
+                });
             if (clChar)
-                q = q.then(() => director.charSet((<DefChar> episode.q(clChar, ctype)).o(states.g(kpose + cl)), cl));
+                q = q.then(() => {
+                    states.s(kpos + clChar, cl);
+                    return director.charSet((<DefChar> episode.q(clChar, ctype)).o(states.g(kpose + cl)), cl);
+                });
             if (cChar)
-                q = q.then(() => director.charSet((<DefChar> episode.q(cChar, ctype)).o(states.g(kpose + c)), c));
+                q = q.then(() => {
+                    states.s(kpos + cChar, c);
+                    return director.charSet((<DefChar> episode.q(cChar, ctype)).o(states.g(kpose + c)), c);
+                });
             if (crChar)
-                q = q.then(() => director.charSet((<DefChar> episode.q(crChar, ctype)).o(states.g(kpose + cr)), cr));
+                q = q.then(() => {
+                    states.s(kpos + crChar, cr);
+                    return director.charSet((<DefChar> episode.q(crChar, ctype)).o(states.g(kpose + cr)), cr);
+                });
             if (rChar)
-                q = q.then(() => director.charSet((<DefChar> episode.q(rChar, ctype)).o(states.g(kpose + r)), r));
+                q = q.then(() => {
+                    states.s(kpos + rChar, r);
+                    return director.charSet((<DefChar> episode.q(rChar, ctype)).o(states.g(kpose + r)), r);
+                });
             return q;
         }
 

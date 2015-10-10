@@ -3872,7 +3872,7 @@ var Runtime;
                 gChars.e(gChar);
             }
             else
-                states.s(kamount, 1 + states.g(kamount));
+                states.s(kamount, 1 + (states.g(kamount) || 0));
             gChar = this.$c(resource, position).o(1).i(position);
             gChars.a(gChar);
             if (!gCG.gO())
@@ -6954,19 +6954,38 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '_c', kpose = '_s', q = Promise.resolve(runtime), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '_c', kpose = '_s', kpos = '.p', q = Promise.resolve(runtime), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
+            if (bgm)
+                q = q.then(function () { return director.playBGM(episode.q(bgm, type.BGM).o()); });
+            if (!states.g('_rc'))
+                q = q.then(function () { return director.asRoom(episode.q(states.g('_rd'), type.Room).o(states.g('_t'))); });
             if (cg)
                 q = q.then(function () { return director.setCG(episode.q(cg, type.CG).o()); });
             if (lChar)
-                q = q.then(function () { return director.charSet(episode.q(lChar, ctype).o(states.g(kpose + l)), l); });
+                q = q.then(function () {
+                    states.s(kpos + lChar, l);
+                    return director.charSet(episode.q(lChar, ctype).o(states.g(kpose + l)), l);
+                });
             if (clChar)
-                q = q.then(function () { return director.charSet(episode.q(clChar, ctype).o(states.g(kpose + cl)), cl); });
+                q = q.then(function () {
+                    states.s(kpos + clChar, cl);
+                    return director.charSet(episode.q(clChar, ctype).o(states.g(kpose + cl)), cl);
+                });
             if (cChar)
-                q = q.then(function () { return director.charSet(episode.q(cChar, ctype).o(states.g(kpose + c)), c); });
+                q = q.then(function () {
+                    states.s(kpos + cChar, c);
+                    return director.charSet(episode.q(cChar, ctype).o(states.g(kpose + c)), c);
+                });
             if (crChar)
-                q = q.then(function () { return director.charSet(episode.q(crChar, ctype).o(states.g(kpose + cr)), cr); });
+                q = q.then(function () {
+                    states.s(kpos + crChar, cr);
+                    return director.charSet(episode.q(crChar, ctype).o(states.g(kpose + cr)), cr);
+                });
             if (rChar)
-                q = q.then(function () { return director.charSet(episode.q(rChar, ctype).o(states.g(kpose + r)), r); });
+                q = q.then(function () {
+                    states.s(kpos + rChar, r);
+                    return director.charSet(episode.q(rChar, ctype).o(states.g(kpose + r)), r);
+                });
             return q;
         };
         /**

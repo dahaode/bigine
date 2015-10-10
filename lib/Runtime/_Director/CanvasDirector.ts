@@ -279,7 +279,7 @@ namespace Runtime {
             if (gChar) {
                 gChars.e(gChar);
             } else
-                states.s(kamount, 1 + <number> states.g(kamount));
+                states.s(kamount, 1 + (<number> states.g(kamount) || 0));
             gChar = this.$c(resource, position).o(1).i(<any> position);
             gChars.a(gChar);
             if (!gCG.gO())
