@@ -48,6 +48,16 @@ namespace G {
         private _t: Sprite[];
 
         /**
+         * 发生变化地组合元素序号。
+         */
+        private _u: number;
+
+        /**
+         * 绘制缓存。
+         */
+        private _k: [number, ImageData];
+
+        /**
          * 构造函数。
          */
         constructor(context: CanvasRenderingContext2D) {
@@ -89,6 +99,9 @@ namespace G {
                     this.$c();
                 }
             ];
+            this._t = [];
+            this._u = -1;
+            this._k = [0, undefined];
             this.b(context.canvas);
         }
 
@@ -123,10 +136,22 @@ namespace G {
         /**
          * 发生变更。
          */
-        public f(): Stage {
+        public f(child?: Sprite): Stage {
             var fresh: boolean = !this._f,
                 event: Event.Focus;
             this._f = true;
+            if (child) {
+                Util.some(this._d, (element: Element, index: number) => {
+                    if (child == element) {
+                        this._u = index;
+                        return true;
+                    }
+                    return false;
+                });
+            } else
+                this._u = 0;
+            if (this._k[0] > this._u)
+                this._k = [0, undefined];
             Util.each(this.$s(this._m.x, this._m.y)[0], (element: Sprite) => {
                 if (!event)
                     event = new Event.Focus(this._m);
@@ -157,7 +182,17 @@ namespace G {
             return Promise.all(this.$r())
                 .then(() => {
                     this._f = false;
-                    return super.d(this._c);
+                    return Util.Q.every(this._d, (element: Element, index: number) => {
+                        if (this._k[0]) {
+                            if (index < this._k[0])
+                                return this._c;
+                            if (index == this._k[0])
+                                this._c.putImageData(this._k[1], 0, 0);
+                        }
+                        if (index && index == this._u && this._u != this._k[0])
+                            this._k = [index, this._c.getImageData(0, 0, 1280, 720)];
+                        return element.d(this._c);
+                    });
                 });
         }
 

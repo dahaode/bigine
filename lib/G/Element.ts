@@ -126,6 +126,8 @@ namespace G {
          */
         public x(value: number): Element {
             this._b.x = value;
+            if (!this.gO())
+                return this;
             return this.f();
         }
 
@@ -134,6 +136,8 @@ namespace G {
          */
         public y(value: number): Element {
             this._b.y = value;
+            if (!this.gO())
+                return this;
             return this.f();
         }
 
@@ -146,6 +150,8 @@ namespace G {
             this._b.w *= ratio;
             this._b.h *= ratio;
             this._s *= ratio;
+            if (!this.gO())
+                return this;
             return this.f();
         }
 
@@ -165,6 +171,8 @@ namespace G {
             this._r = degrees % 360;
             if (0 > this._r)
                 this._r += 360;
+            if (!this.gO())
+                return this;
             return this.f();
         }
 
@@ -232,7 +240,7 @@ namespace G {
         public f(): Element {
             this._f = true;
             if (this._p)
-                this._p.f();
+                this._p.f(this);
             return this;
         }
 

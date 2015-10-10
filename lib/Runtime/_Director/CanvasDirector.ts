@@ -239,8 +239,10 @@ namespace Runtime {
                 gChar: G.Image = this.$c(resource, position);
             states.s(kamount, 1 + (<number> states.g(kamount) || 0));
             gChars.a(gChar.i(<any> position));
-            if (gCG.gO())
+            if (gCG.gO()) {
+                gChar.o(1);
                 return this._p;
+            }
             gChars.o(1);
             return gChar.p(new G.FadeIn(500))
                 .then(() => this._r);

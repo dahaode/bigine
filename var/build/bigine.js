@@ -2191,6 +2191,8 @@ var G;
          */
         Element.prototype.x = function (value) {
             this._b.x = value;
+            if (!this.gO())
+                return this;
             return this.f();
         };
         /**
@@ -2198,6 +2200,8 @@ var G;
          */
         Element.prototype.y = function (value) {
             this._b.y = value;
+            if (!this.gO())
+                return this;
             return this.f();
         };
         /**
@@ -2209,6 +2213,8 @@ var G;
             this._b.w *= ratio;
             this._b.h *= ratio;
             this._s *= ratio;
+            if (!this.gO())
+                return this;
             return this.f();
         };
         /**
@@ -2226,6 +2232,8 @@ var G;
             this._r = degrees % 360;
             if (0 > this._r)
                 this._r += 360;
+            if (!this.gO())
+                return this;
             return this.f();
         };
         /**
@@ -2286,7 +2294,7 @@ var G;
         Element.prototype.f = function () {
             this._f = true;
             if (this._p)
-                this._p.f();
+                this._p.f(this);
             return this;
         };
         /**
@@ -2479,6 +2487,15 @@ var G;
             return _super.prototype.d.call(this, context);
         };
         /**
+         * 发生变更。
+         */
+        Sprite.prototype.f = function (child) {
+            this._f = true;
+            if (this._p)
+                this._p.f(this);
+            return this;
+        };
+        /**
          * 设置父元素。
          */
         Sprite.prototype.$p = function (parent) {
@@ -2527,6 +2544,8 @@ var G;
             if (-1 == index)
                 index = this._d.length;
             this._d.splice(index, 0, element.$p(this));
+            if (!this.gO())
+                return this;
             return this.f();
         };
         /**
@@ -2536,6 +2555,8 @@ var G;
             var index = Util.indexOf(this._d, element);
             if (-1 != index)
                 this._d.splice(index, 1);
+            if (!this.gO())
+                return this;
             return this.f();
         };
         /**
@@ -2543,6 +2564,8 @@ var G;
          */
         Sprite.prototype.c = function () {
             this._d = [];
+            if (!this.gO())
+                return this;
             return this.f();
         };
         /**
@@ -2907,6 +2930,9 @@ var G;
                     _this.$c();
                 }
             ];
+            this._t = [];
+            this._u = -1;
+            this._k = [0, undefined];
             this.b(context.canvas);
         }
         /**
@@ -2936,10 +2962,23 @@ var G;
         /**
          * 发生变更。
          */
-        Stage.prototype.f = function () {
+        Stage.prototype.f = function (child) {
             var _this = this;
             var fresh = !this._f, event;
             this._f = true;
+            if (child) {
+                Util.some(this._d, function (element, index) {
+                    if (child == element) {
+                        _this._u = index;
+                        return true;
+                    }
+                    return false;
+                });
+            }
+            else
+                this._u = 0;
+            if (this._k[0] > this._u)
+                this._k = [0, undefined];
             Util.each(this.$s(this._m.x, this._m.y)[0], function (element) {
                 if (!event)
                     event = new G.Event.Focus(_this._m);
@@ -2969,7 +3008,17 @@ var G;
             return Promise.all(this.$r())
                 .then(function () {
                 _this._f = false;
-                return _super.prototype.d.call(_this, _this._c);
+                return Util.Q.every(_this._d, function (element, index) {
+                    if (_this._k[0]) {
+                        if (index < _this._k[0])
+                            return _this._c;
+                        if (index == _this._k[0])
+                            _this._c.putImageData(_this._k[1], 0, 0);
+                    }
+                    if (index && index == _this._u && _this._u != _this._k[0])
+                        _this._k = [index, _this._c.getImageData(0, 0, 1280, 720)];
+                    return element.d(_this._c);
+                });
             });
         };
         /**
@@ -3840,8 +3889,10 @@ var Runtime;
             var states = this._r.gS(), gChars = this._c.q('c')[0], gCG = this._c.q('g')[0], kamount = '$c', gChar = this.$c(resource, position);
             states.s(kamount, 1 + (states.g(kamount) || 0));
             gChars.a(gChar.i(position));
-            if (gCG.gO())
+            if (gCG.gO()) {
+                gChar.o(1);
                 return this._p;
+            }
             gChars.o(1);
             return gChar.p(new G.FadeIn(500))
                 .then(function () { return _this._r; });

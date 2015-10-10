@@ -75,6 +75,16 @@ namespace G {
         }
 
         /**
+         * 发生变更。
+         */
+        public f(child?: Element): Sprite {
+            this._f = true;
+            if (this._p)
+                this._p.f(this);
+            return this;
+        }
+
+        /**
          * 设置父元素。
          */
         public $p(parent?: Sprite): Sprite {
@@ -131,6 +141,8 @@ namespace G {
             if (-1 == index)
                 index = this._d.length;
             this._d.splice(index, 0, element.$p(this));
+            if (!this.gO())
+                return this;
             return <Sprite> this.f();
         }
 
@@ -141,6 +153,8 @@ namespace G {
             var index: number = Util.indexOf(this._d, element);
             if (-1 != index)
                 this._d.splice(index, 1);
+            if (!this.gO())
+                return this;
             return <Sprite> this.f();
         }
 
@@ -149,6 +163,8 @@ namespace G {
          */
         public c(): Sprite {
             this._d = [];
+            if (!this.gO())
+                return this;
             return <Sprite> this.f();
         }
 

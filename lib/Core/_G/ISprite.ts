@@ -24,13 +24,17 @@ namespace Core {
     // IGraphicElement:p()
     // IGraphicElement:i()
     // IGraphicElement:gI()
-    // IGraphicElement:f()
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()
     export interface ISprite extends IGraphicElement, IEmittable {
         // constructor(x: number, y: number, w: number, h: number, absolute: boolean = false);
         // constructor(bounds: IBounds, absolute: boolean = false);
+
+        /**
+         * 发生变更。
+         */
+        f(child?: IGraphicElement): ISprite;
 
         /**
          * 添加元素。
