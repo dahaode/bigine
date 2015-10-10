@@ -1702,6 +1702,12 @@ var Runtime;
             return this._p;
         };
         /**
+         * （读档继续时）设置特写。
+         */
+        Director.prototype.setCG = function (resource) {
+            return this._p;
+        };
+        /**
          * 获取动态创建标识。
          */
         Director.prototype.gD = function () {
@@ -4076,7 +4082,7 @@ var Runtime;
                         gChars.p(new G.FadeOut(500)),
                         gCG.p(new G.FadeIn(500))
                     ]).then(function () { return gCG.p(_this._h = new G.WaitForClick()); });
-                }).then(function () { return _this._r; });
+                }).then(function () { return runtime; });
             });
         };
         /**
@@ -4212,6 +4218,18 @@ var Runtime;
                 _this._c.q('v')[0].o(0);
                 _this._c.q('t')[0].o(0);
                 _this._c.q('D')[0].o(0);
+                return runtime;
+            });
+        };
+        /**
+         * （读档继续时）设置特写。
+         */
+        CanvasDirector.prototype.setCG = function (resource) {
+            var _this = this;
+            return _super.prototype.setCG.call(this, resource).then(function (runtime) {
+                var bounds = CanvasDirector.BOUNDS;
+                _this._c.q('g')[0].a(new G.Image(resource, bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p'))
+                    .o(1);
                 return runtime;
             });
         };
@@ -6930,6 +6948,27 @@ var Tag;
             return clob.substr(0, clob.length - 1) + ',"' + this._i + '")';
         };
         /**
+         * 执行。
+         */
+        Idable.prototype.p = function (runtime) {
+            if (!this._d)
+                return runtime;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '_c', kpose = '_s', q = Promise.resolve(runtime), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
+            if (cg)
+                q = q.then(function () { return director.setCG(episode.q(cg, type.CG).o()); });
+            if (lChar)
+                q = q.then(function () { return director.charSet(episode.q(lChar, ctype).o(states.g(kpose + l)), l); });
+            if (clChar)
+                q = q.then(function () { return director.charSet(episode.q(clChar, ctype).o(states.g(kpose + cl)), cl); });
+            if (cChar)
+                q = q.then(function () { return director.charSet(episode.q(cChar, ctype).o(states.g(kpose + c)), c); });
+            if (crChar)
+                q = q.then(function () { return director.charSet(episode.q(crChar, ctype).o(states.g(kpose + cr)), cr); });
+            if (rChar)
+                q = q.then(function () { return director.charSet(episode.q(rChar, ctype).o(states.g(kpose + r)), r); });
+            return q;
+        };
+        /**
          * 获取编号。
          */
         Idable.prototype.gI = function () {
@@ -6940,6 +6979,13 @@ var Tag;
          */
         Idable.prototype.i = function (id) {
             this._i = id;
+        };
+        /**
+         * 恢复人物和特写。
+         */
+        Idable.prototype.d = function () {
+            this._d = true;
+            return this;
         };
         return Idable;
     })(Tag.Action);
@@ -6978,8 +7024,10 @@ var Tag;
          * 执行。
          */
         Speak.prototype.p = function (runtime) {
-            return runtime.a(this).gD()
-                .words(runtime.gS().t(this._c), 'speak', this._p[2] || this._mc.gI(), this._mc.o());
+            var _this = this;
+            return Promise.resolve(_super.prototype.p.call(this, runtime))
+                .then(function () { return runtime.a(_this).gD()
+                .words(runtime.gS().t(_this._c), 'speak', _this._p[2] || _this._mc.gI(), _this._mc.o()); });
         };
         /**
          * 获取关联人物。
@@ -7044,6 +7092,7 @@ var Tag;
                         else
                             return runtime;
                         id = undefined;
+                        action.d();
                     }
                     return action.p(runtime);
                 }).then(loop);
@@ -7184,6 +7233,7 @@ var Tag;
                     else
                         return runtime;
                     id = undefined;
+                    action.d();
                 }
                 return action.p(runtime);
             }); })['catch'](function (error) {
@@ -7657,8 +7707,10 @@ var Tag;
          * 执行。
          */
         Monolog.prototype.p = function (runtime) {
-            return runtime.a(this).gD()
-                .words(runtime.gS().t(this._c), 'monolog', this._mc.gI(), this._mc.o());
+            var _this = this;
+            return Promise.resolve(_super.prototype.p.call(this, runtime))
+                .then(function () { return runtime.a(_this).gD()
+                .words(runtime.gS().t(_this._c), 'monolog', _this._mc.gI(), _this._mc.o()); });
         };
         /**
          * 获取关联人物。
@@ -7696,8 +7748,10 @@ var Tag;
          * 执行。
          */
         VoiceOver.prototype.p = function (runtime) {
-            return runtime.a(this).gD()
-                .words(runtime.gS().t(this._c), 'voiceover');
+            var _this = this;
+            return Promise.resolve(_super.prototype.p.call(this, runtime))
+                .then(function () { return runtime.a(_this).gD()
+                .words(runtime.gS().t(_this._c), 'voiceover'); });
         };
         return VoiceOver;
     })(Tag.Idable);
@@ -8381,6 +8435,7 @@ var Tag;
                     else
                         return runtime;
                     id = undefined;
+                    action.d();
                 }
                 return action.p(runtime);
             })['catch'](function (error) {
@@ -8465,6 +8520,7 @@ var Tag;
                     else
                         return runtime;
                     id = undefined;
+                    action.d();
                 }
                 return action.p(runtime);
             })['catch'](function (error) {
@@ -8549,6 +8605,7 @@ var Tag;
                     else
                         return runtime;
                     id = undefined;
+                    action.d();
                 }
                 return action.p(runtime);
             })['catch'](function (error) {
@@ -8868,6 +8925,7 @@ var Tag;
                     else
                         return runtime;
                     id = undefined;
+                    action.d();
                 }
                 return action.p(runtime);
             })['catch'](function (error) {

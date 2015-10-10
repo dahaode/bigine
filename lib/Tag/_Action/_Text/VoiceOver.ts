@@ -22,8 +22,10 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            return runtime.a(this).gD()
-                .words(runtime.gS().t(this._c), 'voiceover');
+            return Promise.resolve(super.p(runtime))
+                .then(() => runtime.a(this).gD()
+                    .words(runtime.gS().t(this._c), 'voiceover')
+                );
         }
     }
 }

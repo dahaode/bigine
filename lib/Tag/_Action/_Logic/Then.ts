@@ -52,7 +52,7 @@ namespace Tag {
             return Util.Q.every(this._s, (action: Action) => {
                 if (id) {
                     if ('gI' in action) {
-                        if ((<Speak> action).gI() != id)
+                        if ((<Idable> action).gI() != id)
                             return runtime;
                         states.d(kid);
                     } else if ('gA' in action) {
@@ -61,6 +61,7 @@ namespace Tag {
                     } else
                         return runtime;
                     id = undefined;
+                    (<Idable> action).d();
                 }
                 return action.p(runtime);
             })['catch']((error?: E) => {

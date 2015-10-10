@@ -115,6 +115,11 @@ namespace Core {
          * 重置。
          */
         reset(): Promise<IRuntime>;
+
+        /**
+         * （读档继续时）设置特写。
+         */
+        setCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
     }
 
     export namespace IDirector {

@@ -511,7 +511,7 @@ namespace Runtime {
                             gChars.p(new G.FadeOut(500)),
                             gCG.p(new G.FadeIn(500))
                         ]).then(() => gCG.p(this._h = new G.WaitForClick()));
-                    }).then(() => this._r);
+                    }).then(() => runtime);
             });
         }
 
@@ -660,6 +660,18 @@ namespace Runtime {
                 this._c.q('v')[0].o(0);
                 this._c.q('t')[0].o(0);
                 this._c.q('D')[0].o(0);
+                return runtime;
+            });
+        }
+
+        /**
+         * （读档继续时）设置特写。
+         */
+        public setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime> {
+            return super.setCG(resource).then((runtime: Core.IRuntime) => {
+                var bounds: Core.IBounds = CanvasDirector.BOUNDS;
+                (<G.Sprite> this._c.q('g')[0]).a(new G.Image(resource, bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p'))
+                    .o(1);
                 return runtime;
             });
         }

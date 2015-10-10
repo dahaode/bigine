@@ -205,6 +205,13 @@ namespace Runtime {
         }
 
         /**
+         * （读档继续时）设置特写。
+         */
+        public setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
          * 获取动态创建标识。
          */
         public gD(): boolean {
