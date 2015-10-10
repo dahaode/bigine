@@ -112,8 +112,13 @@ namespace Runtime {
                         tn: string,
                         cn: string,
                         enter: Tag.Enter;
-                    if (!fresh)
+                    if (!fresh) {
                         states.i(data);
+                        if (!states.g('_a'))
+                            states.d('_c')
+                                .d('_c*')
+                                .d('_s*');
+                    }
                     if (fresh || !states.g(ks)) // 无存档或存档无事件特征
                         return this.dispatchEvent(new Event.Begin({
                             target: episode

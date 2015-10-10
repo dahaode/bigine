@@ -1383,7 +1383,7 @@ var Runtime;
             if ('*' == key[length]) {
                 key = key.substr(0, length);
                 Util.each(this._d, function (value, index) {
-                    if (index.substr(0, length) != key)
+                    if (index.length == length || index.substr(0, length) != key)
                         return;
                     logger.d('[state]', index, '=');
                     delete _this._d[index];
@@ -9002,8 +9002,13 @@ var Runtime;
             this.addEventListener('resume', function () {
                 var callback = function (data) {
                     var fresh = !data, episode = _this._e, states = _this._s, ks = '_s', ktn = '_rt', kcn = '_rc', kco = '$rc', tn, cn, enter;
-                    if (!fresh)
+                    if (!fresh) {
                         states.i(data);
+                        if (!states.g('_a'))
+                            states.d('_c')
+                                .d('_c*')
+                                .d('_s*');
+                    }
                     if (fresh || !states.g(ks))
                         return _this.dispatchEvent(new Runtime_1.Event.Begin({
                             target: episode

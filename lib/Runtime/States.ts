@@ -56,7 +56,7 @@ namespace Runtime {
             if ('*' == key[length]) {
                 key = key.substr(0, length);
                 Util.each(this._d, (value: any, index: string) => {
-                    if (index.substr(0, length) != key) return;
+                    if (index.length == length || index.substr(0, length) != key) return;
                     logger.d('[state]', index, '=');
                     delete this._d[index];
                 });
