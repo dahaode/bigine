@@ -936,14 +936,15 @@ var Util;
             return [tablet || mobile, msie];
         };
         if (env.Window) {
-            env.Screen.Width = screen.width;
-            env.Screen.Height = screen.height;
             if ('https:' == location.protocol)
                 env.Protocol = 'https:';
             env.Canvas = 'CanvasRenderingContext2D' in window;
-            var desult = detect();
+            var desult = detect(), doc = document.documentElement;
             env.Mobile = desult[0];
             env.MSIE = desult[1];
+            // window.devicePixelRatio @?x
+            env.Screen.Width = desult[0] ? doc.clientWidth : screen.width;
+            env.Screen.Height = desult[0] ? doc.clientHeight : screen.height;
         }
     })(Util.ENV);
 })(Util || (Util = {}));
@@ -977,7 +978,7 @@ var Runtime;
             else {
                 if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri))
                     throw new E(E.RES_INVALID_URI);
-                var height = env.Screen.Height, filename = height + '.';
+                var height = 720 <= env.Screen.Height ? 720 : 360, filename = height + '.';
                 switch (type) {
                     case types.Room:
                     case types.CG:

@@ -46,7 +46,7 @@ namespace Runtime {
             } else {
                 if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri))
                     throw new E(E.RES_INVALID_URI);
-                var height: number = env.Screen.Height,
+                var height: number = 720 <= env.Screen.Height ? 720 : 360,
                     filename: string = height + '.';
                 switch (type) {
                     case types.Room:
