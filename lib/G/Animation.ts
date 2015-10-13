@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../Core/_G/IAnimation.ts" />
-/// <reference path="../Util/_raf.d.ts" />
+/// <reference path="../../include/_raf.d.ts" />
 /// <reference path="../Util/ENV.ts" />
 
 namespace G {

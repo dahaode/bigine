@@ -369,8 +369,8 @@ var Util;
  * @license   GPL-3.0
  * @file      Util/Q.ts
  */
-/// <reference path="node.d.ts" />
-/// <reference path="es6-promise.d.ts" />
+/// <reference path="../../include/node.d.ts" />
+/// <reference path="../../include/es6-promise.d.ts" />
 /// <reference path="../E.ts" />
 /// <reference path="_iterator.ts" />
 var Util;
@@ -872,7 +872,7 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Util/Env.ts
  */
-/// <reference path="node.d.ts" />
+/// <reference path="../../include/node.d.ts" />
 /// <reference path="../E.ts" />
 var Util;
 (function (Util) {
@@ -1813,7 +1813,7 @@ var Runtime;
  * @file      G/Animation.ts
  */
 /// <reference path="../Core/_G/IAnimation.ts" />
-/// <reference path="../Util/_raf.d.ts" />
+/// <reference path="../../include/_raf.d.ts" />
 /// <reference path="../Util/ENV.ts" />
 var G;
 (function (G) {

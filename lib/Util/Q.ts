@@ -7,8 +7,8 @@
  * @file      Util/Q.ts
  */
 
-/// <reference path="node.d.ts" />
-/// <reference path="es6-promise.d.ts" />
+/// <reference path="../../include/node.d.ts" />
+/// <reference path="../../include/es6-promise.d.ts" />
 /// <reference path="../E.ts" />
 /// <reference path="_iterator.ts" />
 
