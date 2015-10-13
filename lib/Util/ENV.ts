@@ -11,7 +11,7 @@
 /// <reference path="../E.ts" />
 
 namespace Util {
-    interface IEnvType {
+    export interface IEnvType {
         Window: boolean;
         Node: {
             JS: boolean,
