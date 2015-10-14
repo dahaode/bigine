@@ -11,10 +11,14 @@
   "author": "郑煜宇 <yzheng@atfacg.com>",
   "files": [
     "bin",
+    "var/build/bigine.d.ts",
     "var/build/bigine.js*",
     "var/build/xhr.js"
   ],
   "main": "var/build/bigine.js",
+  "typescript": {
+    "definition": "var/build/bigine.d.ts"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/bigine/bigine"
