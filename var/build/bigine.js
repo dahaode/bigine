@@ -9117,6 +9117,7 @@ var Runtime;
             this._fv = 1;
             this._fa = this._e.gA();
             this._d.a(this._fa);
+            this._t = Promise.resolve(this);
             this.addEventListener('ready', function () {
                 _this._d.t(_this._e.gC());
                 _this._fr = true;
@@ -9320,15 +9321,10 @@ var Runtime;
          */
         Runtime.prototype.t = function (flow) {
             var _this = this;
-            var timeline = function () {
-                return Promise.resolve()
-                    .then(function () { return flow(); })['catch'](Util.Q.ignoreHalt)['catch'](function (reason) {
-                    _this._l.e(reason);
-                });
-            };
-            this._t = this._t ?
-                this._t.then(timeline) :
-                timeline();
+            this._t = this._t.then(flow)['catch'](Util.Q.ignoreHalt)['catch'](function (reason) {
+                _this._l.e(reason);
+                throw reason;
+            });
             return this;
         };
         return Runtime;

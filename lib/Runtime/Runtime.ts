@@ -89,6 +89,7 @@ namespace Runtime {
             this._fv = 1;
             this._fa = this._e.gA();
             this._d.a(this._fa);
+            this._t = Promise.resolve(this);
             this.addEventListener<Episode>('ready', () => {
                 this._d.t(this._e.gC());
                 this._fr = true;
@@ -316,17 +317,12 @@ namespace Runtime {
          * 声明时序流。
          */
         public t(flow: () => Runtime | Thenable<Runtime>): Runtime {
-            var timeline: () => Promise<Runtime> = () => {
-                return Promise.resolve()
-                    .then(() => flow())
-                    ['catch'](Util.Q.ignoreHalt)
-                    ['catch']((reason?: any) => {
-                        this._l.e(reason);
-                    });
-            };
-            this._t = this._t ?
-                this._t.then(timeline) :
-                timeline();
+            this._t = this._t.then(flow)
+                ['catch'](Util.Q.ignoreHalt)
+                ['catch']((reason?: any) => {
+                    this._l.e(reason);
+                    throw reason;
+                });
             return this;
         }
     }
