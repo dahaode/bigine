@@ -709,7 +709,7 @@ namespace Runtime {
                     // 开始按钮
                     .a(new G.Button(t2b(section))
                         .b(() => {
-                            this.playBGM(resources[0][4]);
+                            this.playSE(resources[0][4]);
                             this.lightOff().then(() => {
                                 gStart.o(0);
                                 this._r.dispatchEvent(new Event.Begin({
@@ -734,7 +734,7 @@ namespace Runtime {
             // 读档按钮
             gStart.a(new G.Button(t2b(section))
                     .b(() => {
-                        this.playBGM(resources[0][4]);
+                        this.playSE(resources[0][4]);
                         this.lightOff().then(() => {
                             gStart.o(0);
                             this._r.dispatchEvent(new Event.Resume({

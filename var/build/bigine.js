@@ -4309,7 +4309,7 @@ var Runtime;
                 .a(new G.Image(resources[0][0], bounds))
                 .a(new G.Button(t2b(section))
                 .b(function () {
-                _this.playBGM(resources[0][4]);
+                _this.playSE(resources[0][4]);
                 _this.lightOff().then(function () {
                     gStart.o(0);
                     _this._r.dispatchEvent(new Runtime.Event.Begin({
@@ -4325,7 +4325,7 @@ var Runtime;
             // 读档按钮
             gStart.a(new G.Button(t2b(section))
                 .b(function () {
-                _this.playBGM(resources[0][4]);
+                _this.playSE(resources[0][4]);
                 _this.lightOff().then(function () {
                     gStart.o(0);
                     _this._r.dispatchEvent(new Runtime.Event.Resume({

@@ -23,8 +23,7 @@ $gulp.task('compile', function () {
         ts = $gulp.src('lib/Bigine.ts')
             .pipe($smap.init())
             .pipe($tsc($tsc.createProject('tsconfig.json', {
-                outFile: pkg.name + '.js',
-                typescript: require('typescript')
+                outFile: pkg.name + '.js'
             })));
     return ts.js
         .pipe($replace(/\$\{BIGINE_VERSION\}/, pkg.version))
