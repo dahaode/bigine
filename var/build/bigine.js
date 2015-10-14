@@ -369,8 +369,8 @@ var Util;
  * @license   GPL-3.0
  * @file      Util/Q.ts
  */
-/// <reference path="../../include/node.d.ts" />
-/// <reference path="../../include/es6-promise.d.ts" />
+/// <reference path="../../include/node/node.d.ts" />
+/// <reference path="../../include/es6-promise/es6-promise.d.ts" />
 /// <reference path="../E.ts" />
 /// <reference path="_iterator.ts" />
 var Util;
@@ -872,7 +872,7 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Util/Env.ts
  */
-/// <reference path="../../include/node.d.ts" />
+/// <reference path="../../include/node/node.d.ts" />
 /// <reference path="../E.ts" />
 var Util;
 (function (Util) {
@@ -9324,7 +9324,7 @@ var Runtime;
             this._t = this._t.then(flow)['catch'](Util.Q.ignoreHalt)['catch'](function (reason) {
                 _this._l.e(reason);
                 throw reason;
-            });
+            }).then(function () { return _this; });
             return this;
         };
         return Runtime;

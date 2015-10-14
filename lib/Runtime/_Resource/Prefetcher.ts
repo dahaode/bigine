@@ -17,7 +17,7 @@ namespace Runtime {
          */
         export function c(resources: Resource<string | HTMLImageElement>[][], logger?: Core.ILogger): Promise<void> {
             if (!resources.length)
-                return Promise.resolve();
+                return Promise.resolve<void>();
             var total: Resource<string | HTMLImageElement>[][] = resources.slice(0),
                 first: Promise<string | HTMLImageElement>[] = [],
                 required: Promise<(string | HTMLImageElement)[]>;

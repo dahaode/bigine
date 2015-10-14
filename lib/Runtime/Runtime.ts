@@ -319,10 +319,10 @@ namespace Runtime {
         public t(flow: () => Runtime | Thenable<Runtime>): Runtime {
             this._t = this._t.then(flow)
                 ['catch'](Util.Q.ignoreHalt)
-                ['catch']((reason?: any) => {
+                ['catch']((reason: any) => {
                     this._l.e(reason);
                     throw reason;
-                });
+                }).then(() => this);
             return this;
         }
     }

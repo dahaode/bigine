@@ -7,7 +7,7 @@
  * @file      Util/Env.ts
  */
 
-/// <reference path="../../include/node.d.ts" />
+/// <reference path="../../include/node/node.d.ts" />
 /// <reference path="../E.ts" />
 
 namespace Util {

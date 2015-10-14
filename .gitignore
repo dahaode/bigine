@@ -4,6 +4,7 @@
 !Gulpfile.js
 !package.json
 !tsconfig.json
+!tsd.json
 !tslint.json
 
 !bin/

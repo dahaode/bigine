@@ -7,8 +7,8 @@
  * @file      Util/Q.ts
  */
 
-/// <reference path="../../include/node.d.ts" />
-/// <reference path="../../include/es6-promise.d.ts" />
+/// <reference path="../../include/node/node.d.ts" />
+/// <reference path="../../include/es6-promise/es6-promise.d.ts" />
 /// <reference path="../E.ts" />
 /// <reference path="_iterator.ts" />
 
@@ -21,7 +21,7 @@ namespace Util {
          * 中断顺序时序流。
          */
         export function doHalt<T>(): Promise<T> {
-            return Promise.reject<T>(new E('', E.Signal.HALT));
+            return Promise.reject(new E('', E.Signal.HALT));
         }
 
         /**
@@ -29,7 +29,7 @@ namespace Util {
          */
         export function ignoreHalt(error: E): Promise<void> {
             if (E.Signal.HALT == error.signal)
-                return Promise.resolve();
+                return Promise.resolve<void>();
             return Promise.reject(error);
         }
 
@@ -37,7 +37,7 @@ namespace Util {
          * 中断循环时序流。
          */
         export function doBreak<T>(): Promise<T> {
-            return Promise.reject<T>(new E('', E.Signal.BREAK));
+            return Promise.reject(new E('', E.Signal.BREAK));
         }
 
         /**
@@ -45,7 +45,7 @@ namespace Util {
          */
         export function ignoreBreak(error: E): Promise<void> {
             if (E.Signal.BREAK == error.signal)
-                return Promise.resolve();
+                return Promise.resolve<void>();
             return Promise.reject(error);
         }
 
