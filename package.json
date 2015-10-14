@@ -11,6 +11,7 @@
   "author": "郑煜宇 <yzheng@atfacg.com>",
   "files": [
     "bin",
+    "include",
     "var/build/bigine.d.ts",
     "var/build/bigine.js*",
     "var/build/xhr.js"
