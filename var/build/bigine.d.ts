@@ -1,5 +1,4 @@
-/// <reference path="../../include/node/node.d.ts" />
-/// <reference path="../../include/es6-promise/es6-promise.d.ts" />
+/// <reference path="../../include/tsd.d.ts" />
 /// <reference path="../../include/_raf.d.ts" />
 declare namespace Bigine {
 namespace Util {
