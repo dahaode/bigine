@@ -1577,7 +1577,7 @@ var Runtime;
         /**
          * 开始动画。
          */
-        Director.prototype.OP = function (start) {
+        Director.prototype.OP = function (start, title, author) {
             if (!start)
                 this._r.dispatchEvent(new Runtime.Event.Begin({
                     target: this._r.gE()
@@ -1716,7 +1716,7 @@ var Runtime;
         /**
          * 使用主题。
          */
-        Director.prototype.t = function (theme) {
+        Director.prototype.t = function (id, theme) {
             return this;
         };
         /**
@@ -3742,7 +3742,10 @@ var Runtime;
  * * t - 提醒
  *     * w - 文本
  * * D - 选择
+ * * A - 作者
+ *     * t - 作者名
  * * S - 开始菜单
+ *     * t - 作品名
  * * C - 幕帘
  * * L - 加载进度条
  *     * e - 完成进度条
@@ -3776,6 +3779,7 @@ var Runtime;
                 .a(new G.Sprite(bounds).i('m').o(0))
                 .a(new G.Sprite(bounds).i('v').o(0))
                 .a(new G.Sprite(bounds).i('t').o(0))
+                .a(new G.Sprite(bounds).i('A').o(0))
                 .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Color(bounds, '#000').i('C'))
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
@@ -3836,8 +3840,16 @@ var Runtime;
         /**
          * 开始动画。
          */
-        CanvasDirector.prototype.OP = function (start) {
+        CanvasDirector.prototype.OP = function (start, title, author) {
             var _this = this;
+            if (title) {
+                this._c.q('S')[0].q('t')[0]
+                    .c()
+                    .a(new G.Phrase()
+                    .t(title)
+                    .c(this._f['n']['c'])
+                    .f(this._f['n']['f']));
+            }
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
@@ -3845,12 +3857,25 @@ var Runtime;
                 _this._c.z()
                     .a(gLogo, 'C');
                 return _this.lightOn()
-                    .then(function () { return gLogo.p(new G.Delay(2000)); })
+                    .then(function () { return gLogo.p(new G.Delay(1000)); })
                     .then(function () { return _this.lightOff(); })
                     .then(function () {
                     _this._c.e(gLogo);
-                    return _super.prototype.OP.call(_this, start);
-                }).then(function (runtime) {
+                    if (!author)
+                        return;
+                    var gAuthor = _this._c.q('A')[0].o(1);
+                    gAuthor.q('t')[0]
+                        .c()
+                        .a(new G.Phrase()
+                        .t(author)
+                        .c(_this._f['a']['c'])
+                        .f(_this._f['a']['f']));
+                    return _this.lightOn()
+                        .then(function () { return gAuthor.p(new G.Delay(1000)); })
+                        .then(function () { return _this.lightOff(); })
+                        .then(function () { return gAuthor.o(0); });
+                }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
+                    .then(function (runtime) {
                     if (!start)
                         return runtime;
                     _this._c.q('S')[0].o(1);
@@ -4287,26 +4312,46 @@ var Runtime;
         /**
          * 使用主题。
          */
-        CanvasDirector.prototype.t = function (theme) {
+        CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
-            var chapter = theme['start'], section = chapter['new'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, t2b = function (config) {
-                return {
-                    x: config['left'],
-                    y: config['top'],
-                    w: config['width'],
-                    h: config['height']
-                };
-            }, resources = [
-                [
-                    new Runtime.Resource(chapter['image'], raw),
-                    new Runtime.Resource(section['image'], raw),
-                    new Runtime.Resource(section['hover'], raw),
-                    this._i['f'],
-                    this._i['c']
-                ]
-            ], gStart = this._c.q('S')[0]
-                .a(new G.Image(resources[0][0], bounds))
-                .a(new G.Button(t2b(section))
+            var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], align = function (desc) {
+                var aligns = Core.ITextElement.Align;
+                switch (desc) {
+                    case 'center':
+                    case 'middle':
+                        return aligns.Center;
+                    case 'right':
+                        return aligns.Right;
+                    default:
+                        return aligns.Left;
+                }
+            }, gAuthor = this._c.q('A')[0], gStart = this._c.q('S')[0], gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gChoose;
+            // 作品
+            gAuthor.a(new G.Text(section, section['h'], align(section['align']))
+                .a(new G.Phrase()
+                .c(section['color'])
+                .f(section['size'])
+                .t('作品')));
+            section = chapter['title'];
+            this._f['a'] = {
+                c: section['color'],
+                f: section['size']
+            };
+            // 作者名
+            gAuthor.a(new G.Text(section, section['h'], align(section['align'])).i('t'));
+            // -------- start --------
+            chapter = theme['start'];
+            section = chapter['new'];
+            resources.push([
+                new Runtime.Resource(url + chapter['image'], raw),
+                new Runtime.Resource(url + section['image'], raw),
+                new Runtime.Resource(url + section['hover'], raw),
+                this._i['f'],
+                this._i['c']
+            ]);
+            // 背景图
+            gStart.a(new G.Image(resources[0][0], bounds))
+                .a(new G.Button(section)
                 .b(function () {
                 _this.playSE(resources[0][4]);
                 _this.lightOff().then(function () {
@@ -4318,11 +4363,11 @@ var Runtime;
             }, new G.Image(resources[0][2]), new G.Image(resources[0][1]))
                 .addEventListener('$focus', function () {
                 _this.playSE(resources[0][3]);
-            })), gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gChoose;
+            }));
             section = chapter['load'];
-            resources[0].push(new Runtime.Resource(section['image'], raw), new Runtime.Resource(section['hover'], raw));
+            resources[0].push(new Runtime.Resource(url + section['image'], raw), new Runtime.Resource(url + section['hover'], raw));
             // 读档按钮
-            gStart.a(new G.Button(t2b(section))
+            gStart.a(new G.Button(section)
                 .b(function () {
                 _this.playSE(resources[0][4]);
                 _this.lightOff().then(function () {
@@ -4335,14 +4380,20 @@ var Runtime;
                 .addEventListener('$focus', function () {
                 _this.playSE(resources[0][3]);
             }));
+            section = chapter['title'];
+            this._f['n'] = {
+                c: section['color'],
+                f: section['size']
+            };
+            gStart.a(new G.Text(section, section['h'], align(section['align'])).i('t'));
             // -------- voiceover --------
             chapter = theme['voiceover'];
             section = chapter['back'];
             resources.push([
-                new Runtime.Resource(section['image'], raw)
+                new Runtime.Resource(url + section['image'], raw)
             ]);
             // 背景图
-            gVoiceOver.a(new G.Image(resources[1][0], t2b(section)));
+            gVoiceOver.a(new G.Image(resources[1][0], section));
             section = chapter['text'];
             this._f['v'] = {
                 s: section['shadow'],
@@ -4351,17 +4402,17 @@ var Runtime;
             };
             ;
             // 文字区域
-            gVoiceOver.a(new G.Text(t2b(section), 32)
+            gVoiceOver.a(new G.Text(section, 32)
                 .i('w'));
             // -------- monolog --------
             chapter = theme['monolog'];
             section = chapter['back'];
             resources.push([
-                new Runtime.Resource(section['image'], raw)
+                new Runtime.Resource(url + section['image'], raw)
             ]);
             // 背景图
-            gMonolog.a(new G.Image(resources[2][0], t2b(section)))
-                .a(new G.Sprite(t2b(chapter['avatar']))
+            gMonolog.a(new G.Image(resources[2][0], section))
+                .a(new G.Sprite(chapter['avatar'])
                 .i('a'));
             section = chapter['name'];
             this._f['mn'] = {
@@ -4369,7 +4420,7 @@ var Runtime;
                 c: section['color']
             };
             // 名字区域
-            gMonolog.a(new G.Text(t2b(section), 42)
+            gMonolog.a(new G.Text(section, 42)
                 .i('n'));
             section = chapter['text'];
             this._f['m'] = {
@@ -4379,17 +4430,17 @@ var Runtime;
             };
             ;
             // 文字区域
-            gMonolog.a(new G.Text(t2b(section), 32)
+            gMonolog.a(new G.Text(section, 32)
                 .i('w'));
             // -------- speak --------
             chapter = theme['speak'];
             section = chapter['back'];
             resources.push([
-                new Runtime.Resource(section['image'], raw)
+                new Runtime.Resource(url + section['image'], raw)
             ]);
             // 背景图
-            gSpeak.a(new G.Image(resources[3][0], t2b(section)))
-                .a(new G.Sprite(t2b(chapter['avatar']))
+            gSpeak.a(new G.Image(resources[3][0], section))
+                .a(new G.Sprite(chapter['avatar'])
                 .i('a'));
             section = chapter['name'];
             this._f['sn'] = {
@@ -4397,7 +4448,7 @@ var Runtime;
                 c: section['color']
             };
             // 名字区域
-            gSpeak.a(new G.Text(t2b(section), 42)
+            gSpeak.a(new G.Text(section, 42)
                 .i('n'));
             section = chapter['text'];
             this._f['s'] = {
@@ -4407,16 +4458,16 @@ var Runtime;
             };
             ;
             // 文字区域
-            gSpeak.a(new G.Text(t2b(section), 32)
+            gSpeak.a(new G.Text(section, 32)
                 .i('w'));
             // -------- tip --------
             chapter = theme['tip'];
             section = chapter['back'];
             resources.push([
-                new Runtime.Resource(section['image'], raw)
+                new Runtime.Resource(url + section['image'], raw)
             ]);
             // 背景图
-            gTip.a(new G.Image(resources[4][0], t2b(section)));
+            gTip.a(new G.Image(resources[4][0], section));
             section = chapter['text'];
             this._f['t'] = {
                 s: section['shadow'],
@@ -4425,18 +4476,18 @@ var Runtime;
             };
             ;
             // 文字区域
-            gTip.a(new G.Text(t2b(section), 32, Core.ITextElement.Align.Center)
+            gTip.a(new G.Text(section, 32, Core.ITextElement.Align.Center)
                 .i('w'));
             // -------- choose --------
             chapter = theme['choose'];
-            gChoose = new G.Sprite((bounds.w - chapter['width']) / 2, 0, chapter['width'], bounds.h)
+            gChoose = new G.Sprite((bounds.w - chapter['w']) / 2, 0, chapter['w'], bounds.h)
                 .i('D')
                 .o(0);
             chapter = chapter['option'];
             section = chapter['back'];
             resources.push([
-                new Runtime.Resource(section['image'], raw),
-                new Runtime.Resource(section['hover'], raw)
+                new Runtime.Resource(url + section['image'], raw),
+                new Runtime.Resource(url + section['hover'], raw)
             ]);
             this._i['cn'] = resources[5][0];
             this._i['ch'] = resources[5][1];
@@ -9118,7 +9169,7 @@ var Runtime;
             this._d.a(this._fa);
             this._t = Promise.resolve(this);
             this.addEventListener('ready', function () {
-                _this._d.t(_this._e.gC());
+                _this._d.t(_this._e.gT(), _this._e.gC());
                 _this._fr = true;
                 if (_this._fp) {
                     _this._fp = false;
@@ -9249,7 +9300,7 @@ var Runtime;
             this._s.i({});
             this._d.playBGM();
             this._d.playSE();
-            this._d.OP(!this._e.gA());
+            this._d.OP(!this._e.gA(), this._n, this._c);
             return this;
         };
         /**
@@ -9324,6 +9375,20 @@ var Runtime;
                 _this._l.e(reason);
                 throw reason;
             }).then(function () { return _this; });
+            return this;
+        };
+        /**
+         * 设置作品标题。
+         */
+        Runtime.prototype.title = function (title) {
+            this._n = title;
+            return this;
+        };
+        /**
+         * 设置作者。
+         */
+        Runtime.prototype.author = function (title) {
+            this._c = title;
             return this;
         };
         return Runtime;
@@ -9528,7 +9593,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.11.0';
+    Bigine.version = '0.12.0';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

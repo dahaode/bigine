@@ -61,7 +61,7 @@ namespace Runtime {
         /**
          * 开始动画。
          */
-        public OP(start: boolean): Promise<Core.IRuntime> {
+        public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
             if (!start)
                 this._r.dispatchEvent(new Event.Begin({
                     target: this._r.gE()
@@ -221,7 +221,7 @@ namespace Runtime {
         /**
          * 使用主题。
          */
-        public t(theme: Util.IHashTable<Util.IHashTable<any>>): Director {
+        public t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director {
             return this;
         }
 

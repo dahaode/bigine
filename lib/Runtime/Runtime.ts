@@ -75,6 +75,16 @@ namespace Runtime {
         private _t: Promise<Runtime>;
 
         /**
+         * 作品名称。
+         */
+        private _n: string;
+
+        /**
+         * 作者名。
+         */
+        private _c: string;
+
+        /**
          * 构造函数。
          */
         constructor(ep: Core.IRootTag) {
@@ -91,7 +101,7 @@ namespace Runtime {
             this._d.a(this._fa);
             this._t = Promise.resolve(this);
             this.addEventListener<Episode>('ready', () => {
-                this._d.t(this._e.gC());
+                this._d.t(this._e.gT(), this._e.gC());
                 this._fr = true;
                 if (this._fp) {
                     this._fp = false;
@@ -238,7 +248,7 @@ namespace Runtime {
             this._s.i({});
             this._d.playBGM();
             this._d.playSE();
-            this._d.OP(!this._e.gA());
+            this._d.OP(!this._e.gA(), this._n, this._c);
             return this;
         }
 
@@ -323,6 +333,22 @@ namespace Runtime {
                     this._l.e(reason);
                     throw reason;
                 }).then(() => this);
+            return this;
+        }
+
+        /**
+         * 设置作品标题。
+         */
+        public title(title: string): Runtime {
+            this._n = title;
+            return this;
+        }
+
+        /**
+         * 设置作者。
+         */
+        public author(title: string): Runtime {
+            this._c = title;
             return this;
         }
     }

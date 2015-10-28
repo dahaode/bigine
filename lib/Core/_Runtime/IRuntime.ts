@@ -89,5 +89,15 @@ namespace Core {
          * 声明时序流。
          */
         t(flow: () => IRuntime | Thenable<IRuntime>): IRuntime;
+
+        /**
+         * 设置作品标题。
+         */
+        title(title: string): IRuntime;
+
+        /**
+         * 设置作者。
+         */
+        author(title: string): IRuntime;
     }
 }

@@ -244,6 +244,7 @@ namespace Core {
 namespace Core {
     interface IDirector {
         c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
+        OP(start: boolean, title: string, author: string): Promise<IRuntime>;
         ED(): Promise<IRuntime>;
         FAIL(): Promise<IRuntime>;
         charOn(resource: IResource<HTMLImageElement>, position: IDirector.Position): Promise<IRuntime>;
@@ -296,6 +297,8 @@ namespace Core {
         a(action: IIdableTag): IRuntime;
         gH(): boolean;
         t(flow: () => IRuntime | Thenable<IRuntime>): IRuntime;
+        title(title: string): IRuntime;
+        author(title: string): IRuntime;
     }
 }
 namespace Core {
@@ -514,7 +517,7 @@ namespace Runtime {
         protected _v: number;
         constructor(runtime: Core.IRuntime);
         c(resources: Resource<string | HTMLImageElement>[][]): Promise<void>;
-        OP(start: boolean): Promise<Core.IRuntime>;
+        OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
         ED(): Promise<Core.IRuntime>;
         FAIL(): Promise<Core.IRuntime>;
         charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
@@ -536,7 +539,7 @@ namespace Runtime {
         reset(): Promise<Core.IRuntime>;
         setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
         gD(): boolean;
-        t(theme: Util.IHashTable<Util.IHashTable<any>>): Director;
+        t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
         a(auto: boolean): Director;
         v(volume: number): Director;
         f(): void;
@@ -955,7 +958,7 @@ namespace Runtime {
         private _l;
         constructor(runtime: Core.IRuntime);
         c(resources: Resource<string | HTMLImageElement>[][]): Promise<void>;
-        OP(start: boolean): Promise<Core.IRuntime>;
+        OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
         ED(): Promise<Core.IRuntime>;
         charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
         charOff(position: Core.IDirector.Position): Promise<Core.IRuntime>;
@@ -976,7 +979,7 @@ namespace Runtime {
         choose(options: Core.IOptionTag[]): Promise<Core.IRuntime>;
         reset(): Promise<Core.IRuntime>;
         setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
-        t(theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
+        t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
         a(auto: boolean): CanvasDirector;
         v(volume: number): CanvasDirector;
         f(): void;
@@ -1673,6 +1676,8 @@ namespace Runtime {
         private _fa;
         private _fh;
         private _t;
+        private _n;
+        private _c;
         constructor(ep: Core.IRootTag);
         addEventListener<T>(type: string, listener: Core.IEventListener<T>): Runtime;
         removeEventListener<T>(type: string, listener: Core.IEventListener<T>): Runtime;
@@ -1691,6 +1696,8 @@ namespace Runtime {
         a(action: Core.IIdableTag): Runtime;
         gH(): boolean;
         t(flow: () => Runtime | Thenable<Runtime>): Runtime;
+        title(title: string): Runtime;
+        author(title: string): Runtime;
     }
 }
 namespace Lex {

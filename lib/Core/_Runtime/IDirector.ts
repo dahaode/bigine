@@ -22,6 +22,11 @@ namespace Core {
         c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
 
         /**
+         * 开场动画。
+         */
+        OP(start: boolean, title: string, author: string): Promise<IRuntime>;
+
+        /**
          * 完结动画。
          */
         ED(): Promise<IRuntime>;
