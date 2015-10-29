@@ -1295,6 +1295,50 @@ var Runtime;
     Runtime.ConsoleLogger = ConsoleLogger;
 })(Runtime || (Runtime = {}));
 /**
+ * 声明（运行时）查询存档数据事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Runtime/Event/IQueryMetas.ts
+ */
+/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）查询存档数据事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Runtime/Event/Query.ts
+ */
+/// <reference path="Event.ts" />
+/// <reference path="IQueryMetas.ts" />
+var Runtime;
+(function (Runtime) {
+    var Event;
+    (function (Event) {
+        var Query = (function (_super) {
+            __extends(Query, _super);
+            /**
+             * 构造函数。
+             */
+            function Query(metas) {
+                _super.call(this, metas);
+                this.callback = metas.callback;
+            }
+            /**
+             * 获取类型。
+             */
+            Query.prototype.gT = function () {
+                return 'query';
+            };
+            return Query;
+        })(Event.Event);
+        Event.Query = Query;
+    })(Event = Runtime.Event || (Runtime.Event = {}));
+})(Runtime || (Runtime = {}));
+/**
  * 声明（运行时）存档事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1325,8 +1369,9 @@ var Runtime;
              */
             function Save(metas) {
                 _super.call(this, metas);
-                this.title = metas.title;
                 this.data = metas.data;
+                this.manual = metas.manual;
+                this.callback = metas.callback;
             }
             /**
              * 获取类型。
@@ -1349,6 +1394,7 @@ var Runtime;
  */
 /// <reference path="../Core/_Runtime/IStates.ts" />
 /// <reference path="../Core/_Runtime/IRuntime.ts" />
+/// <reference path="Event/Query.ts" />
 /// <reference path="Event/Save.ts" />
 var Runtime;
 (function (Runtime) {
@@ -1359,6 +1405,8 @@ var Runtime;
         function States(runtime) {
             this._d = {};
             this._r = runtime;
+            this._s = {};
+            this._l = false;
         }
         /**
          * 设置值。
@@ -1428,16 +1476,20 @@ var Runtime;
          *
          * 此方法应触发 Save 事件。
          */
-        States.prototype.e = function (brief) {
-            var data = {};
+        States.prototype.e = function (manual) {
+            var _this = this;
+            var data = {}, save = function (id) {
+                _this._s[manual ? '1' : 'auto'] = [id, +new Date()];
+            };
             Util.each(this._d, function (value, key) {
                 if ('.' != key[0] && '$' != key[0] && undefined != value)
                     data[key] = value;
             });
             this._r.dispatchEvent(new Runtime.Event.Save({
                 target: this,
-                title: brief || '',
-                data: data
+                manual: manual,
+                data: data,
+                callback: save
             }));
             return this._d;
         };
@@ -1447,6 +1499,28 @@ var Runtime;
         States.prototype.i = function (data) {
             this._d = data;
             return this;
+        };
+        /**
+         * 查询档位存档编号。
+         */
+        States.prototype.q = function (index) {
+            return this._s[index];
+        };
+        /**
+         * 加载存档信息。
+         */
+        States.prototype.l = function () {
+            var _this = this;
+            if (this._l)
+                return;
+            this._l = true;
+            var query = function (slots) {
+                _this._s = slots;
+            };
+            this._r.dispatchEvent(new Runtime.Event.Query({
+                target: this,
+                callback: query
+            }));
         };
         return States;
     })();
@@ -1563,7 +1637,8 @@ var Runtime;
             this._r = runtime;
             this._p = Promise.resolve(this._r);
             this._d =
-                this._a = false;
+                this._a =
+                    this._o = false;
             this._v = 1;
         }
         /**
@@ -1749,6 +1824,20 @@ var Runtime;
          * 取消阻塞。
          */
         Director.prototype.h = function () {
+            //
+        };
+        /**
+         * 显示存档读档菜单。
+         */
+        Director.prototype.qs = function (load, opacity) {
+            if (load === void 0) { load = true; }
+            if (opacity === void 0) { opacity = 1; }
+            this._o = load;
+        };
+        /**
+         * 隐藏存档读档菜单。
+         */
+        Director.prototype.qh = function (succeed) {
             //
         };
         return Director;
@@ -3723,6 +3812,7 @@ var Runtime;
 /// <reference path="Director.ts" />
 /// <reference path="../../G/_pack.ts" />
 /// <reference path="../Event/Resume.ts" />
+/// <reference path="../Event/Save.ts" />
 /**
  * * b - 背景
  * * M - 地图
@@ -3742,10 +3832,21 @@ var Runtime;
  * * t - 提醒
  *     * w - 文本
  * * D - 选择
+ * * $. - 功能菜单按钮
  * * A - 作者
  *     * t - 作者名
  * * S - 开始菜单
  *     * t - 作品名
+ * * $ - 功能菜单
+ *     * m - 遮罩层
+ *     * f - 功能层
+ *     * s - 档位层
+ *         * _ - 自动档
+ *             * t - 时间
+ *         * _. - 自动档禁止状态
+ *         * 1 - 第一档
+ *             * t - 时间
+ *         * 1. - 第一档禁止状态
  * * C - 幕帘
  * * L - 加载进度条
  *     * e - 完成进度条
@@ -3781,6 +3882,7 @@ var Runtime;
                 .a(new G.Sprite(bounds).i('t').o(0))
                 .a(new G.Sprite(bounds).i('A').o(0))
                 .a(new G.Sprite(bounds).i('S').o(0))
+                .a(new G.Sprite(bounds).i('$').o(0))
                 .a(new G.Color(bounds, '#000').i('C'))
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
@@ -3853,9 +3955,10 @@ var Runtime;
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
-                var gLogo = new G.Image(_this._i['o'], CanvasDirector.BOUNDS);
+                var gLogo = new G.Image(_this._i['o'], CanvasDirector.BOUNDS), gEntry = _this._c.q('$.')[0];
                 _this._c.z()
                     .a(gLogo, 'C');
+                gEntry.o(0);
                 return _this.lightOn()
                     .then(function () { return gLogo.p(new G.Delay(1000)); })
                     .then(function () { return _this.lightOff(); })
@@ -3876,6 +3979,7 @@ var Runtime;
                         .then(function () { return gAuthor.o(0); });
                 }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
                     .then(function (runtime) {
+                    gEntry.o(_this._r.auto() ? 0 : 1);
                     if (!start)
                         return runtime;
                     _this._c.q('S')[0].o(1);
@@ -3896,6 +4000,7 @@ var Runtime;
                 return _this.lightOff()
                     .then(function () {
                     _this._c.a(gED, 'C');
+                    _this._c.q('$.')[0].o(0);
                     return _this.lightOn();
                 }).then(function () { return gED.p(new G.Delay(2000)); })
                     .then(function () { return _this.lightOff(); })
@@ -4325,7 +4430,7 @@ var Runtime;
                     default:
                         return aligns.Left;
                 }
-            }, gAuthor = this._c.q('A')[0], gStart = this._c.q('S')[0], gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gChoose;
+            }, gAuthor = this._c.q('A')[0], gStart = this._c.q('S')[0], gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gMenu = this._c.q('$')[0], gMenuWay = false, right = Core.ITextElement.Align.Right, gMenuEntry, gMenuMask, gMenuFeatures, gMenuSlots, gChoose;
             // 作品
             gAuthor.a(new G.Text(section, section['h'], align(section['align']))
                 .a(new G.Phrase()
@@ -4347,7 +4452,7 @@ var Runtime;
                 new Runtime.Resource(url + section['image'], raw),
                 new Runtime.Resource(url + section['hover'], raw),
                 this._i['f'],
-                this._i['c']
+                this._i['c'] // 4
             ]);
             // 背景图
             gStart.a(new G.Image(resources[0][0], bounds))
@@ -4365,7 +4470,9 @@ var Runtime;
                 _this.playSE(resources[0][3]);
             }));
             section = chapter['load'];
-            resources[0].push(new Runtime.Resource(url + section['image'], raw), new Runtime.Resource(url + section['hover'], raw));
+            resources[0].push(new Runtime.Resource(url + section['image'], raw), // 5
+            new Runtime.Resource(url + section['hover'], raw) // 6
+            );
             // 读档按钮
             gStart.a(new G.Button(section)
                 .b(function () {
@@ -4390,7 +4497,7 @@ var Runtime;
             chapter = theme['voiceover'];
             section = chapter['back'];
             resources.push([
-                new Runtime.Resource(url + section['image'], raw)
+                new Runtime.Resource(url + section['image'], raw) // 0
             ]);
             // 背景图
             gVoiceOver.a(new G.Image(resources[1][0], section));
@@ -4408,7 +4515,7 @@ var Runtime;
             chapter = theme['monolog'];
             section = chapter['back'];
             resources.push([
-                new Runtime.Resource(url + section['image'], raw)
+                new Runtime.Resource(url + section['image'], raw) // 0
             ]);
             // 背景图
             gMonolog.a(new G.Image(resources[2][0], section))
@@ -4436,7 +4543,7 @@ var Runtime;
             chapter = theme['speak'];
             section = chapter['back'];
             resources.push([
-                new Runtime.Resource(url + section['image'], raw)
+                new Runtime.Resource(url + section['image'], raw) // 0
             ]);
             // 背景图
             gSpeak.a(new G.Image(resources[3][0], section))
@@ -4464,7 +4571,7 @@ var Runtime;
             chapter = theme['tip'];
             section = chapter['back'];
             resources.push([
-                new Runtime.Resource(url + section['image'], raw)
+                new Runtime.Resource(url + section['image'], raw) // 0
             ]);
             // 背景图
             gTip.a(new G.Image(resources[4][0], section));
@@ -4487,7 +4594,7 @@ var Runtime;
             section = chapter['back'];
             resources.push([
                 new Runtime.Resource(url + section['image'], raw),
-                new Runtime.Resource(url + section['hover'], raw)
+                new Runtime.Resource(url + section['hover'], raw) // 1
             ]);
             this._i['cn'] = resources[5][0];
             this._i['ch'] = resources[5][1];
@@ -4497,6 +4604,124 @@ var Runtime;
                 c: section['color']
             };
             this._c.a(gChoose, 'S');
+            // -------- menu --------
+            chapter = theme['menu'];
+            gMenu.a((gMenuMask = new G.Color(bounds, chapter['mask']['color0'])).i('m'))
+                .a((gMenuFeatures = new G.Sprite(bounds)).i('f'))
+                .a((gMenuSlots = new G.Sprite(bounds)).i('s').o(0));
+            section = chapter['enter'];
+            resources.push([
+                new Runtime.Resource(url + section['image'], raw),
+                new Runtime.Resource(url + section['hover'], raw) // 1
+            ]);
+            // 入口按钮
+            this._c.a((gMenuEntry = new G.Button(section).b(function () {
+                gMenuEntry.o(0);
+                gMenuMask.o(.4);
+                gMenuSlots.o(0);
+                gMenuFeatures.o(1);
+                gMenu.o(1);
+            }, new G.Image(resources[6][1]), new G.Image(resources[6][0]))).i('$.'), 'A');
+            section = chapter['back'];
+            resources[6].push(new Runtime.Resource(url + section['image'], raw), // 2
+            new Runtime.Resource(url + section['hover'], raw) // 3
+            );
+            // 关闭按钮
+            gMenuFeatures.a(new G.Button(section).b(function () {
+                gMenuEntry.o(1);
+                gMenu.o(0);
+            }, new G.Image(resources[6][3]), new G.Image(resources[6][2])));
+            // 返回按钮
+            gMenuSlots.a(new G.Button(section).b(function () {
+                if (!gMenuWay) {
+                    _this.qh(false);
+                    return;
+                }
+                gMenuSlots.o(0);
+                gMenuFeatures.o(1);
+            }, new G.Image(resources[6][3]), new G.Image(resources[6][2])));
+            section = chapter['save'];
+            resources[6].push(new Runtime.Resource(url + section['image'], raw), // 4
+            new Runtime.Resource(url + section['hover'], raw) // 5
+            );
+            // 存档按钮
+            gMenuFeatures.a(new G.Button(section).b(function () {
+                gMenuWay = true;
+                _this.qs(false, .4);
+            }, new G.Image(resources[6][5]), new G.Image(resources[6][4])));
+            section = chapter['load'];
+            resources[6].push(new Runtime.Resource(url + section['image'], raw), // 6
+            new Runtime.Resource(url + section['hover'], raw) // 7
+            );
+            // 读档按钮
+            gMenuFeatures.a(new G.Button(section).b(function () {
+                gMenuWay = true;
+                _this.qs(true, .4);
+            }, new G.Image(resources[6][7]), new G.Image(resources[6][6])));
+            section = chapter['auto'];
+            resources[6].push(new Runtime.Resource(url + section['image'], raw), // 8
+            new Runtime.Resource(url + section['hover'], raw) // 9
+            );
+            section = chapter['autotext'];
+            // 自动档按钮
+            gMenuSlots.a(new G.Button(chapter['auto']).b(function () {
+                _this._r.l(_this._r.gS().q('auto')[0]);
+            }, new G.Image(resources[6][9]), new G.Image(resources[6][8]))
+                .a(new G.Text(section, section['h'], right, true).i('t'))
+                .i('_'));
+            // 自动档按钮（禁用状态）
+            gMenuSlots.a(new G.Sprite(chapter['auto'])
+                .a(new G.Image(resources[6][8]))
+                .a(new G.Text(section, section['h'], right, true)
+                .a(new G.Phrase()
+                .t('无')
+                .f(chapter['disabled']['size'])
+                .c(chapter['disabled']['color']))).i('_.').o(0));
+            section = chapter['1'];
+            resources[6].push(new Runtime.Resource(url + section['image'], raw), // 10
+            new Runtime.Resource(url + section['hover'], raw) // 11
+            );
+            section = chapter['1text'];
+            // 第一档按钮
+            gMenuSlots.a(new G.Button(chapter['1']).b(function () {
+                if (_this._o) {
+                    _this._r.l(_this._r.gS().q('1')[0]);
+                    return;
+                }
+                _this._r.gS().e(true);
+                gMenuEntry.o(1);
+                gMenu.o(0);
+            }, new G.Image(resources[6][11]), new G.Image(resources[6][10]))
+                .a(new G.Text(section, section['h'], right, true).i('t'))
+                .i('1'));
+            // 第一档按钮（禁用状态）
+            gMenuSlots.a(new G.Sprite(chapter['1'])
+                .a(new G.Image(resources[6][10]))
+                .a(new G.Text(section, section['h'], right, true)
+                .a(new G.Phrase()
+                .t('无')
+                .f(chapter['disabled']['size'])
+                .c(chapter['disabled']['color']))).i('1.').o(0));
+            section = chapter['2'];
+            resources[6].push(new Runtime.Resource(url + section['image'], raw) // 12
+            );
+            // 第二档按钮
+            gMenuSlots.a(new G.Image(resources[6][12], section));
+            section = chapter['3'];
+            resources[6].push(new Runtime.Resource(url + section['image'], raw) // 13
+            );
+            // 第三档按钮
+            gMenuSlots.a(new G.Image(resources[6][13], section));
+            section = chapter['4'];
+            resources[6].push(new Runtime.Resource(url + section['image'], raw) // 14
+            );
+            // 第二档按钮
+            gMenuSlots.a(new G.Image(resources[6][14], section));
+            section = chapter['enabled'];
+            this._f['f'] = {
+                f: section['size'],
+                c: section['color']
+            };
             this.c(resources);
             return this;
         };
@@ -4562,6 +4787,55 @@ var Runtime;
             }
             this.playBGM();
             this.playSE();
+        };
+        /**
+         * 显示存档读档菜单。
+         */
+        CanvasDirector.prototype.qs = function (load, opacity) {
+            if (load === void 0) { load = true; }
+            if (opacity === void 0) { opacity = 1; }
+            _super.prototype.qs.call(this, load, opacity);
+            var gEntry = this._c.q('$.')[0], gMenu = this._c.q('$')[0], gMask = gMenu.q('m')[0], gFeatures = gMenu.q('f')[0], gSlots = gMenu.q('s')[0], gAuto = gSlots.q('_')[0], gAutoDisabled = gSlots.q('_.')[0], g1 = gSlots.q('1')[0], g1Disabled = gSlots.q('1.')[0], states = this._r.gS(), slot = states.q('auto'), config = this._f['f'], time = function (stamp) {
+                var date = new Date(stamp), node = date.getHours(), clob = ' ' + (10 > node ? '0' : '') + node;
+                node = date.getMinutes();
+                clob += ':' + (10 > node ? '0' : '') + node;
+                return date.getFullYear() + '-' + (1 + date.getMonth()) + '-' + (1 + date.getDate()) + clob;
+            };
+            gEntry.o(0);
+            gMask.o(0);
+            gFeatures.o(0);
+            gSlots.o(1);
+            gAuto.o(load && slot ? 1 : 0);
+            if (slot)
+                gAuto.q('t')[0].c()
+                    .a(new G.Phrase()
+                    .t(time(slot[1]))
+                    .f(config['f'])
+                    .c(config['c']));
+            gAutoDisabled.o(load && !slot ? 1 : 0);
+            slot = states.q('1');
+            g1.o(!load || slot ? 1 : 0);
+            if (slot)
+                g1.q('t')[0].c()
+                    .a(new G.Phrase()
+                    .t(time(slot[1]))
+                    .f(config['f'])
+                    .c(config['c']));
+            g1Disabled.o(load && !slot ? 1 : 0);
+            gMenu.o(1);
+            this.lightOn();
+        };
+        /**
+         * 隐藏存档读档菜单。
+         */
+        CanvasDirector.prototype.qh = function (succeed) {
+            var _this = this;
+            this.lightOff()
+                .then(function () {
+                _this._c.q('$.')[0].o(1);
+                _this._c.q('S')[0].o(succeed ? 0 : 1);
+                _this._c.q('$')[0].o(0);
+            }).then(function () { return _this.lightOn(); });
         };
         /**
          * 将文本添加至画面文字元素中。
@@ -4667,6 +4941,7 @@ var Runtime;
             function Load(metas) {
                 _super.call(this, metas);
                 this.callback = metas.callback;
+                this.id = metas.id;
             }
             /**
              * 获取类型。
@@ -7910,7 +8185,7 @@ var Tag;
                     scene = scene.gU();
                 brief = scene.$c();
             }
-            runtime.gS().e(brief);
+            runtime.gS().e(false);
             return runtime;
         };
         return Save;
@@ -9145,6 +9420,7 @@ var Tag;
 /// <reference path="_Director/DirectorFactory.ts" />
 /// <reference path="Event/Begin.ts" />
 /// <reference path="Event/Load.ts" />
+/// <reference path="Event/Query.ts" />
 /// <reference path="Event/Scene.ts" />
 /// <reference path="Event/Action.ts" />
 /// <reference path="../Tag/_pack.ts" />
@@ -9169,6 +9445,7 @@ var Runtime;
             this._d.a(this._fa);
             this._t = Promise.resolve(this);
             this.addEventListener('ready', function () {
+                _this._s.l();
                 _this._d.t(_this._e.gT(), _this._e.gC());
                 _this._fr = true;
                 if (_this._fp) {
@@ -9180,48 +9457,7 @@ var Runtime;
                 _this.t(function () { return _this._e.p(Core.ISceneTag.Type.Begin, _this); });
             });
             this.addEventListener('resume', function () {
-                var callback = function (data) {
-                    var fresh = !data, episode = _this._e, states = _this._s, ks = '_s', ktn = '_rt', kcn = '_rc', kco = '$rc', tn, cn, enter;
-                    if (!fresh) {
-                        states.i(data);
-                        if (!states.g('_a'))
-                            states.d('_c')
-                                .d('_c*')
-                                .d('_s*');
-                    }
-                    if (fresh || !states.g(ks))
-                        return _this.dispatchEvent(new Runtime_1.Event.Begin({
-                            target: episode
-                        }));
-                    states.m('_a', '.a')
-                        .m(ks, '.s');
-                    _this._fh = true; // 中止现有时序流
-                    _this._d.h();
-                    _this.t(function () {
-                        _this._fh = false;
-                        tn = states.g(ktn);
-                        cn = states.g(kcn);
-                        if (tn || cn) {
-                            if (cn) {
-                                if (tn) {
-                                    states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
-                                }
-                                else {
-                                    tn = cn;
-                                    states.d(kcn);
-                                }
-                            }
-                            enter = new Tag.Enter([tn || cn], '', [], -1);
-                            enter.b(episode);
-                            return enter.p(_this)['catch'](Util.Q.ignoreHalt);
-                        }
-                        return episode.p(states.g('_p'), _this);
-                    });
-                };
-                _this.dispatchEvent(new Runtime_1.Event.Load({
-                    target: _this._s,
-                    callback: callback
-                }));
+                _this._d.qs();
             });
             this.addEventListener('end', function () {
                 _this._fp = false;
@@ -9338,6 +9574,20 @@ var Runtime;
             return this._fv;
         };
         /**
+         * 设置作品标题。
+         */
+        Runtime.prototype.title = function (title) {
+            this._n = title;
+            return this;
+        };
+        /**
+         * 设置作者。
+         */
+        Runtime.prototype.author = function (title) {
+            this._c = title;
+            return this;
+        };
+        /**
          * 播报当前事件。
          */
         Runtime.prototype.s = function (scene, title, actions) {
@@ -9378,18 +9628,54 @@ var Runtime;
             return this;
         };
         /**
-         * 设置作品标题。
+         * 读档继续。
          */
-        Runtime.prototype.title = function (title) {
-            this._n = title;
-            return this;
-        };
-        /**
-         * 设置作者。
-         */
-        Runtime.prototype.author = function (title) {
-            this._c = title;
-            return this;
+        Runtime.prototype.l = function (id) {
+            var _this = this;
+            var load = function (data) {
+                var fresh = !data || {} == data, episode = _this._e, states = _this._s, ks = '_s', ktn = '_rt', kcn = '_rc', kco = '$rc', tn, cn, enter;
+                if (!fresh) {
+                    states.i(data);
+                    if (!states.g('_a'))
+                        states.d('_c')
+                            .d('_c*')
+                            .d('_s*');
+                }
+                _this._d.qh(true);
+                if (fresh || !states.g(ks))
+                    return _this.dispatchEvent(new Runtime_1.Event.Begin({
+                        target: episode
+                    }));
+                states.m('_a', '.a')
+                    .m(ks, '.s');
+                _this._fh = true; // 中止现有时序流
+                _this._d.h();
+                _this.t(function () {
+                    _this._fh = false;
+                    tn = states.g(ktn);
+                    cn = states.g(kcn);
+                    if (tn || cn) {
+                        if (cn) {
+                            if (tn) {
+                                states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                            }
+                            else {
+                                tn = cn;
+                                states.d(kcn);
+                            }
+                        }
+                        enter = new Tag.Enter([tn || cn], '', [], -1);
+                        enter.b(episode);
+                        return enter.p(_this)['catch'](Util.Q.ignoreHalt);
+                    }
+                    return episode.p(states.g('_p'), _this);
+                });
+            };
+            this.dispatchEvent(new Runtime_1.Event.Load({
+                target: this._s,
+                callback: load,
+                id: id
+            }));
         };
         return Runtime;
     })();

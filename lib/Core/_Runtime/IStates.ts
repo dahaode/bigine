@@ -79,11 +79,21 @@ namespace Core {
          *
          * 此方法应触发 Save 事件。
          */
-        e(brief?: string): Util.IHashTable<any>;
+        e(manual: boolean): Util.IHashTable<any>;
 
         /**
          * 导入数据。
          */
         i(data: Util.IHashTable<any>): IStates;
+
+        /**
+         * 查询档位信息。
+         */
+        q(index: string): [string, number];
+
+        /**
+         * 加载存档信息。
+         */
+        l(): void;
     }
 }

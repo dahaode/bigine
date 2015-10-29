@@ -9,6 +9,7 @@
 
 /// <reference path="../Core/_Runtime/IStates.ts" />
 /// <reference path="../Core/_Runtime/IRuntime.ts" />
+/// <reference path="Event/Query.ts" />
 /// <reference path="Event/Save.ts" />
 
 namespace Runtime {
@@ -24,11 +25,23 @@ namespace Runtime {
         private _r: Core.IRuntime;
 
         /**
+         * 存档信息。
+         */
+        private _s: Util.IHashTable<[string, number]>;
+
+        /**
+         * 是否已加载存档信息。
+         */
+        private _l: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
             this._d = {};
             this._r = runtime;
+            this._s = {};
+            this._l = false;
         }
 
         /**
@@ -104,16 +117,20 @@ namespace Runtime {
          *
          * 此方法应触发 Save 事件。
          */
-        public e(brief?: string): Util.IHashTable<any> {
-            var data: Util.IHashTable<any> = {};
+        public e(manual: boolean): Util.IHashTable<any> {
+            var data: Util.IHashTable<any> = {},
+                save: (id: string) => void = (id: string) => {
+                    this._s[manual ? '1' : 'auto'] = [id, + new Date()];
+                };
             Util.each(this._d, (value: any, key: string) => {
                 if ('.' != key[0] && '$' != key[0] && undefined != value)
                     data[key] = value;
             });
-            this._r.dispatchEvent(new Event.Save(<Event.ISaveMetas> {
+            this._r.dispatchEvent(new Event.Save({
                 target: this,
-                title: brief || '',
-                data: data
+                manual: manual,
+                data: data,
+                callback: save
             }));
             return this._d;
         }
@@ -124,6 +141,28 @@ namespace Runtime {
         public i(data: Util.IHashTable<any>): States {
             this._d = data;
             return this;
+        }
+
+        /**
+         * 查询档位存档编号。
+         */
+        public q(index: string): [string, number] {
+            return this._s[index];
+        }
+
+        /**
+         * 加载存档信息。
+         */
+        public l(): void {
+            if (this._l) return;
+            this._l = true;
+            var query: (slots: Util.IHashTable<[string, number]>) => void = (slots: Util.IHashTable<[string, number]>) => {
+                this._s = slots;
+            };
+            this._r.dispatchEvent(new Event.Query({
+                target: this,
+                callback: query
+            }));
         }
     }
 }

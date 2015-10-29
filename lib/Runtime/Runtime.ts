@@ -13,6 +13,7 @@
 /// <reference path="_Director/DirectorFactory.ts" />
 /// <reference path="Event/Begin.ts" />
 /// <reference path="Event/Load.ts" />
+/// <reference path="Event/Query.ts" />
 /// <reference path="Event/Scene.ts" />
 /// <reference path="Event/Action.ts" />
 /// <reference path="../Tag/_pack.ts" />
@@ -101,6 +102,7 @@ namespace Runtime {
             this._d.a(this._fa);
             this._t = Promise.resolve(this);
             this.addEventListener<Episode>('ready', () => {
+                this._s.l();
                 this._d.t(this._e.gT(), this._e.gC());
                 this._fr = true;
                 if (this._fp) {
@@ -112,57 +114,7 @@ namespace Runtime {
                 this.t(() => this._e.p(Core.ISceneTag.Type.Begin, this));
             });
             this.addEventListener<Episode>('resume', () => {
-                var callback: (data: Util.IHashTable<any>) => void = (data: Util.IHashTable<any>) => {
-                    var fresh: boolean = !data,
-                        episode: Episode = this._e,
-                        states: States = this._s,
-                        ks: string = '_s',
-                        ktn: string = '_rt',
-                        kcn: string = '_rc',
-                        kco: string = '$rc',
-                        tn: string,
-                        cn: string,
-                        enter: Tag.Enter;
-                    if (!fresh) {
-                        states.i(data);
-                        if (!states.g('_a'))
-                            states.d('_c')
-                                .d('_c*')
-                                .d('_s*');
-                    }
-                    if (fresh || !states.g(ks)) // 无存档或存档无事件特征
-                        return this.dispatchEvent(new Event.Begin({
-                            target: episode
-                        }));
-                    states.m('_a', '.a')
-                        .m(ks, '.s');
-                    this._fh = true; // 中止现有时序流
-                    this._d.h();
-                    this.t(() => {
-                        this._fh = false;
-                        tn = states.g(ktn);
-                        cn = states.g(kcn);
-                        if (tn || cn) {
-                            if (cn) {
-                                if (tn) {
-                                    states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
-                                } else {
-                                    tn = cn;
-                                    states.d(kcn);
-                                }
-                            }
-                            enter = new Tag.Enter([tn || cn], '', [], -1);
-                            enter.b(episode);
-                            return <Runtime | Thenable<Runtime>> enter.p(this)
-                                ['catch'](Util.Q.ignoreHalt);
-                        }
-                        return episode.p(states.g('_p'), this);
-                    });
-                };
-                this.dispatchEvent(new Event.Load({
-                    target: this._s,
-                    callback: callback
-                }));
+                this._d.qs();
             });
             this.addEventListener<Episode>('end', () => {
                 this._fp = false;
@@ -292,6 +244,22 @@ namespace Runtime {
         }
 
         /**
+         * 设置作品标题。
+         */
+        public title(title: string): Runtime {
+            this._n = title;
+            return this;
+        }
+
+        /**
+         * 设置作者。
+         */
+        public author(title: string): Runtime {
+            this._c = title;
+            return this;
+        }
+
+        /**
          * 播报当前事件。
          */
         public s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime {
@@ -337,19 +305,62 @@ namespace Runtime {
         }
 
         /**
-         * 设置作品标题。
+         * 读档继续。
          */
-        public title(title: string): Runtime {
-            this._n = title;
-            return this;
-        }
-
-        /**
-         * 设置作者。
-         */
-        public author(title: string): Runtime {
-            this._c = title;
-            return this;
+        public l(id: string): void {
+            var load: (data: Util.IHashTable<any>) => void = (data: Util.IHashTable<any>) => {
+                var fresh: boolean = !data || {} == data,
+                    episode: Episode = this._e,
+                    states: States = this._s,
+                    ks: string = '_s',
+                    ktn: string = '_rt',
+                    kcn: string = '_rc',
+                    kco: string = '$rc',
+                    tn: string,
+                    cn: string,
+                    enter: Tag.Enter;
+                if (!fresh) {
+                    states.i(data);
+                    if (!states.g('_a'))
+                        states.d('_c')
+                            .d('_c*')
+                            .d('_s*');
+                }
+                this._d.qh(true);
+                if (fresh || !states.g(ks)) // 无存档或存档无事件特征
+                    return this.dispatchEvent(new Event.Begin({
+                        target: episode
+                    }));
+                states.m('_a', '.a')
+                    .m(ks, '.s');
+                this._fh = true; // 中止现有时序流
+                this._d.h();
+                this.t(() => {
+                    this._fh = false;
+                    tn = states.g(ktn);
+                    cn = states.g(kcn);
+                    if (tn || cn) {
+                        if (cn) {
+                            if (tn) {
+                                states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                            } else {
+                                tn = cn;
+                                states.d(kcn);
+                            }
+                        }
+                        enter = new Tag.Enter([tn || cn], '', [], -1);
+                        enter.b(episode);
+                        return <Runtime | Thenable<Runtime>> enter.p(this)
+                            ['catch'](Util.Q.ignoreHalt);
+                    }
+                    return episode.p(states.g('_p'), this);
+                });
+            };
+            this.dispatchEvent(new Event.Load({
+                target: this._s,
+                callback: load,
+                id: id
+            }));
         }
     }
 }

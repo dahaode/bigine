@@ -39,13 +39,19 @@ namespace Runtime {
         protected _v: number;
 
         /**
+         * 是否读档。
+         */
+        protected _o: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
             this._r = runtime;
             this._p = Promise.resolve(this._r);
             this._d =
-            this._a = false;
+            this._a =
+            this._o = false;
             this._v = 1;
         }
 
@@ -259,6 +265,20 @@ namespace Runtime {
          * 取消阻塞。
          */
         public h(): void {
+            //
+        }
+
+        /**
+         * 显示存档读档菜单。
+         */
+        public qs(load: boolean = true, opacity: number = 1): void {
+            this._o = load;
+        }
+
+        /**
+         * 隐藏存档读档菜单。
+         */
+        public qh(succeed: boolean): void {
             //
         }
     }

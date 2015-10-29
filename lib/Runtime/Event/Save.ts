@@ -14,22 +14,28 @@ namespace Runtime {
     export namespace Event {
         export class Save extends Event<Core.IStates> {
             /**
-             * 存档标题。
-             */
-            public title: string;
-
-            /**
              * 存档数据。
              */
             public data: Util.IHashTable<any>;
+
+            /**
+             * 是否手动存档。
+             */
+            public manual: boolean;
+
+            /**
+             * 回调函数。
+             */
+            public callback: (id: string) => void;
 
             /**
              * 构造函数。
              */
             constructor(metas: ISaveMetas) {
                 super(metas);
-                this.title = metas.title;
                 this.data = metas.data;
+                this.manual = metas.manual;
+                this.callback = metas.callback;
             }
 
             /**

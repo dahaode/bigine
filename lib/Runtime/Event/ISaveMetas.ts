@@ -14,14 +14,19 @@ namespace Runtime {
     export namespace Event {
         export interface ISaveMetas extends Core.IEventMetas<Core.IStates> {
             /**
-             * 标题。
-             */
-            title: string;
-
-            /**
              * 数据。
              */
             data: Util.IHashTable<any>;
+
+            /**
+             * 是否手动存档。
+             */
+            manual: boolean;
+
+            /**
+             * 回调函数。
+             */
+            callback: (id: string) => void;
         }
     }
 }

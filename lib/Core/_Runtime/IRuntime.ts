@@ -99,5 +99,10 @@ namespace Core {
          * 设置作者。
          */
         author(title: string): IRuntime;
+
+        /**
+         * 读取存档。
+         */
+        l(id?: string): void;
     }
 }

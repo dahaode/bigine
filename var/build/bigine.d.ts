@@ -103,8 +103,10 @@ namespace Core {
         c(src: string, dest: string): IStates;
         m(src: string, dest: string): IStates;
         t(text: string): string;
-        e(brief?: string): Util.IHashTable<any>;
+        e(manual: boolean): Util.IHashTable<any>;
         i(data: Util.IHashTable<any>): IStates;
+        q(index: string): [string, number];
+        l(): void;
     }
 }
 class E extends Error {
@@ -299,6 +301,7 @@ namespace Core {
         t(flow: () => IRuntime | Thenable<IRuntime>): IRuntime;
         title(title: string): IRuntime;
         author(title: string): IRuntime;
+        l(id?: string): void;
     }
 }
 namespace Core {
@@ -457,17 +460,35 @@ namespace Runtime {
 }
 namespace Runtime {
     namespace Event {
+        interface IQueryMetas extends Core.IEventMetas<Core.IStates> {
+            callback: (slots: Util.IHashTable<[string, number]>) => void;
+        }
+    }
+}
+namespace Runtime {
+    namespace Event {
+        class Query extends Event<Core.IStates> {
+            callback: (slots: Util.IHashTable<[string, number]>) => void;
+            constructor(metas: IQueryMetas);
+            gT(): string;
+        }
+    }
+}
+namespace Runtime {
+    namespace Event {
         interface ISaveMetas extends Core.IEventMetas<Core.IStates> {
-            title: string;
             data: Util.IHashTable<any>;
+            manual: boolean;
+            callback: (id: string) => void;
         }
     }
 }
 namespace Runtime {
     namespace Event {
         class Save extends Event<Core.IStates> {
-            title: string;
             data: Util.IHashTable<any>;
+            manual: boolean;
+            callback: (id: string) => void;
             constructor(metas: ISaveMetas);
             gT(): string;
         }
@@ -477,6 +498,8 @@ namespace Runtime {
     class States implements Core.IStates {
         private _d;
         private _r;
+        private _s;
+        private _l;
         constructor(runtime: Core.IRuntime);
         s(key: string, value: any): States;
         g(key: string): any;
@@ -485,8 +508,10 @@ namespace Runtime {
         c(src: string, dest: string): States;
         m(src: string, dest: string): States;
         t(text: string): string;
-        e(brief?: string): Util.IHashTable<any>;
+        e(manual: boolean): Util.IHashTable<any>;
         i(data: Util.IHashTable<any>): States;
+        q(index: string): [string, number];
+        l(): void;
     }
 }
 namespace Runtime {
@@ -515,6 +540,7 @@ namespace Runtime {
         protected _d: boolean;
         protected _a: boolean;
         protected _v: number;
+        protected _o: boolean;
         constructor(runtime: Core.IRuntime);
         c(resources: Resource<string | HTMLImageElement>[][]): Promise<void>;
         OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
@@ -545,6 +571,8 @@ namespace Runtime {
         f(): void;
         d(): void;
         h(): void;
+        qs(load?: boolean, opacity?: number): void;
+        qh(succeed: boolean): void;
     }
 }
 namespace Runtime {
@@ -985,6 +1013,8 @@ namespace Runtime {
         f(): void;
         d(): void;
         h(): void;
+        qs(load?: boolean, opacity?: number): void;
+        qh(succeed: boolean): void;
         private $w(element, words, font);
     }
 }
@@ -997,14 +1027,15 @@ namespace Runtime {
     namespace Event {
         interface ILoadMetas extends Core.IEventMetas<Core.IStates> {
             callback: (data: Util.IHashTable<any>) => void;
+            id: string;
         }
     }
 }
 namespace Runtime {
     namespace Event {
         class Load extends Event<Core.IStates> {
-            title: string;
             callback: (data: Util.IHashTable<any>) => void;
+            id: string;
             constructor(metas: ILoadMetas);
             gT(): string;
         }
@@ -1692,12 +1723,13 @@ namespace Runtime {
         fix(): void;
         auto(auto?: boolean): boolean;
         volume(volume?: number): number;
+        title(title: string): Runtime;
+        author(title: string): Runtime;
         s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime;
         a(action: Core.IIdableTag): Runtime;
         gH(): boolean;
         t(flow: () => Runtime | Thenable<Runtime>): Runtime;
-        title(title: string): Runtime;
-        author(title: string): Runtime;
+        l(id: string): void;
     }
 }
 namespace Lex {
