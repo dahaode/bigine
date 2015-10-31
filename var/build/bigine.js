@@ -6553,17 +6553,15 @@ var Tag;
          * 播放。
          */
         DefRoom.prototype.p = function (type, runtime) {
-            if (!(type in this._a))
-                return Promise.resolve(runtime);
-            return Util.Q.every(this._a[type], function (scene) {
-                if (runtime.gH())
-                    return Util.Q.doHalt();
-                return scene.p(runtime);
-            }).then(function () {
-                if (Core.ISceneTag.Type.PostEnter == type)
-                    return runtime.gD().lightOn();
-                return runtime;
-            });
+            return (type in this._a ?
+                Util.Q.every(this._a[type], function (scene) {
+                    if (runtime.gH())
+                        return Util.Q.doHalt();
+                    return scene.p(runtime);
+                }) :
+                Promise.resolve(runtime)).then(function () { return Core.ISceneTag.Type.PostEnter == type ?
+                runtime.gD().lightOn() :
+                runtime; });
         };
         /**
          * 获取资源。
@@ -9879,7 +9877,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.12.0';
+    Bigine.version = '0.13.0';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;
