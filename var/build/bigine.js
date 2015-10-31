@@ -3873,6 +3873,7 @@ var Runtime;
             }
             els[0].appendChild(canvas);
             this._c = new G.Stage(canvas.getContext('2d'))
+                .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
                 .a(new G.Sprite(bounds).i('c').o(0))
                 .a(new G.Sprite(bounds).i('g').o(0))
