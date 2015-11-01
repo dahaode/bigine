@@ -75,6 +75,11 @@ namespace Core {
         t(text: string): string;
 
         /**
+         * 生成快照（以备存档）。
+         */
+        p(): IStates;
+
+        /**
          * 导出数据（存档）。
          *
          * 此方法应触发 Save 事件。

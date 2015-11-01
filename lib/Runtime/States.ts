@@ -35,6 +35,11 @@ namespace Runtime {
         private _l: boolean;
 
         /**
+         * 快照。
+         */
+        private _p: Util.IHashTable<any>;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -113,26 +118,35 @@ namespace Runtime {
         }
 
         /**
+         * 生成快照（以备存档）。
+         */
+        public p(): States {
+            this._p = {};
+            Util.each(this._d, (value: any, key: string) => {
+                if ('.' != key[0] && '$' != key[0] && undefined != value)
+                    this._p[key] = value;
+            });
+            return this;
+        }
+
+        /**
          * 导出数据（存档）。
          *
          * 此方法应触发 Save 事件。
          */
         public e(manual: boolean): Util.IHashTable<any> {
-            var data: Util.IHashTable<any> = {},
-                save: (id: string) => void = (id: string) => {
+            if (!this._p)
+                return {};
+            var save: (id: string) => void = (id: string) => {
                     this._s[manual ? '1' : 'auto'] = [id, + new Date()];
                 };
-            Util.each(this._d, (value: any, key: string) => {
-                if ('.' != key[0] && '$' != key[0] && undefined != value)
-                    data[key] = value;
-            });
             this._r.dispatchEvent(new Event.Save({
                 target: this,
                 manual: manual,
-                data: data,
+                data: this._p,
                 callback: save
             }));
-            return this._d;
+            return this._p;
         }
 
         /**
@@ -140,6 +154,7 @@ namespace Runtime {
          */
         public i(data: Util.IHashTable<any>): States {
             this._d = data;
+            this._p = undefined;
             return this;
         }
 

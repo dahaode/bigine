@@ -103,6 +103,7 @@ namespace Core {
         c(src: string, dest: string): IStates;
         m(src: string, dest: string): IStates;
         t(text: string): string;
+        p(): IStates;
         e(manual: boolean): Util.IHashTable<any>;
         i(data: Util.IHashTable<any>): IStates;
         q(index: string): [string, number];
@@ -500,6 +501,7 @@ namespace Runtime {
         private _r;
         private _s;
         private _l;
+        private _p;
         constructor(runtime: Core.IRuntime);
         s(key: string, value: any): States;
         g(key: string): any;
@@ -508,6 +510,7 @@ namespace Runtime {
         c(src: string, dest: string): States;
         m(src: string, dest: string): States;
         t(text: string): string;
+        p(): States;
         e(manual: boolean): Util.IHashTable<any>;
         i(data: Util.IHashTable<any>): States;
         q(index: string): [string, number];

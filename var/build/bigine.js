@@ -1472,32 +1472,43 @@ var Runtime;
             return text.replace(/〈(.+)〉/g, convert).replace(/＜(.+)＞/g, convert);
         };
         /**
+         * 生成快照（以备存档）。
+         */
+        States.prototype.p = function () {
+            var _this = this;
+            this._p = {};
+            Util.each(this._d, function (value, key) {
+                if ('.' != key[0] && '$' != key[0] && undefined != value)
+                    _this._p[key] = value;
+            });
+            return this;
+        };
+        /**
          * 导出数据（存档）。
          *
          * 此方法应触发 Save 事件。
          */
         States.prototype.e = function (manual) {
             var _this = this;
-            var data = {}, save = function (id) {
+            if (!this._p)
+                return {};
+            var save = function (id) {
                 _this._s[manual ? '1' : 'auto'] = [id, +new Date()];
             };
-            Util.each(this._d, function (value, key) {
-                if ('.' != key[0] && '$' != key[0] && undefined != value)
-                    data[key] = value;
-            });
             this._r.dispatchEvent(new Runtime.Event.Save({
                 target: this,
                 manual: manual,
-                data: data,
+                data: this._p,
                 callback: save
             }));
-            return this._d;
+            return this._p;
         };
         /**
          * 导入数据。
          */
         States.prototype.i = function (data) {
             this._d = data;
+            this._p = undefined;
             return this;
         };
         /**
@@ -7334,7 +7345,7 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '_c', kpose = '_s', kpos = '.p', q = Promise.resolve(runtime), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '_c', kpose = '_s', kpos = '.p', q = runtime.gD().reset(), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
             if (bgm)
                 q = q.then(function () { return director.playBGM(episode.q(bgm, type.BGM).o()); });
             if (!states.g('_rc'))
@@ -9617,7 +9628,8 @@ var Runtime;
          * 播报当前关键帧。
          */
         Runtime.prototype.a = function (action) {
-            this._s.s('_a', action.gI());
+            this._s.s('_a', action.gI())
+                .p();
             this.dispatchEvent(new Runtime_1.Event.Action({
                 target: action
             }));

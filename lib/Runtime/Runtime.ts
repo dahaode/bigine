@@ -277,7 +277,8 @@ namespace Runtime {
          * 播报当前关键帧。
          */
         public a(action: Core.IIdableTag): Runtime {
-            this._s.s('_a', action.gI());
+            this._s.s('_a', action.gI())
+                .p();
             this.dispatchEvent(new Event.Action({
                 target: action
             }));
