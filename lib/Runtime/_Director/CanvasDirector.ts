@@ -1159,7 +1159,7 @@ namespace Runtime {
         /**
          * 显示存档读档菜单。
          */
-        public qs(load: boolean = true, opacity: number = 1): void {
+        public qs(load: boolean = true, opacity: number = 1): Promise<Core.IRuntime> {
             super.qs(load, opacity);
             var gEntry: Core.IGraphicElement = this._c.q('$.')[0],
                 gMenu: G.Sprite = <G.Sprite> this._c.q('$')[0],
@@ -1205,19 +1205,23 @@ namespace Runtime {
                     );
             g1Disabled.o(load && !slot ? 1 : 0);
             gMenu.o(1);
-            this.lightOn();
+            return this.lightOn();
         }
 
         /**
          * 隐藏存档读档菜单。
          */
-        public qh(succeed: boolean): void {
-            this.lightOff()
+        public qh(succeed: boolean): Promise<Core.IRuntime> {
+            return this.lightOff()
                 .then(() => {
                     this._c.q('$.')[0].o(1);
                     this._c.q('S')[0].o(succeed ? 0 : 1);
                     this._c.q('$')[0].o(0);
-                }).then(() => this.lightOn());
+                }).then(() => {
+                    return succeed ?
+                        this._r :
+                        this.lightOn();
+                });
         }
 
         /**

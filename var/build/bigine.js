@@ -1833,12 +1833,13 @@ var Runtime;
             if (load === void 0) { load = true; }
             if (opacity === void 0) { opacity = 1; }
             this._o = load;
+            return this._p;
         };
         /**
          * 隐藏存档读档菜单。
          */
         Director.prototype.qh = function (succeed) {
-            //
+            return this._p;
         };
         return Director;
     })();
@@ -4824,19 +4825,23 @@ var Runtime;
                     .c(config['c']));
             g1Disabled.o(load && !slot ? 1 : 0);
             gMenu.o(1);
-            this.lightOn();
+            return this.lightOn();
         };
         /**
          * 隐藏存档读档菜单。
          */
         CanvasDirector.prototype.qh = function (succeed) {
             var _this = this;
-            this.lightOff()
+            return this.lightOff()
                 .then(function () {
                 _this._c.q('$.')[0].o(1);
                 _this._c.q('S')[0].o(succeed ? 0 : 1);
                 _this._c.q('$')[0].o(0);
-            }).then(function () { return _this.lightOn(); });
+            }).then(function () {
+                return succeed ?
+                    _this._r :
+                    _this.lightOn();
+            });
         };
         /**
          * 将文本添加至画面文字元素中。
@@ -7435,6 +7440,14 @@ var Tag;
     Tag.Speak = Speak;
 })(Tag || (Tag = {}));
 /**
+ * 声明块标签接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Tag/IBlock.ts
+ */
+/**
  * 定义循环动作标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -7448,6 +7461,7 @@ var Tag;
 /// <reference path="../../_Action/_Director/PlaySE.ts" />
 /// <reference path="../../_Action/_Director/ShowCG.ts" />
 /// <reference path="../../_Action/_Text/Speak.ts" />
+/// <reference path="../../../Core/_Tag/IBlock.ts" />
 var Tag;
 (function (Tag) {
     var Loop = (function (_super) {
@@ -7472,13 +7486,15 @@ var Tag;
          */
         Loop.prototype.p = function (runtime) {
             var _this = this;
-            var states = runtime.gS(), logger = runtime.gL(), title = 'LOOP', kd = '$d', depth = states.g(kd), kid = '.a', id = states.g(kid), loop = function () {
+            var states = runtime.gS(), logger = runtime.gL(), title = 'LOOP', kd = '$d', depth = states.g(kd), kid = '.a', id, loop = function () {
                 return Util.Q.every(_this._s, function (action) {
+                    id = states.g(kid);
                     if (id) {
                         if ('gI' in action) {
                             if (action.gI() != id)
                                 return runtime;
                             states.d(kid);
+                            action.d();
                         }
                         else if ('gA' in action) {
                             if (-1 == Util.indexOf(action.gA(), id))
@@ -7486,8 +7502,6 @@ var Tag;
                         }
                         else
                             return runtime;
-                        id = undefined;
-                        action.d();
                     }
                     return action.p(runtime);
                 }).then(loop);
@@ -7615,11 +7629,13 @@ var Tag;
                 .then(function () { return Util.Q.every(_this._s, function (action) {
                 if (runtime.gH())
                     return Util.Q.doHalt();
+                id = states.g(kid);
                 if (id) {
                     if ('gI' in action) {
                         if (action.gI() != id)
                             return runtime;
                         states.d(kid);
+                        action.d();
                     }
                     else if ('gA' in action) {
                         if (-1 == Util.indexOf(action.gA(), id))
@@ -7627,8 +7643,6 @@ var Tag;
                     }
                     else
                         return runtime;
-                    id = undefined;
-                    action.d();
                 }
                 return action.p(runtime);
             }); })['catch'](function (error) {
@@ -8817,11 +8831,13 @@ var Tag;
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, function (action) {
+                id = states.g(kid);
                 if (id) {
                     if ('gI' in action) {
                         if (action.gI() != id)
                             return runtime;
                         states.d(kid);
+                        action.d();
                     }
                     else if ('gA' in action) {
                         if (-1 == Util.indexOf(action.gA(), id))
@@ -8829,8 +8845,6 @@ var Tag;
                     }
                     else
                         return runtime;
-                    id = undefined;
-                    action.d();
                 }
                 return action.p(runtime);
             })['catch'](function (error) {
@@ -8902,11 +8916,13 @@ var Tag;
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, function (action) {
+                id = states.g(kid);
                 if (id) {
                     if ('gI' in action) {
                         if (action.gI() != id)
                             return runtime;
                         states.d(kid);
+                        action.d();
                     }
                     else if ('gA' in action) {
                         if (-1 == Util.indexOf(action.gA(), id))
@@ -8914,8 +8930,6 @@ var Tag;
                     }
                     else
                         return runtime;
-                    id = undefined;
-                    action.d();
                 }
                 return action.p(runtime);
             })['catch'](function (error) {
@@ -8987,11 +9001,13 @@ var Tag;
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, function (action) {
+                id = states.g(kid);
                 if (id) {
                     if ('gI' in action) {
                         if (action.gI() != id)
                             return runtime;
                         states.d(kid);
+                        action.d();
                     }
                     else if ('gA' in action) {
                         if (-1 == Util.indexOf(action.gA(), id))
@@ -8999,8 +9015,6 @@ var Tag;
                     }
                     else
                         return runtime;
-                    id = undefined;
-                    action.d();
                 }
                 return action.p(runtime);
             })['catch'](function (error) {
@@ -9307,11 +9321,13 @@ var Tag;
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, function (action) {
+                id = states.g(kid);
                 if (id) {
                     if ('gI' in action) {
                         if (action.gI() != id)
                             return runtime;
                         states.d(kid);
+                        action.d();
                     }
                     else if ('gA' in action) {
                         if (-1 == Util.indexOf(action.gA(), id))
@@ -9319,8 +9335,6 @@ var Tag;
                     }
                     else
                         return runtime;
-                    id = undefined;
-                    action.d();
                 }
                 return action.p(runtime);
             })['catch'](function (error) {
@@ -9640,34 +9654,35 @@ var Runtime;
                             .d('_c*')
                             .d('_s*');
                 }
-                _this._d.qh(true);
-                if (fresh || !states.g(ks))
-                    return _this.dispatchEvent(new Runtime_1.Event.Begin({
-                        target: episode
-                    }));
-                states.m('_a', '.a')
-                    .m(ks, '.s');
-                _this._fh = true; // 中止现有时序流
-                _this._d.h();
-                _this.t(function () {
-                    _this._fh = false;
-                    tn = states.g(ktn);
-                    cn = states.g(kcn);
-                    if (tn || cn) {
-                        if (cn) {
-                            if (tn) {
-                                states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                _this._d.qh(true).then(function () {
+                    if (fresh || !states.g(ks))
+                        return _this.dispatchEvent(new Runtime_1.Event.Begin({
+                            target: episode
+                        }));
+                    states.m('_a', '.a')
+                        .m(ks, '.s');
+                    _this._fh = true; // 中止现有时序流
+                    _this._d.h();
+                    _this.t(function () {
+                        _this._fh = false;
+                        tn = states.g(ktn);
+                        cn = states.g(kcn);
+                        if (tn || cn) {
+                            if (cn) {
+                                if (tn) {
+                                    states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                                }
+                                else {
+                                    tn = cn;
+                                    states.d(kcn);
+                                }
                             }
-                            else {
-                                tn = cn;
-                                states.d(kcn);
-                            }
+                            enter = new Tag.Enter([tn || cn], '', [], -1);
+                            enter.b(episode);
+                            return enter.p(_this)['catch'](Util.Q.ignoreHalt);
                         }
-                        enter = new Tag.Enter([tn || cn], '', [], -1);
-                        enter.b(episode);
-                        return enter.p(_this)['catch'](Util.Q.ignoreHalt);
-                    }
-                    return episode.p(states.g('_p'), _this);
+                        return episode.p(states.g('_p'), _this);
+                    });
                 });
             };
             this.dispatchEvent(new Runtime_1.Event.Load({

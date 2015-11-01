@@ -10,7 +10,7 @@
 /// <reference path="../../_Action/_Logic/Loop.ts" />
 
 namespace Tag {
-    export class Content extends Unknown implements Core.IPerformableTag {
+    export class Content extends Unknown implements Core.IPerformableTag, Core.IBlock {
         /**
          * 获取标签名称。
          */
@@ -34,18 +34,18 @@ namespace Tag {
                 .then(() => Util.Q.every(this._s, (action: Action) => {
                     if (runtime.gH())
                         return Util.Q.doHalt<Core.IRuntime>();
+                    id = states.g(kid);
                     if (id) {
                         if ('gI' in action) {
                             if ((<Idable> action).gI() != id)
                                 return runtime;
                             states.d(kid);
+                            (<Idable> action).d();
                         } else if ('gA' in action) {
                             if (-1 == Util.indexOf((<Loop> action).gA(), id))
                                 return runtime;
                         } else
                             return runtime;
-                        id = undefined;
-                        (<Idable> action).d();
                     }
                     return action.p(runtime);
                 }))['catch']((error?: E) => {

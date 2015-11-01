@@ -10,7 +10,7 @@
 /// <reference path="Loop.ts" />
 
 namespace Tag {
-    export class WhenVar extends Action {
+    export class WhenVar extends Action implements Core.IBlock {
         /**
          * 获取标签名称。
          */
@@ -51,18 +51,18 @@ namespace Tag {
             states.s(kt, true)
                 .s(kd, 1 + depth);
             return Util.Q.every(this._s, (action: Action) => {
+                id = states.g(kid);
                 if (id) {
                     if ('gI' in action) {
                         if ((<Idable> action).gI() != id)
                             return runtime;
                         states.d(kid);
+                        (<Idable> action).d();
                     } else if ('gA' in action) {
                         if (-1 == Util.indexOf((<Loop> action).gA(), id))
                             return runtime;
                     } else
                         return runtime;
-                    id = undefined;
-                    (<Idable> action).d();
                 }
                 return action.p(runtime);
             })['catch']((error?: E) => {

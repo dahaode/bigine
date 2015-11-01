@@ -571,8 +571,8 @@ namespace Runtime {
         f(): void;
         d(): void;
         h(): void;
-        qs(load?: boolean, opacity?: number): void;
-        qh(succeed: boolean): void;
+        qs(load?: boolean, opacity?: number): Promise<Core.IRuntime>;
+        qh(succeed: boolean): Promise<Core.IRuntime>;
     }
 }
 namespace Runtime {
@@ -1013,8 +1013,8 @@ namespace Runtime {
         f(): void;
         d(): void;
         h(): void;
-        qs(load?: boolean, opacity?: number): void;
-        qh(succeed: boolean): void;
+        qs(load?: boolean, opacity?: number): Promise<Core.IRuntime>;
+        qh(succeed: boolean): Promise<Core.IRuntime>;
         private $w(element, words, font);
     }
 }
@@ -1430,8 +1430,13 @@ namespace Tag {
         gC(): DefChar;
     }
 }
+namespace Core {
+    interface IBlock {
+        gA(): string[];
+    }
+}
 namespace Tag {
-    class Loop extends Action {
+    class Loop extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
@@ -1440,7 +1445,7 @@ namespace Tag {
     }
 }
 namespace Tag {
-    class Content extends Unknown implements Core.IPerformableTag {
+    class Content extends Unknown implements Core.IPerformableTag, Core.IBlock {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         gA(): string[];
@@ -1622,7 +1627,7 @@ namespace Tag {
     }
 }
 namespace Tag {
-    class Otherwise extends Action {
+    class Otherwise extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
@@ -1631,7 +1636,7 @@ namespace Tag {
     }
 }
 namespace Tag {
-    class Then extends Action {
+    class Then extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
@@ -1640,7 +1645,7 @@ namespace Tag {
     }
 }
 namespace Tag {
-    class When extends Action {
+    class When extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
@@ -1686,7 +1691,7 @@ namespace Tag {
     }
 }
 namespace Tag {
-    class WhenVar extends Action {
+    class WhenVar extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;

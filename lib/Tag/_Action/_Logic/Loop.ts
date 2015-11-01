@@ -13,9 +13,10 @@
 /// <reference path="../../_Action/_Director/PlaySE.ts" />
 /// <reference path="../../_Action/_Director/ShowCG.ts" />
 /// <reference path="../../_Action/_Text/Speak.ts" />
+/// <reference path="../../../Core/_Tag/IBlock.ts" />
 
 namespace Tag {
-    export class Loop extends Action {
+    export class Loop extends Action implements Core.IBlock {
         /**
          * 获取标签名称。
          */
@@ -40,21 +41,21 @@ namespace Tag {
                 kd: string = '$d',
                 depth: number = states.g(kd),
                 kid: string = '.a',
-                id: string = states.g(kid),
+                id: string,
                 loop: () => Promise<Core.IRuntime> = () => {
                     return Util.Q.every(<Action[]> this._s, (action: Action) => {
+                        id = states.g(kid);
                         if (id) {
                             if ('gI' in action) {
                                 if ((<Idable> action).gI() != id)
                                     return runtime;
                                 states.d(kid);
+                                (<Idable> action).d();
                             } else if ('gA' in action) {
                                 if (-1 == Util.indexOf((<Loop> action).gA(), id))
                                     return runtime;
                             } else
                                 return runtime;
-                            id = undefined;
-                            (<Idable> action).d();
                         }
                         return action.p(runtime);
                     }).then(loop);

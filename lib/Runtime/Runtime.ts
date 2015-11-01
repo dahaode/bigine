@@ -326,34 +326,35 @@ namespace Runtime {
                             .d('_c*')
                             .d('_s*');
                 }
-                this._d.qh(true);
-                if (fresh || !states.g(ks)) // 无存档或存档无事件特征
-                    return this.dispatchEvent(new Event.Begin({
-                        target: episode
-                    }));
-                states.m('_a', '.a')
-                    .m(ks, '.s');
-                this._fh = true; // 中止现有时序流
-                this._d.h();
-                this.t(() => {
-                    this._fh = false;
-                    tn = states.g(ktn);
-                    cn = states.g(kcn);
-                    if (tn || cn) {
-                        if (cn) {
-                            if (tn) {
-                                states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
-                            } else {
-                                tn = cn;
-                                states.d(kcn);
+                this._d.qh(true).then(() => {
+                    if (fresh || !states.g(ks)) // 无存档或存档无事件特征
+                        return this.dispatchEvent(new Event.Begin({
+                            target: episode
+                        }));
+                    states.m('_a', '.a')
+                        .m(ks, '.s');
+                    this._fh = true; // 中止现有时序流
+                    this._d.h();
+                    this.t(() => {
+                        this._fh = false;
+                        tn = states.g(ktn);
+                        cn = states.g(kcn);
+                        if (tn || cn) {
+                            if (cn) {
+                                if (tn) {
+                                    states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                                } else {
+                                    tn = cn;
+                                    states.d(kcn);
+                                }
                             }
+                            enter = new Tag.Enter([tn || cn], '', [], -1);
+                            enter.b(episode);
+                            return <Runtime | Thenable<Runtime>> enter.p(this)
+                                ['catch'](Util.Q.ignoreHalt);
                         }
-                        enter = new Tag.Enter([tn || cn], '', [], -1);
-                        enter.b(episode);
-                        return <Runtime | Thenable<Runtime>> enter.p(this)
-                            ['catch'](Util.Q.ignoreHalt);
-                    }
-                    return episode.p(states.g('_p'), this);
+                        return episode.p(states.g('_p'), this);
+                    });
                 });
             };
             this.dispatchEvent(new Event.Load({
