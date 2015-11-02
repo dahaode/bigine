@@ -6750,37 +6750,32 @@ var Util;
          * HTTP 请求远端数据。
          */
         function http(method, url, data, onSuccess, onFailure) {
-            var xhr = 'undefined' != typeof XMLHttpRequest ?
-                new XMLHttpRequest() :
-                require('./xhr').create(), qs = [], q;
-            xhr.addEventListener('load', function () {
+            var xhr = Util.ENV.Node.JS ?
+                require('./xhr').create() :
+                ('undefined' != typeof XDomainRequest ?
+                    new XDomainRequest() :
+                    new XMLHttpRequest()), qs = [];
+            xhr.onload = function () {
                 try {
                     var resp = JSON.parse(xhr.responseText);
                     if ('reason' in resp)
                         throw new E(resp['reason']);
-                    if (200 != xhr.status)
+                    if ('status' in xhr && 200 != xhr.status)
                         throw new E(xhr.statusText);
                     onSuccess(resp);
                 }
                 catch (error) {
                     onFailure(error, xhr.status);
                 }
-            });
-            xhr.addEventListener('error', function (event) {
+            };
+            xhr.onerror = function (event) {
                 onFailure(event.error);
-            });
+            };
             xhr.open(Method.GET == method ? 'GET' : 'POST', format(url), true);
             Util.each(data, function (value, key) {
                 qs.push(key + '=' + encodeURIComponent(value));
             });
-            if (qs.length) {
-                q = qs.join('&');
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.setRequestHeader('Content-Length', q.length.toString());
-                xhr.send(q);
-            }
-            else
-                xhr.send();
+            xhr.send(qs.length ? qs.join('&') : null);
         }
         Remote.http = http;
     })(Remote = Util.Remote || (Util.Remote = {}));

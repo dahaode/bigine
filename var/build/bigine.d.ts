@@ -1323,6 +1323,7 @@ namespace Util {
         (error: Error, status?: number): void;
     }
 }
+var XDomainRequest: typeof XMLHttpRequest;
 namespace Util {
     namespace Remote {
         function format(url: string): string;

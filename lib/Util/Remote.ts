@@ -13,6 +13,8 @@
 /// <reference path="IFailureCallback.ts" />
 /// <reference path="_iterator.ts" />
 
+declare var XDomainRequest: typeof XMLHttpRequest;
+
 namespace Util {
     export namespace Remote {
         /**
@@ -48,37 +50,33 @@ namespace Util {
          * HTTP 请求远端数据。
          */
         export function http<T>(method: Method, url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void {
-            var xhr: XMLHttpRequest = 'undefined' != typeof XMLHttpRequest ?
-                    new XMLHttpRequest() :
-                    require('./xhr').create(),
-                qs: string[] = [],
-                q: string;
-            xhr.addEventListener('load', () => {
+            var xhr: XMLHttpRequest = ENV.Node.JS ?
+                    require('./xhr').create() :
+                    ('undefined' != typeof XDomainRequest ?
+                        new XDomainRequest() :
+                        new XMLHttpRequest()
+                    ),
+                qs: string[] = [];
+            xhr.onload = () => {
                 try {
                     var resp: Util.IHashTable<any> = <Util.IHashTable<any>> JSON.parse(xhr.responseText);
                     if ('reason' in resp)
                         throw new E(<string> resp['reason']);
-                    if (200 != xhr.status)
+                    if ('status' in xhr && 200 != xhr.status)
                         throw new E(xhr.statusText);
                     onSuccess(resp);
                 } catch (error) {
                     onFailure(<Error> error, xhr.status);
                 }
-            });
-            xhr.addEventListener('error', (event: ErrorEvent) => {
+            };
+            xhr.onerror = (event: ErrorEvent) => {
                 onFailure(<Error> event.error);
-            });
+            };
             xhr.open(Method.GET == method ? 'GET' : 'POST', format(url), true);
             each(data, (value: string | number, key: string) => {
                 qs.push(key + '=' + encodeURIComponent(<string> value));
             });
-            if (qs.length) {
-                q = qs.join('&');
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.setRequestHeader('Content-Length', q.length.toString());
-                xhr.send(q);
-            } else
-                xhr.send();
+            xhr.send(qs.length ? qs.join('&') : null);
         }
     }
 }

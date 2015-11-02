@@ -7,16 +7,10 @@
  */
 
 function NodeXHR() {
-    this._l = {};
     this.responseText =
     this.statusText = '';
     this.status = 0;
 }
-
-NodeXHR.prototype.addEventListener = function(type, callback) {
-    this._l[type] = this._l[type] || [];
-    this._l[type].push(callback);
-};
 
 NodeXHR.prototype.open = function(method, url, async) {
     var options = require('url').parse(url);
@@ -30,10 +24,6 @@ NodeXHR.prototype.open = function(method, url, async) {
     this._o = options;
 };
 
-NodeXHR.prototype.setRequestHeader = function(title, value) {
-    this._o.headers[title] = value;
-};
-
 NodeXHR.prototype.send = function(data) {
     var $this = this,
         req = require(this._o.protocol.replace(/:$/, '')).request(this._o, function (resp) {
@@ -44,15 +34,13 @@ NodeXHR.prototype.send = function(data) {
                 $this.responseText += chunk;
             });
             resp.on('end', function (chunk) {
-                ($this._l['load'] || []).forEach(function (listener) {
-                    listener.call($this);
-                });
+                if ($this.onload)
+                    $this.onload();
             });
         });
     req.on('error', function (error) {
-        ($this._l['error'] || []).forEach(function (listener) {
-            listener.call($this);
-        });
+        if ($this.onerror)
+            $this.onerror();
     });
     if (data)
         req.write(data);
