@@ -238,9 +238,9 @@ namespace Runtime {
                                 .then(() => gAuthor.o(0));
                         }).then(() => super.OP(start, title, author))
                         .then((runtime: Core.IRuntime) => {
-                            gEntry.o(this._r.auto() ? 0 : 1);
                             if (!start)
                                 return runtime;
+                            gEntry.o(1);
                             this._c.q('S')[0].o(1);
                             return this.lightOn();
                         });

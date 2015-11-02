@@ -3992,9 +3992,9 @@ var Runtime;
                         .then(function () { return gAuthor.o(0); });
                 }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
                     .then(function (runtime) {
-                    gEntry.o(_this._r.auto() ? 0 : 1);
                     if (!start)
                         return runtime;
+                    gEntry.o(1);
                     _this._c.q('S')[0].o(1);
                     return _this.lightOn();
                 });
@@ -7345,7 +7345,7 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '_c', kpose = '_s', kpos = '.p', q = runtime.gD().reset(), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '_c', kpose = '_s', kpos = '.p', q = Promise.resolve(runtime), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
             if (bgm)
                 q = q.then(function () { return director.playBGM(episode.q(bgm, type.BGM).o()); });
             if (!states.g('_rc'))

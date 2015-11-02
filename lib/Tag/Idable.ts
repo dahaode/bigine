@@ -44,7 +44,7 @@ namespace Tag {
                 kid: string = '_c',
                 kpose: string = '_s',
                 kpos: string = '.p',
-                q: Promise<Core.IRuntime> = runtime.gD().reset(),
+                q: Promise<Core.IRuntime> = Promise.resolve(runtime),
                 bgm: string = states.g('_b'),
                 cg: string = states.g(kid),
                 l: Core.IDirector.Position = pos.Left,
