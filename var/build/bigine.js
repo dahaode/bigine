@@ -9902,7 +9902,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.13.0';
+    Bigine.version = '0.13.2';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;
