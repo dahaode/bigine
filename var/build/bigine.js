@@ -6188,11 +6188,13 @@ var Tag;
          */
         Enter.prototype.p = function (runtime) {
             var _this = this;
-            var states = runtime.gS(), kcn = '_rc', cn = states.g(kcn), kdn = '_rd', ktn = '_rt', kt = '_t', kco = '$rc', co = states.g(kco), kdo = '$rd', kto = '$rt', director = runtime.gD(), type = Core.ISceneTag.Type;
+            var states = runtime.gS(), kcx = '_c*', kcn = '_rc', cn = states.g(kcn), kdn = '_rd', ktn = '_rt', kt = '_t', kco = '$rc', co = states.g(kco), kdo = '$rd', kto = '$rt', director = runtime.gD(), type = Core.ISceneTag.Type;
             if (cn == this._p[0])
                 return director.lightOff()
-                    .then(function () { return director.reset(); })
                     .then(function () {
+                    states.d(kcx);
+                    return director.reset();
+                }).then(function () {
                     if (states.a(kcn, kdn))
                         return director.lightOn();
                     // 恢复房间默认背景后开灯。
@@ -6230,8 +6232,10 @@ var Tag;
                 director.c([_this._mo.d()]);
                 var map = _this._mo.gM();
                 return director.lightOff()
-                    .then(function () { return director.reset(); })
-                    .then(function () { return director.asRoom(_this._mo.o(states.g(kt))); })
+                    .then(function () {
+                    states.d(kcx);
+                    return director.reset();
+                }).then(function () { return director.asRoom(_this._mo.o(states.g(kt))); })
                     .then(function () { return director.asMap(map ? map.gP() : {}); })
                     .then(function () { return _this._mo.p(type.PostEnter, runtime); });
             }); });

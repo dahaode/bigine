@@ -36,6 +36,7 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
+                kcx: string = '_c*',
                 kcn: string = '_rc',
                 cn: string = states.g(kcn),
                 kdn: string = '_rd',
@@ -49,8 +50,10 @@ namespace Tag {
                 type: typeof Core.ISceneTag.Type = Core.ISceneTag.Type;
             if (cn == this._p[0]) // 同房间二次进入，
                 return director.lightOff()
-                    .then(() => director.reset())
                     .then(() => {
+                        states.d(kcx);
+                        return director.reset();
+                    }).then(() => {
                         if (states.a(kcn, kdn)) // 未修改背景直接开灯。
                             return director.lightOn();
                         // 恢复房间默认背景后开灯。
@@ -88,8 +91,10 @@ namespace Tag {
                     director.c([this._mo.d()]);
                     var map: DefMap = this._mo.gM();
                     return director.lightOff()
-                        .then(() => director.reset())
-                        .then(() => director.asRoom(this._mo.o(states.g(kt))))
+                        .then(() => {
+                            states.d(kcx);
+                            return director.reset();
+                        }).then(() => director.asRoom(this._mo.o(states.g(kt))))
                         .then(() => director.asMap(map ? map.gP() : {}))
                         .then(() => this._mo.p(type.PostEnter, runtime));
                 })
