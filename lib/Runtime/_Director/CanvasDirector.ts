@@ -694,7 +694,11 @@ namespace Runtime {
          */
         public reset(): Promise<Core.IRuntime> {
             return super.reset().then((runtime: Core.IRuntime) => {
-                this._c.e(this._c.q('b')[0]);
+                var gBack: Core.IGraphicElement = this._c.q('b')[0],
+                    gColor: G.Color = new G.Color(CanvasDirector.BOUNDS, '#000');
+                this._c.a(gColor, gBack)
+                    .e(gBack);
+                gColor.i('b');
                 (<G.Sprite> this._c.q('M')[0]).c();
                 (<G.Sprite> this._c.q('c')[0]).c()
                     .o(0);

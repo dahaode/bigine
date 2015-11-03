@@ -4402,7 +4402,10 @@ var Runtime;
         CanvasDirector.prototype.reset = function () {
             var _this = this;
             return _super.prototype.reset.call(this).then(function (runtime) {
-                _this._c.e(_this._c.q('b')[0]);
+                var gBack = _this._c.q('b')[0], gColor = new G.Color(CanvasDirector.BOUNDS, '#000');
+                _this._c.a(gColor, gBack)
+                    .e(gBack);
+                gColor.i('b');
                 _this._c.q('M')[0].c();
                 _this._c.q('c')[0].c()
                     .o(0);
