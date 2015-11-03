@@ -6775,6 +6775,8 @@ var Util;
             Util.each(data, function (value, key) {
                 qs.push(key + '=' + encodeURIComponent(value));
             });
+            if (qs.length && 'setRequestHeader' in xhr)
+                xhr['setRequestHeader']('Content-Type', 'application/x-www-form-urlencoded');
             xhr.send(qs.length ? qs.join('&') : null);
         }
         Remote.http = http;

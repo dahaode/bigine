@@ -76,6 +76,8 @@ namespace Util {
             each(data, (value: string | number, key: string) => {
                 qs.push(key + '=' + encodeURIComponent(<string> value));
             });
+            if (qs.length && 'setRequestHeader' in xhr)
+                xhr['setRequestHeader']('Content-Type', 'application/x-www-form-urlencoded');
             xhr.send(qs.length ? qs.join('&') : null);
         }
     }
