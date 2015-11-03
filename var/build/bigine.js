@@ -4851,7 +4851,7 @@ var Runtime;
                 _this._c.q('$')[0].o(0);
             }).then(function () {
                 return succeed ?
-                    _this._r :
+                    _this.reset() :
                     _this.lightOn();
             });
         };

@@ -1220,7 +1220,7 @@ namespace Runtime {
                     this._c.q('$')[0].o(0);
                 }).then(() => {
                     return succeed ?
-                        this._r :
+                        this.reset() :
                         this.lightOn();
                 });
         }
