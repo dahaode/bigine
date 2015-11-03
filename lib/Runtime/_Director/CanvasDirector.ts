@@ -260,6 +260,7 @@ namespace Runtime {
                         .then(() => {
                             this._c.a(gED, 'C');
                             this._c.q('$.')[0].o(0);
+                            this._c.q('$')[0].o(0);
                             return this.lightOn();
                         }).then(() => gED.p(new G.Delay(2000)))
                         .then(() => this.lightOff())

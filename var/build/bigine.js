@@ -4014,6 +4014,7 @@ var Runtime;
                     .then(function () {
                     _this._c.a(gED, 'C');
                     _this._c.q('$.')[0].o(0);
+                    _this._c.q('$')[0].o(0);
                     return _this.lightOn();
                 }).then(function () { return gED.p(new G.Delay(2000)); })
                     .then(function () { return _this.lightOff(); })
