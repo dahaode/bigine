@@ -29,6 +29,11 @@ namespace Runtime {
         private _w: ((value: T) => void)[];
 
         /**
+         * 是否已加载。
+         */
+        private _r: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(uri: string, type: Core.IResource.Type) {
@@ -69,22 +74,31 @@ namespace Runtime {
                 if (ie9 && '.mp3' != this._l.substr(-4))
                     this._l = '//dahao.de/a' + this._l.substr(13);
             }
-            this._l = env.Protocol + this._l + '?bigine';
+            this._l = env.Protocol + this._l;
             this._w = [];
+            this._r = false;
+        }
+
+        /**
+         * 获取真实 URL 。
+         */
+        public l(): string {
+            return this._l;
         }
 
         /**
          * 获取 DOM 对象。
          */
         public o(): Promise<T> {
-            if (!this._q)
+            if (!this._q) {
                 this._q = new Promise<T>((resolve: (value?: T | Thenable<T>) => void, reject: (reason?: any) => void) => {
                     var $mp3: boolean = '.mp3' == this._l.substr(-4),
+                        url: string = this._l + '?bigine',
                         xhr: XMLHttpRequest,
                         img: HTMLImageElement;
                     if ($mp3 || Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
-                        xhr.open('GET', this._l);
+                        xhr.open('GET', url);
                         xhr.onload = () => {
                             if ($mp3)
                                 return resolve(<any> this._l);
@@ -106,12 +120,16 @@ namespace Runtime {
                     img.onload = () => {
                         resolve(<any> img);
                     };
-                    img.src = this._l;
+                    img.src = url;
                 });
-            if (this._w.length) {
-                Util.each(this._w.splice(0), (callback: (value: T) => void) => {
-                    this._q.then(callback);
+                this._q.then(() => {
+                    this._r = true;
                 });
+                if (this._w.length) {
+                    Util.each(this._w.splice(0), (callback: (value: T) => void) => {
+                        this._q.then(callback);
+                    });
+                }
             }
             return this._q;
         }
@@ -120,7 +138,10 @@ namespace Runtime {
          * 加载完成时通知。
          */
         public w(callback: (value: T) => void): Resource<T> {
-            this._w.push(callback);
+            if (this._q) {
+                this._q.then(callback);
+            } else
+                this._w.push(callback);
             return this;
         }
     }

@@ -999,20 +999,27 @@ var Runtime;
                 if (ie9 && '.mp3' != this._l.substr(-4))
                     this._l = '//dahao.de/a' + this._l.substr(13);
             }
-            this._l = env.Protocol + this._l + '?bigine';
+            this._l = env.Protocol + this._l;
             this._w = [];
+            this._r = false;
         }
+        /**
+         * 获取真实 URL 。
+         */
+        Resource.prototype.l = function () {
+            return this._l;
+        };
         /**
          * 获取 DOM 对象。
          */
         Resource.prototype.o = function () {
             var _this = this;
-            if (!this._q)
+            if (!this._q) {
                 this._q = new Promise(function (resolve, reject) {
-                    var $mp3 = '.mp3' == _this._l.substr(-4), xhr, img;
+                    var $mp3 = '.mp3' == _this._l.substr(-4), url = _this._l + '?bigine', xhr, img;
                     if ($mp3 || Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
-                        xhr.open('GET', _this._l);
+                        xhr.open('GET', url);
                         xhr.onload = function () {
                             if ($mp3)
                                 return resolve(_this._l);
@@ -1034,12 +1041,16 @@ var Runtime;
                     img.onload = function () {
                         resolve(img);
                     };
-                    img.src = _this._l;
+                    img.src = url;
                 });
-            if (this._w.length) {
-                Util.each(this._w.splice(0), function (callback) {
-                    _this._q.then(callback);
+                this._q.then(function () {
+                    _this._r = true;
                 });
+                if (this._w.length) {
+                    Util.each(this._w.splice(0), function (callback) {
+                        _this._q.then(callback);
+                    });
+                }
             }
             return this._q;
         };
@@ -1047,7 +1058,11 @@ var Runtime;
          * 加载完成时通知。
          */
         Resource.prototype.w = function (callback) {
-            this._w.push(callback);
+            if (this._q) {
+                this._q.then(callback);
+            }
+            else
+                this._w.push(callback);
             return this;
         };
         return Resource;
@@ -1549,40 +1564,55 @@ var Runtime;
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
 var Runtime;
 (function (Runtime) {
-    var Prefecher;
-    (function (Prefecher) {
+    /**
+     * 唯一实例。
+     */
+    var instance;
+    var Prefecher = (function () {
+        /**
+         * 构造函数。
+         */
+        function Prefecher() {
+            this._p = Promise.resolve();
+        }
         /**
          * 预加载资源。
          */
-        function c(resources, logger) {
+        Prefecher.c = function (resources, logger) {
             if (!resources.length)
                 return Promise.resolve();
-            var total = resources.slice(0), first = [], required;
-            Util.each(total[0], function (resource) {
-                first.push(resource.o());
+            if (!instance)
+                instance = new Prefecher;
+            var ret;
+            Util.each(resources, function (group) {
+                var p = instance.q(group, logger);
+                if (!ret)
+                    ret = p;
             });
-            if (logger)
-                logger.d('[cache]', total.shift());
-            required = Promise.all(first);
-            required.then(function () {
-                if (!total.length)
-                    return;
-                Util.Q.every(total, function (group) {
-                    var step = [];
-                    Util.each(group, function (resource) {
-                        step.push(resource.o());
-                    });
+            return ret;
+        };
+        /**
+         * 排队。
+         */
+        Prefecher.prototype.q = function (resources, logger) {
+            var _this = this;
+            return new Promise(function (resolve) {
+                _this._p = _this._p.then(function () {
                     if (logger)
-                        logger.d('[cache]', group);
-                    return Promise.all(step);
+                        logger.d('[cache]', resources);
+                    var tasks = [];
+                    Util.each(resources, function (resource) {
+                        tasks.push(resource.o());
+                    });
+                    return Promise.all(tasks).then(function () {
+                        resolve();
+                    });
                 });
             });
-            return required.then(function () {
-                return;
-            });
-        }
-        Prefecher.c = c;
-    })(Prefecher = Runtime.Prefecher || (Runtime.Prefecher = {}));
+        };
+        return Prefecher;
+    })();
+    Runtime.Prefecher = Prefecher;
 })(Runtime || (Runtime = {}));
 /**
  * 声明（运行时）开场事件元信息接口规范。

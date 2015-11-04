@@ -11,36 +11,57 @@
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
 
 namespace Runtime {
-    export namespace Prefecher {
+    /**
+     * 唯一实例。
+     */
+    var instance: Prefecher;
+
+    export class Prefecher {
+        /**
+         * 处理句柄。
+         */
+        private _p: Promise<void>;
+
+        /**
+         * 构造函数。
+         */
+        constructor() {
+            this._p = Promise.resolve<void>();
+        }
+
         /**
          * 预加载资源。
          */
-        export function c(resources: Resource<string | HTMLImageElement>[][], logger?: Core.ILogger): Promise<void> {
+        public static c(resources: Resource<string | HTMLImageElement>[][], logger?: Core.ILogger): Promise<void> {
             if (!resources.length)
                 return Promise.resolve<void>();
-            var total: Resource<string | HTMLImageElement>[][] = resources.slice(0),
-                first: Promise<string | HTMLImageElement>[] = [],
-                required: Promise<(string | HTMLImageElement)[]>;
-            Util.each(total[0], (resource: Resource<string | HTMLImageElement>) => {
-                first.push(resource.o());
+            if (!instance)
+                instance = new Prefecher;
+            var ret: Promise<void>;
+            Util.each(resources, (group: Resource<string | HTMLImageElement>[]) => {
+                var p: Promise<void> = instance.q(group, logger);
+                if (!ret)
+                    ret = p;
             });
-            if (logger)
-                logger.d('[cache]', total.shift());
-            required = Promise.all(first);
-            required.then(() => {
-                if (!total.length) return;
-                Util.Q.every(total, (group: Resource<string | HTMLImageElement>[]) => {
-                    var step: Promise<string | HTMLImageElement>[] = [];
-                    Util.each(group, (resource: Resource<string | HTMLImageElement>) => {
-                        step.push(resource.o());
-                    });
+            return ret;
+        }
+
+        /**
+         * 排队。
+         */
+        private q(resources: Resource<string | HTMLImageElement>[], logger?: Core.ILogger): Promise<void> {
+            return new Promise<void>((resolve: () => void) => {
+                this._p = this._p.then(() => {
                     if (logger)
-                        logger.d('[cache]', group);
-                    return Promise.all(step);
+                        logger.d('[cache]', resources);
+                    var tasks: Promise<string | HTMLImageElement>[] = [];
+                    Util.each(resources, (resource: Resource<string | HTMLImageElement>) => {
+                        tasks.push(resource.o());
+                    });
+                    return Promise.all(tasks).then(() => {
+                        resolve();
+                    });
                 });
-            });
-            return required.then(() => {
-                return;
             });
         }
     }

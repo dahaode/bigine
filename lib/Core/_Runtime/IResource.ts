@@ -14,6 +14,11 @@ namespace Core {
         // new (uri: string, type: IResource.Type): IResource;
 
         /**
+         * 获取真实 URL 。
+         */
+        l(): string;
+
+        /**
          * 获取 DOM 对象。
          */
         o(): Promise<T>;

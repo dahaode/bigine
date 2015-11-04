@@ -193,6 +193,7 @@ namespace Util {
 }
 namespace Core {
     interface IResource<T> {
+        l(): string;
         o(): Promise<T>;
         w(callback: (value: T) => void): IResource<T>;
     }
@@ -420,7 +421,9 @@ namespace Runtime {
         private _l;
         private _q;
         private _w;
+        private _r;
         constructor(uri: string, type: Core.IResource.Type);
+        l(): string;
         o(): Promise<T>;
         w(callback: (value: T) => void): Resource<T>;
     }
@@ -518,8 +521,11 @@ namespace Runtime {
     }
 }
 namespace Runtime {
-    namespace Prefecher {
-        function c(resources: Resource<string | HTMLImageElement>[][], logger?: Core.ILogger): Promise<void>;
+    class Prefecher {
+        private _p;
+        constructor();
+        static c(resources: Resource<string | HTMLImageElement>[][], logger?: Core.ILogger): Promise<void>;
+        private q(resources, logger?);
     }
 }
 namespace Runtime {
