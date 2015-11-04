@@ -565,11 +565,20 @@ namespace Runtime {
          */
         public asRoom(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             return super.asRoom(resource).then((runtime: Core.IRuntime) => {
-                var gOld: Core.IGraphicElement = this._c.q('b')[0];
-                if (gOld)
+                var gCurtain: Core.IGraphicElement = this._c.q('C')[0],
+                    gOld: Core.IGraphicElement = this._c.q('b')[0],
+                    gNew: G.Element = new G.Image(resource, CanvasDirector.BOUNDS).i('b')
+                        .o(0);
+                this._c.a(gNew, 'M');
+                if (1 || gCurtain.gO()) {
+                    gNew.o(1);
                     this._c.e(gOld);
-                this._c.a(new G.Image(resource, CanvasDirector.BOUNDS).i('b'), 'M');
-                return runtime;
+                    return runtime;
+                }
+                return gNew.p(new G.FadeIn(500)).then(() => {
+                    this._c.e(gOld);
+                    return runtime;
+                });
             });
         }
 

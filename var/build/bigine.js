@@ -4316,11 +4316,18 @@ var Runtime;
         CanvasDirector.prototype.asRoom = function (resource) {
             var _this = this;
             return _super.prototype.asRoom.call(this, resource).then(function (runtime) {
-                var gOld = _this._c.q('b')[0];
-                if (gOld)
+                var gCurtain = _this._c.q('C')[0], gOld = _this._c.q('b')[0], gNew = new G.Image(resource, CanvasDirector.BOUNDS).i('b')
+                    .o(0);
+                _this._c.a(gNew, 'M');
+                if (1 || gCurtain.gO()) {
+                    gNew.o(1);
                     _this._c.e(gOld);
-                _this._c.a(new G.Image(resource, CanvasDirector.BOUNDS).i('b'), 'M');
-                return runtime;
+                    return runtime;
+                }
+                return gNew.p(new G.FadeIn(500)).then(function () {
+                    _this._c.e(gOld);
+                    return runtime;
+                });
             });
         };
         /**
