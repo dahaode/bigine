@@ -69,6 +69,8 @@ namespace Tag {
          * 获取所有关联资源。
          */
         public d(): Core.IResource<HTMLImageElement>[] {
+            if (this._o)
+                return this._o.d();
             var poses: Poses = <Poses> this.$q('Poses')[0],
                 ret: Core.IResource<HTMLImageElement>[] = [(<Avatar> this.$q('Avatar')[0]).o()];
             if (poses)

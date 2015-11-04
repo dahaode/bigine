@@ -5785,6 +5785,8 @@ var Tag;
          * 获取所有关联资源。
          */
         DefChar.prototype.d = function () {
+            if (this._o)
+                return this._o.d();
             var poses = this.$q('Poses')[0], ret = [this.$q('Avatar')[0].o()];
             if (poses)
                 ret = ret.concat(poses.d());
