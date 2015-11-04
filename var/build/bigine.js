@@ -7351,7 +7351,7 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '_c', kpose = '_s', kpos = '.p', q = Promise.resolve(runtime), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kpose = '_s', kpos = '.p', q = Promise.resolve(runtime), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
             if (bgm)
                 q = q.then(function () { return director.playBGM(episode.q(bgm, type.BGM).o()); });
             if (!states.g('_rc'))
@@ -9664,21 +9664,20 @@ var Runtime;
         Runtime.prototype.l = function (id) {
             var _this = this;
             var load = function (data) {
-                var fresh = !data || {} == data, episode = _this._e, states = _this._s, ks = '_s', ktn = '_rt', kcn = '_rc', kco = '$rc', tn, cn, enter;
-                if (!fresh) {
-                    states.i(data);
-                    if (!states.g('_a'))
-                        states.d('_c')
-                            .d('_c*')
-                            .d('_s*');
-                }
+                var fresh = !data || {} == data, episode = _this._e, states = _this._s, ks = '_s', ktn = '_rt', kcn = '_rc', kco = '$rc', kdc = '_c', krc = '.c', pos = Core.IDirector.Position, tn, cn, enter;
                 _this._d.qh(true).then(function () {
+                    if (!fresh)
+                        states.i(data);
                     if (fresh || !states.g(ks))
                         return _this.dispatchEvent(new Runtime_1.Event.Begin({
                             target: episode
                         }));
-                    states.m('_a', '.a')
-                        .m(ks, '.s');
+                    states.m('_a', '.a') // 识别重建用状态数据
+                        .m(ks, '.s')
+                        .m(kdc, krc)
+                        .m(kdc + pos.Left, krc + pos.Left)
+                        .m(kdc + pos.Center, krc + pos.Center)
+                        .m(kdc + pos.Right, krc + pos.Right);
                     _this._fh = true; // 中止现有时序流
                     _this._d.h();
                     _this.t(function () {

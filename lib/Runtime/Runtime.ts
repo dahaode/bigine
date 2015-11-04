@@ -317,23 +317,25 @@ namespace Runtime {
                     ktn: string = '_rt',
                     kcn: string = '_rc',
                     kco: string = '$rc',
+                    kdc: string = '_c',
+                    krc: string = '.c',
+                    pos: typeof Core.IDirector.Position = Core.IDirector.Position,
                     tn: string,
                     cn: string,
                     enter: Tag.Enter;
-                if (!fresh) {
-                    states.i(data);
-                    if (!states.g('_a'))
-                        states.d('_c')
-                            .d('_c*')
-                            .d('_s*');
-                }
                 this._d.qh(true).then(() => {
+                    if (!fresh)
+                        states.i(data);
                     if (fresh || !states.g(ks)) // 无存档或存档无事件特征
                         return this.dispatchEvent(new Event.Begin({
                             target: episode
                         }));
-                    states.m('_a', '.a')
-                        .m(ks, '.s');
+                    states.m('_a', '.a') // 识别重建用状态数据
+                        .m(ks, '.s')
+                        .m(kdc, krc)
+                        .m(kdc + pos.Left, krc + pos.Left)
+                        .m(kdc + pos.Center, krc + pos.Center)
+                        .m(kdc + pos.Right, krc + pos.Right);
                     this._fh = true; // 中止现有时序流
                     this._d.h();
                     this.t(() => {

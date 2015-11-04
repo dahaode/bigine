@@ -41,7 +41,7 @@ namespace Tag {
                 states: Core.IStates = runtime.gS(),
                 director: Core.IDirector = runtime.gD(),
                 episode: Core.IEpisode = runtime.gE(),
-                kid: string = '_c',
+                kid: string = '.c',
                 kpose: string = '_s',
                 kpos: string = '.p',
                 q: Promise<Core.IRuntime> = Promise.resolve(runtime),
