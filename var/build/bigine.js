@@ -9579,7 +9579,15 @@ var Runtime;
          * 销毁。
          */
         Runtime.prototype.destroy = function () {
-            this._d.d();
+            var _this = this;
+            return new Promise(function (resolve) {
+                _this._fh = true; // 中止现有时序流
+                _this._d.d();
+                _this.t(function () {
+                    resolve(_this);
+                    return _this;
+                });
+            });
         };
         /**
          * DOM 定位修正。

@@ -214,8 +214,15 @@ namespace Runtime {
         /**
          * 销毁。
          */
-        public destroy(): void {
-            this._d.d();
+        public destroy(): Promise<Runtime> {
+            return new Promise((resolve: (value: Runtime) => void) => {
+                this._fh = true; // 中止现有时序流
+                this._d.d();
+                this.t(() => {
+                    resolve(this);
+                    return this;
+                });
+            });
         }
 
         /**

@@ -53,7 +53,7 @@ namespace Core {
         /**
          * 销毁。
          */
-        destroy(): void;
+        destroy(): Promise<IRuntime>;
 
         /**
          * DOM 定位修正。

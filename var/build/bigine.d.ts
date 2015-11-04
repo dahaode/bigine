@@ -292,7 +292,7 @@ namespace Core {
         gD(): IDirector;
         play(): IRuntime;
         replay(): IRuntime;
-        destroy(): void;
+        destroy(): Promise<IRuntime>;
         fix(): void;
         auto(auto?: boolean): boolean;
         volume(volume?: number): number;
@@ -1728,7 +1728,7 @@ namespace Runtime {
         gD(): Director;
         play(): Runtime;
         replay(): Runtime;
-        destroy(): void;
+        destroy(): Promise<Runtime>;
         fix(): void;
         auto(auto?: boolean): boolean;
         volume(volume?: number): number;
