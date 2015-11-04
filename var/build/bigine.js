@@ -999,7 +999,7 @@ var Runtime;
                 if (ie9 && '.mp3' != this._l.substr(-4))
                     this._l = '//dahao.de/a' + this._l.substr(13);
             }
-            this._l = env.Protocol + this._l;
+            this._l = env.Protocol + this._l + '?bigine';
             this._w = [];
         }
         /**
