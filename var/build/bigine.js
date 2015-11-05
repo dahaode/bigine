@@ -7552,6 +7552,8 @@ var Tag;
             var _this = this;
             var states = runtime.gS(), logger = runtime.gL(), title = 'LOOP', kd = '$d', depth = states.g(kd), kid = '.a', id, loop = function () {
                 return Util.Q.every(_this._s, function (action) {
+                    if (runtime.gH())
+                        return Util.Q.doBreak();
                     id = states.g(kid);
                     if (id) {
                         if ('gI' in action) {

@@ -44,6 +44,8 @@ namespace Tag {
                 id: string,
                 loop: () => Promise<Core.IRuntime> = () => {
                     return Util.Q.every(<Action[]> this._s, (action: Action) => {
+                        if (runtime.gH())
+                            return Util.Q.doBreak<Core.IRuntime>();
                         id = states.g(kid);
                         if (id) {
                             if ('gI' in action) {
