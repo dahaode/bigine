@@ -500,24 +500,29 @@ namespace Runtime {
         /**
          * 播放背景音乐。
          */
-        public playBGM(resource?: Resource<string> ): Promise<Core.IRuntime> {
-            resource = resource || this._i['s'];
-            return resource.o().then((url: string) => {
-                if (this._s['b'].src != url)
-                    this._s['b'].src = url;
-                return super.playBGM(resource);
-            });
+        public playBGM(resource?: Resource<string>): Promise<Core.IRuntime> {
+            var url: string = (resource || this._i['s']).l();
+            if (this._s['b'].src != url)
+                this._s['b'].src = url;
+            if (!resource)
+                this._s['b'].play();
+            return super.playBGM(resource);
         }
 
         /**
          * 播放音效。
          */
-        public playSE(resource?: Resource<string> ): Promise<Core.IRuntime> {
-            resource = resource || this._i['s'];
-            return resource.o().then((url: string) => {
-                this._s['e'].src = url;
-                return super.playSE(resource);
-            });
+        public playSE(resource?: Resource<string>): Promise<Core.IRuntime> {
+            var url: string = (resource || this._i['s']).l(),
+                resume: () => void = () => {
+                    this._s['e'].removeEventListener('ended', resume);
+                    this._s['b'].play();
+                };
+            this._s['e'].addEventListener('ended', resume);
+            this._s['e'].src = url;
+            if (!resource)
+                this._s['e'].play();
+            return super.playSE(resource);
         }
 
         /**

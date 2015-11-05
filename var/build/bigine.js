@@ -1016,13 +1016,15 @@ var Runtime;
             var _this = this;
             if (!this._q) {
                 this._q = new Promise(function (resolve, reject) {
-                    var $mp3 = '.mp3' == _this._l.substr(-4), url = _this._l + '?bigine', xhr, img;
-                    if ($mp3 || Util.ENV.MSIE && 'undefined' != typeof URL) {
+                    var url = _this._l + '?bigine', xhr, img;
+                    if ('.mp3' == _this._l.substr(-4)) {
+                        _this._l = url;
+                        return resolve(url);
+                    }
+                    if (Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
                         xhr.onload = function () {
-                            if ($mp3)
-                                return resolve(_this._l);
                             var blob = URL.createObjectURL(xhr.response);
                             img = new Image();
                             img.onload = function () {
@@ -1031,8 +1033,7 @@ var Runtime;
                             };
                             img.src = blob;
                         };
-                        if (!$mp3)
-                            xhr.responseType = 'blob';
+                        xhr.responseType = 'blob';
                         xhr.send();
                         return;
                     }
@@ -4256,24 +4257,27 @@ var Runtime;
          * 播放背景音乐。
          */
         CanvasDirector.prototype.playBGM = function (resource) {
-            var _this = this;
-            resource = resource || this._i['s'];
-            return resource.o().then(function (url) {
-                if (_this._s['b'].src != url)
-                    _this._s['b'].src = url;
-                return _super.prototype.playBGM.call(_this, resource);
-            });
+            var url = (resource || this._i['s']).l();
+            if (this._s['b'].src != url)
+                this._s['b'].src = url;
+            if (!resource)
+                this._s['b'].play();
+            return _super.prototype.playBGM.call(this, resource);
         };
         /**
          * 播放音效。
          */
         CanvasDirector.prototype.playSE = function (resource) {
             var _this = this;
-            resource = resource || this._i['s'];
-            return resource.o().then(function (url) {
-                _this._s['e'].src = url;
-                return _super.prototype.playSE.call(_this, resource);
-            });
+            var url = (resource || this._i['s']).l(), resume = function () {
+                _this._s['e'].removeEventListener('ended', resume);
+                _this._s['b'].play();
+            };
+            this._s['e'].addEventListener('ended', resume);
+            this._s['e'].src = url;
+            if (!resource)
+                this._s['e'].play();
+            return _super.prototype.playSE.call(this, resource);
         };
         /**
          * 关闭特写。
@@ -9971,7 +9975,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.13.3';
+    Bigine.version = '0.13.4';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

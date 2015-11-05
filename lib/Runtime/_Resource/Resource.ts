@@ -92,16 +92,17 @@ namespace Runtime {
         public o(): Promise<T> {
             if (!this._q) {
                 this._q = new Promise<T>((resolve: (value?: T | Thenable<T>) => void, reject: (reason?: any) => void) => {
-                    var $mp3: boolean = '.mp3' == this._l.substr(-4),
-                        url: string = this._l + '?bigine',
+                    var url: string = this._l + '?bigine',
                         xhr: XMLHttpRequest,
                         img: HTMLImageElement;
-                    if ($mp3 || Util.ENV.MSIE && 'undefined' != typeof URL) {
+                    if ('.mp3' == this._l.substr(-4)) {
+                        this._l = url;
+                        return resolve(<any> url);
+                    }
+                    if (Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
                         xhr.onload = () => {
-                            if ($mp3)
-                                return resolve(<any> this._l);
                             var blob: string = URL.createObjectURL(xhr.response);
                             img = new Image();
                             img.onload = () => {
@@ -110,8 +111,7 @@ namespace Runtime {
                             };
                             img.src = blob;
                         };
-                        if (!$mp3)
-                            xhr.responseType = 'blob';
+                        xhr.responseType = 'blob';
                         xhr.send();
                         return;
                     }
