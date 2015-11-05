@@ -7390,11 +7390,15 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', q = Promise.resolve(runtime), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr, room;
             if (bgm)
                 q = q.then(function () { return director.playBGM(episode.q(bgm, type.BGM).o()); });
-            if (!states.g('_rc'))
-                q = q.then(function () { return director.asRoom(episode.q(states.g('_rd'), type.Room).o(states.g('_t'))); });
+            if (kroom && !states.g(kdo))
+                q = q.then(function () {
+                    states.s(kdo, room = episode.q(kroom, type.Room));
+                    return director.asRoom(room.o(states.g('_t')))
+                        .then(function () { return room.gM() ? director.asMap(room.gM().gP()) : runtime; });
+                });
             if (cg)
                 q = q.then(function () {
                     states.m(kid, kdata);

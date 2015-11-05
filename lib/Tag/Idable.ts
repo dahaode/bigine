@@ -46,6 +46,8 @@ namespace Tag {
                 kpose: string = '_s',
                 kpos: string = '.p',
                 q: Promise<Core.IRuntime> = Promise.resolve(runtime),
+                kroom: string = states.g('_rd'),
+                kdo: string = '$rd',
                 bgm: string = states.g('_b'),
                 cg: string = states.g(kid),
                 l: Core.IDirector.Position = pos.Left,
@@ -58,11 +60,16 @@ namespace Tag {
                 crChar: string = states.g(kid + cr),
                 r: Core.IDirector.Position = pos.Right,
                 rChar: string = states.g(kid + r),
-                ctype: Core.IEpisode.Entity = type.Chr;
+                ctype: Core.IEpisode.Entity = type.Chr,
+                room: DefRoom;
             if (bgm)
                 q = q.then(() => director.playBGM((<DefBGM> episode.q(bgm, type.BGM)).o()));
-            if (!states.g('_rc'))
-                q = q.then(() => director.asRoom((<DefRoom> episode.q(states.g('_rd'), type.Room)).o(states.g('_t'))));
+            if (kroom && !states.g(kdo))
+                q = q.then(() => {
+                    states.s(kdo, room = <DefRoom> episode.q(kroom, type.Room));
+                    return director.asRoom(room.o(states.g('_t')))
+                        .then(() => room.gM() ? director.asMap(room.gM().gP()) : runtime);
+                });
             if (cg)
                 q = q.then(() => {
                     states.m(kid, kdata);
