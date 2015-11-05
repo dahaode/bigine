@@ -1193,7 +1193,7 @@ namespace Runtime {
                         clob: string = ' ' + (10 > node ? '0' : '') + node;
                     node = date.getMinutes();
                     clob += ':' + (10 > node ? '0' : '') + node;
-                    return date.getFullYear() + '-' + (1 + date.getMonth()) + '-' + (1 + date.getDate()) + clob;
+                    return date.getFullYear() + '-' + (1 + date.getMonth()) + '-' + date.getDate() + clob;
                 };
             gEntry.o(0);
             gMask.o(0);
