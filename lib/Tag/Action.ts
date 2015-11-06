@@ -32,5 +32,12 @@ namespace Tag {
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             return runtime;
         }
+
+        /**
+         * 获取依赖素材资源列表。
+         */
+        public $d(): Core.IResource<string | HTMLImageElement>[] {
+            return [];
+        }
     }
 }

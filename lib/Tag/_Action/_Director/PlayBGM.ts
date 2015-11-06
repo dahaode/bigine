@@ -45,6 +45,13 @@ namespace Tag {
         }
 
         /**
+         * 获取依赖素材资源列表。
+         */
+        public $d(): Core.IResource<string>[] {
+            return [this._mo.o()];
+        }
+
+        /**
          * 获取关联音乐。
          */
         public gB(): DefBGM {

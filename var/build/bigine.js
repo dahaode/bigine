@@ -6196,6 +6196,12 @@ var Tag;
         Action.prototype.p = function (runtime) {
             return runtime;
         };
+        /**
+         * 获取依赖素材资源列表。
+         */
+        Action.prototype.$d = function () {
+            return [];
+        };
         return Action;
     })(Tag.Unknown);
     Tag.Action = Action;
@@ -7141,6 +7147,12 @@ var Tag;
                 .then(function () { return director.asMap(map ? map.gP() : {}); });
         };
         /**
+         * 获取依赖素材资源列表。
+         */
+        AsRoom.prototype.$d = function () {
+            return this._mo.d();
+        };
+        /**
          * 获取关联房间。
          */
         AsRoom.prototype.gR = function () {
@@ -7212,6 +7224,12 @@ var Tag;
             return runtime.gD().charOn(this._mo.o(this._ms), this._mp);
         };
         /**
+         * 获取依赖素材资源列表。
+         */
+        CharOn.prototype.$d = function () {
+            return [this._mo.o(this._ms)];
+        };
+        /**
          * 获取关联人物。
          */
         CharOn.prototype.gC = function () {
@@ -7261,6 +7279,12 @@ var Tag;
             return runtime.gD().playBGM(this._mo.o());
         };
         /**
+         * 获取依赖素材资源列表。
+         */
+        PlayBGM.prototype.$d = function () {
+            return [this._mo.o()];
+        };
+        /**
          * 获取关联音乐。
          */
         PlayBGM.prototype.gB = function () {
@@ -7304,6 +7328,12 @@ var Tag;
          */
         PlaySE.prototype.p = function (runtime) {
             return runtime.gD().playSE(this._mo.o());
+        };
+        /**
+         * 获取依赖素材资源列表。
+         */
+        PlaySE.prototype.$d = function () {
+            return [this._mo.o()];
         };
         /**
          * 获取关联音效。
@@ -7353,6 +7383,12 @@ var Tag;
                 throw new E(E.ACT_CG_ALREADY_SHOWN, this._l);
             states.s(key, this._p[0]);
             return runtime.gD().showCG(this._mo.o());
+        };
+        /**
+         * 获取依赖素材资源列表。
+         */
+        ShowCG.prototype.$d = function () {
+            return [this._mo.o()];
         };
         /**
          * 获取关联特写。
@@ -7502,6 +7538,12 @@ var Tag;
                 .words(runtime.gS().t(_this._c), 'speak', _this._p[2] || _this._mc.gI(), _this._mc.o()); });
         };
         /**
+         * 获取依赖素材资源列表。
+         */
+        Speak.prototype.$d = function () {
+            return [this._mc.o()];
+        };
+        /**
          * 获取关联人物。
          */
         Speak.prototype.gC = function () {
@@ -7628,24 +7670,17 @@ var Tag;
             Util.each(this._s, function (action) {
                 switch (action.gN()) {
                     case 'AsRoom':
-                        frame = frame.concat(action.gR().d());
-                        break;
                     case 'CharOn':
+                    case 'CharPose':
                     case 'CharSet':
-                        frame = frame.concat(action.gC().d());
-                        break;
                     case 'PlayBGM':
-                        frame.push(action.gB().o());
-                        break;
                     case 'PlaySE':
-                        frame.push(action.gS().o());
-                        break;
                     case 'ShowCG':
-                        frame.push(action.gC().o());
+                        frame = frame.concat(action.$d());
                         break;
                     case 'Monolog':
                     case 'Speak':
-                        frame.push(action.gC().o());
+                        frame = frame.concat(action.$d());
                         pack();
                         break;
                     case 'VoiceOver':
@@ -8100,6 +8135,12 @@ var Tag;
             return runtime.gD().charSet(this._mo.o(this._ms), this._mp);
         };
         /**
+         * 获取依赖素材资源列表。
+         */
+        CharSet.prototype.$d = function () {
+            return [this._mo.o(this._ms)];
+        };
+        /**
          * 获取关联人物。
          */
         CharSet.prototype.gC = function () {
@@ -8153,6 +8194,12 @@ var Tag;
             states.s('_s' + pos, this._ms);
             return runtime.gD().charSet(this._mo, pos);
         };
+        /**
+         * 获取依赖素材资源列表。
+         */
+        CharPose.prototype.$d = function () {
+            return [this._mo];
+        };
         return CharPose;
     })(Tag.Action);
     Tag.CharPose = CharPose;
@@ -8194,6 +8241,12 @@ var Tag;
             return Promise.resolve(_super.prototype.p.call(this, runtime))
                 .then(function () { return runtime.a(_this).gD()
                 .words(runtime.gS().t(_this._c), 'monolog', _this._mc.gI(), _this._mc.o()); });
+        };
+        /**
+         * 获取依赖素材资源列表。
+         */
+        Monolog.prototype.$d = function () {
+            return [this._mc.o()];
         };
         /**
          * 获取关联人物。
@@ -9975,7 +10028,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.13.4';
+    Bigine.version = '0.13.5';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

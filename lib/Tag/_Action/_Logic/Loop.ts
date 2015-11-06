@@ -115,24 +115,17 @@ namespace Tag {
             Util.each(this._s, (action: Action) => {
                 switch (action.gN()) {
                     case 'AsRoom':
-                        frame = frame.concat((<AsRoom> action).gR().d());
-                        break;
                     case 'CharOn':
+                    case 'CharPose':
                     case 'CharSet':
-                        frame = frame.concat((<CharOn> action).gC().d());
-                        break;
                     case 'PlayBGM':
-                        frame.push((<PlayBGM> action).gB().o());
-                        break;
                     case 'PlaySE':
-                        frame.push((<PlaySE> action).gS().o());
-                        break;
                     case 'ShowCG':
-                        frame.push((<ShowCG> action).gC().o());
+                        frame = frame.concat(action.$d());
                         break;
                     case 'Monolog':
                     case 'Speak':
-                        frame.push((<Speak> action).gC().o());
+                        frame = frame.concat(action.$d());
                         pack();
                         break;
                     case 'VoiceOver':

@@ -55,6 +55,13 @@ namespace Tag {
         }
 
         /**
+         * 获取依赖素材资源列表。
+         */
+        public $d(): Core.IResource<HTMLImageElement>[] {
+            return this._mo.d();
+        }
+
+        /**
          * 获取关联房间。
          */
         public gR(): DefRoom {

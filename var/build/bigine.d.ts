@@ -1238,6 +1238,7 @@ namespace Tag {
         $i(abstract?: boolean): number;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<string | HTMLImageElement>[];
     }
 }
 namespace Tag {
@@ -1377,6 +1378,7 @@ namespace Tag {
         gN(): string;
         $b(ep: Core.IEpisode): void;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<HTMLImageElement>[];
         gR(): DefRoom;
     }
 }
@@ -1390,6 +1392,7 @@ namespace Tag {
         gN(): string;
         $b(ep: Core.IEpisode): void;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<HTMLImageElement>[];
         gC(): DefChar;
     }
 }
@@ -1399,6 +1402,7 @@ namespace Tag {
         gN(): string;
         $b(ep: Core.IEpisode): void;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<string>[];
         gB(): DefBGM;
     }
 }
@@ -1408,6 +1412,7 @@ namespace Tag {
         gN(): string;
         $b(ep: Core.IEpisode): void;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<string>[];
         gS(): DefSE;
     }
 }
@@ -1417,6 +1422,7 @@ namespace Tag {
         gN(): string;
         $b(ep: Core.IEpisode): void;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<HTMLImageElement>[];
         gC(): DefCG;
     }
 }
@@ -1437,6 +1443,7 @@ namespace Tag {
         gN(): string;
         $b(ep: Core.IEpisode): void;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<HTMLImageElement>[];
         gC(): DefChar;
     }
 }
@@ -1508,6 +1515,7 @@ namespace Tag {
         gN(): string;
         $b(ep: Core.IEpisode): void;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<HTMLImageElement>[];
         gC(): DefChar;
     }
 }
@@ -1520,6 +1528,7 @@ namespace Tag {
         gN(): string;
         $b(ep: Core.IEpisode): void;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<HTMLImageElement>[];
     }
 }
 namespace Tag {
@@ -1528,6 +1537,7 @@ namespace Tag {
         gN(): string;
         $b(ep: Core.IEpisode): void;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        $d(): Core.IResource<HTMLImageElement>[];
         gC(): DefChar;
     }
 }

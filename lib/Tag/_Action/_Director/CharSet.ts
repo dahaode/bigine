@@ -87,6 +87,13 @@ namespace Tag {
         }
 
         /**
+         * 获取依赖素材资源列表。
+         */
+        public $d(): Core.IResource<HTMLImageElement>[] {
+            return [this._mo.o(this._ms)];
+        }
+
+        /**
          * 获取关联人物。
          */
         public gC(): DefChar {

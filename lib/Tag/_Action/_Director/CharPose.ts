@@ -62,5 +62,12 @@ namespace Tag {
             states.s('_s' + pos, this._ms);
             return runtime.gD().charSet(this._mo, pos);
         }
+
+        /**
+         * 获取依赖素材资源列表。
+         */
+        public $d(): Core.IResource<HTMLImageElement>[] {
+            return [this._mo];
+        }
     }
 }
