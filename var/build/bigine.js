@@ -9736,6 +9736,12 @@ var Runtime;
             return this._fv;
         };
         /**
+         * 是否正在播放。
+         */
+        Runtime.prototype.isPlaying = function () {
+            return this._fp;
+        };
+        /**
          * 设置作品标题。
          */
         Runtime.prototype.title = function (title) {

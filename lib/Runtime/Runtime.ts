@@ -251,6 +251,13 @@ namespace Runtime {
         }
 
         /**
+         * 是否正在播放。
+         */
+        public isPlaying(): boolean {
+            return this._fp;
+        }
+
+        /**
          * 设置作品标题。
          */
         public title(title: string): Runtime {

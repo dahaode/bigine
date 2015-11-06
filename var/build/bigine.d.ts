@@ -297,6 +297,7 @@ namespace Core {
         fix(): void;
         auto(auto?: boolean): boolean;
         volume(volume?: number): number;
+        isPlaying(): boolean;
         s(scene: ISceneTag, title: string, actions: string[]): IRuntime;
         a(action: IIdableTag): IRuntime;
         gH(): boolean;
@@ -1749,6 +1750,7 @@ namespace Runtime {
         fix(): void;
         auto(auto?: boolean): boolean;
         volume(volume?: number): number;
+        isPlaying(): boolean;
         title(title: string): Runtime;
         author(title: string): Runtime;
         s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime;

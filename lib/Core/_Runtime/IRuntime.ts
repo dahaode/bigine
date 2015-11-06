@@ -71,6 +71,11 @@ namespace Core {
         volume(volume?: number): number;
 
         /**
+         * 是否正在播放。
+         */
+        isPlaying(): boolean;
+
+        /**
          * 播报当前事件。
          */
         s(scene: ISceneTag, title: string, actions: string[]): IRuntime;
