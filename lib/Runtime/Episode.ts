@@ -147,7 +147,7 @@ namespace Runtime {
          * 注册资源。
          */
         public r(uri: string, type: Core.IResource.Type): Resource<string | HTMLImageElement> {
-            return new Resource<string | HTMLImageElement>(uri, type);
+            return Resource.g<string | HTMLImageElement>(uri, type);
         }
 
         /**

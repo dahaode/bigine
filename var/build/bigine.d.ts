@@ -423,6 +423,7 @@ namespace Runtime {
         private _w;
         private _r;
         constructor(uri: string, type: Core.IResource.Type);
+        static g<U>(uri: string, type: Core.IResource.Type): Resource<U>;
         l(): string;
         o(): Promise<T>;
         w(callback: (value: T) => void): Resource<T>;

@@ -12,6 +12,11 @@
 /// <reference path="../../Util/Q.ts" />
 
 namespace Runtime {
+    /**
+     * 资源池。
+     */
+    var $r: Util.IHashTable<Resource<any>> = {};
+
     export class Resource<T> implements Core.IResource<T> {
         /**
          * 真实 URL 。
@@ -42,7 +47,7 @@ namespace Runtime {
                 ie9: boolean = env.MSIE && 'undefined' == typeof URL,
                 ext: string;
             if (types.Raw == type) {
-                this._l = uri.replace(/^.+:\/\//, '//');
+                this._l = uri;
                 if ('//s.dahao.de/' != this._l.substr(0, 13))
                     throw new E(E.RES_INVALID_URI);
                 ext = this._l.substr(-4);
@@ -77,6 +82,17 @@ namespace Runtime {
             this._l = env.Protocol + this._l;
             this._w = [];
             this._r = false;
+        }
+
+        /**
+         * 获取资源。
+         */
+        public static g<U>(uri: string, type: Core.IResource.Type): Resource<U> {
+            uri = uri.replace(/^.+:\/\//, '//');
+            var key: string = uri + type;
+            if (!(key in $r))
+                $r[key] = new Resource<U>(uri, type);
+            return $r[key];
         }
 
         /**
