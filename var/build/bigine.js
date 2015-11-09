@@ -7976,14 +7976,14 @@ var Tag;
                     return true;
                 });
                 return result;
-            }, dict = {}, dlobs = [], clob;
+            }, dict = {}, dlobs = [], echars = /[-\/\\^$*+?.()|[\]{}]/g, clob;
             Util.each(this._s, function (tag) {
                 children.push(tag.toJsrn());
             });
             clob = children.join(',');
             dict = dictor(profiler(clob));
             Util.each(dict, function (term, code) {
-                clob = clob.replace(new RegExp(term, 'g'), '_.' + code);
+                clob = clob.replace(new RegExp(term.replace(echars, '\\$&'), 'g'), '_.' + code);
                 dlobs.push(code + ':' + term);
             });
             return '(function($,_){return $([' + clob + '])})(require("bigine"),{' + dlobs.join(',') + '})';
@@ -10048,7 +10048,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.13.5';
+    Bigine.version = '0.13.6';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

@@ -117,6 +117,7 @@ namespace Tag {
                 },
                 dict: Util.IHashTable<string> = {},
                 dlobs: string[] = [],
+                echars: RegExp = /[-\/\\^$*+?.()|[\]{}]/g,
                 clob: string;
             Util.each(this._s, (tag: Unknown) => {
                 children.push(tag.toJsrn());
@@ -124,7 +125,7 @@ namespace Tag {
             clob = children.join(',');
             dict = dictor(profiler(clob));
             Util.each(dict, (term: string, code: string) => {
-                clob = clob.replace(new RegExp(term, 'g'), '_.' + code);
+                clob = clob.replace(new RegExp(term.replace(echars, '\\$&'), 'g'), '_.' + code);
                 dlobs.push(code + ':' + term);
             });
             return '(function($,_){return $([' + clob + '])})(require("bigine"),{' + dlobs.join(',') + '})';
