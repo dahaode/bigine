@@ -56,7 +56,7 @@ namespace G {
          * 设置文本内容。
          */
         public t(clob: string): Phrase {
-            this._t = clob;
+            this._t = clob.toString();
             return this;
         }
 

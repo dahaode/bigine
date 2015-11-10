@@ -3342,7 +3342,7 @@ var G;
          * 设置文本内容。
          */
         Phrase.prototype.t = function (clob) {
-            this._t = clob;
+            this._t = clob.toString();
             return this;
         };
         /**
@@ -10048,7 +10048,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.13.6';
+    Bigine.version = '0.13.7';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;
