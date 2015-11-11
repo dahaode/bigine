@@ -27,9 +27,9 @@ namespace Tag {
                 ktime: string = '_t',
                 time: string = states.g(ktime),
                 room: DefRoom = <DefRoom> states.g('$rd');
+            states.s(ktime, this._p[0]);
             if (time == this._p[0] || !room)
                 return runtime;
-            states.s(ktime, this._p[0]);
             return runtime.gD().asRoom(room.o(this._p[0]));
         }
 

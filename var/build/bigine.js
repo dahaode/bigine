@@ -8536,9 +8536,9 @@ var Tag;
          */
         AsTime.prototype.p = function (runtime) {
             var states = runtime.gS(), ktime = '_t', time = states.g(ktime), room = states.g('$rd');
+            states.s(ktime, this._p[0]);
             if (time == this._p[0] || !room)
                 return runtime;
-            states.s(ktime, this._p[0]);
             return runtime.gD().asRoom(room.o(this._p[0]));
         };
         /**
