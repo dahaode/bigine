@@ -237,7 +237,7 @@ namespace Runtime {
          */
         public auto(auto?: boolean): boolean {
             if (undefined !== auto)
-                this._d.a(this._fa = !!auto);
+                this._fa = this._d.a(!!auto);
             return this._fa;
         }
 

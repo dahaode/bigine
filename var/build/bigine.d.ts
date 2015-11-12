@@ -577,7 +577,7 @@ namespace Runtime {
         setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
         gD(): boolean;
         t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
-        a(auto: boolean): Director;
+        a(auto: boolean): boolean;
         v(volume: number): Director;
         f(): void;
         d(): void;
@@ -624,6 +624,7 @@ namespace Core {
         h(): IAnimation;
         w(): IAnimation;
         r(): IAnimation;
+        gW(): boolean;
     }
 }
 namespace G {
@@ -645,6 +646,7 @@ namespace G {
         protected $h(): void;
         w(): Animation;
         r(): Animation;
+        gW(): boolean;
     }
     namespace Animation {
         function f(callback: FrameRequestCallback, draw?: boolean): void;
@@ -1023,7 +1025,7 @@ namespace Runtime {
         reset(): Promise<Core.IRuntime>;
         setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
         t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
-        a(auto: boolean): CanvasDirector;
+        a(auto: boolean): boolean;
         v(volume: number): CanvasDirector;
         f(): void;
         d(): void;

@@ -42,5 +42,10 @@ namespace Core {
          * 恢复播放。
          */
         r(): IAnimation;
+
+        /**
+         * 获取暂停状态。
+         */
+        gW(): boolean;
     }
 }

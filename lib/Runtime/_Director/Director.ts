@@ -234,9 +234,8 @@ namespace Runtime {
         /**
          * 设置自动播放。
          */
-        public a(auto: boolean): Director {
-            this._a = auto;
-            return this;
+        public a(auto: boolean): boolean {
+            return this._a = auto;
         }
 
         /**

@@ -1854,8 +1854,7 @@ var Runtime;
          * 设置自动播放。
          */
         Director.prototype.a = function (auto) {
-            this._a = auto;
-            return this;
+            return this._a = auto;
         };
         /**
          * 设置音量。
@@ -2061,6 +2060,12 @@ var G;
         Animation.prototype.r = function () {
             this._w = false;
             return this;
+        };
+        /**
+         * 获取暂停状态。
+         */
+        Animation.prototype.gW = function () {
+            return this._w;
         };
         return Animation;
     })();
@@ -4784,6 +4789,8 @@ var Runtime;
          */
         CanvasDirector.prototype.a = function (auto) {
             if (this._t) {
+                if (this._t.gW())
+                    return this._a;
                 this._t.h();
                 this._t = undefined;
             }
@@ -9706,7 +9713,7 @@ var Runtime;
          */
         Runtime.prototype.auto = function (auto) {
             if (undefined !== auto)
-                this._d.a(this._fa = !!auto);
+                this._fa = this._d.a(!!auto);
             return this._fa;
         };
         /**

@@ -164,6 +164,13 @@ namespace G {
             this._w = false;
             return this;
         }
+
+        /**
+         * 获取暂停状态。
+         */
+        public gW(): boolean {
+            return this._w;
+        }
     }
 
     export namespace Animation {

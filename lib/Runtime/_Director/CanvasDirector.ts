@@ -1108,12 +1108,14 @@ namespace Runtime {
         /**
          * 设置自动播放。
          */
-        public a(auto: boolean): CanvasDirector {
+        public a(auto: boolean): boolean {
             if (this._t) {
+                if (this._t.gW())
+                    return this._a;
                 this._t.h();
                 this._t = undefined;
             }
-            return <CanvasDirector> super.a(auto);
+            return super.a(auto);
         }
 
         /**
