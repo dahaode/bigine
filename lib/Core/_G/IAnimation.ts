@@ -32,5 +32,15 @@ namespace Core {
          * 中止。
          */
         h(): IAnimation;
+
+        /**
+         * 暂停。
+         */
+        w(): IAnimation;
+
+        /**
+         * 恢复播放。
+         */
+        r(): IAnimation;
     }
 }

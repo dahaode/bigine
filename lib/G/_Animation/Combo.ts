@@ -21,46 +21,30 @@ namespace G {
          * 构造函数。
          */
         constructor(animations: Animation[]) {
-            super(0);
+            super(Infinity);
             this._a = animations;
         }
 
         /**
          * 执行。
          */
-        public p(element: Core.IGraphicElement): Promise<Core.IGraphicElement> {
-            var r: Promise<Core.IGraphicElement> = Promise.resolve(element),
-                counter: number = 0,
-                once: () => Promise<Core.IGraphicElement> = () => {
-                    if (this._h)
-                        return r;
-                    var p: Promise<Core.IGraphicElement>[] = [];
-                    Util.each(this._a, (anime: Animation) => {
-                        p.push(anime.p(element));
-                    });
-                    return Promise.all(p).then(() => {
-                        if (!this._h && ++counter < this._l)
-                            return once().then(() => element);
-                        return element;
-                    });
-                },
-                q: Promise<Core.IGraphicElement>;
-            if (this._p || this._h)
-                return r;
-            q = once();
-            if (!this._c.length)
-                return q;
-            return q.then(() => Util.Q.every(this._c, (anime: Animation) => anime.p(element)));
+        public $p(element: Core.IGraphicElement, elapsed: number, done: () => void): void {
+            if (1 == elapsed) {
+                var p: Promise<Core.IGraphicElement>[] = [];
+                Util.each(this._a, (anime: Animation) => {
+                    p.push(anime.p(element));
+                });
+                Promise.all(p).then(done);
+            }
         }
 
         /**
-         * 中止。
+         * 中止处理。
          */
-        public h(): Animation {
+        public $h(): void {
             Util.each(this._a, (anime: Animation) => {
                 anime.h();
             });
-            return super.h();
         }
     }
 }

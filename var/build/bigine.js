@@ -1972,7 +1972,8 @@ var G;
             this._c = [];
             this._l = 1;
             this._p =
-                this._h = false;
+                this._h =
+                    this._w = false;
         }
         /**
          * 链式动画。
@@ -1997,12 +1998,13 @@ var G;
                 if (_this._h)
                     return r;
                 return new Promise(function (resolve) {
-                    var index = 0, task = function (time) {
-                        if (_this._h || index++ == _this._d) {
-                            resolve(element);
-                            return;
-                        }
-                        _this.$p(element, index);
+                    var index = 0, done = function () {
+                        resolve(element);
+                    }, task = function (time) {
+                        if (_this._h || index > _this._d)
+                            return done();
+                        if (!_this._w)
+                            _this.$p(element, ++index, done);
                         Animation.f(task);
                     };
                     Animation.f(task);
@@ -2024,7 +2026,7 @@ var G;
         /**
          * 帧执行。
          */
-        Animation.prototype.$p = function (element, elpased) {
+        Animation.prototype.$p = function (element, elpased, done) {
             //
         };
         /**
@@ -2045,6 +2047,20 @@ var G;
          */
         Animation.prototype.$h = function () {
             //
+        };
+        /**
+         * 暂停。
+         */
+        Animation.prototype.w = function () {
+            this._w = true;
+            return this;
+        };
+        /**
+         * 恢复播放。
+         */
+        Animation.prototype.r = function () {
+            this._w = false;
+            return this;
         };
         return Animation;
     })();
@@ -2111,42 +2127,28 @@ var G;
          * 构造函数。
          */
         function Combo(animations) {
-            _super.call(this, 0);
+            _super.call(this, Infinity);
             this._a = animations;
         }
         /**
          * 执行。
          */
-        Combo.prototype.p = function (element) {
-            var _this = this;
-            var r = Promise.resolve(element), counter = 0, once = function () {
-                if (_this._h)
-                    return r;
+        Combo.prototype.$p = function (element, elapsed, done) {
+            if (1 == elapsed) {
                 var p = [];
-                Util.each(_this._a, function (anime) {
+                Util.each(this._a, function (anime) {
                     p.push(anime.p(element));
                 });
-                return Promise.all(p).then(function () {
-                    if (!_this._h && ++counter < _this._l)
-                        return once().then(function () { return element; });
-                    return element;
-                });
-            }, q;
-            if (this._p || this._h)
-                return r;
-            q = once();
-            if (!this._c.length)
-                return q;
-            return q.then(function () { return Util.Q.every(_this._c, function (anime) { return anime.p(element); }); });
+                Promise.all(p).then(done);
+            }
         };
         /**
-         * 中止。
+         * 中止处理。
          */
-        Combo.prototype.h = function () {
+        Combo.prototype.$h = function () {
             Util.each(this._a, function (anime) {
                 anime.h();
             });
-            return _super.prototype.h.call(this);
         };
         return Combo;
     })(G.Animation);
@@ -3591,41 +3593,26 @@ var G;
          * 构造函数。
          */
         function WaitForClick(callback) {
-            _super.call(this, 0);
+            _super.call(this, Infinity);
             this._f = callback;
         }
         /**
          * 执行。
          */
-        WaitForClick.prototype.p = function (element) {
+        WaitForClick.prototype.$p = function (element, elapsed, done) {
             var _this = this;
-            var r = Promise.resolve(element), counter = 0, type = '$click', once = function () {
-                if (_this._h)
-                    return r;
-                return new Promise(function (resolve) {
-                    var listener = function (event) {
-                        if (_this._f)
-                            _this._f.call(undefined, event);
-                        _this._r();
-                    };
-                    _this._r = function () {
-                        element.removeEventListener(type, listener);
-                        resolve(element);
-                    };
-                    element.addEventListener(type, listener);
-                }).then(function () {
-                    if (!_this._h && ++counter < _this._l)
-                        return once();
-                    return element;
-                });
-            }, q;
-            if (this._p || this._h)
-                return r;
-            this._p = true;
-            q = once();
-            if (!this._c.length)
-                return q;
-            return q.then(function () { return Util.Q.every(_this._c, function (anime) { return anime.p(element); }); });
+            if (1 == elapsed) {
+                var type = '$click', handler = function (event) {
+                    if (_this._f)
+                        _this._f.call(undefined, event);
+                    _this._r();
+                };
+                this._r = function () {
+                    element.removeEventListener(type, handler);
+                    done();
+                };
+                element.addEventListener(type, handler);
+            }
         };
         /**
          * 中止。
@@ -3656,31 +3643,23 @@ var G;
          * 构造函数。
          */
         function Type(rate) {
-            _super.call(this, 0);
+            _super.call(this, 17);
             this._r = rate || 1;
             if (0 > this._r)
                 this._r = 1;
         }
         /**
-         * 执行。
-         */
-        Type.prototype.p = function (element) {
-            if (this._p || this._h)
-                return Promise.resolve(element);
-            this._t = element;
-            var length = 0;
-            Util.each(this._s = element.gT(), function (phrase) {
-                length += phrase.gL();
-            });
-            this._d = 0 | length * this._r;
-            this._r = this._d / length;
-            return _super.prototype.p.call(this, element);
-        };
-        /**
          * 帧执行。
          */
         Type.prototype.$p = function (element, elpased) {
-            var length;
+            var length = 0;
+            if (1 == elpased) {
+                Util.each(this._s = element.gT(), function (phrase) {
+                    length += phrase.gL();
+                });
+                this._d = 0 | length * this._r;
+                this._r = this._d / length;
+            }
             elpased = 0 | elpased / this._r;
             element.c().o(1);
             Util.each(this._s, function (phrase) {
@@ -3727,7 +3706,7 @@ var G;
          * 构造函数。
          */
         function TypeDelay(rate) {
-            _super.call(this, 0);
+            _super.call(this, 17);
             this._r = rate || 1;
             if (0 > this._r)
                 this._r = 1;
@@ -3735,15 +3714,14 @@ var G;
         /**
          * 执行。
          */
-        TypeDelay.prototype.p = function (element) {
-            if (this._p || this._h)
-                return Promise.resolve(element);
-            var length = 0;
-            Util.each(element.gT(), function (phrase) {
-                length += phrase.gL();
-            });
-            this._d = 0 | length * this._r;
-            return _super.prototype.p.call(this, element);
+        TypeDelay.prototype.$p = function (element, elapsed) {
+            if (1 == elapsed) {
+                var length = 0;
+                Util.each(element.gT(), function (phrase) {
+                    length += phrase.gL();
+                });
+                this._d = 0 | length * this._r;
+            }
         };
         return TypeDelay;
     })(G.Delay);
@@ -4037,9 +4015,9 @@ var Runtime;
                         .then(function () { return gAuthor.o(0); });
                 }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
                     .then(function (runtime) {
+                    gEntry.o(1);
                     if (!start)
                         return runtime;
-                    gEntry.o(1);
                     _this._c.q('S')[0].o(1);
                     return _this.lightOn();
                 });
@@ -4688,6 +4666,8 @@ var Runtime;
             ]);
             // 入口按钮
             this._c.a((gMenuEntry = new G.Button(section).b(function () {
+                if (_this._t)
+                    _this._t.w();
                 gMenuEntry.o(0);
                 gMenuMask.o(.4);
                 gMenuSlots.o(0);
@@ -4700,6 +4680,8 @@ var Runtime;
             );
             // 关闭按钮
             gMenuFeatures.a(new G.Button(section).b(function () {
+                if (_this._t)
+                    _this._t.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
             }, new G.Image(resources[6][3]), new G.Image(resources[6][2])));
@@ -10048,7 +10030,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.13.7';
+    Bigine.version = '0.13.8';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

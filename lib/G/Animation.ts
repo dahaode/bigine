@@ -49,6 +49,11 @@ namespace G {
         protected _t: Core.IGraphicElement;
 
         /**
+         * 暂停。
+         */
+        protected _w: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(duration: number, metas?: Util.IHashTable<any>) {
@@ -57,7 +62,8 @@ namespace G {
             this._c = [];
             this._l = 1;
             this._p =
-            this._h = false;
+            this._h =
+            this._w = false;
         }
 
         /**
@@ -87,12 +93,14 @@ namespace G {
                         return r;
                     return new Promise((resolve: (value: Core.IGraphicElement) => void) => {
                         var index: number = 0,
+                            done: () => void = () => {
+                                resolve(element);
+                            },
                             task: FrameRequestCallback = (time: number) => {
-                                if (this._h || index++ == this._d) {
-                                    resolve(element);
-                                    return;
-                                }
-                                this.$p(element, index);
+                                if (this._h || index > this._d)
+                                    return done();
+                                if (!this._w)
+                                    this.$p(element, ++index, done);
                                 Animation.f(task);
                             };
                         Animation.f(task);
@@ -116,7 +124,7 @@ namespace G {
         /**
          * 帧执行。
          */
-        protected $p(element: Core.IGraphicElement, elpased: number): void {
+        protected $p(element: Core.IGraphicElement, elpased: number, done: () => void): void {
             //
         }
 
@@ -139,6 +147,22 @@ namespace G {
          */
         protected $h(): void {
             //
+        }
+
+        /**
+         * 暂停。
+         */
+        public w(): Animation {
+            this._w = true;
+            return this;
+        }
+
+        /**
+         * 恢复播放。
+         */
+        public r(): Animation {
+            this._w = false;
+            return this;
         }
     }
 

@@ -21,7 +21,7 @@ namespace G {
          * 构造函数。
          */
         constructor(rate?: number) {
-            super(0);
+            super(17);
             this._r = rate || 1;
             if (0 > this._r)
                 this._r = 1;
@@ -30,15 +30,14 @@ namespace G {
         /**
          * 执行。
          */
-        public p(element: Core.ITextElement): Promise<Core.ITextElement> {
-            if (this._p || this._h)
-                return Promise.resolve(element);
-            var length: number = 0;
-            Util.each(element.gT(), (phrase: Core.ITextPhrase) => {
-                length += phrase.gL();
-            });
-            this._d = 0 | length * this._r;
-            return super.p(element);
+        public $p(element: Core.ITextElement, elapsed: number): void {
+            if (1 == elapsed) {
+                var length: number = 0;
+                Util.each(element.gT(), (phrase: Core.ITextPhrase) => {
+                    length += phrase.gL();
+                });
+                this._d = 0 | length * this._r;
+            }
         }
     }
 }

@@ -238,9 +238,9 @@ namespace Runtime {
                                 .then(() => gAuthor.o(0));
                         }).then(() => super.OP(start, title, author))
                         .then((runtime: Core.IRuntime) => {
+                            gEntry.o(1);
                             if (!start)
                                 return runtime;
-                            gEntry.o(1);
                             this._c.q('S')[0].o(1);
                             return this.lightOn();
                         });
@@ -975,6 +975,8 @@ namespace Runtime {
             ]);
             // 入口按钮
             this._c.a((gMenuEntry = new G.Button(<Core.IBounds> section).b(() => {
+                if (this._t)
+                    this._t.w();
                 gMenuEntry.o(0);
                 gMenuMask.o(.4);
                 gMenuSlots.o(0);
@@ -988,6 +990,8 @@ namespace Runtime {
             );
             // 关闭按钮
             gMenuFeatures.a(new G.Button(<Core.IBounds> section).b(() => {
+                if (this._t)
+                    this._t.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
             }, new G.Image(resources[6][3]), new G.Image(resources[6][2])));

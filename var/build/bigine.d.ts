@@ -622,6 +622,8 @@ namespace Core {
         l(times?: number): IAnimation;
         p(element: IGraphicElement): Promise<IGraphicElement>;
         h(): IAnimation;
+        w(): IAnimation;
+        r(): IAnimation;
     }
 }
 namespace G {
@@ -633,13 +635,16 @@ namespace G {
         protected _p: boolean;
         protected _h: boolean;
         protected _t: Core.IGraphicElement;
+        protected _w: boolean;
         constructor(duration: number, metas?: Util.IHashTable<any>);
         c(next: Animation): Animation;
         l(times?: number): Animation;
         p(element: Core.IGraphicElement): Promise<Core.IGraphicElement>;
-        protected $p(element: Core.IGraphicElement, elpased: number): void;
+        protected $p(element: Core.IGraphicElement, elpased: number, done: () => void): void;
         h(): Animation;
         protected $h(): void;
+        w(): Animation;
+        r(): Animation;
     }
     namespace Animation {
         function f(callback: FrameRequestCallback, draw?: boolean): void;
@@ -653,8 +658,8 @@ namespace G {
     class Combo extends Animation implements Core.IComboAnimation {
         private _a;
         constructor(animations: Animation[]);
-        p(element: Core.IGraphicElement): Promise<Core.IGraphicElement>;
-        h(): Animation;
+        $p(element: Core.IGraphicElement, elapsed: number, done: () => void): void;
+        $h(): void;
     }
 }
 namespace G {
@@ -934,7 +939,7 @@ namespace G {
         private _f;
         private _r;
         constructor(callback?: Core.IEventListener<Core.ISprite>);
-        p(element: Core.ISprite): Promise<Core.ISprite>;
+        $p(element: Core.ISprite, elapsed: number, done: () => void): void;
         $h(): void;
     }
 }
@@ -943,7 +948,6 @@ namespace G {
         private _r;
         private _s;
         constructor(rate?: number);
-        p(element: Core.ITextElement): Promise<Core.ITextElement>;
         protected $p(element: Core.ITextElement, elpased: number): void;
         $h(): void;
     }
@@ -952,7 +956,7 @@ namespace G {
     class TypeDelay extends Delay {
         private _r;
         constructor(rate?: number);
-        p(element: Core.ITextElement): Promise<Core.ITextElement>;
+        $p(element: Core.ITextElement, elapsed: number): void;
     }
 }
 namespace G {
