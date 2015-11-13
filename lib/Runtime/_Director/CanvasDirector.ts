@@ -93,6 +93,11 @@ namespace Runtime {
         private _h: Core.IAnimation;
 
         /**
+         * 菜单暂停相关动画。
+         */
+        private _m: Core.IAnimation;
+
+        /**
          * 阻塞类 Promise 。
          */
         private _q: () => void;
@@ -287,7 +292,7 @@ namespace Runtime {
                 return this._p;
             }
             gChars.o(1);
-            return gChar.p(new G.FadeIn(500))
+            return gChar.p(this._m = new G.FadeIn(500))
                 .then(() => this._r);
         }
 
@@ -302,7 +307,7 @@ namespace Runtime {
                 gChar: G.Element = gChars.q(<any> position)[0];
             if (gChar) {
                 states.s(kamount, --amount);
-                return gChar.p(new G.FadeOut(500)).then(() => {
+                return gChar.p(this._m = new G.FadeOut(500)).then(() => {
                     gChars.e(gChar);
                     if (!amount)
                         gChars.o(0);
@@ -359,7 +364,7 @@ namespace Runtime {
                     x = 800;
                     break;
             }
-            return gChar.p(new G.Move(500, {
+            return gChar.p(this._m = new G.Move(500, {
                 x: x,
                 y: gChar.gB().y
             })).then(() => {
@@ -420,21 +425,21 @@ namespace Runtime {
             gFrame.o(1);
             return this.lightOn()
                 .then(() => {
-                    var aType: G.Type = new G.Type(1),
+                    var aType: G.Type = this._m = new G.Type(1),
                         aWFC: G.WaitForClick;
                     if (this._a)
                         return gWords.p(aType);
                     this._t = aWFC = new G.WaitForClick(() => {
                         aType.h();
                     });
-                    return Promise.race<any> ([
+                    return Promise.race<any>([
                         gWords.p(aType).then(() => aWFC.h()),
                         gFrame.p(aWFC)
                     ]);
                 }).then(() => {
                     if (this._a)
-                        return gWords.p(this._h = this._t = new G.TypeDelay(9));
-                    return gFrame.p(this._h = this._t = new G.WaitForClick());
+                        return gWords.p(this._h = this._t = this._m = new G.TypeDelay(9));
+                    return gFrame.p(this._h = this._t = this._m = new G.WaitForClick());
                 }).then(() => {
                     gFrame.o(0);
                     if (gAvatar)
@@ -975,8 +980,8 @@ namespace Runtime {
             ]);
             // 入口按钮
             this._c.a((gMenuEntry = new G.Button(<Core.IBounds> section).b(() => {
-                if (this._t)
-                    this._t.w();
+                if (this._m)
+                    this._m.w();
                 gMenuEntry.o(0);
                 gMenuMask.o(.4);
                 gMenuSlots.o(0);
@@ -990,8 +995,8 @@ namespace Runtime {
             );
             // 关闭按钮
             gMenuFeatures.a(new G.Button(<Core.IBounds> section).b(() => {
-                if (this._t)
-                    this._t.r();
+                if (this._m)
+                    this._m.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
             }, new G.Image(resources[6][3]), new G.Image(resources[6][2])));
@@ -1061,6 +1066,8 @@ namespace Runtime {
                     return;
                 }
                 this._r.gS().e(true);
+                if (this._m)
+                    this._m.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
             }, new G.Image(resources[6][11]), new G.Image(resources[6][10]))
@@ -1109,9 +1116,9 @@ namespace Runtime {
          * 设置自动播放。
          */
         public a(auto: boolean): boolean {
+            if (this._m && this._m.gW())
+                return this._a;
             if (this._t) {
-                if (this._t.gW())
-                    return this._a;
                 this._t.h();
                 this._t = undefined;
             }
@@ -1168,6 +1175,8 @@ namespace Runtime {
          * 取消阻塞。
          */
         public h(): void {
+            if (this._m)
+                this._m.h();
             if (this._h) {
                 this._h.h();
                 this._h = undefined;

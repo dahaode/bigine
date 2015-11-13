@@ -97,7 +97,7 @@ namespace G {
                                 resolve(element);
                             },
                             task: FrameRequestCallback = (time: number) => {
-                                if (this._h || index > this._d)
+                                if (this._h || index >= this._d)
                                     return done();
                                 if (!this._w)
                                     this.$p(element, ++index, done);
