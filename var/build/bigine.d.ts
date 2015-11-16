@@ -463,6 +463,7 @@ namespace Runtime {
         o(title: string): void;
         c(title: string): void;
         l(level: Core.ILogger.Level): ConsoleLogger;
+        private p(method, contents);
     }
 }
 namespace Runtime {

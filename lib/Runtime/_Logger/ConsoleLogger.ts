@@ -8,6 +8,7 @@
  */
 
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
+/// <reference path="../../Util/_iterator.ts" />
 
 namespace Runtime {
     export class ConsoleLogger implements Core.ILogger {
@@ -36,7 +37,7 @@ namespace Runtime {
          */
         public d(...parts: any[]): void {
             if (this._l > Core.ILogger.Level.Debug || !this._c) return;
-            (this._c.debug || this._c.log).apply(this._c, parts);
+            this.p(this._c.debug || this._c.log, parts);
         }
 
         /**
@@ -44,7 +45,7 @@ namespace Runtime {
          */
         public i(...parts: any[]): void {
             if (this._l > Core.ILogger.Level.Info || !this._c) return;
-            (this._c.info || this._c.log).apply(this._c, parts);
+            this.p(this._c.info || this._c.log, parts);
         }
 
         /**
@@ -52,31 +53,31 @@ namespace Runtime {
          */
         public w(...parts: any[]): void {
             if (this._l > Core.ILogger.Level.Warn || !this._c) return;
-            (this._c.warn || this._c.log).apply(this._c, parts);
+            this.p(this._c.warn || this._c.log, parts);
         }
 
         /**
          * 错误。
          */
         public e(...parts: any[]): void {
-            if (this._c && 'function' == typeof this._c.error)
-                this._c.error.apply(this._c, 1 < parts.length ? parts : [parts[0]['stack'] || parts[0]]);
+            if (this._c)
+                this.p(this._c.error, 1 < parts.length ? parts : [parts[0]['stack'] || parts[0]]);
         }
 
         /**
          * 分组。
          */
         public o(title: string): void {
-            if (Core.ILogger.Level.Debug == this._l && this._c && 'function' == typeof this._c.group)
-                this._c.group.call(this._c, title);
+            if (Core.ILogger.Level.Debug == this._l && this._c)
+                this.p(this._c.group, [title]);
         }
 
         /**
          * 分组结束。
          */
         public c(title: string): void {
-            if (Core.ILogger.Level.Debug == this._l && this._c && 'function' == typeof this._c.groupEnd)
-                this._c.groupEnd.call(this._c, title);
+            if (Core.ILogger.Level.Debug == this._l && this._c)
+                this.p(this._c.groupEnd, [title]);
         }
 
         /**
@@ -85,6 +86,16 @@ namespace Runtime {
         public l(level: Core.ILogger.Level): ConsoleLogger {
             this._l = level;
             return this;
+        }
+
+        /**
+         * 打印。
+         */
+        private p(method: typeof console.log, contents: any[]): void {
+            if (!method) return;
+            if ('apply' in method)
+                return method.apply(this._c, contents);
+            method(contents.join(' '));
         }
     }
 }

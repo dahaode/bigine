@@ -1241,6 +1241,7 @@ var Runtime;
  * @file      Runtime/_Logger/ConsoleLogger.ts
  */
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
+/// <reference path="../../Util/_iterator.ts" />
 var Runtime;
 (function (Runtime) {
     var ConsoleLogger = (function () {
@@ -1263,7 +1264,7 @@ var Runtime;
             }
             if (this._l > Core.ILogger.Level.Debug || !this._c)
                 return;
-            (this._c.debug || this._c.log).apply(this._c, parts);
+            this.p(this._c.debug || this._c.log, parts);
         };
         /**
          * 信息。
@@ -1275,7 +1276,7 @@ var Runtime;
             }
             if (this._l > Core.ILogger.Level.Info || !this._c)
                 return;
-            (this._c.info || this._c.log).apply(this._c, parts);
+            this.p(this._c.info || this._c.log, parts);
         };
         /**
          * 警告。
@@ -1287,7 +1288,7 @@ var Runtime;
             }
             if (this._l > Core.ILogger.Level.Warn || !this._c)
                 return;
-            (this._c.warn || this._c.log).apply(this._c, parts);
+            this.p(this._c.warn || this._c.log, parts);
         };
         /**
          * 错误。
@@ -1297,22 +1298,22 @@ var Runtime;
             for (var _i = 0; _i < arguments.length; _i++) {
                 parts[_i - 0] = arguments[_i];
             }
-            if (this._c && 'function' == typeof this._c.error)
-                this._c.error.apply(this._c, 1 < parts.length ? parts : [parts[0]['stack'] || parts[0]]);
+            if (this._c)
+                this.p(this._c.error, 1 < parts.length ? parts : [parts[0]['stack'] || parts[0]]);
         };
         /**
          * 分组。
          */
         ConsoleLogger.prototype.o = function (title) {
-            if (Core.ILogger.Level.Debug == this._l && this._c && 'function' == typeof this._c.group)
-                this._c.group.call(this._c, title);
+            if (Core.ILogger.Level.Debug == this._l && this._c)
+                this.p(this._c.group, [title]);
         };
         /**
          * 分组结束。
          */
         ConsoleLogger.prototype.c = function (title) {
-            if (Core.ILogger.Level.Debug == this._l && this._c && 'function' == typeof this._c.groupEnd)
-                this._c.groupEnd.call(this._c, title);
+            if (Core.ILogger.Level.Debug == this._l && this._c)
+                this.p(this._c.groupEnd, [title]);
         };
         /**
          * 设置日志等级。
@@ -1320,6 +1321,16 @@ var Runtime;
         ConsoleLogger.prototype.l = function (level) {
             this._l = level;
             return this;
+        };
+        /**
+         * 打印。
+         */
+        ConsoleLogger.prototype.p = function (method, contents) {
+            if (!method)
+                return;
+            if ('apply' in method)
+                return method.apply(this._c, contents);
+            method(contents.join(' '));
         };
         return ConsoleLogger;
     })();
