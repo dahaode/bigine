@@ -14,7 +14,7 @@ namespace Lex {
         /**
          * 语法。
          */
-        public static GRAMMAR: RegExp = /^(\t*)([^\s（：]+)(?:|（([^）]+)）)(?:|：(.*))$/;
+        public static GRAMMAR: RegExp = /^(\t*)([^\s（：]+)(?:|：(.*)|（(.*)）：(.*)|（(.*)）)$/;
 
         /**
          * 缩进。
@@ -50,7 +50,7 @@ namespace Lex {
                 if (!tokens)
                     throw new E(E.LEX_ILLEGAL_SOURCE, lineNo);
                 this._i = tokens[1].length;
-                this._t = [tokens[2], tokens[3] || '', tokens[4] || ''];
+                this._t = [tokens[2], tokens[4] || tokens[6] || '', tokens[3] || tokens[5] || ''];
                 this._c = [];
                 this._l = [lineNo, lineNo];
             }

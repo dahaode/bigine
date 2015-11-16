@@ -9874,7 +9874,7 @@ var Lex;
                 if (!tokens)
                     throw new E(E.LEX_ILLEGAL_SOURCE, lineNo);
                 this._i = tokens[1].length;
-                this._t = [tokens[2], tokens[3] || '', tokens[4] || ''];
+                this._t = [tokens[2], tokens[4] || tokens[6] || '', tokens[3] || tokens[5] || ''];
                 this._c = [];
                 this._l = [lineNo, lineNo];
             }
@@ -9935,7 +9935,7 @@ var Lex;
         /**
          * 语法。
          */
-        TagLine.GRAMMAR = /^(\t*)([^\s（：]+)(?:|（([^）]+)）)(?:|：(.*))$/;
+        TagLine.GRAMMAR = /^(\t*)([^\s（：]+)(?:|：(.*)|（(.*)）：(.*)|（(.*)）)$/;
         return TagLine;
     })();
     Lex.TagLine = TagLine;
@@ -10045,7 +10045,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.14.0';
+    Bigine.version = '0.13.9';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;
