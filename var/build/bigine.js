@@ -973,11 +973,11 @@ var Runtime;
             var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext;
             if (types.Raw == type) {
                 this._l = uri;
-                if ('//s.dahao.de/' != this._l.substr(0, 13))
+                if ('//s.dahao.de/theme/' != this._l.substr(0, 19))
                     throw new E(E.RES_INVALID_URI);
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = '//dahao.de/a' + this._l.substr(12);
+                    this._l = '//dahao.de/.9' + this._l.substr(18);
             }
             else {
                 if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri))
@@ -1002,7 +1002,7 @@ var Runtime;
                 }
                 this._l = '//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename;
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = '//dahao.de/a' + this._l.substr(13);
+                    this._l = '//dahao.de/.9' + this._l.substr(13);
             }
             this._l = env.Protocol + this._l;
             this._w = [];
@@ -3937,14 +3937,14 @@ var Runtime;
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
             this._i = {
-                o: Runtime.Resource.g('//s.dahao.de/lib/bigine/logo.png', raw),
-                e: Runtime.Resource.g('//s.dahao.de/lib/bigine/thx.png', raw),
-                s: Runtime.Resource.g('//s.dahao.de/lib/bigine/oops.mp3', raw),
-                s3: Runtime.Resource.g('//s.dahao.de/lib/bigine/3stars.png', raw),
-                s2: Runtime.Resource.g('//s.dahao.de/lib/bigine/2stars.png', raw),
-                s1: Runtime.Resource.g('//s.dahao.de/lib/bigine/1star.png', raw),
-                f: Runtime.Resource.g('//s.dahao.de/lib/bigine/focus.mp3', raw),
-                c: Runtime.Resource.g('//s.dahao.de/lib/bigine/click.mp3', raw)
+                o: Runtime.Resource.g('//s.dahao.de/theme/_/logo.png', raw),
+                e: Runtime.Resource.g('//s.dahao.de/theme/_/thx.png', raw),
+                s: Runtime.Resource.g('//s.dahao.de/theme/_/oops.mp3', raw),
+                s3: Runtime.Resource.g('//s.dahao.de/theme/_/3stars.png', raw),
+                s2: Runtime.Resource.g('//s.dahao.de/theme/_/2stars.png', raw),
+                s1: Runtime.Resource.g('//s.dahao.de/theme/_/1star.png', raw),
+                f: Runtime.Resource.g('//s.dahao.de/theme/_/focus.mp3', raw),
+                c: Runtime.Resource.g('//s.dahao.de/theme/_/click.mp3', raw)
             };
             this._f = {};
             this._e = [0, 0];
@@ -10045,7 +10045,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.13.9';
+    Bigine.version = '0.14.0';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

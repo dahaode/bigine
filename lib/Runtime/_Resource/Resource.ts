@@ -48,11 +48,11 @@ namespace Runtime {
                 ext: string;
             if (types.Raw == type) {
                 this._l = uri;
-                if ('//s.dahao.de/' != this._l.substr(0, 13))
+                if ('//s.dahao.de/theme/' != this._l.substr(0, 19))
                     throw new E(E.RES_INVALID_URI);
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = '//dahao.de/a' + this._l.substr(12);
+                    this._l = '//dahao.de/.9' + this._l.substr(18);
             } else {
                 if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri))
                     throw new E(E.RES_INVALID_URI);
@@ -77,7 +77,7 @@ namespace Runtime {
                 }
                 this._l = '//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename;
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = '//dahao.de/a' + this._l.substr(13);
+                    this._l = '//dahao.de/.9' + this._l.substr(13);
             }
             this._l = env.Protocol + this._l;
             this._w = [];

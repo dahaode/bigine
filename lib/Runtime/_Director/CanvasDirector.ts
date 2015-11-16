@@ -156,14 +156,14 @@ namespace Runtime {
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
             this._i = {
-                o: Resource.g<HTMLImageElement>('//s.dahao.de/lib/bigine/logo.png', raw),
-                e: Resource.g<HTMLImageElement>('//s.dahao.de/lib/bigine/thx.png', raw),
-                s: Resource.g<string>('//s.dahao.de/lib/bigine/oops.mp3', raw),
-                s3: Resource.g<HTMLImageElement>('//s.dahao.de/lib/bigine/3stars.png', raw),
-                s2: Resource.g<HTMLImageElement>('//s.dahao.de/lib/bigine/2stars.png', raw),
-                s1: Resource.g<HTMLImageElement>('//s.dahao.de/lib/bigine/1star.png', raw),
-                f: Resource.g<string>('//s.dahao.de/lib/bigine/focus.mp3', raw),
-                c: Resource.g<string>('//s.dahao.de/lib/bigine/click.mp3', raw)
+                o: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/logo.png', raw),
+                e: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/thx.png', raw),
+                s: Resource.g<string>('//s.dahao.de/theme/_/oops.mp3', raw),
+                s3: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/3stars.png', raw),
+                s2: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/2stars.png', raw),
+                s1: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/1star.png', raw),
+                f: Resource.g<string>('//s.dahao.de/theme/_/focus.mp3', raw),
+                c: Resource.g<string>('//s.dahao.de/theme/_/click.mp3', raw)
             };
             this._f = {};
             this._e = [0, 0];
