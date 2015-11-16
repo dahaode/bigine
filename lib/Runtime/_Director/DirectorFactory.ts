@@ -14,8 +14,11 @@
 namespace Runtime {
     export namespace DirectorFactory {
         export function c(runtime: Core.IRuntime): Director {
-            if (!Util.ENV.Window)
+            var env: Util.IEnvType = Util.ENV;
+            if (!env.Window)
                 return new NodeDirector(runtime);
+            if (!env.Canvas)
+                throw new E(E.SUPPORT_NO_CANVAS);
             return new CanvasDirector(runtime);
         }
     }

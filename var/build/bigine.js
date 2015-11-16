@@ -233,6 +233,7 @@ var E = (function (_super) {
     E.EP_ENTITY_NOT_FOUND = '实体不存在';
     E.EP_THEME_NOT_LOADED = '主题数据尚未加载完成';
     E.G_PARENT_NOT_FOUND = '画面父元素未绑定';
+    E.SUPPORT_NO_CANVAS = '浏览器不支持 Canvas';
     return E;
 })(Error);
 var E;
@@ -4971,8 +4972,11 @@ var Runtime;
     var DirectorFactory;
     (function (DirectorFactory) {
         function c(runtime) {
-            if (!Util.ENV.Window)
+            var env = Util.ENV;
+            if (!env.Window)
                 return new Runtime.NodeDirector(runtime);
+            if (!env.Canvas)
+                throw new E(E.SUPPORT_NO_CANVAS);
             return new Runtime.CanvasDirector(runtime);
         }
         DirectorFactory.c = c;
@@ -10041,7 +10045,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.13.8';
+    Bigine.version = '0.14.0';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

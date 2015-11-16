@@ -86,6 +86,8 @@ class E extends Error {
 
     public static G_PARENT_NOT_FOUND: string = '画面父元素未绑定';
 
+    public static SUPPORT_NO_CANVAS: string = '浏览器不支持 Canvas';
+
     /**
      * 信号。
      */

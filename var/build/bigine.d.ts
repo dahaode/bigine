@@ -150,6 +150,7 @@ class E extends Error {
     static EP_ENTITY_NOT_FOUND: string;
     static EP_THEME_NOT_LOADED: string;
     static G_PARENT_NOT_FOUND: string;
+    static SUPPORT_NO_CANVAS: string;
     signal: E.Signal;
     constructor(message: string, lineNo?: number);
 }
