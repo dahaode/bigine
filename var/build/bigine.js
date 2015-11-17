@@ -234,6 +234,7 @@ var E = (function (_super) {
     E.EP_THEME_NOT_LOADED = '主题数据尚未加载完成';
     E.G_PARENT_NOT_FOUND = '画面父元素未绑定';
     E.SUPPORT_NO_CANVAS = '浏览器不支持 Canvas';
+    E.UTIL_REMOTE_TIMEOUT = '远端请求超时';
     return E;
 })(Error);
 var E;
@@ -6795,6 +6796,7 @@ var Tag;
 /// <reference path="_iterator.ts" />
 var Util;
 (function (Util) {
+    var xdrs = [];
     var Remote;
     (function (Remote) {
         /**
@@ -6831,11 +6833,16 @@ var Util;
          * HTTP 请求远端数据。
          */
         function http(method, url, data, onSuccess, onFailure) {
-            var xhr = Util.ENV.Node.JS ?
-                require('./xhr').create() :
-                ('undefined' != typeof XDomainRequest ?
-                    new XDomainRequest() :
-                    new XMLHttpRequest()), qs = [];
+            var qs = [], xhr;
+            if (Util.ENV.Node.JS) {
+                xhr = require('./xhr').create();
+            }
+            else if ('undefined' != typeof XDomainRequest) {
+                xhr = new XDomainRequest();
+                xdrs.push(xhr);
+            }
+            else
+                xhr = new XMLHttpRequest();
             xhr.onload = function () {
                 try {
                     var resp = JSON.parse(xhr.responseText);
@@ -6849,9 +6856,16 @@ var Util;
                     onFailure(error, xhr.status);
                 }
             };
+            xhr.onprogress = function () {
+                //
+            };
             xhr.onerror = function (event) {
                 onFailure(event.error);
             };
+            xhr.ontimeout = function () {
+                onFailure(new E(E.UTIL_REMOTE_TIMEOUT));
+            };
+            xhr.timeout = 3000;
             xhr.open(Method.GET == method ? 'GET' : 'POST', format(url), true);
             Util.each(data, function (value, key) {
                 qs.push(key + '=' + encodeURIComponent(value));

@@ -88,6 +88,8 @@ class E extends Error {
 
     public static SUPPORT_NO_CANVAS: string = '浏览器不支持 Canvas';
 
+    public static UTIL_REMOTE_TIMEOUT: string = '远端请求超时';
+
     /**
      * 信号。
      */

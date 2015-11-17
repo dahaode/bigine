@@ -151,6 +151,7 @@ class E extends Error {
     static EP_THEME_NOT_LOADED: string;
     static G_PARENT_NOT_FOUND: string;
     static SUPPORT_NO_CANVAS: string;
+    static UTIL_REMOTE_TIMEOUT: string;
     signal: E.Signal;
     constructor(message: string, lineNo?: number);
 }

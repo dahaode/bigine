@@ -16,6 +16,8 @@
 declare var XDomainRequest: typeof XMLHttpRequest;
 
 namespace Util {
+    var xdrs: any[] = [];
+
     export namespace Remote {
         /**
          * 格式化。
@@ -50,13 +52,15 @@ namespace Util {
          * HTTP 请求远端数据。
          */
         export function http<T>(method: Method, url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void {
-            var xhr: XMLHttpRequest = ENV.Node.JS ?
-                    require('./xhr').create() :
-                    ('undefined' != typeof XDomainRequest ?
-                        new XDomainRequest() :
-                        new XMLHttpRequest()
-                    ),
-                qs: string[] = [];
+            var qs: string[] = [],
+                xhr: XMLHttpRequest;
+            if (ENV.Node.JS) {
+                xhr = require('./xhr').create();
+            } else if ('undefined' != typeof XDomainRequest) {
+                xhr = new XDomainRequest();
+                xdrs.push(xhr);
+            } else
+                xhr = new XMLHttpRequest();
             xhr.onload = () => {
                 try {
                     var resp: Util.IHashTable<any> = <Util.IHashTable<any>> JSON.parse(xhr.responseText);
@@ -69,9 +73,16 @@ namespace Util {
                     onFailure(<Error> error, xhr.status);
                 }
             };
+            xhr.onprogress = () => {
+                //
+            };
             xhr.onerror = (event: ErrorEvent) => {
                 onFailure(<Error> event.error);
             };
+            xhr.ontimeout = () => {
+                onFailure(new E(E.UTIL_REMOTE_TIMEOUT));
+            };
+            xhr.timeout = 3000;
             xhr.open(Method.GET == method ? 'GET' : 'POST', format(url), true);
             each(data, (value: string | number, key: string) => {
                 qs.push(key + '=' + encodeURIComponent(<string> value));

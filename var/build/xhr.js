@@ -10,6 +10,7 @@ function NodeXHR() {
     this.responseText =
     this.statusText = '';
     this.status = 0;
+    this.timeout = 10000;
 }
 
 NodeXHR.prototype.open = function(method, url, async) {
@@ -38,6 +39,10 @@ NodeXHR.prototype.send = function(data) {
                     $this.onload();
             });
         });
+    req.setTimeout($this.timeout, function () {
+        if ($this.ontimeout)
+            $this.ontimeout();
+    });
     req.on('error', function (error) {
         if ($this.onerror)
             $this.onerror();
