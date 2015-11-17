@@ -174,9 +174,10 @@ namespace G {
     }
 
     export namespace Animation {
-        var jobs: FrameRequestCallback[] = [],
-            raf: typeof window.requestAnimationFrame,
-            proxy: FrameRequestCallback;
+        var raf: typeof window.requestAnimationFrame,
+            jobs: FrameRequestCallback[] = [],
+            elapsed: number = 0,
+            size: number;
 
         if (Util.ENV.Window) {
             raf = window.requestAnimationFrame ||
@@ -184,15 +185,19 @@ namespace G {
                 window.webkitRequestAnimationFrame ||
                 window.mozRequestAnimationFrame ||
                 window.oRequestAnimationFrame;
-            if (raf) {
-                proxy = (now: number) => {
-                    if (jobs.length)
-                        Util.each(jobs.splice(0, jobs.length), (job: FrameRequestCallback) => {
-                            job(now);
-                        });
-                    raf.call(window, proxy);
+            if (!raf) {
+                raf = (callback: FrameRequestCallback) => {
+                    jobs.push(callback);
+                    return 0;
                 };
-                raf.call(window, proxy);
+                setInterval(() => {
+                    elapsed += 5;
+                    size = jobs.length;
+                    if ((1 + elapsed % 50) % 3 || !size) return;
+                    Util.each(jobs.splice(0, size), (callback: FrameRequestCallback) => {
+                        callback(elapsed);
+                    });
+                }, 5);
             }
         } else
             raf = (callback: FrameRequestCallback) => 0;
@@ -201,10 +206,7 @@ namespace G {
          * 帧处理。
          */
         export function f(callback: FrameRequestCallback, draw?: boolean): void {
-            if (draw) {
-                jobs.unshift(callback);
-            } else
-                jobs.push(callback);
+            raf.call(window, callback);
         }
     }
 }

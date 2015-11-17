@@ -2084,22 +2084,27 @@ var G;
     G.Animation = Animation;
     var Animation;
     (function (Animation) {
-        var jobs = [], raf, proxy;
+        var raf, jobs = [], elapsed = 0, size;
         if (Util.ENV.Window) {
             raf = window.requestAnimationFrame ||
                 window.msRequestAnimationFrame ||
                 window.webkitRequestAnimationFrame ||
                 window.mozRequestAnimationFrame ||
                 window.oRequestAnimationFrame;
-            if (raf) {
-                proxy = function (now) {
-                    if (jobs.length)
-                        Util.each(jobs.splice(0, jobs.length), function (job) {
-                            job(now);
-                        });
-                    raf.call(window, proxy);
+            if (!raf) {
+                raf = function (callback) {
+                    jobs.push(callback);
+                    return 0;
                 };
-                raf.call(window, proxy);
+                setInterval(function () {
+                    elapsed += 5;
+                    size = jobs.length;
+                    if ((1 + elapsed % 50) % 3 || !size)
+                        return;
+                    Util.each(jobs.splice(0, size), function (callback) {
+                        callback(elapsed);
+                    });
+                }, 5);
             }
         }
         else
@@ -2108,11 +2113,7 @@ var G;
          * 帧处理。
          */
         function f(callback, draw) {
-            if (draw) {
-                jobs.unshift(callback);
-            }
-            else
-                jobs.push(callback);
+            raf.call(window, callback);
         }
         Animation.f = f;
     })(Animation = G.Animation || (G.Animation = {}));
