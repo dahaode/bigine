@@ -6865,7 +6865,6 @@ var Util;
             xhr.ontimeout = function () {
                 onFailure(new E(E.UTIL_REMOTE_TIMEOUT));
             };
-            xhr.timeout = 3000;
             xhr.open(Method.GET == method ? 'GET' : 'POST', format(url), true);
             Util.each(data, function (value, key) {
                 qs.push(key + '=' + encodeURIComponent(value));
@@ -10071,7 +10070,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.14.0';
+    Bigine.version = '0.14.1';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

@@ -82,7 +82,6 @@ namespace Util {
             xhr.ontimeout = () => {
                 onFailure(new E(E.UTIL_REMOTE_TIMEOUT));
             };
-            xhr.timeout = 3000;
             xhr.open(Method.GET == method ? 'GET' : 'POST', format(url), true);
             each(data, (value: string | number, key: string) => {
                 qs.push(key + '=' + encodeURIComponent(<string> value));
