@@ -506,25 +506,21 @@ namespace Runtime {
          * 播放背景音乐。
          */
         public playBGM(resource?: Resource<string>): Promise<Core.IRuntime> {
-            var oops: Resource<string> = this._i['s'],
-                url: string = oops.l(),
+            var oops: string = this._i['s'].l(),
+                url: string = resource ? resource.l() : oops,
                 bgm: HTMLAudioElement = this._s['b'],
-                volume: number = bgm.volume;
-            if (resource) {
-                if (bgm.src != url) {
-                    url = resource.l();
-                    return new G.AudioFadeOut(1500).p(bgm).then(() => {
-                        bgm.volume = volume;
+                volume: number = bgm.volume,
+                change: () => Promise<Core.IRuntime> = () => {
+                    bgm.volume = volume;
+                    if (bgm.src != url)
                         bgm.src = url;
-                        return this._r;
-                    });
-                } else
-                    bgm.src = resource.l();
-            } else {
-                bgm.src = url;
+                    return super.playBGM(resource);
+                };
+            if (!resource)
                 bgm.play();
-            }
-            return super.playBGM(resource);
+            if (bgm.src && bgm.src != oops)
+                return new G.AudioFadeOut(1500).p(bgm).then(change);
+            return change();
         }
 
         /**

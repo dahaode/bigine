@@ -69,6 +69,7 @@ namespace Tag {
         Enter: '进入房间',
         PlaySE: '播放音效',
         Weather: '设置天气',
+        StopBGM: '停止音乐',
 
         Assert: '当数据',
         Assign: '设置数据',
@@ -102,7 +103,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // 63
+    export var S: { [index: number]: any[] } = { // 64
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -244,7 +245,8 @@ namespace Tag {
         62: ['CharMove', 1, 1], // [人物] 新位置
         63: ['WhenVar', 1, -1, { // [比较数据]
             '-1': [1]
-        }]
+        }],
+        64: ['StopBGM', 0, -1]
     };
     var ii: any,
         jj: any;

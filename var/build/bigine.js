@@ -4312,24 +4312,17 @@ var Runtime;
          */
         CanvasDirector.prototype.playBGM = function (resource) {
             var _this = this;
-            var oops = this._i['s'], url = oops.l(), bgm = this._s['b'], volume = bgm.volume;
-            if (resource) {
-                if (bgm.src != url) {
-                    url = resource.l();
-                    return new G.AudioFadeOut(1500).p(bgm).then(function () {
-                        bgm.volume = volume;
-                        bgm.src = url;
-                        return _this._r;
-                    });
-                }
-                else
-                    bgm.src = resource.l();
-            }
-            else {
-                bgm.src = url;
+            var oops = this._i['s'].l(), url = resource ? resource.l() : oops, bgm = this._s['b'], volume = bgm.volume, change = function () {
+                bgm.volume = volume;
+                if (bgm.src != url)
+                    bgm.src = url;
+                return _super.prototype.playBGM.call(_this, resource);
+            };
+            if (!resource)
                 bgm.play();
-            }
-            return _super.prototype.playBGM.call(this, resource);
+            if (bgm.src && bgm.src != oops)
+                return new G.AudioFadeOut(1500).p(bgm).then(change);
+            return change();
         };
         /**
          * 播放音效。
@@ -5251,6 +5244,7 @@ var Tag;
         Enter: '进入房间',
         PlaySE: '播放音效',
         Weather: '设置天气',
+        StopBGM: '停止音乐',
         Assert: '当数据',
         Assign: '设置数据',
         Choose: '选择',
@@ -5410,7 +5404,8 @@ var Tag;
         62: ['CharMove', 1, 1],
         63: ['WhenVar', 1, -1, {
                 '-1': [1]
-            }]
+            }],
+        64: ['StopBGM', 0, -1]
     };
     var ii, jj;
     for (ii in Tag.S)
@@ -9583,6 +9578,39 @@ var Tag;
     Tag.WhenVar = WhenVar;
 })(Tag || (Tag = {}));
 /**
+ * 定义停止音乐动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/StopBGM.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var StopBGM = (function (_super) {
+        __extends(StopBGM, _super);
+        function StopBGM() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        StopBGM.prototype.gN = function () {
+            return 'StopBGM';
+        };
+        /**
+         * 执行。
+         */
+        StopBGM.prototype.p = function (runtime) {
+            runtime.gS().d('_b');
+            return runtime.gD().playBGM();
+        };
+        return StopBGM;
+    })(Tag.Action);
+    Tag.StopBGM = StopBGM;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9638,6 +9666,7 @@ var Tag;
 /// <reference path="_Action/_Logic/Maximum.ts" />
 /// <reference path="_Action/_Director/CharMove.ts" />
 /// <reference path="_Action/_Logic/WhenVar.ts" />
+/// <reference path="_Action/_Director/StopBGM.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -10126,7 +10155,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.14.1';
+    Bigine.version = '0.15.0';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

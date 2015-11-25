@@ -55,3 +55,4 @@
 /// <reference path="_Action/_Logic/Maximum.ts" />
 /// <reference path="_Action/_Director/CharMove.ts" />
 /// <reference path="_Action/_Logic/WhenVar.ts" />
+/// <reference path="_Action/_Director/StopBGM.ts" />
