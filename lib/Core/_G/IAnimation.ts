@@ -1,13 +1,11 @@
 /**
- * 声明画面动画接口规范。
+ * 声明动画接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
  * @file      Core/_G/IAnimation.ts
  */
-
-/// <reference path="IGraphicElement.ts" />
 
 namespace Core {
     export interface IAnimation {
@@ -26,7 +24,7 @@ namespace Core {
         /**
          * 执行。
          */
-        p(element: IGraphicElement): Promise<IGraphicElement>;
+        p(element: any): Promise<any>;
 
         /**
          * 中止。

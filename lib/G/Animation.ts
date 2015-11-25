@@ -46,7 +46,7 @@ namespace G {
         /**
          * 对象。
          */
-        protected _t: Core.IGraphicElement;
+        protected _t: any;
 
         /**
          * 暂停。
@@ -85,13 +85,13 @@ namespace G {
         /**
          * 执行。
          */
-        public p(element: Core.IGraphicElement): Promise<Core.IGraphicElement> {
-            var r: Promise<Core.IGraphicElement> = Promise.resolve(element),
+        public p(element: any): Promise<any> {
+            var r: Promise<any> = Promise.resolve(element),
                 counter: number = 0,
-                once: () => Promise<Core.IGraphicElement> = () => {
+                once: () => Promise<any> = () => {
                     if (this._h)
                         return r;
-                    return new Promise((resolve: (value: Core.IGraphicElement) => void) => {
+                    return new Promise((resolve: (value: any) => void) => {
                         var index: number = 0,
                             done: () => void = () => {
                                 resolve(element);
@@ -110,7 +110,7 @@ namespace G {
                         return element;
                     });
                 },
-                q: Promise<Core.IGraphicElement>;
+                q: Promise<any>;
             if (this._p || this._h)
                 return r;
             this._p = true;
@@ -124,7 +124,7 @@ namespace G {
         /**
          * 帧执行。
          */
-        protected $p(element: Core.IGraphicElement, elpased: number, done: () => void): void {
+        protected $p(element: any, elpased: number, done: () => void): void {
             //
         }
 

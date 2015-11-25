@@ -1934,33 +1934,13 @@ var Runtime;
     Runtime.NodeDirector = NodeDirector;
 })(Runtime || (Runtime = {}));
 /**
- * 声明画面元素区域接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IBounds.ts
- */
-/**
- * 声明画面元素接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IGraphicElement.ts
- */
-/// <reference path="IBounds.ts" />
-/// <reference path="../../Util/Q.ts" />
-/// <reference path="IAnimation.ts" />
-/**
- * 声明画面动画接口规范。
+ * 声明动画接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2015 Dahao.de
  * @license   GPL-3.0
  * @file      Core/_G/IAnimation.ts
  */
-/// <reference path="IGraphicElement.ts" />
 /**
  * 定义抽象画面动画组件。
  *
@@ -2264,6 +2244,25 @@ var G;
     })(G.Fade);
     G.FadeOut = FadeOut;
 })(G || (G = {}));
+/**
+ * 声明画面元素区域接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_G/IBounds.ts
+ */
+/**
+ * 声明画面元素接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_G/IGraphicElement.ts
+ */
+/// <reference path="IBounds.ts" />
+/// <reference path="../../Util/Q.ts" />
+/// <reference path="IAnimation.ts" />
 /**
  * 声明画面组合元素接口规范。
  *
@@ -3792,6 +3791,49 @@ var G;
     G.Move = Move;
 })(G || (G = {}));
 /**
+ * 声明音频音量渐变动画元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      G/_Animation/IAudioFadeMetas.ts
+ */
+/// <reference path="../../Util/IHashTable.ts" />
+/**
+ * 定义透明度渐变动画组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      G/_Animation/AudioFadeOut.ts
+ */
+/// <reference path="../Animation.ts" />
+/// <reference path="IAudioFadeMetas.ts" />
+var G;
+(function (G) {
+    var AudioFadeOut = (function (_super) {
+        __extends(AudioFadeOut, _super);
+        /**
+         * 构造函数。
+         */
+        function AudioFadeOut(duration) {
+            _super.call(this, duration, {
+                volume: 0
+            });
+        }
+        /**
+         * 帧执行。
+         */
+        AudioFadeOut.prototype.$p = function (element, elpased) {
+            if (1 == elpased)
+                this._v = element.volume;
+            element.volume = this._v - this._v * elpased / this._d;
+        };
+        return AudioFadeOut;
+    })(G.Animation);
+    G.AudioFadeOut = AudioFadeOut;
+})(G || (G = {}));
+/**
  * 打包所有已定义地画面调度（含：元素、动画）组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -3812,6 +3854,7 @@ var G;
 /// <reference path="_Animation/Type.ts" />
 /// <reference path="_Animation/TypeDelay.ts" />
 /// <reference path="_Animation/Move.ts" />
+/// <reference path="_Animation/AudioFadeOut.ts" />
 /**
  * 声明（运行时）读档继续事件元信息接口规范。
  *
@@ -4268,11 +4311,24 @@ var Runtime;
          * 播放背景音乐。
          */
         CanvasDirector.prototype.playBGM = function (resource) {
-            var url = (resource || this._i['s']).l();
-            if (this._s['b'].src != url)
-                this._s['b'].src = url;
-            if (!resource)
-                this._s['b'].play();
+            var _this = this;
+            var oops = this._i['s'], url = oops.l(), bgm = this._s['b'], volume = bgm.volume;
+            if (resource) {
+                if (bgm.src != url) {
+                    url = resource.l();
+                    return new G.AudioFadeOut(1500).p(bgm).then(function () {
+                        bgm.volume = volume;
+                        bgm.src = url;
+                        return _this._r;
+                    });
+                }
+                else
+                    bgm.src = resource.l();
+            }
+            else {
+                bgm.src = url;
+                bgm.play();
+            }
             return _super.prototype.playBGM.call(this, resource);
         };
         /**
@@ -4280,12 +4336,12 @@ var Runtime;
          */
         CanvasDirector.prototype.playSE = function (resource) {
             var _this = this;
-            var url = (resource || this._i['s']).l(), resume = function () {
-                _this._s['e'].removeEventListener('ended', resume);
+            var url = (resource || this._i['s']).l(), se = this._s['e'], type = 'ended', resume = function () {
+                se.removeEventListener(type, resume);
                 _this._s['b'].play();
             };
-            this._s['e'].addEventListener('ended', resume);
-            this._s['e'].src = url;
+            se.addEventListener(type, resume);
+            se.src = url;
             if (!resource)
                 this._s['e'].play();
             return _super.prototype.playSE.call(this, resource);

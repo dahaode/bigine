@@ -506,11 +506,24 @@ namespace Runtime {
          * 播放背景音乐。
          */
         public playBGM(resource?: Resource<string>): Promise<Core.IRuntime> {
-            var url: string = (resource || this._i['s']).l();
-            if (this._s['b'].src != url)
-                this._s['b'].src = url;
-            if (!resource)
-                this._s['b'].play();
+            var oops: Resource<string> = this._i['s'],
+                url: string = oops.l(),
+                bgm: HTMLAudioElement = this._s['b'],
+                volume: number = bgm.volume;
+            if (resource) {
+                if (bgm.src != url) {
+                    url = resource.l();
+                    return new G.AudioFadeOut(1500).p(bgm).then(() => {
+                        bgm.volume = volume;
+                        bgm.src = url;
+                        return this._r;
+                    });
+                } else
+                    bgm.src = resource.l();
+            } else {
+                bgm.src = url;
+                bgm.play();
+            }
             return super.playBGM(resource);
         }
 
@@ -519,12 +532,14 @@ namespace Runtime {
          */
         public playSE(resource?: Resource<string>): Promise<Core.IRuntime> {
             var url: string = (resource || this._i['s']).l(),
+                se: HTMLAudioElement = this._s['e'],
+                type: string = 'ended',
                 resume: () => void = () => {
-                    this._s['e'].removeEventListener('ended', resume);
+                    se.removeEventListener(type, resume);
                     this._s['b'].play();
                 };
-            this._s['e'].addEventListener('ended', resume);
-            this._s['e'].src = url;
+            se.addEventListener(type, resume);
+            se.src = url;
             if (!resource)
                 this._s['e'].play();
             return super.playSE(resource);

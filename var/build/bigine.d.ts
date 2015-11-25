@@ -594,36 +594,10 @@ namespace Runtime {
     }
 }
 namespace Core {
-    interface IBounds {
-        x: number;
-        y: number;
-        w: number;
-        h: number;
-    }
-}
-namespace Core {
-    interface IGraphicElement {
-        gB(): IBounds;
-        x(value: number): IGraphicElement;
-        y(value: number): IGraphicElement;
-        s(ratio: number): IGraphicElement;
-        gS(): number;
-        r(degrees: number): IGraphicElement;
-        gR(): number;
-        o(value: number): IGraphicElement;
-        gO(): number;
-        d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
-        p(animation: IAnimation): Promise<IGraphicElement>;
-        i(id: string): IGraphicElement;
-        gI(): string;
-        f(): IGraphicElement;
-    }
-}
-namespace Core {
     interface IAnimation {
         c(next: IAnimation): IAnimation;
         l(times?: number): IAnimation;
-        p(element: IGraphicElement): Promise<IGraphicElement>;
+        p(element: any): Promise<any>;
         h(): IAnimation;
         w(): IAnimation;
         r(): IAnimation;
@@ -638,13 +612,13 @@ namespace G {
         protected _l: number;
         protected _p: boolean;
         protected _h: boolean;
-        protected _t: Core.IGraphicElement;
+        protected _t: any;
         protected _w: boolean;
         constructor(duration: number, metas?: Util.IHashTable<any>);
         c(next: Animation): Animation;
         l(times?: number): Animation;
-        p(element: Core.IGraphicElement): Promise<Core.IGraphicElement>;
-        protected $p(element: Core.IGraphicElement, elpased: number, done: () => void): void;
+        p(element: any): Promise<any>;
+        protected $p(element: any, elpased: number, done: () => void): void;
         h(): Animation;
         protected $h(): void;
         w(): Animation;
@@ -687,6 +661,32 @@ namespace G {
 namespace G {
     class FadeOut extends Fade {
         constructor(duration: number);
+    }
+}
+namespace Core {
+    interface IBounds {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+    }
+}
+namespace Core {
+    interface IGraphicElement {
+        gB(): IBounds;
+        x(value: number): IGraphicElement;
+        y(value: number): IGraphicElement;
+        s(ratio: number): IGraphicElement;
+        gS(): number;
+        r(degrees: number): IGraphicElement;
+        gR(): number;
+        o(value: number): IGraphicElement;
+        gO(): number;
+        d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
+        p(animation: IAnimation): Promise<IGraphicElement>;
+        i(id: string): IGraphicElement;
+        gI(): string;
+        f(): IGraphicElement;
     }
 }
 namespace Core {
@@ -976,6 +976,18 @@ namespace G {
         private _y;
         constructor(duration: number, metas: IMoveMetas);
         protected $p(element: Core.IGraphicElement, elpased: number): void;
+    }
+}
+namespace G {
+    interface IAudioFadeMetas extends Util.IHashTable<any> {
+        volume: number;
+    }
+}
+namespace G {
+    class AudioFadeOut extends Animation {
+        private _v;
+        constructor(duration: number);
+        protected $p(element: HTMLAudioElement, elpased: number): void;
     }
 }
 namespace Runtime {

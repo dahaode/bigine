@@ -20,3 +20,4 @@
 /// <reference path="_Animation/Type.ts" />
 /// <reference path="_Animation/TypeDelay.ts" />
 /// <reference path="_Animation/Move.ts" />
+/// <reference path="_Animation/AudioFadeOut.ts" />
