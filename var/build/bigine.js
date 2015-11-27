@@ -235,6 +235,8 @@ var E = (function (_super) {
     E.G_PARENT_NOT_FOUND = '画面父元素未绑定';
     E.SUPPORT_NO_CANVAS = '浏览器不支持 Canvas';
     E.UTIL_REMOTE_TIMEOUT = '远端请求超时';
+    E.OPT_OPTIONS_MISSING = '选项声明缺失';
+    E.OPT_OPTIONS_CONFLICT = '选项声明冲突';
     return E;
 })(Error);
 var E;
@@ -5247,12 +5249,15 @@ var Tag;
         StopBGM: '停止音乐',
         Assert: '当数据',
         Assign: '设置数据',
-        Choose: '选择',
         Compare: '对比数据',
         Increase: '增加数据',
         LoopBreak: '循环中止',
         Maximum: '最大数据',
         Minimum: '最小数据',
+        Choose: '选择',
+        DefOptions: '定义选择',
+        AddOption: '添加选项',
+        DropOption: '去除选项',
         And: '且',
         Or: '或',
         Otherwise: '否则',
@@ -5347,25 +5352,12 @@ var Tag;
                 32: 1
             }],
         48: ['DefWeather', 0, 1],
-        21: ['And', 0, -1, {
-                '-1': [1]
-            }],
-        26: ['Or', 0, -1, {
-                '-1': [1]
-            }],
-        22: ['Assert', [2, 3], -1],
-        24: ['Compare', 1, -1],
-        28: ['Then', 0, -1, {
-                '-1': [1]
-            }],
-        27: ['Otherwise', 0, -1, {
-                '-1': [1]
-            }],
         53: ['Unknown', 1, 0],
         0: ['CharOn', [0, 1], 1],
         1: ['CharOff', 1, -1],
         2: ['CharSet', [0, 1], 1],
         3: ['CharPose', 1, 1],
+        62: ['CharMove', 1, 1],
         4: ['Monolog', 0, 1],
         5: ['Speak', [2, 3], 1],
         6: ['Tip', 0, 1],
@@ -5375,6 +5367,7 @@ var Tag;
         10: ['Fail', 0, -1],
         11: ['Stars', 1, -1],
         12: ['PlayBGM', 1, -1],
+        64: ['StopBGM', 0, -1],
         13: ['HideCG', 0, -1],
         14: ['ShowCG', 1, -1],
         15: ['AsRoom', 1, -1],
@@ -5383,29 +5376,46 @@ var Tag;
         18: ['Enter', 1, -1],
         19: ['PlaySE', 1, -1],
         20: ['Weather', 1, -1],
-        23: ['Assign', 1, 1],
-        25: ['Choose', [0, 1], -1, {
-                53: [1]
-            }],
-        29: ['When', 1, -1, {
-                '-1': [1]
-            }],
-        30: ['Increase', 1, 1],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
         59: ['LoopBreak', 0, -1],
+        25: ['Choose', [0, 1], 0, {
+                53: [0]
+            }],
+        65: ['DefOptions', 0, 1, {
+                53: [0]
+            }],
+        66: ['AddOption', 2, 0],
+        67: ['DropOption', 2, -1],
+        23: ['Assign', 1, 1],
+        30: ['Increase', 1, 1],
+        22: ['Assert', [2, 3], -1],
+        24: ['Compare', 1, -1],
+        21: ['And', 0, -1, {
+                '-1': [1]
+            }],
+        26: ['Or', 0, -1, {
+                '-1': [1]
+            }],
         60: ['Maximum', [0, 1], -1, {
                 53: [1]
             }],
         61: ['Minimum', [0, 1], -1, {
                 53: [1]
             }],
-        62: ['CharMove', 1, 1],
+        28: ['Then', 0, -1, {
+                '-1': [1]
+            }],
+        29: ['When', 1, -1, {
+                '-1': [1]
+            }],
         63: ['WhenVar', 1, -1, {
                 '-1': [1]
             }],
-        64: ['StopBGM', 0, -1]
+        27: ['Otherwise', 0, -1, {
+                '-1': [1]
+            }]
     };
     var ii, jj;
     for (ii in Tag.S)
@@ -9277,11 +9287,10 @@ var Tag;
         /**
          * 类型转换。
          */
-        Option.f = function (tag, key) {
+        Option.f = function (tag) {
             if ('Unknown' != tag.gN())
                 throw new E(E.ACT_OPTION_CAST_FAILURE, tag.gL());
             var opt = new Option([tag.$p(0)], tag.$c(), [], tag.gL());
-            opt._k = key;
             return opt;
         };
         /**
@@ -9299,6 +9308,13 @@ var Tag;
                 .s('$t' + depth, false);
             if (this._k)
                 states.c(kv, this._k);
+        };
+        /**
+         * 设置状态键名。
+         */
+        Option.prototype.sK = function (key) {
+            this._k = key;
+            return this;
         };
         return Option;
     })(Tag.Unknown);
@@ -9318,8 +9334,15 @@ var Tag;
 (function (Tag) {
     var Choose = (function (_super) {
         __extends(Choose, _super);
-        function Choose() {
-            _super.apply(this, arguments);
+        /**
+         * 构造函数。
+         */
+        function Choose(params, content, children, lineNo) {
+            if (!children.length && !content.length)
+                throw new E(E.OPT_OPTIONS_MISSING, lineNo);
+            if (children.length && content)
+                throw new E(E.OPT_OPTIONS_CONFLICT, lineNo);
+            _super.call(this, params, content, children, lineNo);
         }
         /**
          * 获取标签名称。
@@ -9332,11 +9355,23 @@ var Tag;
          */
         Choose.prototype.p = function (runtime) {
             var _this = this;
-            var opts = [];
-            Util.each(this._s, function (tag) {
-                opts.push(Tag.Option.f(tag, _this._p[0]));
-            });
-            return runtime.gD().choose(opts);
+            var opts;
+            if (this._c) {
+                opts = runtime.gS().g('$_' + this._c) || [];
+                if (this._p[0])
+                    Util.each(opts, function (option) {
+                        option.sK(_this._p[0]);
+                    });
+            }
+            else {
+                opts = [];
+                Util.each(this._s, function (tag) {
+                    opts.push(Tag.Option.f(tag).sK(_this._p[0]));
+                });
+            }
+            if (opts.length)
+                return runtime.gD().choose(opts);
+            return runtime;
         };
         return Choose;
     })(Tag.Action);

@@ -90,6 +90,10 @@ class E extends Error {
 
     public static UTIL_REMOTE_TIMEOUT: string = '远端请求超时';
 
+    public static OPT_OPTIONS_MISSING: string = '选项声明缺失';
+
+    public static OPT_OPTIONS_CONFLICT: string = '选项声明冲突';
+
     /**
      * 信号。
      */

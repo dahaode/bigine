@@ -20,11 +20,10 @@ namespace Tag {
         /**
          * 类型转换。
          */
-        public static f(tag: Unknown, key?: string): Option {
+        public static f(tag: Unknown): Option {
             if ('Unknown' != tag.gN())
                 throw new E(E.ACT_OPTION_CAST_FAILURE, tag.gL());
             var opt: Option = new Option([tag.$p(0)], tag.$c(), [], tag.gL());
-            opt._k = key;
             return opt;
         }
 
@@ -46,6 +45,14 @@ namespace Tag {
                 .s('$t' + depth, false);
             if (this._k)
                 states.c(kv, this._k);
+        }
+
+        /**
+         * 设置状态键名。
+         */
+        public sK(key: string): Option {
+            this._k = key;
+            return this;
         }
     }
 }

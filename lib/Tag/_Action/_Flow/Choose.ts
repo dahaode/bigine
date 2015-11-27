@@ -20,14 +20,36 @@ namespace Tag {
         }
 
         /**
+         * 构造函数。
+         */
+        constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
+            if (!children.length && !content.length)
+                throw new E(E.OPT_OPTIONS_MISSING, lineNo);
+            if (children.length && content)
+                throw new E(E.OPT_OPTIONS_CONFLICT, lineNo);
+            super(params, content, children, lineNo);
+        }
+
+        /**
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            var opts: Option[] = [];
-            Util.each(this._s, (tag: Unknown) => {
-                opts.push(Option.f(tag, this._p[0]));
-            });
-            return runtime.gD().choose(opts);
+            var opts: Option[];
+            if (this._c) {
+                opts = runtime.gS().g('$_' + this._c) || [];
+                if (this._p[0])
+                    Util.each(opts, (option: Option) => {
+                        option.sK(this._p[0]);
+                    });
+            } else {
+                opts = [];
+                Util.each(this._s, (tag: Unknown) => {
+                    opts.push(Option.f(tag).sK(this._p[0]));
+                });
+            }
+            if (opts.length)
+                return runtime.gD().choose(opts);
+            return runtime;
         }
     }
 }

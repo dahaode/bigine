@@ -152,6 +152,8 @@ class E extends Error {
     static G_PARENT_NOT_FOUND: string;
     static SUPPORT_NO_CANVAS: string;
     static UTIL_REMOTE_TIMEOUT: string;
+    static OPT_OPTIONS_MISSING: string;
+    static OPT_OPTIONS_CONFLICT: string;
     signal: E.Signal;
     constructor(message: string, lineNo?: number);
 }
@@ -1700,14 +1702,16 @@ namespace Tag {
 namespace Tag {
     class Option extends Unknown implements Core.IOptionTag {
         _k: string;
-        static f(tag: Unknown, key?: string): Option;
+        static f(tag: Unknown): Option;
         gT(): string;
         p(runtime: Core.IRuntime): void;
+        sK(key: string): Option;
     }
 }
 namespace Tag {
     class Choose extends Action {
         gN(): string;
+        constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
