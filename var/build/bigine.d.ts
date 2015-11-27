@@ -1755,6 +1755,12 @@ namespace Tag {
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
+namespace Tag {
+    class AddOption extends Action {
+        gN(): string;
+        p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+    }
+}
 namespace Runtime {
     class Runtime implements Core.IRuntime {
         private _a;

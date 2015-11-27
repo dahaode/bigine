@@ -9649,6 +9649,42 @@ var Tag;
     Tag.DefOptions = DefOptions;
 })(Tag || (Tag = {}));
 /**
+ * 定义添加选项动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Flow/AddOption.ts
+ */
+/// <reference path="../../Action.ts" />
+/// <reference path="Option.ts" />
+var Tag;
+(function (Tag) {
+    var AddOption = (function (_super) {
+        __extends(AddOption, _super);
+        function AddOption() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        AddOption.prototype.gN = function () {
+            return 'AddOption';
+        };
+        /**
+         * 执行。
+         */
+        AddOption.prototype.p = function (runtime) {
+            var states = runtime.gS(), key = '$_' + this._p[0], opts = states.g(key) || [];
+            opts.push(new Tag.Option([this._p[1]], this._c || this._p[1], [], this._l));
+            states.s(key, opts);
+            return runtime;
+        };
+        return AddOption;
+    })(Tag.Action);
+    Tag.AddOption = AddOption;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9706,6 +9742,7 @@ var Tag;
 /// <reference path="_Action/_Logic/WhenVar.ts" />
 /// <reference path="_Action/_Director/StopBGM.ts" />
 /// <reference path="_Action/_Flow/DefOptions.ts" />
+/// <reference path="_Action/_Flow/AddOption.ts" />
 /**
  * 定义（作品）运行时组件。
  *

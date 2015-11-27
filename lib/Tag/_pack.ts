@@ -57,3 +57,4 @@
 /// <reference path="_Action/_Logic/WhenVar.ts" />
 /// <reference path="_Action/_Director/StopBGM.ts" />
 /// <reference path="_Action/_Flow/DefOptions.ts" />
+/// <reference path="_Action/_Flow/AddOption.ts" />
