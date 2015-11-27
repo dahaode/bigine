@@ -9611,6 +9611,44 @@ var Tag;
     Tag.StopBGM = StopBGM;
 })(Tag || (Tag = {}));
 /**
+ * 定义定义选择动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Flow/DefOptions.ts
+ */
+/// <reference path="../../Action.ts" />
+/// <reference path="Option.ts" />
+var Tag;
+(function (Tag) {
+    var DefOptions = (function (_super) {
+        __extends(DefOptions, _super);
+        function DefOptions() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        DefOptions.prototype.gN = function () {
+            return 'DefOptions';
+        };
+        /**
+         * 执行。
+         */
+        DefOptions.prototype.p = function (runtime) {
+            var opts = [];
+            Util.each(this._s, function (tag) {
+                opts.push(Tag.Option.f(tag));
+            });
+            runtime.gS().s('$_' + this._c, opts);
+            return runtime;
+        };
+        return DefOptions;
+    })(Tag.Action);
+    Tag.DefOptions = DefOptions;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9667,6 +9705,7 @@ var Tag;
 /// <reference path="_Action/_Director/CharMove.ts" />
 /// <reference path="_Action/_Logic/WhenVar.ts" />
 /// <reference path="_Action/_Director/StopBGM.ts" />
+/// <reference path="_Action/_Flow/DefOptions.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -10155,7 +10194,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.15.0';
+    Bigine.version = '0.16.0';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;
