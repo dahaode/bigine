@@ -58,3 +58,4 @@
 /// <reference path="_Action/_Director/StopBGM.ts" />
 /// <reference path="_Action/_Flow/DefOptions.ts" />
 /// <reference path="_Action/_Flow/AddOption.ts" />
+/// <reference path="_Action/_Flow/DropOption.ts" />

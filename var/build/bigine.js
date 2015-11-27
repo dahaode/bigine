@@ -9685,6 +9685,48 @@ var Tag;
     Tag.AddOption = AddOption;
 })(Tag || (Tag = {}));
 /**
+ * 定义去除选项动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Flow/DropOption.ts
+ */
+/// <reference path="../../Action.ts" />
+/// <reference path="Option.ts" />
+var Tag;
+(function (Tag) {
+    var DropOption = (function (_super) {
+        __extends(DropOption, _super);
+        function DropOption() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        DropOption.prototype.gN = function () {
+            return 'DropOption';
+        };
+        /**
+         * 执行。
+         */
+        DropOption.prototype.p = function (runtime) {
+            var _this = this;
+            var states = runtime.gS(), key = '$_' + this._p[0], opts = states.g(key) || [];
+            Util.some(opts, function (option, index) {
+                if (_this._p[1] != option.$p(0))
+                    return false;
+                opts.splice(index, 1);
+                return true;
+            });
+            states.s(key, opts);
+            return runtime;
+        };
+        return DropOption;
+    })(Tag.Action);
+    Tag.DropOption = DropOption;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9743,6 +9785,7 @@ var Tag;
 /// <reference path="_Action/_Director/StopBGM.ts" />
 /// <reference path="_Action/_Flow/DefOptions.ts" />
 /// <reference path="_Action/_Flow/AddOption.ts" />
+/// <reference path="_Action/_Flow/DropOption.ts" />
 /**
  * 定义（作品）运行时组件。
  *
