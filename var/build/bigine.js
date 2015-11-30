@@ -6332,8 +6332,6 @@ var Tag;
                     states.d(kcx);
                     return director.reset();
                 }).then(function () {
-                    if (states.a(kcn, kdn))
-                        return director.lightOn();
                     // 恢复房间默认背景后开灯。
                     states.c(kcn, kdn)
                         .c(kco, kdo);

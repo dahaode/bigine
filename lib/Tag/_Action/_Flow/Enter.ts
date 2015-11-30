@@ -54,8 +54,6 @@ namespace Tag {
                         states.d(kcx);
                         return director.reset();
                     }).then(() => {
-                        if (states.a(kcn, kdn)) // 未修改背景直接开灯。
-                            return director.lightOn();
                         // 恢复房间默认背景后开灯。
                         states.c(kcn, kdn)
                             .c(kco, kdo);
