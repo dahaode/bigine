@@ -59,3 +59,4 @@
 /// <reference path="_Action/_Flow/DefOptions.ts" />
 /// <reference path="_Action/_Flow/AddOption.ts" />
 /// <reference path="_Action/_Flow/DropOption.ts" />
+/// <reference path="_Action/_Logic/Random.ts" />

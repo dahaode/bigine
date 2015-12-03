@@ -5255,6 +5255,7 @@ var Tag;
         Maximum: '最大数据',
         Minimum: '最小数据',
         Choose: '选择',
+        Random: '随机数据',
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
@@ -5390,6 +5391,7 @@ var Tag;
         67: ['DropOption', 2, -1],
         23: ['Assign', 1, 1],
         30: ['Increase', 1, 1],
+        68: ['Random', 1, -1],
         22: ['Assert', [2, 3], -1],
         24: ['Compare', 1, -1],
         21: ['And', 0, -1, {
@@ -9760,6 +9762,49 @@ var Tag;
     Tag.DropOption = DropOption;
 })(Tag || (Tag = {}));
 /**
+ * 定义随机数据动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/Random.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Random = (function (_super) {
+        __extends(Random, _super);
+        function Random() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Random.prototype.gN = function () {
+            return 'Random';
+        };
+        /**
+         * （执行）检查。
+         */
+        Random.prototype.t = function (states) {
+            var depth = states.g('$d');
+            states.s(this._p[0], 1 | 100 * Math.random())
+                .c(this._p[0], '$v' + depth)
+                .s('$t' + depth, false);
+            return true;
+        };
+        /**
+         * 执行。
+         */
+        Random.prototype.p = function (runtime) {
+            this.t(runtime.gS());
+            return runtime;
+        };
+        return Random;
+    })(Tag.Action);
+    Tag.Random = Random;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9819,6 +9864,7 @@ var Tag;
 /// <reference path="_Action/_Flow/DefOptions.ts" />
 /// <reference path="_Action/_Flow/AddOption.ts" />
 /// <reference path="_Action/_Flow/DropOption.ts" />
+/// <reference path="_Action/_Logic/Random.ts" />
 /**
  * 定义（作品）运行时组件。
  *
