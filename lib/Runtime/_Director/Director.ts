@@ -281,5 +281,12 @@ namespace Runtime {
         public qh(succeed: boolean): Promise<Core.IRuntime> {
             return this._p;
         }
+
+        /**
+         * 绑定视图。
+         */
+        public b(viewport: HTMLElement): Director {
+            return this;
+        }
     }
 }

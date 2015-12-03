@@ -309,6 +309,7 @@ namespace Core {
         title(title: string): IRuntime;
         author(title: string): IRuntime;
         l(id?: string): void;
+        bind(viewport: HTMLElement): IRuntime;
     }
 }
 namespace Core {
@@ -589,6 +590,7 @@ namespace Runtime {
         h(): void;
         qs(load?: boolean, opacity?: number): Promise<Core.IRuntime>;
         qh(succeed: boolean): Promise<Core.IRuntime>;
+        b(viewport: HTMLElement): Director;
     }
 }
 namespace Runtime {
@@ -1050,6 +1052,7 @@ namespace Runtime {
         h(): void;
         qs(load?: boolean, opacity?: number): Promise<Core.IRuntime>;
         qh(succeed: boolean): Promise<Core.IRuntime>;
+        b(viewport: HTMLElement): Director;
         private $w(element, words, font);
     }
 }
@@ -1843,6 +1846,7 @@ namespace Runtime {
         gH(): boolean;
         t(flow: () => Runtime | Thenable<Runtime>): Runtime;
         l(id: string): void;
+        bind(viewport: HTMLElement): Runtime;
     }
 }
 namespace Lex {

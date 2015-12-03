@@ -1911,6 +1911,12 @@ var Runtime;
         Director.prototype.qh = function (succeed) {
             return this._p;
         };
+        /**
+         * 绑定视图。
+         */
+        Director.prototype.b = function (viewport) {
+            return this;
+        };
         return Director;
     })();
     Runtime.Director = Director;
@@ -4971,6 +4977,13 @@ var Runtime;
                     _this.reset() :
                     _this.lightOn();
             });
+        };
+        /**
+         * 绑定视图。
+         */
+        CanvasDirector.prototype.b = function (viewport) {
+            this._c.b(viewport);
+            return this;
         };
         /**
          * 将文本添加至画面文字元素中。
@@ -10344,6 +10357,13 @@ var Runtime;
                 callback: load,
                 id: id
             }));
+        };
+        /**
+         * 绑定视图。
+         */
+        Runtime.prototype.bind = function (viewport) {
+            this._d.b(viewport);
+            return this;
         };
         return Runtime;
     })();

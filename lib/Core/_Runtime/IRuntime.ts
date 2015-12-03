@@ -109,5 +109,10 @@ namespace Core {
          * 读取存档。
          */
         l(id?: string): void;
+
+        /**
+         * 绑定视图。
+         */
+        bind(viewport: HTMLElement): IRuntime;
     }
 }

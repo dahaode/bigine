@@ -380,5 +380,13 @@ namespace Runtime {
                 id: id
             }));
         }
+
+        /**
+         * 绑定视图。
+         */
+        public bind(viewport: HTMLElement): Runtime {
+            this._d.b(viewport);
+            return this;
+        }
     }
 }

@@ -1270,6 +1270,14 @@ namespace Runtime {
         }
 
         /**
+         * 绑定视图。
+         */
+        public b(viewport: HTMLElement): Director {
+            this._c.b(viewport);
+            return this;
+        }
+
+        /**
          * 将文本添加至画面文字元素中。
          */
         private $w(element: G.Text, words: string, font: Util.IHashTable<string | number>): G.Text {
