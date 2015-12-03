@@ -266,7 +266,7 @@ namespace Core {
         playSE(resource?: IResource<string>): Promise<IRuntime>;
         hideCG(): Promise<IRuntime>;
         showCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
-        asRoom(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
+        asRoom(resource: IResource<HTMLImageElement>, time?: boolean): Promise<IRuntime>;
         asMap(points: Util.IHashTable<IPointTag>): Promise<IRuntime>;
         lightOff(): Promise<IRuntime>;
         lightOn(): Promise<IRuntime>;
@@ -573,7 +573,7 @@ namespace Runtime {
         playSE(resource?: Resource<string>): Promise<Core.IRuntime>;
         hideCG(): Promise<Core.IRuntime>;
         showCG(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime>;
-        asRoom(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime>;
+        asRoom(resource: Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime>;
         asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime>;
         lightOff(): Promise<Core.IRuntime>;
         lightOn(): Promise<Core.IRuntime>;
@@ -1035,7 +1035,7 @@ namespace Runtime {
         playSE(resource?: Resource<string>): Promise<Core.IRuntime>;
         hideCG(): Promise<Core.IRuntime>;
         showCG(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime>;
-        asRoom(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime>;
+        asRoom(resource: Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime>;
         asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime>;
         lightOff(): Promise<Core.IRuntime>;
         lightOn(): Promise<Core.IRuntime>;

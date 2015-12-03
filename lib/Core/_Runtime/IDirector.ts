@@ -94,7 +94,7 @@ namespace Core {
         /**
          * 设置房间。
          */
-        asRoom(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
+        asRoom(resource: IResource<HTMLImageElement>, time?: boolean): Promise<IRuntime>;
 
         /**
          * 设置地图。

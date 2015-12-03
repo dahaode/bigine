@@ -584,14 +584,14 @@ namespace Runtime {
         /**
          * 设置房间。
          */
-        public asRoom(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
+        public asRoom(resource: Resource<HTMLImageElement>, time: boolean = false): Promise<Core.IRuntime> {
             return super.asRoom(resource).then((runtime: Core.IRuntime) => {
                 var gCurtain: Core.IGraphicElement = this._c.q('C')[0],
                     gOld: Core.IGraphicElement = this._c.q('b')[0],
                     gNew: G.Element = new G.Image(resource, CanvasDirector.BOUNDS).i('b')
                         .o(0);
                 this._c.a(gNew, 'M');
-                if (1 || gCurtain.gO()) {
+                if (!time || gCurtain.gO()) {
                     gNew.o(1);
                     this._c.e(gOld);
                     return runtime;

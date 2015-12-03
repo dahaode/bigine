@@ -1812,7 +1812,7 @@ var Runtime;
         /**
          * 设置房间。
          */
-        Director.prototype.asRoom = function (resource) {
+        Director.prototype.asRoom = function (resource, time) {
             return this._p;
         };
         /**
@@ -4379,13 +4379,14 @@ var Runtime;
         /**
          * 设置房间。
          */
-        CanvasDirector.prototype.asRoom = function (resource) {
+        CanvasDirector.prototype.asRoom = function (resource, time) {
             var _this = this;
+            if (time === void 0) { time = false; }
             return _super.prototype.asRoom.call(this, resource).then(function (runtime) {
                 var gCurtain = _this._c.q('C')[0], gOld = _this._c.q('b')[0], gNew = new G.Image(resource, CanvasDirector.BOUNDS).i('b')
                     .o(0);
                 _this._c.a(gNew, 'M');
-                if (1 || gCurtain.gO()) {
+                if (!time || gCurtain.gO()) {
                     gNew.o(1);
                     _this._c.e(gOld);
                     return runtime;
@@ -8624,7 +8625,7 @@ var Tag;
             states.s(ktime, this._p[0]);
             if (time == this._p[0] || !room)
                 return runtime;
-            return runtime.gD().asRoom(room.o(this._p[0]));
+            return runtime.gD().asRoom(room.o(this._p[0]), true);
         };
         /**
          * 获取时间。

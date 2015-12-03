@@ -169,7 +169,7 @@ namespace Runtime {
         /**
          * 设置房间。
          */
-        public asRoom(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
+        public asRoom(resource: Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime> {
             return this._p;
         }
 

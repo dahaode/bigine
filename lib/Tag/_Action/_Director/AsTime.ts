@@ -30,7 +30,7 @@ namespace Tag {
             states.s(ktime, this._p[0]);
             if (time == this._p[0] || !room)
                 return runtime;
-            return runtime.gD().asRoom(room.o(this._p[0]));
+            return runtime.gD().asRoom(room.o(this._p[0]), true);
         }
 
         /**
