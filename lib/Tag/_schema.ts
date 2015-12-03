@@ -80,6 +80,7 @@ namespace Tag {
         Minimum: '最小数据',
         Choose: '选择',
         Random: '随机数据',
+        IfTime: '当时间',
 
         DefOptions: '定义选择',
         AddOption: '添加选项',
@@ -108,7 +109,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 69
+    export var S: { [index: number]: any[] } = { // next 70
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -233,6 +234,7 @@ namespace Tag {
         23: ['Assign', 1, 1], // [变量名] 值
         30: ['Increase', 1, 1], // [变量名] 值
         68: ['Random', 1, -1], // [变量名]
+        69: ['IfTime', 1, -1], // [时刻名]
 
         22: ['Assert', [2, 3], -1], // [变量名, 比较值, 操作符?]
         24: ['Compare', 1, -1], // [变量名]

@@ -5256,6 +5256,7 @@ var Tag;
         Minimum: '最小数据',
         Choose: '选择',
         Random: '随机数据',
+        IfTime: '当时间',
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
@@ -5392,6 +5393,7 @@ var Tag;
         23: ['Assign', 1, 1],
         30: ['Increase', 1, 1],
         68: ['Random', 1, -1],
+        69: ['IfTime', 1, -1],
         22: ['Assert', [2, 3], -1],
         24: ['Compare', 1, -1],
         21: ['And', 0, -1, {
@@ -9805,6 +9807,48 @@ var Tag;
     Tag.Random = Random;
 })(Tag || (Tag = {}));
 /**
+ * 定义当时间动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/IfTime.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var IfTime = (function (_super) {
+        __extends(IfTime, _super);
+        function IfTime() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        IfTime.prototype.gN = function () {
+            return 'IfTime';
+        };
+        /**
+         * （执行）检查。
+         */
+        IfTime.prototype.t = function (states) {
+            var depth = states.g('$d'), ret = this._p[0] == states.g('_t');
+            states.s('$v' + depth, ret)
+                .s('$t' + depth, false);
+            return ret;
+        };
+        /**
+         * 执行。
+         */
+        IfTime.prototype.p = function (runtime) {
+            this.t(runtime.gS());
+            return runtime;
+        };
+        return IfTime;
+    })(Tag.Action);
+    Tag.IfTime = IfTime;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9865,6 +9909,7 @@ var Tag;
 /// <reference path="_Action/_Flow/AddOption.ts" />
 /// <reference path="_Action/_Flow/DropOption.ts" />
 /// <reference path="_Action/_Logic/Random.ts" />
+/// <reference path="_Action/_Logic/IfTime.ts" />
 /**
  * 定义（作品）运行时组件。
  *
