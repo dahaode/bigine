@@ -62,3 +62,4 @@
 /// <reference path="_Action/_Logic/Random.ts" />
 /// <reference path="_Action/_Logic/IfTime.ts" />
 /// <reference path="_Action/_Logic/Copy.ts" />
+/// <reference path="_Action/_Logic/Add.ts" />

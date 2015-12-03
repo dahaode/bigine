@@ -5259,6 +5259,7 @@ var Tag;
         Random: '随机数据',
         IfTime: '当时间',
         Copy: '复制数据',
+        Add: '数据合值',
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
@@ -5397,6 +5398,9 @@ var Tag;
         68: ['Random', 1, -1],
         69: ['IfTime', 1, -1],
         70: ['Copy', 2, -1],
+        71: ['Add', 1, -1, {
+                53: [1]
+            }],
         22: ['Assert', [2, 3], -1],
         24: ['Compare', 1, -1],
         21: ['And', 0, -1, {
@@ -9895,6 +9899,52 @@ var Tag;
     Tag.Copy = Copy;
 })(Tag || (Tag = {}));
 /**
+ * 定义数据合值动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/Add.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Add = (function (_super) {
+        __extends(Add, _super);
+        function Add() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Add.prototype.gN = function () {
+            return 'Add';
+        };
+        /**
+         * （执行）检查。
+         */
+        Add.prototype.t = function (states) {
+            var value = 0, depth = states.g('$d');
+            Util.each(this._s, function (tag) {
+                value += states.g(tag.$p(0)) - 0 || 0;
+            });
+            states.s(this._p[0], value)
+                .c(this._p[0], '$v' + depth)
+                .s('$t' + depth, false);
+            return true;
+        };
+        /**
+         * 执行。
+         */
+        Add.prototype.p = function (runtime) {
+            this.t(runtime.gS());
+            return runtime;
+        };
+        return Add;
+    })(Tag.Action);
+    Tag.Add = Add;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9957,6 +10007,7 @@ var Tag;
 /// <reference path="_Action/_Logic/Random.ts" />
 /// <reference path="_Action/_Logic/IfTime.ts" />
 /// <reference path="_Action/_Logic/Copy.ts" />
+/// <reference path="_Action/_Logic/Add.ts" />
 /**
  * 定义（作品）运行时组件。
  *

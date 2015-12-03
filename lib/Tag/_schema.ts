@@ -82,6 +82,7 @@ namespace Tag {
         Random: '随机数据',
         IfTime: '当时间',
         Copy: '复制数据',
+        Add: '数据合值',
 
         DefOptions: '定义选择',
         AddOption: '添加选项',
@@ -110,7 +111,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 71
+    export var S: { [index: number]: any[] } = { // next 72
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -237,6 +238,9 @@ namespace Tag {
         68: ['Random', 1, -1], // [变量名]
         69: ['IfTime', 1, -1], // [时刻名]
         70: ['Copy', 2, -1], // [变量名， 源变量名]
+        71: ['Add', 1, -1, { // [变量名]
+            53: [1]
+        }],
 
         22: ['Assert', [2, 3], -1], // [变量名, 比较值, 操作符?]
         24: ['Compare', 1, -1], // [变量名]
