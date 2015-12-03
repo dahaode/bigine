@@ -61,3 +61,4 @@
 /// <reference path="_Action/_Flow/DropOption.ts" />
 /// <reference path="_Action/_Logic/Random.ts" />
 /// <reference path="_Action/_Logic/IfTime.ts" />
+/// <reference path="_Action/_Logic/Copy.ts" />

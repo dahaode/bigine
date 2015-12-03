@@ -5258,6 +5258,7 @@ var Tag;
         Choose: '选择',
         Random: '随机数据',
         IfTime: '当时间',
+        Copy: '复制数据',
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
@@ -5395,6 +5396,7 @@ var Tag;
         30: ['Increase', 1, 1],
         68: ['Random', 1, -1],
         69: ['IfTime', 1, -1],
+        70: ['Copy', 2, -1],
         22: ['Assert', [2, 3], -1],
         24: ['Compare', 1, -1],
         21: ['And', 0, -1, {
@@ -9850,6 +9852,49 @@ var Tag;
     Tag.IfTime = IfTime;
 })(Tag || (Tag = {}));
 /**
+ * 定义复制数据动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/Copy.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Copy = (function (_super) {
+        __extends(Copy, _super);
+        function Copy() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Copy.prototype.gN = function () {
+            return 'Copy';
+        };
+        /**
+         * （执行）检查。
+         */
+        Copy.prototype.t = function (states) {
+            var depth = states.g('$d');
+            states.c(this._p[1], this._p[0])
+                .c(this._p[0], '$v' + depth)
+                .s('$t' + depth, false);
+            return true;
+        };
+        /**
+         * 执行。
+         */
+        Copy.prototype.p = function (runtime) {
+            this.t(runtime.gS());
+            return runtime;
+        };
+        return Copy;
+    })(Tag.Action);
+    Tag.Copy = Copy;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9911,6 +9956,7 @@ var Tag;
 /// <reference path="_Action/_Flow/DropOption.ts" />
 /// <reference path="_Action/_Logic/Random.ts" />
 /// <reference path="_Action/_Logic/IfTime.ts" />
+/// <reference path="_Action/_Logic/Copy.ts" />
 /**
  * 定义（作品）运行时组件。
  *
