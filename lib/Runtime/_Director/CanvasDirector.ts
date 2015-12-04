@@ -51,6 +51,8 @@
  *     * e - 完成进度条
  */
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export class CanvasDirector extends Director {
         /**
          * 尺寸。
@@ -681,7 +683,7 @@ namespace Runtime {
                     var anime: G.FadeIn = new G.FadeIn(250),
                         clicked: boolean = false;
                     this._q = () => {
-                        Util.Q.doHalt<Core.IRuntime>()['catch']((error: any) => {
+                        E.doHalt<Core.IRuntime>()['catch']((error: any) => {
                             reject(error);
                         });
                     };

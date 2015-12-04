@@ -13,6 +13,8 @@
 /// <reference path="Times.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class DefRoom extends Entity implements Core.IRoomTag {
         /**
          * 已添加地事件。
@@ -60,7 +62,7 @@ namespace Tag {
             return (type in this._a ?
                 Util.Q.every(this._a[type], (scene: Core.ISceneTag) => {
                     if (runtime.gH())
-                        return Util.Q.doHalt<Core.IRuntime>();
+                        return E.doHalt<Core.IRuntime>();
                     return scene.p(runtime);
                 }) :
                 Promise.resolve(runtime)

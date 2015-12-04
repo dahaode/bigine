@@ -11,6 +11,8 @@
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     /**
      * 唯一实例。
      */

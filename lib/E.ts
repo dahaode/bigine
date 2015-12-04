@@ -7,6 +7,8 @@
  * @file      E.ts
  */
 
+/// <reference path="../include/tsd.d.ts" />
+
 class E extends Error {
     public static SCHEMA_TAG_NOT_DECLARED: string = '标签尚未声明语法规则';
 
@@ -113,6 +115,38 @@ class E extends Error {
         super();
         this.name = 'BigineError';
         this.message = message;
+    }
+
+    /**
+     * 中断顺序时序流。
+     */
+    public static doHalt<T>(): Promise<T> {
+        return Promise.reject(new E('', E.Signal.HALT));
+    }
+
+    /**
+     * 忽略中断信号。
+     */
+    public static ignoreHalt(error: E): Promise<void> {
+        if (E.Signal.HALT == error.signal)
+            return Promise.resolve<void>();
+        return Promise.reject(error);
+    }
+
+    /**
+     * 中断循环时序流。
+     */
+    public static doBreak<T>(): Promise<T> {
+        return Promise.reject(new E('', E.Signal.BREAK));
+    }
+
+    /**
+     * 忽略循环中断信号。
+     */
+    public static ignoreBreak(error: E): Promise<void> {
+        if (E.Signal.BREAK == error.signal)
+            return Promise.resolve<void>();
+        return Promise.reject(error);
     }
 }
 

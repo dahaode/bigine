@@ -7,10 +7,12 @@
  * @file      Tag/_Structure/Theme.ts
  */
 
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../Unknown.ts" />
-/// <reference path="../../Util/Remote.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Theme extends Unknown {
         /**
          * 获取标签名称。

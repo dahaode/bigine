@@ -7,9 +7,11 @@
  * @file      G/_Animation/IFadeMetas.ts
  */
 
-/// <reference path="../../Util/IHashTable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export interface IFadeMetas extends Util.IHashTable<any> {
         /**
          * 透明度。

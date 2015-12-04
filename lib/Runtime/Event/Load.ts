@@ -11,6 +11,8 @@
 /// <reference path="ILoadMetas.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export namespace Event {
         export class Load extends Event<Core.IStates> {
             /**

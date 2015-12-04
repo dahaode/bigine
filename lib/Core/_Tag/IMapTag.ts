@@ -11,6 +11,8 @@
 /// <reference path="IPointTag.ts" />
 
 namespace Core {
+    import Util = __Bigine_Util;
+
     // ITag:gL()
     // ITag:gN()
     // ITag:r()

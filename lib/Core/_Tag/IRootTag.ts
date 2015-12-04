@@ -7,10 +7,12 @@
  * @file      Core/_Tag/IRootTag.ts
  */
 
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="IEntityTag.ts" />
-/// <reference path="../../Util/ISuccessCallback.ts" />
 
 namespace Core {
+    import Util = __Bigine_Util;
+
     // ITag:gL()
     // ITag:gN()
     // ITag:r()

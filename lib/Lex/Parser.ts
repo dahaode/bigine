@@ -10,6 +10,8 @@
 /// <reference path="TagLine.ts" />
 
 namespace Lex {
+    import Util = __Bigine_Util;
+
     export namespace Parser {
         /**
          * 解析。

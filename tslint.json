@@ -23,6 +23,7 @@
         "no-conditional-assignment": true,
         "no-console": [
             true,
+            "debug",
             "info",
             "time",
             "timeEnd",
@@ -37,7 +38,7 @@
         "no-shadowed-variable": true,
         "no-empty": true,
         "no-internal-module": true,
-        "no-require-imports": true,
+        "no-require-imports": false,
         "no-string-literal": false,
         "no-switch-case-fall-through": true,
         "no-trailing-comma": true,

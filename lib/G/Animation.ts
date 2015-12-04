@@ -7,11 +7,13 @@
  * @file      G/Animation.ts
  */
 
-/// <reference path="../Core/_G/IAnimation.ts" />
 /// <reference path="../../include/_raf.d.ts" />
-/// <reference path="../Util/ENV.ts" />
+/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../Core/_G/IAnimation.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export class Animation implements Core.IAnimation {
         /**
          * 动画时长（单位：帧）。

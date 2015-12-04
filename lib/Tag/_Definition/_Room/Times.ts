@@ -10,6 +10,8 @@
 /// <reference path="../ResTable.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Times extends ResTable {
 
         /**

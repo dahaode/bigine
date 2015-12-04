@@ -10,6 +10,8 @@
 /// <reference path="../Tag/_pack.ts" />
 
 namespace Lex {
+    import Util = __Bigine_Util;
+
     export class TagLine {
         /**
          * 语法。

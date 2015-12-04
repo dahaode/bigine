@@ -61,7 +61,7 @@ namespace Tag {
             (<Promise<Core.IRuntime>> Enter.prototype.p.call({
                 _p: [room.gI()],
                 _mo: room
-            }, runtime))['catch'](Util.Q.ignoreHalt);
+            }, runtime))['catch'](E.ignoreHalt);
         }
 
         /**

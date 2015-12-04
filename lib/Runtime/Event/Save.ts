@@ -11,6 +11,8 @@
 /// <reference path="ISaveMetas.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export namespace Event {
         export class Save extends Event<Core.IStates> {
             /**

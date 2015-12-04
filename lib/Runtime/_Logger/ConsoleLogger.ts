@@ -8,7 +8,6 @@
  */
 
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
-/// <reference path="../../Util/_iterator.ts" />
 
 namespace Runtime {
     export class ConsoleLogger implements Core.ILogger {

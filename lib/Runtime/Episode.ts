@@ -13,6 +13,8 @@
 /// <reference path="_Resource/Resource.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export class Episode implements Core.IEpisode {
         /**
          * 已添加地事件。
@@ -106,7 +108,7 @@ namespace Runtime {
                 runtime.gS().s('_p', type);
                 q = Util.Q.every(this._a[type], (scene: Core.ISceneTag) => {
                     if (runtime.gH())
-                        return Util.Q.doHalt<Core.IRuntime>();
+                        return E.doHalt<Core.IRuntime>();
                     return scene.p(runtime);
                 });
             } else

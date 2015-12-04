@@ -81,7 +81,7 @@ namespace Tag {
                 })
                 .then(() => { // 播放关联房间（目标）房间进入后事件
                     if (runtime.gH())
-                        return Util.Q.doHalt<Core.IRuntime>();
+                        return E.doHalt<Core.IRuntime>();
                     states.m(ktn, kcn)
                         .m(kto, kco)
                         .c(kcn, kdn)
@@ -97,7 +97,7 @@ namespace Tag {
                         .then(() => this._mo.p(type.PostEnter, runtime));
                 })
             );
-            return Util.Q.doHalt<Core.IRuntime>(); // 中断原有时序流。
+            return E.doHalt<Core.IRuntime>(); // 中断原有时序流。
         }
     }
 }

@@ -10,6 +10,8 @@
 /// <reference path="../Unknown.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class ResTable extends Unknown {
         /**
          * 图片资源。

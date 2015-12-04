@@ -12,6 +12,8 @@
 /// <reference path="../Event/Begin.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export class Director implements Core.IDirector {
         /**
          * 运行时。

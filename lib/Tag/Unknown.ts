@@ -12,6 +12,8 @@
 /// <reference path="../E.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Unknown implements Core.ITag {
         /**
          * 参数。

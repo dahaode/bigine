@@ -10,6 +10,8 @@
 /// <reference path="Loop.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Otherwise extends Action implements Core.IBlock {
         /**
          * 获取标签名称。

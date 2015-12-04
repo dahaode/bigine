@@ -2,7 +2,6 @@
 
 !.gitignore
 
-!xhr.js
 !bigine.d.ts
 !bigine.js*
 !*.png

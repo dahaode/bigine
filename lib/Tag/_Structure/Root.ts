@@ -13,6 +13,8 @@
 /// <reference path="Theme.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Root extends Unknown implements Core.IRootTag {
         /**
          * 压缩键名序列。

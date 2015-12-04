@@ -10,6 +10,8 @@
 /// <reference path="../../_Action/_Logic/Loop.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Content extends Unknown implements Core.IPerformableTag, Core.IBlock {
         /**
          * 获取标签名称。
@@ -33,7 +35,7 @@ namespace Tag {
             return director.c(<Core.IResource<string | HTMLImageElement>[][]> Loop.prototype.c.call(this))
                 .then(() => Util.Q.every(this._s, (action: Action) => {
                     if (runtime.gH())
-                        return Util.Q.doHalt<Core.IRuntime>();
+                        return E.doHalt<Core.IRuntime>();
                     id = states.g(kid);
                     if (id) {
                         if ('gI' in action) {

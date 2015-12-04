@@ -11,6 +11,8 @@
 /// <reference path="../../Core/_G/ISprite.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export class Sprite extends Element implements Core.ISprite {
         /**
          * 子元素集。

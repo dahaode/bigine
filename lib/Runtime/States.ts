@@ -13,6 +13,8 @@
 /// <reference path="Event/Save.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export class States implements Core.IStates {
         /**
          * 数据池。

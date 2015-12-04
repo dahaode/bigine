@@ -22,7 +22,7 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            return Util.Q.doHalt<Core.IRuntime>();
+            return E.doHalt<Core.IRuntime>();
         }
     }
 }

@@ -10,6 +10,8 @@
 /// <reference path="../Core/_G/ISprite.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export class Element implements Core.IGraphicElement {
         /**
          * 区域。

@@ -1,6 +1,6 @@
 {
   "name": "bigine",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "DaHao.de 播放引擎（TypeScript 版）",
   "keywords": [
     "dahao",
@@ -29,7 +29,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "es6-promise": "^3.0.2"
+    "es6-promise": "^3.0.2",
+    "bigine.util": "^0.1.3"
   },
   "devDependencies": {
     "browserify": "^11.1.0",

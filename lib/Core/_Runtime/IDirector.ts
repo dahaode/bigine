@@ -13,6 +13,8 @@
 /// <reference path="../_Tag/IOptionTag.ts" />
 
 namespace Core {
+    import Util = __Bigine_Util;
+
     export interface IDirector {
         /**
          * 预加载指定资源组。

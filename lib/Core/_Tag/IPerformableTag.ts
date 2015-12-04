@@ -9,7 +9,6 @@
 
 /// <reference path="ITag.ts" />
 /// <reference path="../_Runtime/IRuntime.ts" />
-/// <reference path="../../Util/Q.ts" />
 
 namespace Core {
     // ITag:gL()

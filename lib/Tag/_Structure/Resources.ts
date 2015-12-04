@@ -7,8 +7,8 @@
  * @file      Tag/_Structure/Resources.ts
  */
 
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../Unknown.ts" />
-/// <reference path="../../Util/Remote.ts" />
 /// <reference path="../_Definition/_Room/DefRoom.ts" />
 /// <reference path="../_Definition/_Char/DefChar.ts" />
 /// <reference path="../_Definition/DefBGM.ts" />
@@ -16,6 +16,8 @@
 /// <reference path="../_Definition/DefSE.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Resources extends Unknown {
         /**
          * 获取标签名称。

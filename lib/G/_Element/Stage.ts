@@ -16,6 +16,8 @@
 /// <reference path="../_pack.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export class Stage extends Sprite implements Core.IStage {
         /**
          * 画板上下文。

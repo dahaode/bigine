@@ -8,7 +8,6 @@
  */
 
 /// <reference path="IBounds.ts" />
-/// <reference path="../../Util/Q.ts" />
 /// <reference path="IAnimation.ts" />
 
 namespace Core {

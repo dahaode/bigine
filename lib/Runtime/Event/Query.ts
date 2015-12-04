@@ -11,6 +11,8 @@
 /// <reference path="IQueryMetas.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export namespace Event {
         export class Query extends Event<Core.IStates> {
             /**

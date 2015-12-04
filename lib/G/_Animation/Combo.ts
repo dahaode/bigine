@@ -11,6 +11,8 @@
 /// <reference path="../../Core/_G/IComboAnimation.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export class Combo extends Animation implements Core.IComboAnimation {
         /**
          * 动画组合。

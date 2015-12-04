@@ -16,6 +16,8 @@
 /// <reference path="../../../Core/_Tag/IBlock.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Loop extends Action implements Core.IBlock {
         /**
          * 获取标签名称。
@@ -45,7 +47,7 @@ namespace Tag {
                 loop: () => Promise<Core.IRuntime> = () => {
                     return Util.Q.every(<Action[]> this._s, (action: Action) => {
                         if (runtime.gH())
-                            return Util.Q.doBreak<Core.IRuntime>();
+                            return E.doBreak<Core.IRuntime>();
                         id = states.g(kid);
                         if (id) {
                             if ('gI' in action) {
@@ -64,7 +66,7 @@ namespace Tag {
                 };
             logger.o(title);
             states.s(kd, 1 + depth);
-            return loop()['catch'](Util.Q.ignoreBreak)
+            return loop()['catch'](E.ignoreBreak)
                 ['catch']((error?: E) => {
                     if (error && E.Signal.HALT == error.signal)
                         logger.c(title);

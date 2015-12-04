@@ -7,8 +7,6 @@
  * @file      Core/_Runtime/IResource.ts
  */
 
-/// <reference path="../../Util/Q.ts" />
-
 namespace Core {
     export interface IResource<T> {
         // new (uri: string, type: IResource.Type): IResource;

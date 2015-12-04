@@ -7,9 +7,11 @@
  * @file      G/_Animation/IMoveMetas.ts
  */
 
-/// <reference path="../../Util/IHashTable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export interface IMoveMetas extends Util.IHashTable<any> {
         /**
          * X 轴座标。

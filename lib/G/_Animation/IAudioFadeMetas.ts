@@ -7,9 +7,11 @@
  * @file      G/_Animation/IAudioFadeMetas.ts
  */
 
-/// <reference path="../../Util/IHashTable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export interface IAudioFadeMetas extends Util.IHashTable<any> {
         /**
          * 音量。

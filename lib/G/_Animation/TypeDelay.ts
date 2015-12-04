@@ -11,6 +11,8 @@
 /// <reference path="../../Core/_G/ITextElement.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export class TypeDelay extends Delay {
         /**
          * 速度（单位：帧／字）。

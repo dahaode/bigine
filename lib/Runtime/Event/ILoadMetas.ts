@@ -11,6 +11,8 @@
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export namespace Event {
         export interface ILoadMetas extends Core.IEventMetas<Core.IStates> {
             /**

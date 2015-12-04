@@ -1,11 +1,4 @@
-/**
- * 声明哈希表接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Util/IHashTable.ts
- */
+var __Bigine_Util = require("bigine.util");
 /**
  * 声明（运行时）事件元信息接口规范。
  *
@@ -14,7 +7,7 @@
  * @license   GPL-3.0
  * @file      Core/_Event/IEventMetas.ts
  */
-/// <reference path="../../Util/IHashTable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 声明（运行时）事件接口规范。
  *
@@ -101,15 +94,6 @@ var Runtime;
  */
 /// <reference path="ITag.ts" />
 /**
- * 声明成功回调函数接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Util/ISuccessCallback.ts
- */
-/// <reference path="IHashTable.ts" />
-/**
  * 声明根标签接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -117,8 +101,8 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Core/_Tag/IRootTag.ts
  */
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="IEntityTag.ts" />
-/// <reference path="../../Util/ISuccessCallback.ts" />
 /**
  * 声明（运行时）日志接口规范。
  *
@@ -163,275 +147,7 @@ var Core;
  * @license   GPL-3.0
  * @file      Core/_Runtime/IStates.ts
  */
-/// <reference path="../../Util/IHashTable.ts" />
-/**
- * 定义引擎异常。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      E.ts
- */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var E = (function (_super) {
-    __extends(E, _super);
-    /**
-     * 构造函数。
-     */
-    function E(message, lineNo) {
-        if ('captureStackTrace' in Error)
-            Error['captureStackTrace'](this, E);
-        this.signal = (lineNo in E.Signal) ?
-            lineNo :
-            E.Signal.OK;
-        if (0 < lineNo)
-            message = '第 ' + lineNo + ' 行' + message;
-        _super.call(this);
-        this.name = 'BigineError';
-        this.message = message;
-    }
-    E.SCHEMA_TAG_NOT_DECLARED = '标签尚未声明语法规则';
-    E.SCHEMA_CHILD_NOT_ALLOWED = '上级标签不支持此子标签';
-    E.LEX_ILLEGAL_SOURCE = '语法格式错误';
-    E.LEX_UNEXPECTED_INDENTATION = '缩进深度错误';
-    E.TAG_PARAMS_TOO_FEW = '标签参数个数不满足最低要求';
-    E.TAG_PARAMS_TOO_MANY = '标签参数个数超过最大限制';
-    E.TAG_CONTENT_FORBIDEN = '标签不接受内容';
-    E.TAG_CONTENT_REQUIRED = '标签内容缺失';
-    E.TAG_CHILDREN_TOO_FEW = '子标签数量不满足最低要求';
-    E.TAG_CHILDREN_TOO_MANY = '子标签数量超过最大限制';
-    E.DEF_CHAR_AVATAR_NOT_FOUND = '头像标签缺失';
-    E.DEF_CHAR_POSES_NOT_FOUND = '姿态标签未定义';
-    E.DEF_EPISODE_NOT_REGISTERED = '关联实体尚未注册';
-    E.DEF_EPISODE_NOT_BINDED = '关联实体尚未绑定';
-    E.DEF_ROOM_EMPTY = '使用地图标签和时刻标签均未定义';
-    E.DEF_MAP_REGION_BROKEN = '区域定义信息出错';
-    E.DEF_MAP_BGIMAGE_NOT_FOUND = '底图标签缺失';
-    E.DEF_MAP_HLIMAGE_NOT_FOUND = '高亮图标签缺失';
-    E.DEF_MAP_REGION_NOT_FOUND = '区域标签缺失';
-    E.DEF_MAP_TARGET_NOT_FOUND = '对应房间标签缺失';
-    E.DEF_MAP_POINT_NOT_FOUND = '继承交互点未定义';
-    E.SCENE_TYPE_UNKNOWN = '无效的事件类型';
-    E.ROOT_NOT_PARENT = '根标签没有父标签';
-    E.ACT_ILLEGAL_POSITION = '无效地人物站位';
-    E.ACT_CHAR_NOT_ON = '人物并不在场';
-    E.ACT_CHAR_ONSTAGE = '人物已在场';
-    E.ACT_ILLEGAL_STARS = '无效地评分星级';
-    E.ACT_CG_NOT_SHOWN = '并未展示任何特写';
-    E.ACT_CG_ALREADY_SHOWN = '正在展示另一特写';
-    E.ACT_ILLEGAL_OP = '无效的比较符';
-    E.ACT_STATE_NOT_NUMERIC = '状态数据不是数值';
-    E.ACT_DELTA_NOT_NUMERIC = '状态增量不是数值';
-    E.ACT_OPTION_CAST_FAILURE = '无法转化为选项';
-    E.RES_INVALID_URI = '无效的资源地址';
-    E.ENV_NOT_AVAILABLE = '环境不满足播放条件';
-    E.EP_DUPLICATE_ENTITY = '实体编号重复';
-    E.EP_ENTITY_NOT_FOUND = '实体不存在';
-    E.EP_THEME_NOT_LOADED = '主题数据尚未加载完成';
-    E.G_PARENT_NOT_FOUND = '画面父元素未绑定';
-    E.SUPPORT_NO_CANVAS = '浏览器不支持 Canvas';
-    E.UTIL_REMOTE_TIMEOUT = '远端请求超时';
-    E.OPT_OPTIONS_MISSING = '选项声明缺失';
-    E.OPT_OPTIONS_CONFLICT = '选项声明冲突';
-    return E;
-})(Error);
-var E;
-(function (E) {
-    (function (Signal) {
-        /**
-         * 中断循环。
-         */
-        Signal[Signal["BREAK"] = -99] = "BREAK";
-        /**
-         * 中断时序播放。
-         */
-        Signal[Signal["HALT"] = -98] = "HALT";
-        /**
-         * 正常。
-         */
-        Signal[Signal["OK"] = 0] = "OK";
-    })(E.Signal || (E.Signal = {}));
-    var Signal = E.Signal;
-})(E || (E = {}));
-/**
- * 声明数组遍历函数接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Util/IArrayIterator.ts
- */
-/**
- * 声明对象遍历函数接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Util/IObjectIterator.ts
- */
-/// <reference path="IHashTable.ts" />
-/**
- * 定义数组类工具方法。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Util/_iterator.ts
- */
-/// <reference path="IArrayIterator.ts" />
-/// <reference path="IObjectIterator.ts" />
-var Util;
-(function (Util) {
-    function each(obj, cb, $this) {
-        $this = $this || {};
-        var ii;
-        if (obj instanceof Array) {
-            if (obj.forEach)
-                return obj.forEach(cb, $this);
-            for (ii = 0; ii < obj.length; ii++)
-                cb.call($this, obj[ii], ii, obj);
-            return;
-        }
-        for (ii in obj)
-            if (obj.hasOwnProperty(ii))
-                cb.call($this, obj[ii], ii, obj);
-    }
-    Util.each = each;
-    function every(obj, cb, $this) {
-        $this = $this || {};
-        var ii;
-        if (obj instanceof Array) {
-            if (obj.every)
-                return obj.every(cb, $this);
-            for (ii = 0; ii < obj.length; ii++)
-                if (!cb.call($this, obj[ii], ii, obj))
-                    return false;
-        }
-        else
-            for (ii in obj)
-                if (obj.hasOwnProperty(ii) && !cb.call($this, obj[ii], ii, obj))
-                    return false;
-        return true;
-    }
-    Util.every = every;
-    function some(obj, cb, $this) {
-        $this = $this || {};
-        var ii;
-        if (obj instanceof Array) {
-            if (obj.some)
-                return obj.some(cb, $this);
-            for (ii = 0; ii < obj.length; ii++)
-                if (cb.call($this, obj[ii], ii, obj))
-                    return true;
-        }
-        else
-            for (ii in obj)
-                if (obj.hasOwnProperty(ii) && cb.call($this, obj[ii], ii, obj))
-                    return true;
-        return false;
-    }
-    Util.some = some;
-    function indexOf(obj, item, offset) {
-        if (offset === void 0) { offset = 0; }
-        var ii;
-        if (obj instanceof Array) {
-            if (obj.indexOf)
-                return obj.indexOf(item, offset);
-            for (ii = offset; ii < obj.length; ii++)
-                if (obj[ii] == item)
-                    return ii;
-        }
-        else
-            for (ii in obj)
-                if (obj.hasOwnProperty(ii) && obj[ii] == item)
-                    return ii;
-        return -1;
-    }
-    Util.indexOf = indexOf;
-    function clone(orig) {
-        if ('object' != typeof orig)
-            return orig;
-        if (orig instanceof Array)
-            return orig.slice(0);
-        var dolly = {};
-        Util.each(orig, function (value, key) {
-            dolly[key] = clone(value);
-        });
-        return dolly;
-    }
-    Util.clone = clone;
-})(Util || (Util = {}));
-/**
- * 定义基于 Promise 的序列调度组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Util/Q.ts
- */
-/// <reference path="../../include/tsd.d.ts" />
-/// <reference path="../E.ts" />
-/// <reference path="_iterator.ts" />
-var Util;
-(function (Util) {
-    if ('undefined' == typeof Promise)
-        require('es6-promise').polyfill();
-    var Q;
-    (function (Q) {
-        /**
-         * 中断顺序时序流。
-         */
-        function doHalt() {
-            return Promise.reject(new E('', E.Signal.HALT));
-        }
-        Q.doHalt = doHalt;
-        /**
-         * 忽略中断信号。
-         */
-        function ignoreHalt(error) {
-            if (E.Signal.HALT == error.signal)
-                return Promise.resolve();
-            return Promise.reject(error);
-        }
-        Q.ignoreHalt = ignoreHalt;
-        /**
-         * 中断循环时序流。
-         */
-        function doBreak() {
-            return Promise.reject(new E('', E.Signal.BREAK));
-        }
-        Q.doBreak = doBreak;
-        /**
-         * 忽略循环中断信号。
-         */
-        function ignoreBreak(error) {
-            if (E.Signal.BREAK == error.signal)
-                return Promise.resolve();
-            return Promise.reject(error);
-        }
-        Q.ignoreBreak = ignoreBreak;
-        /**
-         * 顺序遍历数组。
-         */
-        function every(array, iterator, $this) {
-            $this = $this || array;
-            var q;
-            Util.each(array, function (element, index) {
-                q = index ?
-                    q.then(function () { return iterator.call($this, element, index, array); }) :
-                    new Promise(function (resolve) {
-                        resolve(iterator.call($this, element, index, array));
-                    });
-            });
-            return q;
-        }
-        Q.every = every;
-    })(Q = Util.Q || (Util.Q = {}));
-})(Util || (Util = {}));
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 声明（运行时）资源（如：图片、音频等）组件。
  *
@@ -440,7 +156,6 @@ var Util;
  * @license   GPL-3.0
  * @file      Core/_Runtime/IResource.ts
  */
-/// <reference path="../../Util/Q.ts" />
 var Core;
 (function (Core) {
     var IResource;
@@ -621,7 +336,6 @@ var Core;
  */
 /// <reference path="ITag.ts" />
 /// <reference path="../_Runtime/IRuntime.ts" />
-/// <reference path="../../Util/Q.ts" />
 /**
  * 声明（作品）事件标签接口规范。
  *
@@ -756,6 +470,11 @@ var Core;
  * @license   GPL-3.0
  * @file      Runtime/Event/Ready.ts
  */
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 /// <reference path="Event.ts" />
 /// <reference path="IReadyMetas.ts" />
 var Runtime;
@@ -868,90 +587,6 @@ var Runtime;
     })(Event = Runtime.Event || (Runtime.Event = {}));
 })(Runtime || (Runtime = {}));
 /**
- * 定义环境信息探测组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Util/Env.ts
- */
-/// <reference path="../../include/tsd.d.ts" />
-/// <reference path="../E.ts" />
-var Util;
-(function (Util) {
-    Util.ENV = {
-        /**
-         * 是否存在 Window 对象。
-         */
-        Window: 'undefined' !== typeof window,
-        /**
-         * 是否为 NodeJS 环境。
-         */
-        Node: {
-            JS: !!('undefined' !== typeof process && process.version && process.arch),
-            Webkit: false
-        },
-        /**
-         * 屏幕信息。
-         */
-        Screen: {
-            Width: 1920,
-            Height: 1080
-        },
-        /**
-         * 通信协议。
-         */
-        Protocol: 'http:',
-        /**
-         * 是否支持 Canvas 功能。
-         */
-        Canvas: false,
-        /**
-         * 是否为移动设备。
-         */
-        Mobile: false,
-        /**
-         * IE 浏览器。
-         */
-        MSIE: false
-    };
-    (function (env) {
-        if (env.Node.JS)
-            env.Node.Webkit = !!(('node-webkit' in process.versions) || ('atom-shell' in process.versions) || ('electron' in process.versions));
-        var detect = function () {
-            var ua = navigator.userAgent.toLowerCase(), pick = function (pattern) {
-                var match = ua.match(pattern);
-                return (match && 1 < match.length) ? match[1] : '';
-            }, ios = pick(/(ipod|iphone|ipad)/), android = /android/.test(ua) && !/like android/.test(ua), tablet = /tablet/.test(ua), mobile = !tablet && /[^-]mobi/.test(ua), osver = 0, msie = false;
-            if (android)
-                osver = parseInt(pick(/android[ \/-](\d+(\.\d+)*)/), 10);
-            if ('ipad' == ios || (android && (3 == osver || (4 == osver && !mobile))) || /silk/.test(ua)) {
-                tablet = true;
-            }
-            else if ('ipod' == ios || 'iphone' == ios || android || /blackberry|\bbb\d+/.test(ua) || /rim\stablet/.test(ua) || /(web|hpw)os/.test(ua) || /bada/i.test(ua))
-                mobile = true;
-            if (/windows phone/.test(ua)) {
-                if (!/edge\/(\d+(\.\d+)?)/.test(ua))
-                    msie = true;
-            }
-            else if (/msie|trident/.test(ua))
-                msie = true;
-            return [tablet || mobile, msie];
-        };
-        if (env.Window) {
-            if ('https:' == location.protocol)
-                env.Protocol = 'https:';
-            env.Canvas = 'CanvasRenderingContext2D' in window;
-            var desult = detect(), doc = document.documentElement;
-            env.Mobile = desult[0];
-            env.MSIE = desult[1];
-            // window.devicePixelRatio @?x
-            env.Screen.Width = desult[0] ? doc.clientWidth : screen.width;
-            env.Screen.Height = desult[0] ? doc.clientHeight : screen.height;
-        }
-    })(Util.ENV);
-})(Util || (Util = {}));
-/**
  * 定义（运行时）资源组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -959,11 +594,11 @@ var Util;
  * @license   GPL-3.0
  * @file      Runtime/_Resource/Resource.ts
  */
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Runtime/IResource.ts" />
-/// <reference path="../../Util/ENV.ts" />
-/// <reference path="../../Util/Q.ts" />
 var Runtime;
 (function (Runtime) {
+    var Util = __Bigine_Util;
     /**
      * 资源池。
      */
@@ -1102,6 +737,7 @@ var Runtime;
 /// <reference path="_Resource/Resource.ts" />
 var Runtime;
 (function (Runtime) {
+    var Util = __Bigine_Util;
     var Episode = (function () {
         /**
          * 构造函数。
@@ -1165,7 +801,7 @@ var Runtime;
                 runtime.gS().s('_p', type);
                 q = Util.Q.every(this._a[type], function (scene) {
                     if (runtime.gH())
-                        return Util.Q.doHalt();
+                        return E.doHalt();
                     return scene.p(runtime);
                 });
             }
@@ -1244,7 +880,6 @@ var Runtime;
  * @file      Runtime/_Logger/ConsoleLogger.ts
  */
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
-/// <reference path="../../Util/_iterator.ts" />
 var Runtime;
 (function (Runtime) {
     var ConsoleLogger = (function () {
@@ -1443,6 +1078,7 @@ var Runtime;
 /// <reference path="Event/Save.ts" />
 var Runtime;
 (function (Runtime) {
+    var Util = __Bigine_Util;
     var States = (function () {
         /**
          * 构造函数。
@@ -1594,6 +1230,7 @@ var Runtime;
 /// <reference path="../../Core/_Runtime/ILogger.ts" />
 var Runtime;
 (function (Runtime) {
+    var Util = __Bigine_Util;
     /**
      * 唯一实例。
      */
@@ -1957,11 +1594,12 @@ var Runtime;
  * @license   GPL-3.0
  * @file      G/Animation.ts
  */
-/// <reference path="../Core/_G/IAnimation.ts" />
 /// <reference path="../../include/_raf.d.ts" />
-/// <reference path="../Util/ENV.ts" />
+/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../Core/_G/IAnimation.ts" />
 var G;
 (function (G) {
+    var Util = __Bigine_Util;
     var Animation = (function () {
         /**
          * 构造函数。
@@ -2128,6 +1766,7 @@ var G;
 /// <reference path="../../Core/_G/IComboAnimation.ts" />
 var G;
 (function (G) {
+    var Util = __Bigine_Util;
     var Combo = (function (_super) {
         __extends(Combo, _super);
         /**
@@ -2169,7 +1808,7 @@ var G;
  * @license   GPL-3.0
  * @file      G/_Animation/IFadeMetas.ts
  */
-/// <reference path="../../Util/IHashTable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义透明度渐变动画组件。
  *
@@ -2269,7 +1908,6 @@ var G;
  * @file      Core/_G/IGraphicElement.ts
  */
 /// <reference path="IBounds.ts" />
-/// <reference path="../../Util/Q.ts" />
 /// <reference path="IAnimation.ts" />
 /**
  * 声明画面组合元素接口规范。
@@ -2292,6 +1930,7 @@ var G;
 /// <reference path="../Core/_G/ISprite.ts" />
 var G;
 (function (G) {
+    var Util = __Bigine_Util;
     var Element = (function () {
         function Element(x) {
             var args = [];
@@ -2613,6 +2252,7 @@ var G;
 /// <reference path="../../Core/_G/ISprite.ts" />
 var G;
 (function (G) {
+    var Util = __Bigine_Util;
     var Sprite = (function (_super) {
         __extends(Sprite, _super);
         function Sprite(x, y, w, h, absolute) {
@@ -2867,6 +2507,7 @@ var G;
 /// <reference path="../_Animation/FadeOut.ts" />
 var G;
 (function (G) {
+    var Util = __Bigine_Util;
     var Button = (function (_super) {
         __extends(Button, _super);
         function Button() {
@@ -3059,6 +2700,7 @@ var G;
 /// <reference path="../_pack.ts" />
 var G;
 (function (G) {
+    var Util = __Bigine_Util;
     var Stage = (function (_super) {
         __extends(Stage, _super);
         /**
@@ -3308,7 +2950,6 @@ var G;
  * @license   GPL-3.0
  * @file      Core/_G/ITextPhrase.ts
  */
-/// <reference path="../../Util/Q.ts" />
 /**
  * 声明画面文字元素接口规范。
  *
@@ -3500,6 +3141,7 @@ var G;
 /// <reference path="Phrase.ts" />
 var G;
 (function (G) {
+    var Util = __Bigine_Util;
     var Text = (function (_super) {
         __extends(Text, _super);
         function Text(x, y, w, h, lineHeight, align, absolute) {
@@ -3663,6 +3305,7 @@ var G;
 /// <reference path="../../Core/_G/ITextElement.ts" />
 var G;
 (function (G) {
+    var Util = __Bigine_Util;
     var Type = (function (_super) {
         __extends(Type, _super);
         /**
@@ -3726,6 +3369,7 @@ var G;
 /// <reference path="../../Core/_G/ITextElement.ts" />
 var G;
 (function (G) {
+    var Util = __Bigine_Util;
     var TypeDelay = (function (_super) {
         __extends(TypeDelay, _super);
         /**
@@ -3761,7 +3405,7 @@ var G;
  * @license   GPL-3.0
  * @file      G/_Animation/IMoveMetas.ts
  */
-/// <reference path="../../Util/IHashTable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义位移动画组件。
  *
@@ -3806,7 +3450,7 @@ var G;
  * @license   GPL-3.0
  * @file      G/_Animation/IAudioFadeMetas.ts
  */
-/// <reference path="../../Util/IHashTable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义透明度渐变动画组件。
  *
@@ -3958,6 +3602,7 @@ var Runtime;
  */
 var Runtime;
 (function (Runtime) {
+    var Util = __Bigine_Util;
     var CanvasDirector = (function (_super) {
         __extends(CanvasDirector, _super);
         /**
@@ -4470,7 +4115,7 @@ var Runtime;
                 return new Promise(function (resolve, reject) {
                     var anime = new G.FadeIn(250), clicked = false;
                     _this._q = function () {
-                        Util.Q.doHalt()['catch'](function (error) {
+                        E.doHalt()['catch'](function (error) {
                             reject(error);
                         });
                     };
@@ -5042,11 +4687,12 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/_Director/DirectorFactory.ts
  */
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="NodeDirector.ts" />
-/// <reference path="../../Util/ENV.ts" />
 /// <reference path="CanvasDirector.ts" />
 var Runtime;
 (function (Runtime) {
+    var Util = __Bigine_Util;
     var DirectorFactory;
     (function (DirectorFactory) {
         function c(runtime) {
@@ -5476,6 +5122,123 @@ var Tag;
             Tag.I[Tag.S[ii][0]] = ii;
 })(Tag || (Tag = {}));
 /**
+ * 定义引擎异常。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      E.ts
+ */
+/// <reference path="../include/tsd.d.ts" />
+var E = (function (_super) {
+    __extends(E, _super);
+    /**
+     * 构造函数。
+     */
+    function E(message, lineNo) {
+        if ('captureStackTrace' in Error)
+            Error['captureStackTrace'](this, E);
+        this.signal = (lineNo in E.Signal) ?
+            lineNo :
+            E.Signal.OK;
+        if (0 < lineNo)
+            message = '第 ' + lineNo + ' 行' + message;
+        _super.call(this);
+        this.name = 'BigineError';
+        this.message = message;
+    }
+    /**
+     * 中断顺序时序流。
+     */
+    E.doHalt = function () {
+        return Promise.reject(new E('', E.Signal.HALT));
+    };
+    /**
+     * 忽略中断信号。
+     */
+    E.ignoreHalt = function (error) {
+        if (E.Signal.HALT == error.signal)
+            return Promise.resolve();
+        return Promise.reject(error);
+    };
+    /**
+     * 中断循环时序流。
+     */
+    E.doBreak = function () {
+        return Promise.reject(new E('', E.Signal.BREAK));
+    };
+    /**
+     * 忽略循环中断信号。
+     */
+    E.ignoreBreak = function (error) {
+        if (E.Signal.BREAK == error.signal)
+            return Promise.resolve();
+        return Promise.reject(error);
+    };
+    E.SCHEMA_TAG_NOT_DECLARED = '标签尚未声明语法规则';
+    E.SCHEMA_CHILD_NOT_ALLOWED = '上级标签不支持此子标签';
+    E.LEX_ILLEGAL_SOURCE = '语法格式错误';
+    E.LEX_UNEXPECTED_INDENTATION = '缩进深度错误';
+    E.TAG_PARAMS_TOO_FEW = '标签参数个数不满足最低要求';
+    E.TAG_PARAMS_TOO_MANY = '标签参数个数超过最大限制';
+    E.TAG_CONTENT_FORBIDEN = '标签不接受内容';
+    E.TAG_CONTENT_REQUIRED = '标签内容缺失';
+    E.TAG_CHILDREN_TOO_FEW = '子标签数量不满足最低要求';
+    E.TAG_CHILDREN_TOO_MANY = '子标签数量超过最大限制';
+    E.DEF_CHAR_AVATAR_NOT_FOUND = '头像标签缺失';
+    E.DEF_CHAR_POSES_NOT_FOUND = '姿态标签未定义';
+    E.DEF_EPISODE_NOT_REGISTERED = '关联实体尚未注册';
+    E.DEF_EPISODE_NOT_BINDED = '关联实体尚未绑定';
+    E.DEF_ROOM_EMPTY = '使用地图标签和时刻标签均未定义';
+    E.DEF_MAP_REGION_BROKEN = '区域定义信息出错';
+    E.DEF_MAP_BGIMAGE_NOT_FOUND = '底图标签缺失';
+    E.DEF_MAP_HLIMAGE_NOT_FOUND = '高亮图标签缺失';
+    E.DEF_MAP_REGION_NOT_FOUND = '区域标签缺失';
+    E.DEF_MAP_TARGET_NOT_FOUND = '对应房间标签缺失';
+    E.DEF_MAP_POINT_NOT_FOUND = '继承交互点未定义';
+    E.SCENE_TYPE_UNKNOWN = '无效的事件类型';
+    E.ROOT_NOT_PARENT = '根标签没有父标签';
+    E.ACT_ILLEGAL_POSITION = '无效地人物站位';
+    E.ACT_CHAR_NOT_ON = '人物并不在场';
+    E.ACT_CHAR_ONSTAGE = '人物已在场';
+    E.ACT_ILLEGAL_STARS = '无效地评分星级';
+    E.ACT_CG_NOT_SHOWN = '并未展示任何特写';
+    E.ACT_CG_ALREADY_SHOWN = '正在展示另一特写';
+    E.ACT_ILLEGAL_OP = '无效的比较符';
+    E.ACT_STATE_NOT_NUMERIC = '状态数据不是数值';
+    E.ACT_DELTA_NOT_NUMERIC = '状态增量不是数值';
+    E.ACT_OPTION_CAST_FAILURE = '无法转化为选项';
+    E.RES_INVALID_URI = '无效的资源地址';
+    E.ENV_NOT_AVAILABLE = '环境不满足播放条件';
+    E.EP_DUPLICATE_ENTITY = '实体编号重复';
+    E.EP_ENTITY_NOT_FOUND = '实体不存在';
+    E.EP_THEME_NOT_LOADED = '主题数据尚未加载完成';
+    E.G_PARENT_NOT_FOUND = '画面父元素未绑定';
+    E.SUPPORT_NO_CANVAS = '浏览器不支持 Canvas';
+    E.UTIL_REMOTE_TIMEOUT = '远端请求超时';
+    E.OPT_OPTIONS_MISSING = '选项声明缺失';
+    E.OPT_OPTIONS_CONFLICT = '选项声明冲突';
+    return E;
+})(Error);
+var E;
+(function (E) {
+    (function (Signal) {
+        /**
+         * 中断循环。
+         */
+        Signal[Signal["BREAK"] = -99] = "BREAK";
+        /**
+         * 中断时序播放。
+         */
+        Signal[Signal["HALT"] = -98] = "HALT";
+        /**
+         * 正常。
+         */
+        Signal[Signal["OK"] = 0] = "OK";
+    })(E.Signal || (E.Signal = {}));
+    var Signal = E.Signal;
+})(E || (E = {}));
+/**
  * 定义未知标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -5488,6 +5251,7 @@ var Tag;
 /// <reference path="../E.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Unknown = (function () {
         /**
          * 构造函数。
@@ -5839,6 +5603,7 @@ var Tag;
 /// <reference path="../ResTable.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Poses = (function (_super) {
         __extends(Poses, _super);
         function Poses() {
@@ -6387,7 +6152,7 @@ var Tag;
             })
                 .then(function () {
                 if (runtime.gH())
-                    return Util.Q.doHalt();
+                    return E.doHalt();
                 states.m(ktn, kcn)
                     .m(kto, kco)
                     .c(kcn, kdn)
@@ -6402,7 +6167,7 @@ var Tag;
                     .then(function () { return director.asMap(map ? map.gP() : {}); })
                     .then(function () { return _this._mo.p(type.PostEnter, runtime); });
             }); });
-            return Util.Q.doHalt(); // 中断原有时序流。
+            return E.doHalt(); // 中断原有时序流。
         };
         return Enter;
     })(Tag.Action);
@@ -6459,7 +6224,7 @@ var Tag;
             Tag.Enter.prototype.p.call({
                 _p: [room.gI()],
                 _mo: room
-            }, runtime)['catch'](Util.Q.ignoreHalt);
+            }, runtime)['catch'](E.ignoreHalt);
         };
         /**
          * 获取唯一编号。
@@ -6536,6 +6301,7 @@ var Tag;
 /// <reference path="Point.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var DefMap = (function (_super) {
         __extends(DefMap, _super);
         /**
@@ -6651,6 +6417,7 @@ var Tag;
 /// <reference path="../ResTable.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Times = (function (_super) {
         __extends(Times, _super);
         function Times() {
@@ -6703,6 +6470,7 @@ var Tag;
 /// <reference path="Times.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var DefRoom = (function (_super) {
         __extends(DefRoom, _super);
         /**
@@ -6742,7 +6510,7 @@ var Tag;
             return (type in this._a ?
                 Util.Q.every(this._a[type], function (scene) {
                     if (runtime.gH())
-                        return Util.Q.doHalt();
+                        return E.doHalt();
                     return scene.p(runtime);
                 }) :
                 Promise.resolve(runtime)).then(function () { return Core.ISceneTag.Type.PostEnter == type ?
@@ -6861,109 +6629,6 @@ var Tag;
     Tag.Player = Player;
 })(Tag || (Tag = {}));
 /**
- * 声明失败回调函数接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Util/IFailureCallback.ts
- */
-/**
- * 定义远端通信组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Util/Remote.ts
- */
-/// <reference path="../E.ts" />
-/// <reference path="ENV.ts" />
-/// <reference path="ISuccessCallback.ts" />
-/// <reference path="IFailureCallback.ts" />
-/// <reference path="_iterator.ts" />
-var Util;
-(function (Util) {
-    var xdrs = [];
-    var Remote;
-    (function (Remote) {
-        /**
-         * 格式化。
-         */
-        function format(url) {
-            return Util.ENV.Protocol + url.replace(/^.+\/\//, '//').replace(/\?.*$/, '');
-        }
-        Remote.format = format;
-        /**
-         * HTTP GET 远端数据。
-         */
-        function get(url, onSuccess, onFailure) {
-            http(Method.GET, url, {}, onSuccess, onFailure);
-        }
-        Remote.get = get;
-        /**
-         * HTTP POST 远端数据。
-         */
-        function post(url, data, onSuccess, onFailure) {
-            http(Method.POST, url, data, onSuccess, onFailure);
-        }
-        Remote.post = post;
-        /**
-         * HTTP 请求方法。
-         */
-        (function (Method) {
-            Method[Method["GET"] = 0] = "GET";
-            Method[Method["POST"] = 1] = "POST";
-        })(Remote.Method || (Remote.Method = {}));
-        var Method = Remote.Method;
-        ;
-        /**
-         * HTTP 请求远端数据。
-         */
-        function http(method, url, data, onSuccess, onFailure) {
-            var qs = [], xhr;
-            if (Util.ENV.Node.JS) {
-                xhr = require('./xhr').create();
-            }
-            else if ('undefined' != typeof XDomainRequest) {
-                xhr = new XDomainRequest();
-                xdrs.push(xhr);
-            }
-            else
-                xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                try {
-                    var resp = JSON.parse(xhr.responseText);
-                    if ('reason' in resp)
-                        throw new E(resp['reason']);
-                    if ('status' in xhr && 200 != xhr.status)
-                        throw new E(xhr.statusText);
-                    onSuccess(resp);
-                }
-                catch (error) {
-                    onFailure(error, xhr.status);
-                }
-            };
-            xhr.onprogress = function () {
-                //
-            };
-            xhr.onerror = function (event) {
-                onFailure(event.error);
-            };
-            xhr.ontimeout = function () {
-                onFailure(new E(E.UTIL_REMOTE_TIMEOUT));
-            };
-            xhr.open(Method.GET == method ? 'GET' : 'POST', format(url), true);
-            Util.each(data, function (value, key) {
-                qs.push(key + '=' + encodeURIComponent(value));
-            });
-            if (qs.length && 'setRequestHeader' in xhr)
-                xhr['setRequestHeader']('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.send(qs.length ? qs.join('&') : null);
-        }
-        Remote.http = http;
-    })(Remote = Util.Remote || (Util.Remote = {}));
-})(Util || (Util = {}));
-/**
  * 定义主题标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -6971,10 +6636,11 @@ var Util;
  * @license   GPL-3.0
  * @file      Tag/_Structure/Theme.ts
  */
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../Unknown.ts" />
-/// <reference path="../../Util/Remote.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Theme = (function (_super) {
         __extends(Theme, _super);
         function Theme() {
@@ -7006,8 +6672,8 @@ var Tag;
  * @license   GPL-3.0
  * @file      Tag/_Structure/Resources.ts
  */
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../Unknown.ts" />
-/// <reference path="../../Util/Remote.ts" />
 /// <reference path="../_Definition/_Room/DefRoom.ts" />
 /// <reference path="../_Definition/_Char/DefChar.ts" />
 /// <reference path="../_Definition/DefBGM.ts" />
@@ -7015,6 +6681,7 @@ var Tag;
 /// <reference path="../_Definition/DefSE.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Resources = (function (_super) {
         __extends(Resources, _super);
         function Resources() {
@@ -7203,6 +6870,7 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Conditions = (function (_super) {
         __extends(Conditions, _super);
         function Conditions() {
@@ -7701,6 +7369,7 @@ var Tag;
 /// <reference path="../../../Core/_Tag/IBlock.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Loop = (function (_super) {
         __extends(Loop, _super);
         function Loop() {
@@ -7726,7 +7395,7 @@ var Tag;
             var states = runtime.gS(), logger = runtime.gL(), title = 'LOOP', kd = '$d', depth = states.g(kd), kid = '.a', id, loop = function () {
                 return Util.Q.every(_this._s, function (action) {
                     if (runtime.gH())
-                        return Util.Q.doBreak();
+                        return E.doBreak();
                     id = states.g(kid);
                     if (id) {
                         if ('gI' in action) {
@@ -7747,7 +7416,7 @@ var Tag;
             };
             logger.o(title);
             states.s(kd, 1 + depth);
-            return loop()['catch'](Util.Q.ignoreBreak)['catch'](function (error) {
+            return loop()['catch'](E.ignoreBreak)['catch'](function (error) {
                 if (error && E.Signal.HALT == error.signal)
                     logger.c(title);
                 throw error;
@@ -7838,6 +7507,7 @@ var Tag;
 /// <reference path="../../_Action/_Logic/Loop.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Content = (function (_super) {
         __extends(Content, _super);
         function Content() {
@@ -7860,7 +7530,7 @@ var Tag;
             return director.c(Tag.Loop.prototype.c.call(this))
                 .then(function () { return Util.Q.every(_this._s, function (action) {
                 if (runtime.gH())
-                    return Util.Q.doHalt();
+                    return E.doHalt();
                 id = states.g(kid);
                 if (id) {
                     if ('gI' in action) {
@@ -7999,6 +7669,7 @@ var Tag;
 /// <reference path="Theme.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Root = (function (_super) {
         __extends(Root, _super);
         /**
@@ -8487,7 +8158,7 @@ var Tag;
                 .d('$rd');
             runtime.t(function () { return runtime.gD().ED()
                 .then(function () { return runtime.gE().p(Core.ISceneTag.Type.End, runtime); }); });
-            return Util.Q.doHalt();
+            return E.doHalt();
         };
         return End;
     })(Tag.Action);
@@ -8525,7 +8196,7 @@ var Tag;
                 .d('$rd');
             runtime.t(function () { return runtime.gD().FAIL()
                 .then(function () { return runtime.gE().p(Core.ISceneTag.Type.Fail, runtime); }); });
-            return Util.Q.doHalt();
+            return E.doHalt();
         };
         return Fail;
     })(Tag.Action);
@@ -8686,7 +8357,7 @@ var Tag;
          * 执行。
          */
         Freeze.prototype.p = function (runtime) {
-            return Util.Q.doHalt();
+            return E.doHalt();
         };
         return Freeze;
     })(Tag.Action);
@@ -8948,7 +8619,7 @@ var Tag;
          * 执行。
          */
         LoopBreak.prototype.p = function (runtime) {
-            return Util.Q.doBreak();
+            return E.doBreak();
         };
         return LoopBreak;
     })(Tag.Action);
@@ -8965,6 +8636,7 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var And = (function (_super) {
         __extends(And, _super);
         function And() {
@@ -9007,6 +8679,7 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Or = (function (_super) {
         __extends(Or, _super);
         function Or() {
@@ -9049,6 +8722,7 @@ var Tag;
 /// <reference path="Loop.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Otherwise = (function (_super) {
         __extends(Otherwise, _super);
         function Otherwise() {
@@ -9134,6 +8808,7 @@ var Tag;
 /// <reference path="Loop.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Then = (function (_super) {
         __extends(Then, _super);
         function Then() {
@@ -9219,6 +8894,7 @@ var Tag;
 /// <reference path="Loop.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var When = (function (_super) {
         __extends(When, _super);
         function When() {
@@ -9358,6 +9034,7 @@ var Tag;
 /// <reference path="Option.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Choose = (function (_super) {
         __extends(Choose, _super);
         /**
@@ -9446,6 +9123,7 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Maximum = (function (_super) {
         __extends(Maximum, _super);
         function Maximum() {
@@ -9564,6 +9242,7 @@ var Tag;
 /// <reference path="Loop.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var WhenVar = (function (_super) {
         __extends(WhenVar, _super);
         function WhenVar() {
@@ -9683,6 +9362,7 @@ var Tag;
 /// <reference path="Option.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var DefOptions = (function (_super) {
         __extends(DefOptions, _super);
         function DefOptions() {
@@ -9757,6 +9437,7 @@ var Tag;
 /// <reference path="Option.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var DropOption = (function (_super) {
         __extends(DropOption, _super);
         function DropOption() {
@@ -9926,6 +9607,7 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Add = (function (_super) {
         __extends(Add, _super);
         function Add() {
@@ -9972,6 +9654,7 @@ var Tag;
 /// <reference path="../../Action.ts" />
 var Tag;
 (function (Tag) {
+    var Util = __Bigine_Util;
     var Subtract = (function (_super) {
         __extends(Subtract, _super);
         function Subtract() {
@@ -10092,6 +9775,7 @@ var Tag;
 /// <reference path="../Tag/_pack.ts" />
 var Runtime;
 (function (Runtime_1) {
+    var Util = __Bigine_Util;
     var Runtime = (function () {
         /**
          * 构造函数。
@@ -10302,7 +9986,7 @@ var Runtime;
          */
         Runtime.prototype.t = function (flow) {
             var _this = this;
-            this._t = this._t.then(flow)['catch'](Util.Q.ignoreHalt)['catch'](function (reason) {
+            this._t = this._t.then(flow)['catch'](E.ignoreHalt)['catch'](function (reason) {
                 _this._l.e(reason);
                 throw reason;
             }).then(function () { return _this; });
@@ -10346,7 +10030,7 @@ var Runtime;
                             }
                             enter = new Tag.Enter([tn || cn], '', [], -1);
                             enter.b(episode);
-                            return enter.p(_this)['catch'](Util.Q.ignoreHalt);
+                            return enter.p(_this)['catch'](E.ignoreHalt);
                         }
                         return episode.p(states.g('_p'), _this);
                     });
@@ -10380,6 +10064,7 @@ var Runtime;
 /// <reference path="../Tag/_pack.ts" />
 var Lex;
 (function (Lex) {
+    var Util = __Bigine_Util;
     var TagLine = (function () {
         /**
          * 构造函数。
@@ -10488,6 +10173,7 @@ var Lex;
 /// <reference path="TagLine.ts" />
 var Lex;
 (function (Lex) {
+    var Util = __Bigine_Util;
     var Parser;
     (function (Parser) {
         function c(source) {
@@ -10567,7 +10253,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.16.0';
+    Bigine.version = '0.17.0';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
 module.exports=Bigine;

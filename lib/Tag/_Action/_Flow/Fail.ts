@@ -29,7 +29,7 @@ namespace Tag {
             runtime.t(() => runtime.gD().FAIL()
                 .then(() => runtime.gE().p(Core.ISceneTag.Type.Fail, runtime))
             );
-            return Util.Q.doHalt<Core.IRuntime>();
+            return E.doHalt<Core.IRuntime>();
         }
     }
 }

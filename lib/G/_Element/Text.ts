@@ -12,6 +12,8 @@
 /// <reference path="Phrase.ts" />
 
 namespace G {
+    import Util = __Bigine_Util;
+
     export class Text extends Element implements Core.ITextElement {
         /**
          * 行高。

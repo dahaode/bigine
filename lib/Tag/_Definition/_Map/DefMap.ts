@@ -13,6 +13,8 @@
 /// <reference path="Point.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class DefMap extends Entity implements Core.IMapTag {
         /**
          * 交互点集合。

@@ -7,8 +7,6 @@
  * @file      Core/_G/ITextPhrase.ts
  */
 
-/// <reference path="../../Util/Q.ts" />
-
 namespace Core {
     export interface ITextPhrase {
         /**

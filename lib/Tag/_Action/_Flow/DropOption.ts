@@ -11,6 +11,8 @@
 /// <reference path="Option.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class DropOption extends Action {
         /**
          * 获取标签名称。

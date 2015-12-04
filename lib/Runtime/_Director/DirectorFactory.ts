@@ -7,11 +7,13 @@
  * @file      Runtime/_Director/DirectorFactory.ts
  */
 
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="NodeDirector.ts" />
-/// <reference path="../../Util/ENV.ts" />
 /// <reference path="CanvasDirector.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export namespace DirectorFactory {
         export function c(runtime: Core.IRuntime): Director {
             var env: Util.IEnvType = Util.ENV;

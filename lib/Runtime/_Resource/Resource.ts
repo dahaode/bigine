@@ -7,11 +7,12 @@
  * @file      Runtime/_Resource/Resource.ts
  */
 
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Runtime/IResource.ts" />
-/// <reference path="../../Util/ENV.ts" />
-/// <reference path="../../Util/Q.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     /**
      * 资源池。
      */

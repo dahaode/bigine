@@ -7,7 +7,7 @@
  * @file      Core/_Runtime/IStates.ts
  */
 
-/// <reference path="../../Util/IHashTable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 /**
  * 1. `_` 表明为场效相关信息，需要被存档记录；
@@ -41,6 +41,8 @@
  * 4. 其它为作品运行信息，需要被存档记录。
  */
 namespace Core {
+    import Util = __Bigine_Util;
+
     export interface IStates {
         /**
          * 设置值。

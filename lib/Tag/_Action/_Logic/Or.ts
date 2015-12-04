@@ -10,6 +10,8 @@
 /// <reference path="../../Action.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Or extends Action {
         /**
          * 获取标签名称。

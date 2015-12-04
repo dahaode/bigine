@@ -10,6 +10,8 @@
 /// <reference path="../../Unknown.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Region extends Unknown {
         /**
          * 座标。

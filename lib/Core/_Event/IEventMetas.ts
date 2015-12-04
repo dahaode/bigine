@@ -7,9 +7,11 @@
  * @file      Core/_Event/IEventMetas.ts
  */
 
-/// <reference path="../../Util/IHashTable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 namespace Core {
+    import Util = __Bigine_Util;
+
     export interface IEventMetas<T> extends Util.IHashTable<any> {
         /**
          * 触发对象。

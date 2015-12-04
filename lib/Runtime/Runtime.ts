@@ -19,6 +19,8 @@
 /// <reference path="../Tag/_pack.ts" />
 
 namespace Runtime {
+    import Util = __Bigine_Util;
+
     export class Runtime implements Core.IRuntime {
         /**
          * 事件监听函数池。
@@ -311,7 +313,7 @@ namespace Runtime {
          */
         public t(flow: () => Runtime | Thenable<Runtime>): Runtime {
             this._t = this._t.then(flow)
-                ['catch'](Util.Q.ignoreHalt)
+                ['catch'](E.ignoreHalt)
                 ['catch']((reason: any) => {
                     this._l.e(reason);
                     throw reason;
@@ -368,7 +370,7 @@ namespace Runtime {
                             enter = new Tag.Enter([tn || cn], '', [], -1);
                             enter.b(episode);
                             return <Runtime | Thenable<Runtime>> enter.p(this)
-                                ['catch'](Util.Q.ignoreHalt);
+                                ['catch'](E.ignoreHalt);
                         }
                         return episode.p(states.g('_p'), this);
                     });

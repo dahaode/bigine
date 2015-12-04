@@ -1,23 +1,18 @@
 /// <reference path="../../include/tsd.d.ts" />
 /// <reference path="../../include/_raf.d.ts" />
-declare namespace Bigine {
-namespace Util {
-    interface IHashTable<T> {
-        [index: string]: T;
-    }
-}
-namespace Core {
+declare namespace Core {
+    import Util = __Bigine_Util;
     interface IEventMetas<T> extends Util.IHashTable<any> {
         target: T;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IEvent<T> {
         target: T;
         gT(): string;
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         class Event<T> implements Core.IEvent<T> {
             target: T;
@@ -26,7 +21,7 @@ namespace Runtime {
         }
     }
 }
-namespace Core {
+declare namespace Core {
     interface ITag {
         gL(): number;
         gN(): string;
@@ -37,36 +32,32 @@ namespace Core {
         gU(): ITag;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IIdableTag extends ITag {
         gI(): string;
         i(id: string): void;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IEventListener<T> {
         (event: IEvent<T>): void;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IEmittable {
         addEventListener<T>(type: string, listener: IEventListener<T>): IEmittable;
         removeEventListener<T>(type: string, listener: IEventListener<T>): IEmittable;
         dispatchEvent<T>(event: IEvent<T>): IEmittable;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IEntityTag extends ITag {
         gI(): string;
         gT(): IEpisode.Entity;
     }
 }
-namespace Util {
-    interface ISuccessCallback<T> {
-        (data: IHashTable<T>): void;
-    }
-}
-namespace Core {
+declare namespace Core {
+    import Util = __Bigine_Util;
     interface IRootTag extends ITag {
         a(): boolean;
         l(callback: Util.ISuccessCallback<Util.IHashTable<IEntityTag>>): boolean;
@@ -75,7 +66,7 @@ namespace Core {
         gT(): string;
     }
 }
-namespace Core {
+declare namespace Core {
     interface ILogger {
         d(...parts: any[]): void;
         i(...parts: any[]): void;
@@ -94,7 +85,8 @@ namespace Core {
         }
     }
 }
-namespace Core {
+declare namespace Core {
+    import Util = __Bigine_Util;
     interface IStates {
         s(key: string, value: any): IStates;
         g(key: string): any;
@@ -110,92 +102,7 @@ namespace Core {
         l(): void;
     }
 }
-class E extends Error {
-    static SCHEMA_TAG_NOT_DECLARED: string;
-    static SCHEMA_CHILD_NOT_ALLOWED: string;
-    static LEX_ILLEGAL_SOURCE: string;
-    static LEX_UNEXPECTED_INDENTATION: string;
-    static TAG_PARAMS_TOO_FEW: string;
-    static TAG_PARAMS_TOO_MANY: string;
-    static TAG_CONTENT_FORBIDEN: string;
-    static TAG_CONTENT_REQUIRED: string;
-    static TAG_CHILDREN_TOO_FEW: string;
-    static TAG_CHILDREN_TOO_MANY: string;
-    static DEF_CHAR_AVATAR_NOT_FOUND: string;
-    static DEF_CHAR_POSES_NOT_FOUND: string;
-    static DEF_EPISODE_NOT_REGISTERED: string;
-    static DEF_EPISODE_NOT_BINDED: string;
-    static DEF_ROOM_EMPTY: string;
-    static DEF_MAP_REGION_BROKEN: string;
-    static DEF_MAP_BGIMAGE_NOT_FOUND: string;
-    static DEF_MAP_HLIMAGE_NOT_FOUND: string;
-    static DEF_MAP_REGION_NOT_FOUND: string;
-    static DEF_MAP_TARGET_NOT_FOUND: string;
-    static DEF_MAP_POINT_NOT_FOUND: string;
-    static SCENE_TYPE_UNKNOWN: string;
-    static ROOT_NOT_PARENT: string;
-    static ACT_ILLEGAL_POSITION: string;
-    static ACT_CHAR_NOT_ON: string;
-    static ACT_CHAR_ONSTAGE: string;
-    static ACT_ILLEGAL_STARS: string;
-    static ACT_CG_NOT_SHOWN: string;
-    static ACT_CG_ALREADY_SHOWN: string;
-    static ACT_ILLEGAL_OP: string;
-    static ACT_STATE_NOT_NUMERIC: string;
-    static ACT_DELTA_NOT_NUMERIC: string;
-    static ACT_OPTION_CAST_FAILURE: string;
-    static RES_INVALID_URI: string;
-    static ENV_NOT_AVAILABLE: string;
-    static EP_DUPLICATE_ENTITY: string;
-    static EP_ENTITY_NOT_FOUND: string;
-    static EP_THEME_NOT_LOADED: string;
-    static G_PARENT_NOT_FOUND: string;
-    static SUPPORT_NO_CANVAS: string;
-    static UTIL_REMOTE_TIMEOUT: string;
-    static OPT_OPTIONS_MISSING: string;
-    static OPT_OPTIONS_CONFLICT: string;
-    signal: E.Signal;
-    constructor(message: string, lineNo?: number);
-}
-namespace E {
-    enum Signal {
-        BREAK = -99,
-        HALT = -98,
-        OK = 0,
-    }
-}
-namespace Util {
-    interface IArrayIterator<T, U> {
-        (element: T, index?: number, array?: T[]): U;
-    }
-}
-namespace Util {
-    interface IObjectIterator<T, U> {
-        (element: T, index?: string, object?: IHashTable<T>): U;
-    }
-}
-namespace Util {
-    function each<T>(array: T[], iterator: IArrayIterator<T, any>, thisArg?: any): void;
-    function each<T>(object: IHashTable<T>, iterator: IObjectIterator<T, any>, thisArg?: any): void;
-    function every<T>(array: T[], iterator: IArrayIterator<T, boolean>, thisArg?: any): boolean;
-    function every<T>(object: IHashTable<T>, iterator: IObjectIterator<T, boolean>, thisArg?: any): boolean;
-    function some<T>(array: T[], iterator: IArrayIterator<T, boolean>, thisArg?: any): boolean;
-    function some<T>(object: IHashTable<T>, iterator: IObjectIterator<T, boolean>, thisArg?: any): boolean;
-    function indexOf<T>(array: T[], element: T, offset?: number): number;
-    function indexOf<T>(object: IHashTable<T>, element: T): string | number;
-    function clone<T>(orig: T[]): T[];
-    function clone<T>(orig: T): T;
-}
-namespace Util {
-    namespace Q {
-        function doHalt<T>(): Promise<T>;
-        function ignoreHalt(error: E): Promise<void>;
-        function doBreak<T>(): Promise<T>;
-        function ignoreBreak(error: E): Promise<void>;
-        function every<T, U>(array: T[], iterator: Util.IArrayIterator<T, U | Thenable<U>>, $this?: any): Promise<U>;
-    }
-}
-namespace Core {
+declare namespace Core {
     interface IResource<T> {
         l(): string;
         o(): Promise<T>;
@@ -214,25 +121,26 @@ namespace Core {
         }
     }
 }
-namespace Core {
+declare namespace Core {
+    import Util = __Bigine_Util;
     interface IMapTag extends IEntityTag {
         o(): IResource<HTMLImageElement>;
         gP(): Util.IHashTable<IPointTag>;
         gP(id: string): IPointTag;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IRoomTag extends IEntityTag, ISceneHost {
         o(id?: string): IResource<HTMLImageElement>;
         gM(): IMapTag;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IButtonable {
         p(runtime: IRuntime): void;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IPointTag extends ITag, IButtonable {
         gI(): string;
         o(): IResource<HTMLImageElement>;
@@ -244,12 +152,13 @@ namespace Core {
         gR(): IRoomTag;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IOptionTag extends ITag, IButtonable {
         gT(): string;
     }
 }
-namespace Core {
+declare namespace Core {
+    import Util = __Bigine_Util;
     interface IDirector {
         c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
         OP(start: boolean, title: string, author: string): Promise<IRuntime>;
@@ -289,7 +198,7 @@ namespace Core {
         }
     }
 }
-namespace Core {
+declare namespace Core {
     interface IRuntime extends IEmittable {
         gE(): IEpisode;
         gL(): ILogger;
@@ -312,12 +221,12 @@ namespace Core {
         bind(viewport: HTMLElement): IRuntime;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IPerformableTag extends ITag {
         p(runtime: IRuntime): IRuntime | Thenable<IRuntime>;
     }
 }
-namespace Core {
+declare namespace Core {
     interface ISceneTag extends IIdableTag, IPerformableTag {
         gT(): ISceneTag.Type;
     }
@@ -333,13 +242,13 @@ namespace Core {
         }
     }
 }
-namespace Core {
+declare namespace Core {
     interface ISceneHost {
         a(scene: ISceneTag): ISceneHost;
         p(type: ISceneTag.Type, runtime: IRuntime): Promise<IRuntime>;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IEpisode extends ISceneHost {
         f(tag: IEntityTag): IEpisode;
         q(id: string, type?: IEpisode.Entity, lineNo?: number): IEntityTag;
@@ -360,13 +269,13 @@ namespace Core {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         interface IReadyMetas extends Core.IEventMetas<Core.IEpisode> {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         class Ready extends Event<Core.IEpisode> {
             constructor(metas: IReadyMetas);
@@ -374,14 +283,14 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         interface IErrorMetas extends Core.IEventMetas<any> {
             error: Error;
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         class Error extends Event<any> {
             error: Error;
@@ -390,13 +299,13 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         interface IEndMetas extends Core.IEventMetas<Core.IEpisode> {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         class End extends Event<Core.IEpisode> {
             constructor(metas: IEndMetas);
@@ -404,25 +313,7 @@ namespace Runtime {
         }
     }
 }
-namespace Util {
-    interface IEnvType {
-        Window: boolean;
-        Node: {
-            JS: boolean;
-            Webkit: boolean;
-        };
-        Screen: {
-            Width: number;
-            Height: number;
-        };
-        Protocol: string;
-        Canvas: boolean;
-        Mobile: boolean;
-        MSIE: boolean;
-    }
-    var ENV: IEnvType;
-}
-namespace Runtime {
+declare namespace Runtime {
     class Resource<T> implements Core.IResource<T> {
         private _l;
         private _q;
@@ -435,7 +326,8 @@ namespace Runtime {
         w(callback: (value: T) => void): Resource<T>;
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     class Episode implements Core.IEpisode {
         private _a;
         private _e;
@@ -455,7 +347,7 @@ namespace Runtime {
         gC(): Util.IHashTable<Util.IHashTable<any>>;
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     class ConsoleLogger implements Core.ILogger {
         private _l;
         private _c;
@@ -470,14 +362,16 @@ namespace Runtime {
         private p(method, contents);
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     namespace Event {
         interface IQueryMetas extends Core.IEventMetas<Core.IStates> {
             callback: (slots: Util.IHashTable<[string, number]>) => void;
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     namespace Event {
         class Query extends Event<Core.IStates> {
             callback: (slots: Util.IHashTable<[string, number]>) => void;
@@ -486,7 +380,8 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     namespace Event {
         interface ISaveMetas extends Core.IEventMetas<Core.IStates> {
             data: Util.IHashTable<any>;
@@ -495,7 +390,8 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     namespace Event {
         class Save extends Event<Core.IStates> {
             data: Util.IHashTable<any>;
@@ -506,7 +402,8 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     class States implements Core.IStates {
         private _d;
         private _r;
@@ -528,7 +425,7 @@ namespace Runtime {
         l(): void;
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     class Prefecher {
         private _p;
         constructor();
@@ -536,13 +433,13 @@ namespace Runtime {
         private q(resources, logger?);
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         interface IBeginMetas extends Core.IEventMetas<Core.IEpisode> {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         class Begin extends Event<Core.IEpisode> {
             constructor(metas: IBeginMetas);
@@ -550,7 +447,8 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     class Director implements Core.IDirector {
         protected _r: Core.IRuntime;
         protected _p: Promise<Core.IRuntime>;
@@ -593,11 +491,11 @@ namespace Runtime {
         b(viewport: HTMLElement): Director;
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     class NodeDirector extends Director {
     }
 }
-namespace Core {
+declare namespace Core {
     interface IAnimation {
         c(next: IAnimation): IAnimation;
         l(times?: number): IAnimation;
@@ -608,7 +506,8 @@ namespace Core {
         gW(): boolean;
     }
 }
-namespace G {
+declare namespace G {
+    import Util = __Bigine_Util;
     class Animation implements Core.IAnimation {
         protected _d: number;
         protected _m: Util.IHashTable<any>;
@@ -633,11 +532,11 @@ namespace G {
         function f(callback: FrameRequestCallback, draw?: boolean): void;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IComboAnimation extends IAnimation {
     }
 }
-namespace G {
+declare namespace G {
     class Combo extends Animation implements Core.IComboAnimation {
         private _a;
         constructor(animations: Animation[]);
@@ -645,29 +544,30 @@ namespace G {
         $h(): void;
     }
 }
-namespace G {
+declare namespace G {
+    import Util = __Bigine_Util;
     interface IFadeMetas extends Util.IHashTable<any> {
         opacity: number;
     }
 }
-namespace G {
+declare namespace G {
     class Fade extends Animation {
         private _o;
         constructor(duration: number, metas: IFadeMetas);
         protected $p(element: Core.IGraphicElement, elpased: number): void;
     }
 }
-namespace G {
+declare namespace G {
     class FadeIn extends Fade {
         constructor(duration: number);
     }
 }
-namespace G {
+declare namespace G {
     class FadeOut extends Fade {
         constructor(duration: number);
     }
 }
-namespace Core {
+declare namespace Core {
     interface IBounds {
         x: number;
         y: number;
@@ -675,7 +575,7 @@ namespace Core {
         h: number;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IGraphicElement {
         gB(): IBounds;
         x(value: number): IGraphicElement;
@@ -693,7 +593,7 @@ namespace Core {
         f(): IGraphicElement;
     }
 }
-namespace Core {
+declare namespace Core {
     interface ISprite extends IGraphicElement, IEmittable {
         f(child?: IGraphicElement): ISprite;
         a(element: IGraphicElement, before?: string): ISprite;
@@ -703,7 +603,7 @@ namespace Core {
         q(id: string): IGraphicElement[];
     }
 }
-namespace G {
+declare namespace G {
     class Element implements Core.IGraphicElement {
         protected _b: Core.IBounds;
         protected _a: boolean;
@@ -732,11 +632,11 @@ namespace G {
         $p(parent: Core.ISprite): Element;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IImageElement extends IGraphicElement {
     }
 }
-namespace G {
+declare namespace G {
     class Image extends Element implements Core.IImageElement {
         private _d;
         constructor(image: Core.IResource<HTMLImageElement>, x?: number, y?: number, w?: number, h?: number, absolute?: boolean);
@@ -745,11 +645,11 @@ namespace G {
         protected $r(): Promise<HTMLImageElement>[];
     }
 }
-namespace Core {
+declare namespace Core {
     interface IColorElement extends IGraphicElement {
     }
 }
-namespace G {
+declare namespace G {
     class Color extends Element implements Core.IColorElement {
         private _d;
         constructor(x: number, y: number, w: number, h: number, color: string, absolute?: boolean);
@@ -757,7 +657,7 @@ namespace G {
         d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
     }
 }
-namespace G {
+declare namespace G {
     class Sprite extends Element implements Core.ISprite {
         protected _d: Element[];
         private _l;
@@ -780,12 +680,12 @@ namespace G {
         protected $r(): Promise<HTMLImageElement>[];
     }
 }
-namespace Core {
+declare namespace Core {
     interface IButton extends ISprite {
         b(callback: () => void, hover?: IGraphicElement, defaults?: IGraphicElement): IButton;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IStage extends ISprite {
         z(): IStage;
         d(): Promise<CanvasRenderingContext2D>;
@@ -794,7 +694,7 @@ namespace Core {
         h(): void;
     }
 }
-namespace G {
+declare namespace G {
     namespace Event {
         interface IMouseEventMetas extends Core.IEventMetas<Core.ISprite> {
             x: number;
@@ -806,7 +706,7 @@ namespace G {
         }
     }
 }
-namespace G {
+declare namespace G {
     namespace Event {
         class MouseEvent implements Core.IEvent<Core.ISprite> {
             target: Core.ISprite;
@@ -821,40 +721,40 @@ namespace G {
         }
     }
 }
-namespace G {
+declare namespace G {
     class Button extends Sprite implements Core.IButton {
         b(callback: Core.IEventListener<Button>, hover?: Element, defaults?: Element): Button;
     }
 }
-namespace G {
+declare namespace G {
     namespace Event {
         class Focus extends MouseEvent {
             gT(): string;
         }
     }
 }
-namespace G {
+declare namespace G {
     namespace Event {
         class Blur extends MouseEvent {
             gT(): string;
         }
     }
 }
-namespace G {
+declare namespace G {
     namespace Event {
         class MouseMove extends MouseEvent {
             gT(): string;
         }
     }
 }
-namespace G {
+declare namespace G {
     namespace Event {
         class Click extends MouseEvent {
             gT(): string;
         }
     }
 }
-namespace G {
+declare namespace G {
     class Stage extends Sprite implements Core.IStage {
         private _c;
         private _z;
@@ -879,11 +779,11 @@ namespace G {
         protected $c(): void;
     }
 }
-namespace G {
+declare namespace G {
     class Delay extends Animation {
     }
 }
-namespace Core {
+declare namespace Core {
     interface ITextPhrase {
         t(clob: string): ITextPhrase;
         c(color: string): ITextPhrase;
@@ -896,7 +796,7 @@ namespace Core {
         a(length: number): ITextPhrase;
     }
 }
-namespace Core {
+declare namespace Core {
     interface ITextElement extends IGraphicElement {
         a(text: ITextPhrase): ITextElement;
         gT(): ITextPhrase[];
@@ -910,7 +810,7 @@ namespace Core {
         }
     }
 }
-namespace G {
+declare namespace G {
     class Phrase implements Core.ITextPhrase {
         static FONT: string;
         private _t;
@@ -930,7 +830,7 @@ namespace G {
         a(length: number): Phrase;
     }
 }
-namespace G {
+declare namespace G {
     class Text extends Element implements Core.ITextElement {
         private _h;
         private _d;
@@ -943,7 +843,7 @@ namespace G {
         c(): Text;
     }
 }
-namespace G {
+declare namespace G {
     class WaitForClick extends Animation {
         private _f;
         private _r;
@@ -952,7 +852,7 @@ namespace G {
         $h(): void;
     }
 }
-namespace G {
+declare namespace G {
     class Type extends Animation {
         private _r;
         private _s;
@@ -961,20 +861,21 @@ namespace G {
         $h(): void;
     }
 }
-namespace G {
+declare namespace G {
     class TypeDelay extends Delay {
         private _r;
         constructor(rate?: number);
         $p(element: Core.ITextElement, elapsed: number): void;
     }
 }
-namespace G {
+declare namespace G {
+    import Util = __Bigine_Util;
     interface IMoveMetas extends Util.IHashTable<any> {
         x: number;
         y: number;
     }
 }
-namespace G {
+declare namespace G {
     class Move extends Animation {
         private _x;
         private _y;
@@ -982,25 +883,26 @@ namespace G {
         protected $p(element: Core.IGraphicElement, elpased: number): void;
     }
 }
-namespace G {
+declare namespace G {
+    import Util = __Bigine_Util;
     interface IAudioFadeMetas extends Util.IHashTable<any> {
         volume: number;
     }
 }
-namespace G {
+declare namespace G {
     class AudioFadeOut extends Animation {
         private _v;
         constructor(duration: number);
         protected $p(element: HTMLAudioElement, elpased: number): void;
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         interface IResumeMetas extends Core.IEventMetas<Core.IEpisode> {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         class Resume extends Event<Core.IEpisode> {
             constructor(metas: IResumeMetas);
@@ -1008,7 +910,8 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     class CanvasDirector extends Director {
         static BOUNDS: Core.IBounds;
         private _c;
@@ -1056,12 +959,13 @@ namespace Runtime {
         private $w(element, words, font);
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace DirectorFactory {
         function c(runtime: Core.IRuntime): Director;
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     namespace Event {
         interface ILoadMetas extends Core.IEventMetas<Core.IStates> {
             callback: (data: Util.IHashTable<any>) => void;
@@ -1069,7 +973,8 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
+    import Util = __Bigine_Util;
     namespace Event {
         class Load extends Event<Core.IStates> {
             callback: (data: Util.IHashTable<any>) => void;
@@ -1079,7 +984,7 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         interface ISceneMetas extends Core.IEventMetas<Core.ISceneTag> {
             title: string;
@@ -1087,7 +992,7 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         class Scene extends Event<Core.ISceneTag> {
             id: string;
@@ -1098,13 +1003,13 @@ namespace Runtime {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         interface IActionMetas extends Core.IEventMetas<Core.IIdableTag> {
         }
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     namespace Event {
         class Action extends Event<Core.IIdableTag> {
             id: string;
@@ -1114,7 +1019,7 @@ namespace Runtime {
         }
     }
 }
-namespace Tag {
+declare namespace Tag {
     var T: {
         [name: string]: string;
     };
@@ -1128,7 +1033,65 @@ namespace Tag {
         [name: string]: number;
     };
 }
-namespace Tag {
+declare class E extends Error {
+    static SCHEMA_TAG_NOT_DECLARED: string;
+    static SCHEMA_CHILD_NOT_ALLOWED: string;
+    static LEX_ILLEGAL_SOURCE: string;
+    static LEX_UNEXPECTED_INDENTATION: string;
+    static TAG_PARAMS_TOO_FEW: string;
+    static TAG_PARAMS_TOO_MANY: string;
+    static TAG_CONTENT_FORBIDEN: string;
+    static TAG_CONTENT_REQUIRED: string;
+    static TAG_CHILDREN_TOO_FEW: string;
+    static TAG_CHILDREN_TOO_MANY: string;
+    static DEF_CHAR_AVATAR_NOT_FOUND: string;
+    static DEF_CHAR_POSES_NOT_FOUND: string;
+    static DEF_EPISODE_NOT_REGISTERED: string;
+    static DEF_EPISODE_NOT_BINDED: string;
+    static DEF_ROOM_EMPTY: string;
+    static DEF_MAP_REGION_BROKEN: string;
+    static DEF_MAP_BGIMAGE_NOT_FOUND: string;
+    static DEF_MAP_HLIMAGE_NOT_FOUND: string;
+    static DEF_MAP_REGION_NOT_FOUND: string;
+    static DEF_MAP_TARGET_NOT_FOUND: string;
+    static DEF_MAP_POINT_NOT_FOUND: string;
+    static SCENE_TYPE_UNKNOWN: string;
+    static ROOT_NOT_PARENT: string;
+    static ACT_ILLEGAL_POSITION: string;
+    static ACT_CHAR_NOT_ON: string;
+    static ACT_CHAR_ONSTAGE: string;
+    static ACT_ILLEGAL_STARS: string;
+    static ACT_CG_NOT_SHOWN: string;
+    static ACT_CG_ALREADY_SHOWN: string;
+    static ACT_ILLEGAL_OP: string;
+    static ACT_STATE_NOT_NUMERIC: string;
+    static ACT_DELTA_NOT_NUMERIC: string;
+    static ACT_OPTION_CAST_FAILURE: string;
+    static RES_INVALID_URI: string;
+    static ENV_NOT_AVAILABLE: string;
+    static EP_DUPLICATE_ENTITY: string;
+    static EP_ENTITY_NOT_FOUND: string;
+    static EP_THEME_NOT_LOADED: string;
+    static G_PARENT_NOT_FOUND: string;
+    static SUPPORT_NO_CANVAS: string;
+    static UTIL_REMOTE_TIMEOUT: string;
+    static OPT_OPTIONS_MISSING: string;
+    static OPT_OPTIONS_CONFLICT: string;
+    signal: E.Signal;
+    constructor(message: string, lineNo?: number);
+    static doHalt<T>(): Promise<T>;
+    static ignoreHalt(error: E): Promise<void>;
+    static doBreak<T>(): Promise<T>;
+    static ignoreBreak(error: E): Promise<void>;
+}
+declare namespace E {
+    enum Signal {
+        BREAK = -99,
+        HALT = -98,
+        OK = 0,
+    }
+}
+declare namespace Tag {
     class Unknown implements Core.ITag {
         protected _p: string[];
         protected _c: string;
@@ -1156,14 +1119,14 @@ namespace Tag {
         protected $q(name: string): Unknown[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Entity extends Unknown implements Core.IEntityTag {
         $r(ep: Core.IEpisode): void;
         gI(): string;
         gT(): Core.IEpisode.Entity;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Image extends Unknown {
         protected _o: Core.IResource<HTMLImageElement>;
         gN(): string;
@@ -1171,27 +1134,28 @@ namespace Tag {
         o(): Core.IResource<HTMLImageElement>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Avatar extends Image {
         gN(): string;
         $r(ep: Core.IEpisode): void;
     }
 }
-namespace Tag {
+declare namespace Tag {
+    import Util = __Bigine_Util;
     class ResTable extends Unknown {
         protected _o: Util.IHashTable<Core.IResource<HTMLImageElement>>;
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
         o(id: string): Core.IResource<HTMLImageElement>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Poses extends ResTable {
         gN(): string;
         $r(ep: Core.IEpisode): void;
         d(): Core.IResource<HTMLImageElement>[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class DefChar extends Entity {
         private _o;
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
@@ -1202,7 +1166,7 @@ namespace Tag {
         d(): Core.IResource<HTMLImageElement>[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Audio extends Unknown {
         protected _o: Core.IResource<string>;
         gN(): string;
@@ -1210,39 +1174,39 @@ namespace Tag {
         o(): Core.IResource<string>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class DefBGM extends Entity {
         gN(): string;
         gT(): Core.IEpisode.Entity;
         o(): Core.IResource<string>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class DefCG extends Entity {
         gN(): string;
         o(): Core.IResource<HTMLImageElement>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class DefSE extends Entity {
         gN(): string;
         gT(): Core.IEpisode.Entity;
         o(): Core.IResource<string>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class BGImage extends Image {
         gN(): string;
         $r(ep: Core.IEpisode): void;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class HLImage extends Image {
         gN(): string;
         $r(ep: Core.IEpisode): void;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Region extends Unknown {
         private _a;
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
@@ -1254,7 +1218,7 @@ namespace Tag {
         gH(): number;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Target extends Unknown {
         private _o;
         gN(): string;
@@ -1262,7 +1226,7 @@ namespace Tag {
         gR(): DefRoom;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Action extends Unknown implements Core.IPerformableTag {
         $i(abstract?: boolean): number;
         t(states: Core.IStates): boolean;
@@ -1270,7 +1234,7 @@ namespace Tag {
         $d(): Core.IResource<string | HTMLImageElement>[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Enter extends Action {
         private _mo;
         gN(): string;
@@ -1278,7 +1242,7 @@ namespace Tag {
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Point extends Unknown implements Core.IPointTag {
         private _o;
         private _m;
@@ -1297,7 +1261,8 @@ namespace Tag {
         gR(): DefRoom;
     }
 }
-namespace Tag {
+declare namespace Tag {
+    import Util = __Bigine_Util;
     class DefMap extends Entity implements Core.IMapTag {
         private _a;
         private _o;
@@ -1311,7 +1276,7 @@ namespace Tag {
         d(): Core.IResource<HTMLImageElement>[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Link extends Unknown {
         private _o;
         gN(): string;
@@ -1319,14 +1284,14 @@ namespace Tag {
         gM(): DefMap;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Times extends ResTable {
         gN(): string;
         $r(ep: Core.IEpisode): void;
         d(): Core.IResource<HTMLImageElement>[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class DefRoom extends Entity implements Core.IRoomTag {
         private _a;
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
@@ -1339,12 +1304,12 @@ namespace Tag {
         d(): Core.IResource<HTMLImageElement>[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Auto extends Unknown {
         gN(): string;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Player extends Unknown {
         private _o;
         gN(): string;
@@ -1354,37 +1319,21 @@ namespace Tag {
         gC(): DefChar;
     }
 }
-namespace Util {
-    interface IFailureCallback {
-        (error: Error, status?: number): void;
-    }
-}
-var XDomainRequest: typeof XMLHttpRequest;
-namespace Util {
-    namespace Remote {
-        function format(url: string): string;
-        function get<T>(url: string, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void;
-        function post<T>(url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void;
-        enum Method {
-            GET = 0,
-            POST = 1,
-        }
-        function http<T>(method: Method, url: string, data: IHashTable<number | string>, onSuccess: ISuccessCallback<T>, onFailure: IFailureCallback): void;
-    }
-}
-namespace Tag {
+declare namespace Tag {
+    import Util = __Bigine_Util;
     class Theme extends Unknown {
         gN(): string;
         l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
     }
 }
-namespace Tag {
+declare namespace Tag {
+    import Util = __Bigine_Util;
     class Resources extends Unknown {
         gN(): string;
         l(callback: Util.ISuccessCallback<Util.IHashTable<Core.IEntityTag>>): void;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Type extends Unknown {
         private _t;
         private _o;
@@ -1395,13 +1344,13 @@ namespace Tag {
         gR(): DefRoom;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Conditions extends Unknown {
         gN(): string;
         t(states: Core.IStates): boolean;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class AsRoom extends Action {
         private _mo;
         gN(): string;
@@ -1411,7 +1360,7 @@ namespace Tag {
         gR(): DefRoom;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class CharOn extends Action {
         private _mp;
         private _mc;
@@ -1425,7 +1374,7 @@ namespace Tag {
         gC(): DefChar;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class PlayBGM extends Action {
         private _mo;
         gN(): string;
@@ -1435,7 +1384,7 @@ namespace Tag {
         gB(): DefBGM;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class PlaySE extends Action {
         private _mo;
         gN(): string;
@@ -1445,7 +1394,7 @@ namespace Tag {
         gS(): DefSE;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class ShowCG extends Action {
         private _mo;
         gN(): string;
@@ -1455,7 +1404,7 @@ namespace Tag {
         gC(): DefCG;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Idable extends Action implements Core.IIdableTag {
         private _i;
         private _d;
@@ -1466,7 +1415,7 @@ namespace Tag {
         d(): Idable;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Speak extends Idable {
         private _mc;
         gN(): string;
@@ -1476,12 +1425,12 @@ namespace Tag {
         gC(): DefChar;
     }
 }
-namespace Core {
+declare namespace Core {
     interface IBlock {
         gA(): string[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Loop extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
@@ -1490,14 +1439,14 @@ namespace Tag {
         c(): Core.IResource<string | HTMLImageElement>[][];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Content extends Unknown implements Core.IPerformableTag, Core.IBlock {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         gA(): string[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Scene extends Unknown implements Core.ISceneTag {
         private _i;
         gN(): string;
@@ -1509,7 +1458,8 @@ namespace Tag {
         gT(): Core.ISceneTag.Type;
     }
 }
-namespace Tag {
+declare namespace Tag {
+    import Util = __Bigine_Util;
     class Root extends Unknown implements Core.IRootTag {
         static SERIALS: string;
         constructor(children: Unknown[]);
@@ -1525,7 +1475,7 @@ namespace Tag {
         gT(): string;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class CharOff extends Action {
         private _mc;
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
@@ -1534,7 +1484,7 @@ namespace Tag {
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class CharSet extends Action {
         private _mp;
         private _mc;
@@ -1548,7 +1498,7 @@ namespace Tag {
         gC(): DefChar;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class CharPose extends Action {
         private _mc;
         private _ms;
@@ -1560,7 +1510,7 @@ namespace Tag {
         $d(): Core.IResource<HTMLImageElement>[];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Monolog extends Idable {
         private _mc;
         gN(): string;
@@ -1570,31 +1520,31 @@ namespace Tag {
         gC(): DefChar;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class VoiceOver extends Idable {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Save extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class End extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Fail extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Stars extends Action {
         private _ms;
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
@@ -1602,80 +1552,80 @@ namespace Tag {
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class HideCG extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class AsTime extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         gT(): string;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Freeze extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Weather extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Assert extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Assign extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Compare extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Increase extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class LoopBreak extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class And extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Or extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Otherwise extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
@@ -1684,7 +1634,7 @@ namespace Tag {
         c(): Core.IResource<string | HTMLImageElement>[][];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Then extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
@@ -1693,7 +1643,7 @@ namespace Tag {
         c(): Core.IResource<string | HTMLImageElement>[][];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class When extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
@@ -1702,7 +1652,7 @@ namespace Tag {
         c(): Core.IResource<string | HTMLImageElement>[][];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Option extends Unknown implements Core.IOptionTag {
         _k: string;
         static f(tag: Unknown): Option;
@@ -1711,27 +1661,27 @@ namespace Tag {
         sK(key: string): Option;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Choose extends Action {
         gN(): string;
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Tip extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Maximum extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class CharMove extends Action {
         private _mc;
         private _mp;
@@ -1741,7 +1691,7 @@ namespace Tag {
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class WhenVar extends Action implements Core.IBlock {
         gN(): string;
         t(states: Core.IStates): boolean;
@@ -1750,66 +1700,66 @@ namespace Tag {
         c(): Core.IResource<string | HTMLImageElement>[][];
     }
 }
-namespace Tag {
+declare namespace Tag {
     class StopBGM extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class DefOptions extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class AddOption extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class DropOption extends Action {
         gN(): string;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Random extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class IfTime extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Copy extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Add extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Tag {
+declare namespace Tag {
     class Subtract extends Action {
         gN(): string;
         t(states: Core.IStates): boolean;
         p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
     }
 }
-namespace Runtime {
+declare namespace Runtime {
     class Runtime implements Core.IRuntime {
         private _a;
         private _e;
@@ -1849,7 +1799,7 @@ namespace Runtime {
         bind(viewport: HTMLElement): Runtime;
     }
 }
-namespace Lex {
+declare namespace Lex {
     class TagLine {
         static GRAMMAR: RegExp;
         private _i;
@@ -1865,21 +1815,17 @@ namespace Lex {
         t(): Core.ITag;
     }
 }
-namespace Lex {
+declare namespace Lex {
     namespace Parser {
         function c(lines: string[]): Core.IRootTag;
         function c(source: string): Core.IRootTag;
     }
 }
-function Bigine(source: string): Core.IRootTag;
-function Bigine(tags: Core.IRootTag): Core.IRuntime;
-function Bigine(lines: string[]): Core.IRootTag;
-function Bigine(children: Core.ITag[]): Core.IRuntime;
-function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Core.ITag[], id?: string): Core.ITag;
-namespace Bigine {
+declare function Bigine(source: string): Core.IRootTag;
+declare function Bigine(tags: Core.IRootTag): Core.IRuntime;
+declare function Bigine(lines: string[]): Core.IRootTag;
+declare function Bigine(children: Core.ITag[]): Core.IRuntime;
+declare function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Core.ITag[], id?: string): Core.ITag;
+declare namespace Bigine {
     var version: string;
-}
-}
-declare module "bigine" {
-export = Bigine.Bigine;
 }
