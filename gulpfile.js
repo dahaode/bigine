@@ -10,15 +10,12 @@ var $gulp = require('gulp'),
     $uglify = require('gulp-uglify');
 
 $gulp.task('lint', function () {
-    return $gulp.src([
-        'lib/**/*.ts',
-        '!lib/**/*.d.ts'
-    ])
+    return $gulp.src('lib/**/*.ts')
         .pipe($lint())
         .pipe($lint.report('prose'));
 });
 
-$gulp.task('compile', function () {
+$gulp.task('dist', function () {
     var pkg = require('./package.json'),
         ts = $gulp.src('lib/Bigine.ts')
             .pipe($smap.init())
@@ -27,12 +24,13 @@ $gulp.task('compile', function () {
             })));
     return ts.js
         .pipe($replace(/\$\{BIGINE_VERSION\}/, pkg.version))
+        .pipe($insert.prepend('var __Bigine_Util = require("bigine.util");\n'))
         .pipe($insert.append('module.exports=Bigine;'))
         .pipe($smap.write('.'))
         .pipe($gulp.dest('var/build'));
 });
 
-$gulp.task('export', ['compile'], function () {
+$gulp.task('tsd', ['lint'], function () {
     var pkg = require('./package.json'),
         ts = $gulp.src('lib/Bigine.ts')
             .pipe($tsc($tsc.createProject('tsconfig.json', {
@@ -40,13 +38,17 @@ $gulp.task('export', ['compile'], function () {
                 removeComments: true
             })));
     return ts.dts
-        .pipe($replace(/declare /g, ''))
-        .pipe($replace(/_raf.d.ts" \/>\n/, "$&declare namespace Bigine {\n"))
-        .pipe($insert.append('}\ndeclare module "bigine" {\nexport = Bigine.Bigine;\n}\n'))
+        .pipe($replace('\n', '\n    '))
+        .pipe($replace('    /// <', '/// <'))
+        .pipe($replace('        import Util = __Bigine_Util;\n', ''))
+        .pipe($replace('declare ', ''))
+        .pipe($replace(/_raf.d.ts" \/>\n/, "$&declare namespace __Bigine {\n    import Util = __Bigine_Util;\n"))
+        .pipe($insert.append('}\n\ndeclare module "bigine" {\n    export = __Bigine.Bigine;\n}\n'))
+        .pipe($replace('\n    }\n    }\n', '\n    }\n}\n'))
         .pipe($gulp.dest('.'));
 });
 
-$gulp.task('bundle', ['lint', 'export'], function () {
+$gulp.task('bundle', ['dist'], function () {
     var pkg = require('./package.json');
     return $browserify({
             detectGlobals: false
@@ -59,7 +61,7 @@ $gulp.task('bundle', ['lint', 'export'], function () {
         .pipe($gulp.dest('var/build'));
 });
 
-$gulp.task('minify', ['lint', 'export'], function () {
+$gulp.task('minify', ['dist'], function () {
     var pkg = require('./package.json');
     return $browserify({
             debug: true,
@@ -80,10 +82,7 @@ $gulp.task('minify', ['lint', 'export'], function () {
 });
 
 $gulp.task('watch', function () {
-    return $gulp.watch([
-        'lib/**/*.ts',
-        '!lib/**/*.d.ts'
-    ], ['lint', 'export']);
+    return $gulp.watch('lib/**/*.ts', ['tsd', 'dist']);
 });
 
-$gulp.task('default', ['minify']);
+$gulp.task('default', ['tsd', 'minify']);
