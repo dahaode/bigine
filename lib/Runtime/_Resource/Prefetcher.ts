@@ -8,7 +8,6 @@
  */
 
 /// <reference path="Resource.ts" />
-/// <reference path="../../Core/_Runtime/ILogger.ts" />
 
 namespace Runtime {
     import Util = __Bigine_Util;
@@ -34,7 +33,7 @@ namespace Runtime {
         /**
          * 预加载资源。
          */
-        public static c(resources: Resource<string | HTMLImageElement>[][], logger?: Core.ILogger): Promise<void> {
+        public static c(resources: Resource<string | HTMLImageElement>[][], logger?: Util.ILogger): Promise<void> {
             if (!resources.length)
                 return Promise.resolve<void>();
             if (!instance)
@@ -51,7 +50,7 @@ namespace Runtime {
         /**
          * 排队。
          */
-        private q(resources: Resource<string | HTMLImageElement>[], logger?: Core.ILogger): Promise<void> {
+        private q(resources: Resource<string | HTMLImageElement>[], logger?: Util.ILogger): Promise<void> {
             return new Promise<void>((resolve: () => void) => {
                 this._p = this._p.then(() => {
                     if (logger)

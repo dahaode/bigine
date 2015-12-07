@@ -104,42 +104,6 @@ var Runtime;
 /// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="IEntityTag.ts" />
 /**
- * 声明（运行时）日志接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_Runtime/ILogger.ts
- */
-var Core;
-(function (Core) {
-    var ILogger;
-    (function (ILogger) {
-        /**
-         * 日志等级。
-         */
-        (function (Level) {
-            /**
-             * 调试。
-             */
-            Level[Level["Debug"] = 0] = "Debug";
-            /**
-             * 信息。
-             */
-            Level[Level["Info"] = 1] = "Info";
-            /**
-             * 警告。
-             */
-            Level[Level["Warn"] = 2] = "Warn";
-            /**
-             * 错误。
-             */
-            Level[Level["Error"] = 3] = "Error";
-        })(ILogger.Level || (ILogger.Level = {}));
-        var Level = ILogger.Level;
-    })(ILogger = Core.ILogger || (Core.ILogger = {}));
-})(Core || (Core = {}));
-/**
  * 声明（运行时）数据状态接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -323,7 +287,6 @@ var Core;
  */
 /// <reference path="../_Event/IEmittable.ts" />
 /// <reference path="../_Tag/IRootTag.ts" />
-/// <reference path="ILogger.ts" />
 /// <reference path="IStates.ts" />
 /// <reference path="IDirector.ts" />
 /**
@@ -872,109 +835,6 @@ var Runtime;
     Runtime.Episode = Episode;
 })(Runtime || (Runtime = {}));
 /**
- * 定义（运行时）控制台日志记录器组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Runtime/_Logger/ConsoleLogger.ts
- */
-/// <reference path="../../Core/_Runtime/ILogger.ts" />
-var Runtime;
-(function (Runtime) {
-    var ConsoleLogger = (function () {
-        /**
-         * 构造函数。
-         */
-        function ConsoleLogger() {
-            this._l = Core.ILogger.Level.Error;
-            this._c = 'undefined' != typeof console ?
-                console :
-                undefined;
-        }
-        /**
-         * 调试。
-         */
-        ConsoleLogger.prototype.d = function () {
-            var parts = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                parts[_i - 0] = arguments[_i];
-            }
-            if (this._l > Core.ILogger.Level.Debug || !this._c)
-                return;
-            this.p(this._c.debug || this._c.log, parts);
-        };
-        /**
-         * 信息。
-         */
-        ConsoleLogger.prototype.i = function () {
-            var parts = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                parts[_i - 0] = arguments[_i];
-            }
-            if (this._l > Core.ILogger.Level.Info || !this._c)
-                return;
-            this.p(this._c.info || this._c.log, parts);
-        };
-        /**
-         * 警告。
-         */
-        ConsoleLogger.prototype.w = function () {
-            var parts = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                parts[_i - 0] = arguments[_i];
-            }
-            if (this._l > Core.ILogger.Level.Warn || !this._c)
-                return;
-            this.p(this._c.warn || this._c.log, parts);
-        };
-        /**
-         * 错误。
-         */
-        ConsoleLogger.prototype.e = function () {
-            var parts = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                parts[_i - 0] = arguments[_i];
-            }
-            if (this._c)
-                this.p(this._c.error, 1 < parts.length ? parts : [parts[0]['stack'] || parts[0]]);
-        };
-        /**
-         * 分组。
-         */
-        ConsoleLogger.prototype.o = function (title) {
-            if (Core.ILogger.Level.Debug == this._l && this._c)
-                this.p(this._c.group, [title]);
-        };
-        /**
-         * 分组结束。
-         */
-        ConsoleLogger.prototype.c = function (title) {
-            if (Core.ILogger.Level.Debug == this._l && this._c)
-                this.p(this._c.groupEnd, [title]);
-        };
-        /**
-         * 设置日志等级。
-         */
-        ConsoleLogger.prototype.l = function (level) {
-            this._l = level;
-            return this;
-        };
-        /**
-         * 打印。
-         */
-        ConsoleLogger.prototype.p = function (method, contents) {
-            if (!method)
-                return;
-            if ('apply' in method)
-                return method.apply(this._c, contents);
-            method(contents.join(' '));
-        };
-        return ConsoleLogger;
-    })();
-    Runtime.ConsoleLogger = ConsoleLogger;
-})(Runtime || (Runtime = {}));
-/**
  * 声明（运行时）查询存档数据事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1227,7 +1087,6 @@ var Runtime;
  * @file      Runtime/_Resource/Prefetcher.ts
  */
 /// <reference path="Resource.ts" />
-/// <reference path="../../Core/_Runtime/ILogger.ts" />
 var Runtime;
 (function (Runtime) {
     var Util = __Bigine_Util;
@@ -9764,7 +9623,6 @@ var Tag;
  * @file      Runtime/Runtime.ts
  */
 /// <reference path="Episode.ts" />
-/// <reference path="_Logger/ConsoleLogger.ts" />
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
 /// <reference path="Event/Begin.ts" />
@@ -9784,7 +9642,7 @@ var Runtime;
             var _this = this;
             this._a = {};
             this._e = new Runtime_1.Episode(ep, this);
-            this._l = new Runtime_1.ConsoleLogger();
+            this._l = Util.ConsoleLogger.singleton();
             this._s = new Runtime_1.States(this);
             this._d = Runtime_1.DirectorFactory.c(this);
             this._fr =

@@ -9,11 +9,12 @@
 
 /// <reference path="../_Event/IEmittable.ts" />
 /// <reference path="../_Tag/IRootTag.ts" />
-/// <reference path="ILogger.ts" />
 /// <reference path="IStates.ts" />
 /// <reference path="IDirector.ts" />
 
 namespace Core {
+    import Util = __Bigine_Util;
+
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()
@@ -28,7 +29,7 @@ namespace Core {
         /**
          * 获取日志组件。
          */
-        gL(): ILogger;
+        gL(): Util.ILogger;
 
         /**
          * 获取数据状态组件。

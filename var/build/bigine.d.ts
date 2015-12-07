@@ -67,25 +67,6 @@ declare namespace __Bigine {
         }
     }
     namespace Core {
-        interface ILogger {
-            d(...parts: any[]): void;
-            i(...parts: any[]): void;
-            w(...parts: any[]): void;
-            e(...parts: any[]): void;
-            o(title: string): void;
-            c(title: string): void;
-            l(level: ILogger.Level): ILogger;
-        }
-        namespace ILogger {
-            enum Level {
-                Debug = 0,
-                Info = 1,
-                Warn = 2,
-                Error = 3,
-            }
-        }
-    }
-    namespace Core {
         interface IStates {
             s(key: string, value: any): IStates;
             g(key: string): any;
@@ -198,7 +179,7 @@ declare namespace __Bigine {
     namespace Core {
         interface IRuntime extends IEmittable {
             gE(): IEpisode;
-            gL(): ILogger;
+            gL(): Util.ILogger;
             gS(): IStates;
             gD(): IDirector;
             play(): IRuntime;
@@ -344,21 +325,6 @@ declare namespace __Bigine {
         }
     }
     namespace Runtime {
-        class ConsoleLogger implements Core.ILogger {
-            private _l;
-            private _c;
-            constructor();
-            d(...parts: any[]): void;
-            i(...parts: any[]): void;
-            w(...parts: any[]): void;
-            e(...parts: any[]): void;
-            o(title: string): void;
-            c(title: string): void;
-            l(level: Core.ILogger.Level): ConsoleLogger;
-            private p(method, contents);
-        }
-    }
-    namespace Runtime {
         namespace Event {
             interface IQueryMetas extends Core.IEventMetas<Core.IStates> {
                 callback: (slots: Util.IHashTable<[string, number]>) => void;
@@ -420,7 +386,7 @@ declare namespace __Bigine {
         class Prefecher {
             private _p;
             constructor();
-            static c(resources: Resource<string | HTMLImageElement>[][], logger?: Core.ILogger): Promise<void>;
+            static c(resources: Resource<string | HTMLImageElement>[][], logger?: Util.ILogger): Promise<void>;
             private q(resources, logger?);
         }
     }
@@ -1757,7 +1723,7 @@ declare namespace __Bigine {
             removeEventListener<T>(type: string, listener: Core.IEventListener<T>): Runtime;
             dispatchEvent<T>(event: Event.Event<T>): Runtime;
             gE(): Episode;
-            gL(): ConsoleLogger;
+            gL(): Util.ConsoleLogger;
             gS(): States;
             gD(): Director;
             play(): Runtime;

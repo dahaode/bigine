@@ -26,7 +26,7 @@ namespace Tag {
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var director: Core.IDirector = runtime.gD(),
                 states: Core.IStates = runtime.gS(),
-                logger: Core.ILogger = runtime.gL(),
+                logger: Util.ILogger = runtime.gL(),
                 title: string = 'CONTENT',
                 kid: string = '.a',
                 id: string = states.g(kid);

@@ -12,6 +12,8 @@
 /// <reference path="Content.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
+
     export class Scene extends Unknown implements Core.ISceneTag {
         /**
          * 唯一编号。
@@ -59,7 +61,7 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
-                logger: Core.ILogger = runtime.gL(),
+                logger: Util.ILogger = runtime.gL(),
                 title: string = 'SCENE ' + this._c,
                 tconds: string = 'CONDITIONS',
                 kid: string = '.s',

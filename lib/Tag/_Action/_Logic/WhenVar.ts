@@ -38,7 +38,7 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
-                logger: Core.ILogger = runtime.gL(),
+                logger: Util.ILogger = runtime.gL(),
                 value: string | number = this.$v(states.g(this._p[0])),
                 title: string = 'WHENVAR ' + this._p[0],
                 kd: string = '$d',

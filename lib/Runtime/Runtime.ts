@@ -8,7 +8,6 @@
  */
 
 /// <reference path="Episode.ts" />
-/// <reference path="_Logger/ConsoleLogger.ts" />
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
 /// <reference path="Event/Begin.ts" />
@@ -35,7 +34,7 @@ namespace Runtime {
         /**
          * 日志组件。
          */
-        private _l: ConsoleLogger;
+        private _l: Util.ConsoleLogger;
 
         /**
          * 数据状态组件。
@@ -93,7 +92,7 @@ namespace Runtime {
         constructor(ep: Core.IRootTag) {
             this._a = {};
             this._e = new Episode(ep, this);
-            this._l = new ConsoleLogger();
+            this._l = Util.ConsoleLogger.singleton();
             this._s = new States(this);
             this._d = DirectorFactory.c(this);
             this._fr =
@@ -172,7 +171,7 @@ namespace Runtime {
         /**
          * 获取日志组件。
          */
-        public gL(): ConsoleLogger {
+        public gL(): Util.ConsoleLogger {
             return this._l;
         }
 

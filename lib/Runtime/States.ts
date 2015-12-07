@@ -72,7 +72,7 @@ namespace Runtime {
          */
         public d(key: string): States {
             var length: number = key.length - 1,
-                logger: Core.ILogger = this._r.gL();
+                logger: Util.ILogger = this._r.gL();
             if ('*' == key[length]) {
                 key = key.substr(0, length);
                 Util.each(this._d, (value: any, index: string) => {
