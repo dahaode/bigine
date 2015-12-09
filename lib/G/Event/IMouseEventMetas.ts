@@ -7,12 +7,14 @@
  * @file      G/Event/IMouseEventMetas.ts
  */
 
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_G/IStage.ts" />
 
 namespace G {
+    import Ev = __Bigine_Event;
+
     export namespace Event {
-        export interface IMouseEventMetas extends Core.IEventMetas<Core.ISprite> {
+        export interface IMouseEventMetas extends Ev.IEventMetas<Core.ISprite> {
             /**
              * X 轴座标。
              */

@@ -7,12 +7,13 @@
  * @file      G/Event/MouseEvent.ts
  */
 
-/// <reference path="../../Core/_Event/IEvent.ts" />
 /// <reference path="IMouseEventMetas.ts" />
 
 namespace G {
+    import Ev = __Bigine_Event;
+
     export namespace Event {
-        export class MouseEvent implements Core.IEvent<Core.ISprite> {
+        export class MouseEvent implements Ev.IEvent<Core.ISprite> {
             /**
              * 事件触发对象。
              */

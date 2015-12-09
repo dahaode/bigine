@@ -7,11 +7,13 @@
  * @file      Runtime/Event/Event.ts
  */
 
-/// <reference path="../../Core/_Event/IEvent.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 namespace Runtime {
+    import Ev = __Bigine_Event;
+
     export namespace Event {
-        export class Event<T> implements Core.IEvent<T> {
+        export class Event<T> implements Ev.IEvent<T> {
             /**
              * 事件触发对象。
              */
@@ -20,7 +22,7 @@ namespace Runtime {
             /**
              * 构造函数。
              */
-            constructor(metas: Core.IEventMetas<T>) {
+            constructor(metas: Ev.IEventMetas<T>) {
                 this.target = metas.target;
             }
 

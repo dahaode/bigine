@@ -32,7 +32,7 @@ $gulp.task('dist', function () {
             })));
     return ts.js
         .pipe($replace(/\$\{BIGINE_VERSION\}/, pkg.version))
-        .pipe($insert.prepend('var __Bigine_Util = require("bigine.util");\n'))
+        .pipe($insert.prepend('var __Bigine_Util = require("bigine.util");\nvar __Bigine_Event = require("bigine.ev");\n'))
         .pipe($insert.append('module.exports=Bigine;'))
         .pipe($smap.write('.'))
         .pipe($gulp.dest('var/build'));
@@ -48,8 +48,9 @@ $gulp.task('tsd', ['lint'], function () {
         .pipe($replace('\n', '\n    '))
         .pipe($replace('    /// <', '/// <'))
         .pipe($replace('        import Util = __Bigine_Util;\n', ''))
+        .pipe($replace('        import Ev = __Bigine_Event;\n', ''))
         .pipe($replace('declare ', ''))
-        .pipe($replace(/_raf.d.ts" \/>\n/, "$&declare namespace __Bigine {\n    import Util = __Bigine_Util;\n"))
+        .pipe($replace(/_raf.d.ts" \/>\n/, "$&declare namespace __Bigine {\n    import Util = __Bigine_Util;\n    import Ev = __Bigine_Event;\n"))
         .pipe($insert.append('}\n\ndeclare module "bigine" {\n    export = __Bigine.Bigine;\n}\n'))
         .pipe($replace('\n    }\n    }\n', '\n    }\n}\n'))
         .pipe($gulp.dest('.'));
@@ -60,6 +61,7 @@ $gulp.task('bundle', ['dist'], function () {
             detectGlobals: false
         })
         .require('bigine.util')
+        .require('bigine.ev')
         .require('./var/build/' + pkg.name, {
             expose: 'bigine'
         })
@@ -75,6 +77,7 @@ $gulp.task('minify', ['dist'], function () {
             detectGlobals: false
         })
         .require('bigine.util')
+        .require('bigine.ev')
         .require('./var/build/' + pkg.name, {
             expose: 'bigine'
         })

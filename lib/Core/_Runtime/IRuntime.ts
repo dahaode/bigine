@@ -7,18 +7,18 @@
  * @file      Core/_Runtime/IRuntime.ts
  */
 
-/// <reference path="../_Event/IEmittable.ts" />
 /// <reference path="../_Tag/IRootTag.ts" />
 /// <reference path="IStates.ts" />
 /// <reference path="IDirector.ts" />
 
 namespace Core {
     import Util = __Bigine_Util;
+    import Ev = __Bigine_Event;
 
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()
-    export interface IRuntime extends IEmittable {
+    export interface IRuntime extends Ev.IEmittable {
         // new (ep: Tag.IRoot): IRuntime;
 
         /**

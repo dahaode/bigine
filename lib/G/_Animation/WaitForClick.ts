@@ -11,11 +11,13 @@
 /// <reference path="../Event/Click.ts" />
 
 namespace G {
+    import Ev = __Bigine_Event;
+
     export class WaitForClick extends Animation {
         /**
          * 功能函数。
          */
-        private _f: Core.IEventListener<Core.ISprite>;
+        private _f: Ev.IEventListener<Core.ISprite>;
 
         /**
          * 中止函数。
@@ -25,7 +27,7 @@ namespace G {
         /**
          * 构造函数。
          */
-        constructor(callback?: Core.IEventListener<Core.ISprite>) {
+        constructor(callback?: Ev.IEventListener<Core.ISprite>) {
             super(Infinity);
             this._f = callback;
         }
@@ -36,7 +38,7 @@ namespace G {
         public $p(element: Core.ISprite, elapsed: number, done: () => void): void {
             if (1 == elapsed) {
                 var type: string = '$click',
-                    handler: Core.IEventListener<Core.ISprite> = (event: Event.Click) => {
+                    handler: Ev.IEventListener<Core.ISprite> = (event: Event.Click) => {
                         if (this._f)
                             this._f.call(undefined, event);
                         this._r();

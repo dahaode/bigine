@@ -7,12 +7,14 @@
  * @file      Runtime/Event/IEndMetas.ts
  */
 
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 
 namespace Runtime {
+    import Ev = __Bigine_Event;
+
     export namespace Event {
-        export interface IEndMetas extends Core.IEventMetas<Core.IEpisode> {
+        export interface IEndMetas extends Ev.IEventMetas<Core.IEpisode> {
         }
     }
 }

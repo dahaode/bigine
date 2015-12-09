@@ -7,14 +7,14 @@
  * @file      Runtime/Event/ISaveMetas.ts
  */
 
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 
 namespace Runtime {
     import Util = __Bigine_Util;
+    import Ev = __Bigine_Event;
 
     export namespace Event {
-        export interface ISaveMetas extends Core.IEventMetas<Core.IStates> {
+        export interface ISaveMetas extends Ev.IEventMetas<Core.IStates> {
             /**
              * 数据。
              */

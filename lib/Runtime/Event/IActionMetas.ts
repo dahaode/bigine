@@ -7,12 +7,14 @@
  * @file      Runtime/Event/IActionMetas.ts
  */
 
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Tag/IIdableTag.ts" />
 
 namespace Runtime {
+    import Ev = __Bigine_Event;
+
     export namespace Event {
-        export interface IActionMetas extends Core.IEventMetas<Core.IIdableTag> {
+        export interface IActionMetas extends Ev.IEventMetas<Core.IIdableTag> {
         }
     }
 }

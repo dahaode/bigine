@@ -7,11 +7,13 @@
  * @file      Runtime/Event/IErrorMetas.ts
  */
 
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 namespace Runtime {
+    import Ev = __Bigine_Event;
+
     export namespace Event {
-        export interface IErrorMetas extends Core.IEventMetas<any> {
+        export interface IErrorMetas extends Ev.IEventMetas<any> {
             /**
              * 异常。
              */

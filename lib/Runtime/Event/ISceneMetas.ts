@@ -7,12 +7,14 @@
  * @file      Runtime/Event/ISceneMetas.ts
  */
 
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Tag/ISceneTag.ts" />
 
 namespace Runtime {
+    import Ev = __Bigine_Event;
+
     export namespace Event {
-        export interface ISceneMetas extends Core.IEventMetas<Core.ISceneTag> {
+        export interface ISceneMetas extends Ev.IEventMetas<Core.ISceneTag> {
             /**
              * 标题。
              */

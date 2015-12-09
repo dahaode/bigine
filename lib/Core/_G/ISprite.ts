@@ -8,9 +8,11 @@
  */
 
 /// <reference path="IGraphicElement.ts" />
-/// <reference path="../_Event/IEmittable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 
 namespace Core {
+    import Ev = __Bigine_Event;
+
     // IGraphicElement:gB()
     // IGraphicElement:x()
     // IGraphicElement:y()
@@ -27,7 +29,7 @@ namespace Core {
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()
-    export interface ISprite extends IGraphicElement, IEmittable {
+    export interface ISprite extends IGraphicElement, Ev.IEmittable {
         // constructor(x: number, y: number, w: number, h: number, absolute: boolean = false);
         // constructor(bounds: IBounds, absolute: boolean = false);
 

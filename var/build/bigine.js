@@ -1,22 +1,5 @@
 var __Bigine_Util = require("bigine.util");
-/**
- * 声明（运行时）事件元信息接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_Event/IEventMetas.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/**
- * 声明（运行时）事件接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_Event/IEvent.ts
- */
-/// <reference path="IEventMetas.ts" />
+var __Bigine_Event = require("bigine.ev");
 /**
  * 定义（运行时）抽象事件组件。
  *
@@ -25,7 +8,7 @@ var __Bigine_Util = require("bigine.util");
  * @license   GPL-3.0
  * @file      Runtime/Event/Event.ts
  */
-/// <reference path="../../Core/_Event/IEvent.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 var Runtime;
 (function (Runtime) {
     var Event;
@@ -66,24 +49,6 @@ var Runtime;
  * @file      Core/_Tag/IIdableTag.ts
  */
 /// <reference path="ITag.ts" />
-/**
- * 声明（运行时）事件监听函数接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_Event/IEventListener.ts
- */
-/// <reference path="IEvent.ts" />
-/**
- * 声明（运行时）事件宿主接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_Event/IEmittable.ts
- */
-/// <reference path="IEventListener.ts" />
 /**
  * 声明实体定义标签接口规范。
  *
@@ -285,7 +250,6 @@ var Core;
  * @license   GPL-3.0
  * @file      Core/_Runtime/IRuntime.ts
  */
-/// <reference path="../_Event/IEmittable.ts" />
 /// <reference path="../_Tag/IRootTag.ts" />
 /// <reference path="IStates.ts" />
 /// <reference path="IDirector.ts" />
@@ -423,7 +387,6 @@ var Core;
  * @license   GPL-3.0
  * @file      Runtime/Event/IReadyMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 /**
  * 定义（运行时）（播放准备）就绪事件。
@@ -471,7 +434,7 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/Event/IErrorMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义（运行时）异常事件。
  *
@@ -514,7 +477,7 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/Event/IEndMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 /**
  * 定义（运行时）完结事件。
@@ -842,7 +805,6 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/Event/IQueryMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 /**
  * 定义（运行时）查询存档数据事件。
@@ -886,7 +848,6 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/Event/ISaveMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 /**
  * 定义（运行时）存档事件。
@@ -1148,7 +1109,7 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/Event/IBeginMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 /**
  * 定义（运行时）开场事件。
@@ -1777,7 +1738,7 @@ var G;
  * @file      Core/_G/ISprite.ts
  */
 /// <reference path="IGraphicElement.ts" />
-/// <reference path="../_Event/IEmittable.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义抽象画面元素组件。
  *
@@ -2311,7 +2272,7 @@ var G;
  * @license   GPL-3.0
  * @file      G/Event/IMouseEventMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_G/IStage.ts" />
 /**
  * 定义画面抽象鼠标事件组件。
@@ -2321,7 +2282,6 @@ var G;
  * @license   GPL-3.0
  * @file      G/Event/MouseEvent.ts
  */
-/// <reference path="../../Core/_Event/IEvent.ts" />
 /// <reference path="IMouseEventMetas.ts" />
 var G;
 (function (G) {
@@ -3374,7 +3334,6 @@ var G;
  * @license   GPL-3.0
  * @file      Runtime/Event/IResumeMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 /**
  * 定义（运行时）读档继续事件。
@@ -4573,7 +4532,6 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/Event/ILoadMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 /**
  * 定义（运行时）读档事件。
@@ -4618,7 +4576,7 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/Event/ISceneMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Tag/ISceneTag.ts" />
 /**
  * 定义（运行时）剧情事件播报事件。
@@ -4664,7 +4622,7 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/Event/IActionMetas.ts
  */
-/// <reference path="../../Core/_Event/IEventMetas.ts" />
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Tag/IIdableTag.ts" />
 /**
  * 定义（运行时）关键帧播报事件。
