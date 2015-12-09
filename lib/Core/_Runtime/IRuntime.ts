@@ -13,12 +13,11 @@
 
 namespace Core {
     import Util = __Bigine_Util;
-    import Ev = __Bigine_Event;
 
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()
-    export interface IRuntime extends Ev.IEmittable {
+    export interface IRuntime extends Util.IEmittable {
         // new (ep: Tag.IRoot): IRuntime;
 
         /**

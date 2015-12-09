@@ -1,5 +1,4 @@
 var __Bigine_Util = require("bigine.util");
-var __Bigine_Event = require("bigine.ev");
 /**
  * 定义（运行时）抽象事件组件。
  *
@@ -10072,5 +10071,5 @@ var Bigine;
     Bigine.version = '0.17.0';
 })(Bigine || (Bigine = {}));
 //export = Bigine;
-module.exports=Bigine;
+module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

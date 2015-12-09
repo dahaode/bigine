@@ -10,10 +10,10 @@
 /// <reference path="../../../include/tsd.d.ts" />
 
 namespace Runtime {
-    import Ev = __Bigine_Event;
+    import Util = __Bigine_Util;
 
     export namespace Event {
-        export class Event<T> implements Ev.IEvent<T> {
+        export class Event<T> implements Util.IEvent<T> {
             /**
              * 事件触发对象。
              */
@@ -22,7 +22,7 @@ namespace Runtime {
             /**
              * 构造函数。
              */
-            constructor(metas: Ev.IEventMetas<T>) {
+            constructor(metas: Util.IEventMetas<T>) {
                 this.target = metas.target;
             }
 

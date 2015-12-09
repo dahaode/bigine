@@ -11,10 +11,10 @@
 /// <reference path="../../Core/_Tag/ISceneTag.ts" />
 
 namespace Runtime {
-    import Ev = __Bigine_Event;
+    import Util = __Bigine_Util;
 
     export namespace Event {
-        export interface ISceneMetas extends Ev.IEventMetas<Core.ISceneTag> {
+        export interface ISceneMetas extends Util.IEventMetas<Core.ISceneTag> {
             /**
              * 标题。
              */

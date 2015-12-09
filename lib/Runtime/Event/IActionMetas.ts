@@ -11,10 +11,10 @@
 /// <reference path="../../Core/_Tag/IIdableTag.ts" />
 
 namespace Runtime {
-    import Ev = __Bigine_Event;
+    import Util = __Bigine_Util;
 
     export namespace Event {
-        export interface IActionMetas extends Ev.IEventMetas<Core.IIdableTag> {
+        export interface IActionMetas extends Util.IEventMetas<Core.IIdableTag> {
         }
     }
 }

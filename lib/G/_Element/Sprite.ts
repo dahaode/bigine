@@ -12,7 +12,6 @@
 
 namespace G {
     import Util = __Bigine_Util;
-    import Ev = __Bigine_Event;
 
     export class Sprite extends Element implements Core.ISprite {
         /**
@@ -23,7 +22,7 @@ namespace G {
         /**
          * 事件监听。
          */
-        private _l: Util.IHashTable<Ev.IEventListener<any>[]>;
+        private _l: Util.IHashTable<Util.IEventListener<any>[]>;
 
         /**
          * 构造函数。
@@ -99,7 +98,7 @@ namespace G {
         /**
          * 新增事件监听。
          */
-        public addEventListener<T>(type: string, listener: Ev.IEventListener<T>): Sprite {
+        public addEventListener<T>(type: string, listener: Util.IEventListener<T>): Sprite {
             this._l[type] = this._l[type] || [];
             this._l[type].push(listener);
             return this;
@@ -108,8 +107,8 @@ namespace G {
         /**
          * 取消事件监听。
          */
-        public removeEventListener<T>(type: string, listener: Ev.IEventListener<T>): Sprite {
-            Util.some(this._l[type] || [], (reged: Ev.IEventListener<any>, index: number) => {
+        public removeEventListener<T>(type: string, listener: Util.IEventListener<T>): Sprite {
+            Util.some(this._l[type] || [], (reged: Util.IEventListener<any>, index: number) => {
                 if (reged == listener) {
                     this._l[type].splice(index, 1);
                     return true;
@@ -122,9 +121,9 @@ namespace G {
         /**
          * 发生事件。
          */
-        public dispatchEvent<T>(event: Ev.IEvent<T>): Sprite {
+        public dispatchEvent<T>(event: Util.IEvent<T>): Sprite {
             var type: string = event.gT();
-            Util.each(this._l[type] || [], (listener: Ev.IEventListener<T>) => {
+            Util.each(this._l[type] || [], (listener: Util.IEventListener<T>) => {
                 listener.call(undefined, event);
             });
             return this;

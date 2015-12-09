@@ -11,7 +11,7 @@
 /// <reference path="../../../include/tsd.d.ts" />
 
 namespace Core {
-    import Ev = __Bigine_Event;
+    import Util = __Bigine_Util;
 
     // IGraphicElement:gB()
     // IGraphicElement:x()
@@ -29,7 +29,7 @@ namespace Core {
     // IEmittable:addEventListener()
     // IEmittable:removeEventListener()
     // IEmittable:dispatchEvent()
-    export interface ISprite extends IGraphicElement, Ev.IEmittable {
+    export interface ISprite extends IGraphicElement, Util.IEmittable {
         // constructor(x: number, y: number, w: number, h: number, absolute: boolean = false);
         // constructor(bounds: IBounds, absolute: boolean = false);
 

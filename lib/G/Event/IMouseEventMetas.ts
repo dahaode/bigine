@@ -11,10 +11,10 @@
 /// <reference path="../../Core/_G/IStage.ts" />
 
 namespace G {
-    import Ev = __Bigine_Event;
+    import Util = __Bigine_Util;
 
     export namespace Event {
-        export interface IMouseEventMetas extends Ev.IEventMetas<Core.ISprite> {
+        export interface IMouseEventMetas extends Util.IEventMetas<Core.ISprite> {
             /**
              * X 轴座标。
              */

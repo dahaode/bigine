@@ -10,10 +10,10 @@
 /// <reference path="IMouseEventMetas.ts" />
 
 namespace G {
-    import Ev = __Bigine_Event;
+    import Util = __Bigine_Util;
 
     export namespace Event {
-        export class MouseEvent implements Ev.IEvent<Core.ISprite> {
+        export class MouseEvent implements Util.IEvent<Core.ISprite> {
             /**
              * 事件触发对象。
              */

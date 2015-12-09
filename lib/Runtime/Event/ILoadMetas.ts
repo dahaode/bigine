@@ -11,10 +11,9 @@
 
 namespace Runtime {
     import Util = __Bigine_Util;
-    import Ev = __Bigine_Event;
 
     export namespace Event {
-        export interface ILoadMetas extends Ev.IEventMetas<Core.IStates> {
+        export interface ILoadMetas extends Util.IEventMetas<Core.IStates> {
             /**
              * 数据导入回调函数。
              */

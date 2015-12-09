@@ -2,12 +2,11 @@
 /// <reference path="../../include/_raf.d.ts" />
 declare namespace __Bigine {
     import Util = __Bigine_Util;
-    import Ev = __Bigine_Event;
     namespace Runtime {
         namespace Event {
-            class Event<T> implements Ev.IEvent<T> {
+            class Event<T> implements Util.IEvent<T> {
                 target: T;
-                constructor(metas: Ev.IEventMetas<T>);
+                constructor(metas: Util.IEventMetas<T>);
                 gT(): string;
             }
         }
@@ -155,7 +154,7 @@ declare namespace __Bigine {
         }
     }
     namespace Core {
-        interface IRuntime extends Ev.IEmittable {
+        interface IRuntime extends Util.IEmittable {
             gE(): IEpisode;
             gL(): Util.ILogger;
             gS(): IStates;
@@ -227,7 +226,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface IReadyMetas extends Ev.IEventMetas<Core.IEpisode> {
+            interface IReadyMetas extends Util.IEventMetas<Core.IEpisode> {
             }
         }
     }
@@ -241,7 +240,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface IErrorMetas extends Ev.IEventMetas<any> {
+            interface IErrorMetas extends Util.IEventMetas<any> {
                 error: Error;
             }
         }
@@ -257,7 +256,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface IEndMetas extends Ev.IEventMetas<Core.IEpisode> {
+            interface IEndMetas extends Util.IEventMetas<Core.IEpisode> {
             }
         }
     }
@@ -304,7 +303,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface IQueryMetas extends Ev.IEventMetas<Core.IStates> {
+            interface IQueryMetas extends Util.IEventMetas<Core.IStates> {
                 callback: (slots: Util.IHashTable<[string, number]>) => void;
             }
         }
@@ -320,7 +319,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface ISaveMetas extends Ev.IEventMetas<Core.IStates> {
+            interface ISaveMetas extends Util.IEventMetas<Core.IStates> {
                 data: Util.IHashTable<any>;
                 manual: boolean;
                 callback: (id: string) => void;
@@ -370,7 +369,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface IBeginMetas extends Ev.IEventMetas<Core.IEpisode> {
+            interface IBeginMetas extends Util.IEventMetas<Core.IEpisode> {
             }
         }
     }
@@ -526,7 +525,7 @@ declare namespace __Bigine {
         }
     }
     namespace Core {
-        interface ISprite extends IGraphicElement, Ev.IEmittable {
+        interface ISprite extends IGraphicElement, Util.IEmittable {
             f(child?: IGraphicElement): ISprite;
             a(element: IGraphicElement, before?: string): ISprite;
             a(element: IGraphicElement, before?: IGraphicElement): ISprite;
@@ -600,9 +599,9 @@ declare namespace __Bigine {
             d(context: CanvasRenderingContext2D): CanvasRenderingContext2D | Thenable<CanvasRenderingContext2D>;
             f(child?: Element): Sprite;
             $p(parent?: Sprite): Sprite;
-            addEventListener<T>(type: string, listener: Ev.IEventListener<T>): Sprite;
-            removeEventListener<T>(type: string, listener: Ev.IEventListener<T>): Sprite;
-            dispatchEvent<T>(event: Ev.IEvent<T>): Sprite;
+            addEventListener<T>(type: string, listener: Util.IEventListener<T>): Sprite;
+            removeEventListener<T>(type: string, listener: Util.IEventListener<T>): Sprite;
+            dispatchEvent<T>(event: Util.IEvent<T>): Sprite;
             a(element: Element, before?: string): Sprite;
             a(element: Element, before?: Element): Sprite;
             e(element: Element): Sprite;
@@ -628,7 +627,7 @@ declare namespace __Bigine {
     }
     namespace G {
         namespace Event {
-            interface IMouseEventMetas extends Ev.IEventMetas<Core.ISprite> {
+            interface IMouseEventMetas extends Util.IEventMetas<Core.ISprite> {
                 x: number;
                 y: number;
                 from: Core.ISprite;
@@ -640,7 +639,7 @@ declare namespace __Bigine {
     }
     namespace G {
         namespace Event {
-            class MouseEvent implements Ev.IEvent<Core.ISprite> {
+            class MouseEvent implements Util.IEvent<Core.ISprite> {
                 target: Core.ISprite;
                 x: number;
                 y: number;
@@ -655,7 +654,7 @@ declare namespace __Bigine {
     }
     namespace G {
         class Button extends Sprite implements Core.IButton {
-            b(callback: Ev.IEventListener<Button>, hover?: Element, defaults?: Element): Button;
+            b(callback: Util.IEventListener<Button>, hover?: Element, defaults?: Element): Button;
         }
     }
     namespace G {
@@ -779,7 +778,7 @@ declare namespace __Bigine {
         class WaitForClick extends Animation {
             private _f;
             private _r;
-            constructor(callback?: Ev.IEventListener<Core.ISprite>);
+            constructor(callback?: Util.IEventListener<Core.ISprite>);
             $p(element: Core.ISprite, elapsed: number, done: () => void): void;
             $h(): void;
         }
@@ -828,7 +827,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface IResumeMetas extends Ev.IEventMetas<Core.IEpisode> {
+            interface IResumeMetas extends Util.IEventMetas<Core.IEpisode> {
             }
         }
     }
@@ -895,7 +894,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface ILoadMetas extends Ev.IEventMetas<Core.IStates> {
+            interface ILoadMetas extends Util.IEventMetas<Core.IStates> {
                 callback: (data: Util.IHashTable<any>) => void;
                 id: string;
             }
@@ -913,7 +912,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface ISceneMetas extends Ev.IEventMetas<Core.ISceneTag> {
+            interface ISceneMetas extends Util.IEventMetas<Core.ISceneTag> {
                 title: string;
                 actions: string[];
             }
@@ -932,7 +931,7 @@ declare namespace __Bigine {
     }
     namespace Runtime {
         namespace Event {
-            interface IActionMetas extends Ev.IEventMetas<Core.IIdableTag> {
+            interface IActionMetas extends Util.IEventMetas<Core.IIdableTag> {
             }
         }
     }
@@ -1697,8 +1696,8 @@ declare namespace __Bigine {
             private _n;
             private _c;
             constructor(ep: Core.IRootTag);
-            addEventListener<T>(type: string, listener: Ev.IEventListener<T>): Runtime;
-            removeEventListener<T>(type: string, listener: Ev.IEventListener<T>): Runtime;
+            addEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime;
+            removeEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime;
             dispatchEvent<T>(event: Event.Event<T>): Runtime;
             gE(): Episode;
             gL(): Util.ConsoleLogger;

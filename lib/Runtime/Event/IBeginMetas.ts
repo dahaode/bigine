@@ -11,10 +11,10 @@
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 
 namespace Runtime {
-    import Ev = __Bigine_Event;
+    import Util = __Bigine_Util;
 
     export namespace Event {
-        export interface IBeginMetas extends Ev.IEventMetas<Core.IEpisode> {
+        export interface IBeginMetas extends Util.IEventMetas<Core.IEpisode> {
         }
     }
 }

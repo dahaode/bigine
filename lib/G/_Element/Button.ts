@@ -15,13 +15,12 @@
 
 namespace G {
     import Util = __Bigine_Util;
-    import Ev = __Bigine_Event;
 
     export class Button extends Sprite implements Core.IButton {
         /**
          * 绑定功能。
          */
-        public b(callback: Ev.IEventListener<Button>, hover?: Element, defaults?: Element): Button {
+        public b(callback: Util.IEventListener<Button>, hover?: Element, defaults?: Element): Button {
             if (defaults)
                 this.a(defaults.o(1));
             if (hover)
@@ -58,7 +57,7 @@ namespace G {
                     animes.push(anime);
                     defaults.p(anime);
                 }
-            }).addEventListener('$click', (event: Ev.IEvent<Button>) => {
+            }).addEventListener('$click', (event: Util.IEvent<Button>) => {
                 Util.each(animes, (animation: Animation) => {
                     animation.h();
                 });

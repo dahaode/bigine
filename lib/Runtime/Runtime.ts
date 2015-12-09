@@ -19,13 +19,12 @@
 
 namespace Runtime {
     import Util = __Bigine_Util;
-    import Ev = __Bigine_Event;
 
     export class Runtime implements Core.IRuntime {
         /**
          * 事件监听函数池。
          */
-        private _a: Util.IHashTable<Ev.IEventListener<any>[]>;
+        private _a: Util.IHashTable<Util.IEventListener<any>[]>;
 
         /**
          * 作品。
@@ -126,9 +125,9 @@ namespace Runtime {
         /**
          * 新增事件监听。
          */
-        public addEventListener<T>(type: string, listener: Ev.IEventListener<T>): Runtime {
+        public addEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime {
             this._a[type] = this._a[type] || [];
-            if (!Util.some(this._a[type], (reged: Ev.IEventListener<any>) => reged == listener))
+            if (!Util.some(this._a[type], (reged: Util.IEventListener<any>) => reged == listener))
                 this._a[type].push(listener);
             return this;
         }
@@ -136,10 +135,10 @@ namespace Runtime {
         /**
          * 取消事件监听。
          */
-        public removeEventListener<T>(type: string, listener: Ev.IEventListener<T>): Runtime {
+        public removeEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime {
             if (!(type in this._a))
                 return this;
-            Util.some(this._a[type], (reged: Ev.IEventListener<any>, index: number) => {
+            Util.some(this._a[type], (reged: Util.IEventListener<any>, index: number) => {
                 if (reged != listener)
                     return false;
                 this._a[type].splice(index, 1);
@@ -156,7 +155,7 @@ namespace Runtime {
             this._l.d('[event]', event);
             if (!(type in this._a))
                 return this;
-            Util.each(<Ev.IEventListener<T>[]> this._a[type], (listener: Ev.IEventListener<T>) => {
+            Util.each(<Util.IEventListener<T>[]> this._a[type], (listener: Util.IEventListener<T>) => {
                 listener(event);
             });
             return this;

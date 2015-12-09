@@ -10,10 +10,10 @@
 /// <reference path="../../../include/tsd.d.ts" />
 
 namespace Runtime {
-    import Ev = __Bigine_Event;
+    import Util = __Bigine_Util;
 
     export namespace Event {
-        export interface IErrorMetas extends Ev.IEventMetas<any> {
+        export interface IErrorMetas extends Util.IEventMetas<any> {
             /**
              * 异常。
              */
