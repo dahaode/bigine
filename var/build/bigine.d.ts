@@ -593,8 +593,6 @@ declare namespace __Bigine {
         static ACT_CG_NOT_SHOWN: string;
         static ACT_CG_ALREADY_SHOWN: string;
         static ACT_ILLEGAL_OP: string;
-        static ACT_STATE_NOT_NUMERIC: string;
-        static ACT_DELTA_NOT_NUMERIC: string;
         static ACT_OPTION_CAST_FAILURE: string;
         static RES_INVALID_URI: string;
         static ENV_NOT_AVAILABLE: string;

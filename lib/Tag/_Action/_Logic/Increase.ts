@@ -22,14 +22,8 @@ namespace Tag {
          * （执行）检查。
          */
         public t(states: Core.IStates): boolean {
-            var value: number = states.g(this._p[0]),
-                delta: number = <number> this.$v(this._c),
-                depth: number = states.g('$d');
-            if ('string' == typeof value)
-                throw new E(E.ACT_STATE_NOT_NUMERIC, this._l);
-            if ('string' == typeof delta)
-                throw new E(E.ACT_DELTA_NOT_NUMERIC, this._l);
-            states.s(this._p[0], value + delta)
+            var depth: number = states.g('$d');
+            states.s(this._p[0], states.g(this._p[0]) + this.$v(this._c))
                 .c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;

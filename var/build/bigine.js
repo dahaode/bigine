@@ -3095,8 +3095,6 @@ var E = (function (_super) {
     E.ACT_CG_NOT_SHOWN = '并未展示任何特写';
     E.ACT_CG_ALREADY_SHOWN = '正在展示另一特写';
     E.ACT_ILLEGAL_OP = '无效的比较符';
-    E.ACT_STATE_NOT_NUMERIC = '状态数据不是数值';
-    E.ACT_DELTA_NOT_NUMERIC = '状态增量不是数值';
     E.ACT_OPTION_CAST_FAILURE = '无法转化为选项';
     E.RES_INVALID_URI = '无效的资源地址';
     E.ENV_NOT_AVAILABLE = '环境不满足播放条件';
@@ -6462,12 +6460,8 @@ var Tag;
          * （执行）检查。
          */
         Increase.prototype.t = function (states) {
-            var value = states.g(this._p[0]), delta = this.$v(this._c), depth = states.g('$d');
-            if ('string' == typeof value)
-                throw new E(E.ACT_STATE_NOT_NUMERIC, this._l);
-            if ('string' == typeof delta)
-                throw new E(E.ACT_DELTA_NOT_NUMERIC, this._l);
-            states.s(this._p[0], value + delta)
+            var depth = states.g('$d');
+            states.s(this._p[0], states.g(this._p[0]) + this.$v(this._c))
                 .c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;

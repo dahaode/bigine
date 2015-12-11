@@ -70,10 +70,6 @@ class E extends Error {
 
     public static ACT_ILLEGAL_OP: string = '无效的比较符';
 
-    public static ACT_STATE_NOT_NUMERIC: string = '状态数据不是数值';
-
-    public static ACT_DELTA_NOT_NUMERIC: string = '状态增量不是数值';
-
     public static ACT_OPTION_CAST_FAILURE: string = '无法转化为选项';
 
     public static RES_INVALID_URI: string = '无效的资源地址';
