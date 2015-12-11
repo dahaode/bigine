@@ -116,7 +116,7 @@ namespace Runtime {
          */
         public t(text: string): string {
             var convert: (match: string, p1: string) => string = (match: string, p1: string) => <string> this._d[p1];
-            return text.replace(/〈(.+)〉/g, convert).replace(/＜(.+)＞/g, convert);
+            return text.replace(/〈([^〉]+)〉/g, convert).replace(/＜([^＞]+)＞/g, convert);
         }
 
         /**

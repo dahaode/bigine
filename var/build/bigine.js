@@ -971,7 +971,7 @@ var Runtime;
         States.prototype.t = function (text) {
             var _this = this;
             var convert = function (match, p1) { return _this._d[p1]; };
-            return text.replace(/〈(.+)〉/g, convert).replace(/＜(.+)＞/g, convert);
+            return text.replace(/〈([^〉]+)〉/g, convert).replace(/＜([^＞]+)＞/g, convert);
         };
         /**
          * 生成快照（以备存档）。
@@ -1502,7 +1502,7 @@ var Runtime;
         function CanvasDirector(runtime) {
             var _this = this;
             _super.call(this, runtime);
-            var doc = document, els = doc.querySelectorAll('.bg-work'), canvas = doc.createElement('canvas'), raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS;
+            var doc = document, els = doc.querySelectorAll('.bg-work'), canvas = doc.createElement('canvas'), raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, assets = '//s.dahao.de/theme/_/';
             canvas.width = bounds.w;
             canvas.height = bounds.h;
             canvas.className = 'viewport';
@@ -1537,14 +1537,14 @@ var Runtime;
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
             this._i = {
-                o: Runtime.Resource.g('//s.dahao.de/theme/_/logo.png', raw),
-                e: Runtime.Resource.g('//s.dahao.de/theme/_/thx.png', raw),
-                s: Runtime.Resource.g('//s.dahao.de/theme/_/oops.mp3', raw),
-                s3: Runtime.Resource.g('//s.dahao.de/theme/_/3stars.png', raw),
-                s2: Runtime.Resource.g('//s.dahao.de/theme/_/2stars.png', raw),
-                s1: Runtime.Resource.g('//s.dahao.de/theme/_/1star.png', raw),
-                f: Runtime.Resource.g('//s.dahao.de/theme/_/focus.mp3', raw),
-                c: Runtime.Resource.g('//s.dahao.de/theme/_/click.mp3', raw)
+                o: Runtime.Resource.g(assets + 'logo.png', raw),
+                e: Runtime.Resource.g(assets + 'thx.png', raw),
+                s: Runtime.Resource.g(assets + 'oops.mp3', raw),
+                s3: Runtime.Resource.g(assets + '3stars.png', raw),
+                s2: Runtime.Resource.g(assets + '2stars.png', raw),
+                s1: Runtime.Resource.g(assets + '1star.png', raw),
+                f: Runtime.Resource.g(assets + 'focus.mp3', raw),
+                c: Runtime.Resource.g(assets + 'click.mp3', raw)
             };
             this._f = {};
             this._e = [0, 0];
