@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "bigine.util": "^0.2.0",
+    "bigine.c2d": "^0.1.0",
     "es6-promise": "^3.0.2"
   },
   "devDependencies": {

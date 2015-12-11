@@ -1,4 +1,5 @@
 var __Bigine_Util = require("bigine.util");
+var __Bigine_C2D = require("bigine.c2d");
 /**
  * 定义（运行时）抽象事件组件。
  *
@@ -1398,1934 +1399,6 @@ var Runtime;
     Runtime.NodeDirector = NodeDirector;
 })(Runtime || (Runtime = {}));
 /**
- * 声明动画接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IAnimation.ts
- */
-/**
- * 定义抽象画面动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/Animation.ts
- */
-/// <reference path="../../include/_raf.d.ts" />
-/// <reference path="../../include/tsd.d.ts" />
-/// <reference path="../Core/_G/IAnimation.ts" />
-var G;
-(function (G) {
-    var Util = __Bigine_Util;
-    var Animation = (function () {
-        /**
-         * 构造函数。
-         */
-        function Animation(duration, metas) {
-            this._d = Math.round(duration * 60 / 1000);
-            this._m = metas || {};
-            this._c = [];
-            this._l = 1;
-            this._p =
-                this._h =
-                    this._w = false;
-        }
-        /**
-         * 链式动画。
-         */
-        Animation.prototype.c = function (next) {
-            this._c.push(next);
-            return this;
-        };
-        /**
-         * 循环。
-         */
-        Animation.prototype.l = function (times) {
-            this._l = times || Infinity;
-            return this;
-        };
-        /**
-         * 执行。
-         */
-        Animation.prototype.p = function (element) {
-            var _this = this;
-            var r = Promise.resolve(element), counter = 0, once = function () {
-                if (_this._h)
-                    return r;
-                return new Promise(function (resolve) {
-                    var index = 0, done = function () {
-                        resolve(element);
-                    }, task = function (time) {
-                        if (_this._h || index >= _this._d)
-                            return done();
-                        if (!_this._w)
-                            _this.$p(element, ++index, done);
-                        Animation.f(task);
-                    };
-                    Animation.f(task);
-                }).then(function () {
-                    if (!_this._h && ++counter < _this._l)
-                        return once();
-                    return element;
-                });
-            }, q;
-            if (this._p || this._h)
-                return r;
-            this._p = true;
-            this._t = element;
-            q = once();
-            if (!this._c.length)
-                return q;
-            return q.then(function () { return Util.Q.every(_this._c, function (anime) { return anime.p(element); }); });
-        };
-        /**
-         * 帧执行。
-         */
-        Animation.prototype.$p = function (element, elpased, done) {
-            //
-        };
-        /**
-         * 中止。
-         */
-        Animation.prototype.h = function () {
-            if (this._h)
-                return this;
-            this._h = true;
-            this.$h();
-            Util.each(this._c, function (anime) {
-                anime.h();
-            });
-            return this;
-        };
-        /**
-         * 中止处理。
-         */
-        Animation.prototype.$h = function () {
-            //
-        };
-        /**
-         * 暂停。
-         */
-        Animation.prototype.w = function () {
-            this._w = true;
-            return this;
-        };
-        /**
-         * 恢复播放。
-         */
-        Animation.prototype.r = function () {
-            this._w = false;
-            return this;
-        };
-        /**
-         * 获取暂停状态。
-         */
-        Animation.prototype.gW = function () {
-            return this._w;
-        };
-        return Animation;
-    })();
-    G.Animation = Animation;
-    var Animation;
-    (function (Animation) {
-        var raf, jobs = [], elapsed = 0, size;
-        if (Util.ENV.Window) {
-            raf = window.requestAnimationFrame ||
-                window.msRequestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame;
-            if (!raf) {
-                raf = function (callback) {
-                    jobs.push(callback);
-                    return 0;
-                };
-                setInterval(function () {
-                    elapsed += 5;
-                    size = jobs.length;
-                    if ((1 + elapsed % 50) % 3 || !size)
-                        return;
-                    Util.each(jobs.splice(0, size), function (callback) {
-                        callback(elapsed);
-                    });
-                }, 5);
-            }
-        }
-        else
-            raf = function (callback) { return 0; };
-        /**
-         * 帧处理。
-         */
-        function f(callback, draw) {
-            raf.call(window, callback);
-        }
-        Animation.f = f;
-    })(Animation = G.Animation || (G.Animation = {}));
-})(G || (G = {}));
-/**
- * 声明画面组合动画接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IComboAnimation.ts
- */
-/// <reference path="IAnimation.ts" />
-/**
- * 定义画面组合动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/Combo.ts
- */
-/// <reference path="../Animation.ts" />
-/// <reference path="../../Core/_G/IComboAnimation.ts" />
-var G;
-(function (G) {
-    var Util = __Bigine_Util;
-    var Combo = (function (_super) {
-        __extends(Combo, _super);
-        /**
-         * 构造函数。
-         */
-        function Combo(animations) {
-            _super.call(this, Infinity);
-            this._a = animations;
-        }
-        /**
-         * 执行。
-         */
-        Combo.prototype.$p = function (element, elapsed, done) {
-            if (1 == elapsed) {
-                var p = [];
-                Util.each(this._a, function (anime) {
-                    p.push(anime.p(element));
-                });
-                Promise.all(p).then(done);
-            }
-        };
-        /**
-         * 中止处理。
-         */
-        Combo.prototype.$h = function () {
-            Util.each(this._a, function (anime) {
-                anime.h();
-            });
-        };
-        return Combo;
-    })(G.Animation);
-    G.Combo = Combo;
-})(G || (G = {}));
-/**
- * 声明透明度渐变动画元信息接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/IFadeMetas.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/**
- * 定义透明度渐变动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/Fade.ts
- */
-/// <reference path="../Animation.ts" />
-/// <reference path="IFadeMetas.ts" />
-var G;
-(function (G) {
-    var Fade = (function (_super) {
-        __extends(Fade, _super);
-        /**
-         * 构造函数。
-         */
-        function Fade(duration, metas) {
-            _super.call(this, duration, metas);
-        }
-        /**
-         * 帧执行。
-         */
-        Fade.prototype.$p = function (element, elpased) {
-            if (1 == elpased)
-                this._o = element.gO();
-            element.o((this._m.opacity - this._o) * elpased / this._d + this._o);
-        };
-        return Fade;
-    })(G.Animation);
-    G.Fade = Fade;
-})(G || (G = {}));
-/**
- * 定义透明度渐显动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/FadeIn.ts
- */
-/// <reference path="Fade.ts" />
-var G;
-(function (G) {
-    var FadeIn = (function (_super) {
-        __extends(FadeIn, _super);
-        /**
-         * 构造函数。
-         */
-        function FadeIn(duration) {
-            _super.call(this, duration, {
-                opacity: 1
-            });
-        }
-        return FadeIn;
-    })(G.Fade);
-    G.FadeIn = FadeIn;
-})(G || (G = {}));
-/**
- * 定义透明度渐隐动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/FadeOut.ts
- */
-/// <reference path="Fade.ts" />
-var G;
-(function (G) {
-    var FadeOut = (function (_super) {
-        __extends(FadeOut, _super);
-        /**
-         * 构造函数。
-         */
-        function FadeOut(duration) {
-            _super.call(this, duration, {
-                opacity: 0
-            });
-        }
-        return FadeOut;
-    })(G.Fade);
-    G.FadeOut = FadeOut;
-})(G || (G = {}));
-/**
- * 声明画面元素区域接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IBounds.ts
- */
-/**
- * 声明画面元素接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IGraphicElement.ts
- */
-/// <reference path="IBounds.ts" />
-/// <reference path="IAnimation.ts" />
-/**
- * 声明画面组合元素接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/ISprite.ts
- */
-/// <reference path="IGraphicElement.ts" />
-/// <reference path="../../../include/tsd.d.ts" />
-/**
- * 定义抽象画面元素组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/Element.ts
- */
-/// <reference path="../Core/_G/ISprite.ts" />
-var G;
-(function (G) {
-    var Util = __Bigine_Util;
-    var Element = (function () {
-        function Element(x) {
-            var args = [];
-            for (var _c = 1; _c < arguments.length; _c++) {
-                args[_c - 1] = arguments[_c];
-            }
-            if (!x || 'number' == typeof x) {
-                this._b = {
-                    x: x,
-                    y: args[0],
-                    w: args[1],
-                    h: args[2]
-                };
-                this._a = !!args[3];
-            }
-            else {
-                this._b = x;
-                this._a = !!args[0];
-            }
-            this._b.x |= 0;
-            this._b.y |= 0;
-            this._b.w |= 0;
-            this._b.h |= 0;
-            this._r = 0;
-            this._s =
-                this._o = 1;
-            this._f = false;
-            this._i = '';
-        }
-        /**
-         * 获取区域信息。
-         */
-        Element.prototype.gB = function () {
-            var bounds = Util.clone(this._b), r, w, h;
-            if (0 && this._r) {
-                r %= 180;
-                if (0 > r)
-                    r += 180;
-                if (90 == r) {
-                    r = bounds.x;
-                    bounds.x = bounds.y;
-                    bounds.y = r;
-                    r = bounds.w;
-                    bounds.w = bounds.h;
-                    bounds.h = r;
-                }
-                else if (r) {
-                    r *= Math.PI / 180;
-                    w = (bounds.h / Math.abs(Math.tan(Math.PI / 2 - r)) + bounds.w) / 2 * Math.cos(r);
-                    h = (bounds.h / Math.abs(Math.tan(r)) + bounds.w) / 2 * Math.sin(r);
-                    bounds = {
-                        x: bounds.x + bounds.w / 2 - w,
-                        y: bounds.y + bounds.h / 2 - h,
-                        w: 2 * w,
-                        h: 2 * h
-                    };
-                }
-            }
-            if (!this._a) {
-                if (!this._p)
-                    throw new E(E.G_PARENT_NOT_FOUND);
-                var bp = this._p.gB();
-                bounds.x += bp.x;
-                bounds.y += bp.y;
-            }
-            return bounds;
-        };
-        /**
-         * 移动 X 轴座标。
-         */
-        Element.prototype.x = function (value) {
-            this._b.x = value;
-            if (!this.gO())
-                return this;
-            return this.f();
-        };
-        /**
-         * 移动 Y 轴座标。
-         */
-        Element.prototype.y = function (value) {
-            this._b.y = value;
-            if (!this.gO())
-                return this;
-            return this.f();
-        };
-        /**
-         * 缩放。
-         */
-        Element.prototype.s = function (ratio) {
-            if (1 == ratio)
-                return this;
-            this._b.w *= ratio;
-            this._b.h *= ratio;
-            this._s *= ratio;
-            if (!this.gO())
-                return this;
-            return this.f();
-        };
-        /**
-         * 获取缩放系数。
-         */
-        Element.prototype.gS = function () {
-            return this._s;
-        };
-        /**
-         * 旋转。
-         */
-        Element.prototype.r = function (degrees) {
-            if (this._r == degrees)
-                return this;
-            this._r = degrees % 360;
-            if (0 > this._r)
-                this._r += 360;
-            if (!this.gO())
-                return this;
-            return this.f();
-        };
-        /**
-         * 获取旋转度数。
-         */
-        Element.prototype.gR = function () {
-            return this._r;
-        };
-        /**
-         * 透明度。
-         */
-        Element.prototype.o = function (value) {
-            if (this._o == value)
-                return this;
-            if (0 > value) {
-                value = 0;
-            }
-            else if (1 < value)
-                value = 1;
-            this._o = value;
-            return this.f();
-        };
-        /**
-         * 获取透明度。
-         */
-        Element.prototype.gO = function () {
-            return this._o * (this._p ? this._p.gO() : 1);
-        };
-        /**
-         * 绘制。
-         */
-        Element.prototype.d = function (context) {
-            this._f = false;
-            return context;
-        };
-        /**
-         * 执行动画。
-         */
-        Element.prototype.p = function (animation) {
-            return animation.p(this);
-        };
-        /**
-         * 设置编号。
-         */
-        Element.prototype.i = function (id) {
-            this._i = id;
-            return this;
-        };
-        /**
-         * 获取编号。
-         */
-        Element.prototype.gI = function () {
-            return this._i;
-        };
-        /**
-         * 发生变更。
-         */
-        Element.prototype.f = function () {
-            this._f = true;
-            if (this._p)
-                this._p.f(this);
-            return this;
-        };
-        /**
-         * 设置父元素。
-         */
-        Element.prototype.$p = function (parent) {
-            this._p = parent;
-            return this;
-        };
-        return Element;
-    })();
-    G.Element = Element;
-})(G || (G = {}));
-/**
- * 声明画面图片元素接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IImageElement.ts
- */
-/// <reference path="IGraphicElement.ts" />
-/// <reference path="../_Runtime/IResource.ts" />
-/**
- * 定义图像画面元素组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Element/Image.ts
- */
-/// <reference path="../Element.ts" />
-/// <reference path="../../Core/_G/IImageElement.ts" />
-var G;
-(function (G) {
-    var Image = (function (_super) {
-        __extends(Image, _super);
-        function Image(image, x, y, w, h, absolute) {
-            var _this = this;
-            _super.call(this, x, y, w, h, absolute);
-            this._d = image;
-            if (!this._b.w || !this._b.h)
-                image.o().then(function (img) {
-                    if (_this._b.w) {
-                        _this._b.h = 0 | _this._b.w * img.height / img.width;
-                    }
-                    else if (_this._b.h) {
-                        _this._b.w = 0 | _this._b.h * img.width / img.height;
-                    }
-                    else {
-                        _this._b.w = img.width;
-                        _this._b.h = img.height;
-                    }
-                });
-        }
-        /**
-         * 绘制。
-         */
-        Image.prototype.d = function (context) {
-            var _this = this;
-            return this._d.o().then(function (img) {
-                var opacity = _this.gO();
-                if (opacity) {
-                    if (1 != opacity) {
-                        context.save();
-                        context.globalAlpha = opacity;
-                    }
-                    var bounds = _this.gB();
-                    context.drawImage(img, bounds.x, bounds.y, bounds.w, bounds.h);
-                    if (1 != opacity)
-                        context.restore();
-                }
-                return _super.prototype.d.call(_this, context);
-            });
-        };
-        /**
-         * 获取需绘制地图片集合。
-         */
-        Image.prototype.$r = function () {
-            return [this._d.o()];
-        };
-        return Image;
-    })(G.Element);
-    G.Image = Image;
-})(G || (G = {}));
-/**
- * 声明画面色块元素接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IColorElement.ts
- */
-/// <reference path="IGraphicElement.ts" />
-/**
- * 定义色块画面元素组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Element/Color.ts
- */
-/// <reference path="../Element.ts" />
-/// <reference path="../../Core/_G/IColorElement.ts" />
-var G;
-(function (G) {
-    var Color = (function (_super) {
-        __extends(Color, _super);
-        function Color(x, y, w, h, color, absolute) {
-            _super.call(this, x, y, w, h, absolute);
-            this._d = 'number' == typeof x ?
-                color :
-                y;
-        }
-        /**
-         * 绘制。
-         */
-        Color.prototype.d = function (context) {
-            var opacity = this.gO();
-            if (opacity) {
-                context.save();
-                context.globalAlpha = opacity;
-                var bounds = this.gB();
-                context.fillStyle = this._d;
-                context.fillRect(bounds.x, bounds.y, bounds.w, bounds.h);
-                context.restore();
-            }
-            return _super.prototype.d.call(this, context);
-        };
-        return Color;
-    })(G.Element);
-    G.Color = Color;
-})(G || (G = {}));
-/**
- * 定义画面组合元素组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Element/Sprite.ts
- */
-/// <reference path="../Element.ts" />
-/// <reference path="../../Core/_G/ISprite.ts" />
-var G;
-(function (G) {
-    var Util = __Bigine_Util;
-    var Sprite = (function (_super) {
-        __extends(Sprite, _super);
-        function Sprite(x, y, w, h, absolute) {
-            _super.call(this, x, y, w, h, absolute);
-            this._d = [];
-            this._f = false;
-            this._l = {};
-        }
-        /**
-         * 缩放。
-         */
-        Sprite.prototype.s = function (ratio) {
-            Util.each(this._d, function (el) {
-                el.s(ratio);
-            });
-            return _super.prototype.s.call(this, ratio);
-        };
-        /**
-         * 旋转。
-         */
-        Sprite.prototype.r = function (degrees) {
-            Util.each(this._d, function (el) {
-                el.r(degrees);
-            });
-            return _super.prototype.r.call(this, degrees);
-        };
-        /**
-         * 绘制。
-         */
-        Sprite.prototype.d = function (context) {
-            var _this = this;
-            var opacity = this.gO();
-            if (opacity && this._d.length) {
-                if (1 != opacity) {
-                    context.save();
-                    context.globalAlpha = opacity;
-                }
-                return Util.Q.every(this._d, function (el) { return el.d(context); })
-                    .then(function () {
-                    if (1 != opacity)
-                        context.restore();
-                    return _super.prototype.d.call(_this, context);
-                });
-            }
-            return _super.prototype.d.call(this, context);
-        };
-        /**
-         * 发生变更。
-         */
-        Sprite.prototype.f = function (child) {
-            this._f = true;
-            if (this._p)
-                this._p.f(this);
-            return this;
-        };
-        /**
-         * 设置父元素。
-         */
-        Sprite.prototype.$p = function (parent) {
-            if (!parent && this._p)
-                return this._p;
-            return _super.prototype.$p.call(this, parent);
-        };
-        /**
-         * 新增事件监听。
-         */
-        Sprite.prototype.addEventListener = function (type, listener) {
-            this._l[type] = this._l[type] || [];
-            this._l[type].push(listener);
-            return this;
-        };
-        /**
-         * 取消事件监听。
-         */
-        Sprite.prototype.removeEventListener = function (type, listener) {
-            var _this = this;
-            Util.some(this._l[type] || [], function (reged, index) {
-                if (reged == listener) {
-                    _this._l[type].splice(index, 1);
-                    return true;
-                }
-                return false;
-            });
-            return this;
-        };
-        /**
-         * 发生事件。
-         */
-        Sprite.prototype.dispatchEvent = function (event) {
-            var type = event.gT();
-            Util.each(this._l[type] || [], function (listener) {
-                listener.call(undefined, event);
-            });
-            return this;
-        };
-        Sprite.prototype.a = function (element, before) {
-            var index = -1;
-            if ('string' == typeof before)
-                before = this.q(before)[0];
-            if (before)
-                index = Util.indexOf(this._d, before);
-            if (-1 == index)
-                index = this._d.length;
-            this._d.splice(index, 0, element.$p(this));
-            if (!this.gO())
-                return this;
-            return this.f();
-        };
-        /**
-         * 删除元素。
-         */
-        Sprite.prototype.e = function (element) {
-            var index = Util.indexOf(this._d, element);
-            if (-1 != index)
-                this._d.splice(index, 1);
-            if (!this.gO())
-                return this;
-            return this.f();
-        };
-        /**
-         * 删除所有元素。
-         */
-        Sprite.prototype.c = function () {
-            this._d = [];
-            if (!this.gO())
-                return this;
-            return this.f();
-        };
-        /**
-         * 根据编号查找元素。
-         */
-        Sprite.prototype.q = function (id) {
-            var result = [];
-            Util.each(this._d, function (element) {
-                if ('q' in element)
-                    result = result.concat(element.q(id));
-                if (element.gI() == id)
-                    result.push(element);
-            });
-            return result;
-        };
-        /**
-         * 根据座标查找元素。
-         */
-        Sprite.prototype.$m = function (x, y) {
-            var els = [], bounds;
-            Util.some(Util.clone(this._d).reverse(), function (element) {
-                if (!('$m' in element) || !element.gO())
-                    return false;
-                bounds = element.gB();
-                if (bounds.x > x || bounds.y > y || bounds.x + bounds.w < x || bounds.y + bounds.h < y)
-                    return false;
-                els = els.concat(element.$m(x, y));
-                return true;
-            });
-            return els.concat(this);
-        };
-        /**
-         * 获取需绘制地图片集合。
-         */
-        Sprite.prototype.$r = function () {
-            var resources = [];
-            Util.each(this._d, function (element) {
-                if (!('$r' in element))
-                    return;
-                resources = resources.concat(element.$r());
-            });
-            return resources;
-        };
-        return Sprite;
-    })(G.Element);
-    G.Sprite = Sprite;
-})(G || (G = {}));
-/**
- * 声明画面按钮元素接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IButton.ts
- */
-/// <reference path="ISprite.ts" />
-/**
- * 声明全画面舞台接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/IStage.ts
- */
-/// <reference path="ISprite.ts" />
-/**
- * 声明（画面）鼠标事件元信息接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/Event/IMouseEventMetas.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../../Core/_G/IStage.ts" />
-/**
- * 定义画面抽象鼠标事件组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/Event/MouseEvent.ts
- */
-/// <reference path="IMouseEventMetas.ts" />
-var G;
-(function (G) {
-    var Event;
-    (function (Event) {
-        var MouseEvent = (function () {
-            /**
-             * 构造函数。
-             */
-            function MouseEvent(metas) {
-                this.target = metas.target;
-                this.x = metas.x;
-                this.y = metas.y;
-                this.from = metas.from;
-                this.fromX = metas.fromX;
-                this.fromY = metas.fromY;
-                this.stage = metas.stage;
-            }
-            /**
-             * 获取类型。
-             */
-            MouseEvent.prototype.gT = function () {
-                return '';
-            };
-            return MouseEvent;
-        })();
-        Event.MouseEvent = MouseEvent;
-    })(Event = G.Event || (G.Event = {}));
-})(G || (G = {}));
-/**
- * 定义画面按钮元素组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Element/Stage.ts
- */
-/// <reference path="Sprite.ts" />
-/// <reference path="../../Core/_G/IButton.ts" />
-/// <reference path="../Event/MouseEvent.ts" />
-/// <reference path="../_Animation/FadeIn.ts" />
-/// <reference path="../_Animation/FadeOut.ts" />
-var G;
-(function (G) {
-    var Util = __Bigine_Util;
-    var Button = (function (_super) {
-        __extends(Button, _super);
-        function Button() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 绑定功能。
-         */
-        Button.prototype.b = function (callback, hover, defaults) {
-            if (defaults)
-                this.a(defaults.o(1));
-            if (hover)
-                this.a(hover.o(0));
-            var animes = [], anime;
-            return this.addEventListener('$focus', function () {
-                Util.each(animes, function (animation) {
-                    animation.h();
-                });
-                animes = [];
-                if (hover) {
-                    anime = new G.FadeIn(250);
-                    animes.push(anime);
-                    hover.p(anime);
-                }
-                if (defaults) {
-                    anime = new G.FadeOut(250);
-                    animes.push(anime);
-                    defaults.p(anime);
-                }
-            }).addEventListener('$blur', function () {
-                Util.each(animes, function (animation) {
-                    animation.h();
-                });
-                animes = [];
-                if (hover) {
-                    anime = new G.FadeOut(250);
-                    animes.push(anime);
-                    hover.p(anime);
-                }
-                if (defaults) {
-                    anime = new G.FadeIn(250);
-                    animes.push(anime);
-                    defaults.p(anime);
-                }
-            }).addEventListener('$click', function (event) {
-                Util.each(animes, function (animation) {
-                    animation.h();
-                });
-                if (hover)
-                    hover.o(1);
-                if (defaults)
-                    defaults.o(0);
-                callback(event);
-            });
-        };
-        return Button;
-    })(G.Sprite);
-    G.Button = Button;
-})(G || (G = {}));
-/**
- * 定义画面聚焦（鼠标移入）事件组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/Event/Focus.ts
- */
-/// <reference path="MouseEvent.ts" />
-var G;
-(function (G) {
-    var Event;
-    (function (Event) {
-        var Focus = (function (_super) {
-            __extends(Focus, _super);
-            function Focus() {
-                _super.apply(this, arguments);
-            }
-            /**
-             * 获取类型。
-             */
-            Focus.prototype.gT = function () {
-                return '$focus';
-            };
-            return Focus;
-        })(Event.MouseEvent);
-        Event.Focus = Focus;
-    })(Event = G.Event || (G.Event = {}));
-})(G || (G = {}));
-/**
- * 定义画面失焦（鼠标移出）事件组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/Event/Blur.ts
- */
-/// <reference path="MouseEvent.ts" />
-var G;
-(function (G) {
-    var Event;
-    (function (Event) {
-        var Blur = (function (_super) {
-            __extends(Blur, _super);
-            function Blur() {
-                _super.apply(this, arguments);
-            }
-            /**
-             * 获取类型。
-             */
-            Blur.prototype.gT = function () {
-                return '$blur';
-            };
-            return Blur;
-        })(Event.MouseEvent);
-        Event.Blur = Blur;
-    })(Event = G.Event || (G.Event = {}));
-})(G || (G = {}));
-/**
- * 定义画面鼠标移动事件组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/Event/MouseMove.ts
- */
-/// <reference path="MouseEvent.ts" />
-var G;
-(function (G) {
-    var Event;
-    (function (Event) {
-        var MouseMove = (function (_super) {
-            __extends(MouseMove, _super);
-            function MouseMove() {
-                _super.apply(this, arguments);
-            }
-            /**
-             * 获取类型。
-             */
-            MouseMove.prototype.gT = function () {
-                return '$mouse.move';
-            };
-            return MouseMove;
-        })(Event.MouseEvent);
-        Event.MouseMove = MouseMove;
-    })(Event = G.Event || (G.Event = {}));
-})(G || (G = {}));
-/**
- * 定义画面点击事件组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/Event/Click.ts
- */
-/// <reference path="MouseEvent.ts" />
-var G;
-(function (G) {
-    var Event;
-    (function (Event) {
-        var Click = (function (_super) {
-            __extends(Click, _super);
-            function Click() {
-                _super.apply(this, arguments);
-            }
-            /**
-             * 获取类型。
-             */
-            Click.prototype.gT = function () {
-                return '$click';
-            };
-            return Click;
-        })(Event.MouseEvent);
-        Event.Click = Click;
-    })(Event = G.Event || (G.Event = {}));
-})(G || (G = {}));
-/**
- * 定义全画面舞台组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Element/Stage.ts
- */
-/// <reference path="Sprite.ts" />
-/// <reference path="../../Core/_G/IStage.ts" />
-/// <reference path="../Event/Focus.ts" />
-/// <reference path="../Event/Blur.ts" />
-/// <reference path="../Event/MouseMove.ts" />
-/// <reference path="../Event/Click.ts" />
-/// <reference path="../_pack.ts" />
-var G;
-(function (G) {
-    var Util = __Bigine_Util;
-    var Stage = (function (_super) {
-        __extends(Stage, _super);
-        /**
-         * 构造函数。
-         */
-        function Stage(context) {
-            var _this = this;
-            var canvas = context.canvas;
-            _super.call(this, 0, 0, canvas.width, canvas.height, true);
-            this._c = context;
-            this.z();
-            this._m = {
-                fromX: 0,
-                fromY: 0,
-                stage: this
-            };
-            this._h = [
-                function (event) {
-                    event.stopPropagation();
-                    var sprites = _this.$s(event.offsetX * _this._z, event.offsetY * _this._z), ev;
-                    if (sprites[0].length) {
-                        ev = new G.Event.Focus(_this._m);
-                        Util.each(sprites[0], function (element) {
-                            element.dispatchEvent(ev);
-                        });
-                    }
-                    if (sprites[2].length) {
-                        ev = new G.Event.Blur(_this._m);
-                        Util.each(sprites[2], function (element) {
-                            element.dispatchEvent(ev);
-                        });
-                    }
-                    if (sprites[1].length) {
-                        ev = new G.Event.MouseMove(_this._m);
-                        Util.each(sprites[1], function (element) {
-                            element.dispatchEvent(ev);
-                        });
-                    }
-                    return false;
-                },
-                function (event) {
-                    _this.$c();
-                }
-            ];
-            this._t = [];
-            this._u = -1;
-            this._k = [0, undefined];
-            this.b(context.canvas);
-        }
-        /**
-         * 移动 X 轴座标。
-         */
-        Stage.prototype.x = function (distance) {
-            return this;
-        };
-        /**
-         * 移动 Y 轴座标。
-         */
-        Stage.prototype.y = function (distance) {
-            return this;
-        };
-        /**
-         * 缩放。
-         */
-        Stage.prototype.s = function (ratio) {
-            return this;
-        };
-        /**
-         * 旋转。
-         */
-        Stage.prototype.r = function (degrees) {
-            return this;
-        };
-        /**
-         * 发生变更。
-         */
-        Stage.prototype.f = function (child) {
-            var _this = this;
-            var fresh = !this._f, event;
-            this._f = true;
-            if (child) {
-                Util.some(this._d, function (element, index) {
-                    if (child == element) {
-                        _this._u = index;
-                        return true;
-                    }
-                    return false;
-                });
-            }
-            else
-                this._u = 0;
-            if (this._k[0] > this._u)
-                this._k = [0, undefined];
-            Util.each(this.$s(this._m.x, this._m.y)[0], function (element) {
-                if (!event)
-                    event = new G.Event.Focus(_this._m);
-                element.dispatchEvent(event);
-            });
-            if (fresh)
-                G.Animation.f(function () {
-                    _this.d();
-                }, true);
-            return this;
-        };
-        /**
-         * 计算缩放比例。
-         */
-        Stage.prototype.z = function () {
-            var canvas = this._c.canvas;
-            this._z = canvas.width / canvas.scrollWidth;
-            return this;
-        };
-        /**
-         * 绘制。
-         */
-        Stage.prototype.d = function () {
-            var _this = this;
-            if (!this._f)
-                return Promise.resolve(this._c);
-            return Promise.all(this.$r())
-                .then(function () {
-                _this._f = false;
-                return Util.Q.every(_this._d, function (element, index) {
-                    if (_this._k[0]) {
-                        if (index < _this._k[0])
-                            return _this._c;
-                        if (index == _this._k[0])
-                            _this._c.putImageData(_this._k[1], 0, 0);
-                    }
-                    if (index && index == _this._u && _this._u != _this._k[0])
-                        _this._k = [index, _this._c.getImageData(0, 0, 1280, 720)];
-                    return element.d(_this._c);
-                });
-            });
-        };
-        /**
-         * 绑定视图。
-         */
-        Stage.prototype.b = function (viewport) {
-            if (this._v) {
-                this._v.removeEventListener('mousemove', this._h[0]);
-                this._v.removeEventListener('click', this._h[1]);
-            }
-            this._v = viewport;
-            this._v.addEventListener('mousemove', this._h[0]);
-            this._v.addEventListener('click', this._h[1]);
-            return this;
-        };
-        /**
-         * 模拟点击。
-         */
-        Stage.prototype.t = function (x, y) {
-            x = x || this._m.x;
-            y = y || this._m.y;
-            var real = this._m;
-            if (x != this._m.x || y != this._m.y)
-                this.$s(x, y);
-            this.$c();
-            this._m = real;
-            return this;
-        };
-        /**
-         * 停止工作。
-         */
-        Stage.prototype.h = function () {
-            var _this = this;
-            this.f = function () { return _this; };
-            this._f = false;
-            this._v.removeEventListener('mousemove', this._h[0]);
-            this._v.removeEventListener('click', this._h[1]);
-        };
-        /**
-         * 根据座标查找元素。
-         */
-        Stage.prototype.$s = function (x, y) {
-            x |= 0;
-            y |= 0;
-            var sprites = [[], [], []], els = this.$m(x, y).slice(0, -1), // 查找新座标点新树
-            bounds, inside, out;
-            Util.each(this._t, function (element) {
-                bounds = element.gB();
-                inside = -1 != Util.indexOf(els, element);
-                out = x < bounds.x || y < bounds.y || x > bounds.x + bounds.w || y > bounds.y + bounds.h;
-                if (!inside && !out) {
-                    inside = true;
-                    els.push(element);
-                }
-                sprites[inside ? 1 : 2].push(element);
-            });
-            this._t = els;
-            this._m.fromX = this._m.x;
-            this._m.fromY = this._m.y;
-            this._m.x = x;
-            this._m.y = y;
-            Util.each(els, function (element) {
-                if (-1 == Util.indexOf(sprites[1], element))
-                    sprites[0].push(element);
-            });
-            this._m.target = sprites[0][0] || sprites[1][0];
-            this._m.from = sprites[2][0];
-            return sprites;
-        };
-        /**
-         * 模拟点击。
-         */
-        Stage.prototype.$c = function () {
-            if (!this._m.target)
-                return;
-            var sprites = [this._m.target], parent = sprites[0].$p(), ev = new G.Event.Click(this._m);
-            while (parent && parent != this) {
-                sprites.push(parent);
-                parent = parent.$p();
-            }
-            Util.each(sprites, function (element) {
-                element.dispatchEvent(ev);
-            });
-        };
-        return Stage;
-    })(G.Sprite);
-    G.Stage = Stage;
-})(G || (G = {}));
-/**
- * 定义冻结（延时）动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/Delay.ts
- */
-/// <reference path="../Animation.ts" />
-var G;
-(function (G) {
-    var Delay = (function (_super) {
-        __extends(Delay, _super);
-        function Delay() {
-            _super.apply(this, arguments);
-        }
-        return Delay;
-    })(G.Animation);
-    G.Delay = Delay;
-})(G || (G = {}));
-/**
- * 声明画面文字接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/ITextPhrase.ts
- */
-/**
- * 声明画面文字元素接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Core/_G/ITextElement.ts
- */
-/// <reference path="IGraphicElement.ts" />
-/// <reference path="ITextPhrase.ts" />
-var Core;
-(function (Core) {
-    var ITextElement;
-    (function (ITextElement) {
-        /**
-         * 对齐方式。
-         */
-        (function (Align) {
-            /**
-             * 左对齐。
-             */
-            Align[Align["Left"] = 0] = "Left";
-            /**
-             * 居中对齐。
-             */
-            Align[Align["Center"] = 1] = "Center";
-            /**
-             * 右对齐。
-             */
-            Align[Align["Right"] = 2] = "Right";
-        })(ITextElement.Align || (ITextElement.Align = {}));
-        var Align = ITextElement.Align;
-        ;
-    })(ITextElement = Core.ITextElement || (Core.ITextElement = {}));
-})(Core || (Core = {}));
-/**
- * 定义画面文字组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Element/Phrase.ts
- */
-/// <reference path="../../Core/_G/ITextPhrase.ts" />
-var G;
-(function (G) {
-    var Phrase = (function () {
-        /**
-         * 构造函数。
-         */
-        function Phrase() {
-            this._t = '';
-            this._c =
-                this._sc = '#000';
-            this._f = 16;
-            this._ss = 0;
-        }
-        /**
-         * 设置文本内容。
-         */
-        Phrase.prototype.t = function (clob) {
-            this._t = clob.toString();
-            return this;
-        };
-        /**
-         * 设置颜色。
-         */
-        Phrase.prototype.c = function (color) {
-            this._c = color;
-            return this;
-        };
-        /**
-         * 设置字号。
-         */
-        Phrase.prototype.f = function (size) {
-            this._f = size;
-            return this;
-        };
-        /**
-         * 获取字号。
-         */
-        Phrase.prototype.gF = function () {
-            return this._f;
-        };
-        /**
-         * 设置阴影。
-         */
-        Phrase.prototype.s = function (size, color) {
-            this._ss = size;
-            this._sc = color || this._sc;
-            return this;
-        };
-        /**
-         * 计算可绘制字符数。
-         */
-        Phrase.prototype.m = function (context, maxWidth, offset) {
-            var clob = offset ?
-                this._t.substr(offset) :
-                this._t, compare = function (text, maxWidth2) {
-                var length = text.length, result2 = [length, context.measureText(text).width], result3;
-                if (result2[1] <= maxWidth2)
-                    return result2;
-                if (1 == length)
-                    return [0, 0];
-                length = 0 | length / 2; // 中分
-                result2 = compare(text.substr(0, length), maxWidth2);
-                if (length != result2[0])
-                    return result2;
-                result3 = compare(text.substr(length), maxWidth2 - result2[1]);
-                result2[0] += result3[0];
-                result2[1] += result3[1];
-                return result2;
-            }, result;
-            offset = clob.length;
-            if (!offset)
-                return [0, 0];
-            context.save();
-            context.fillStyle = this._c;
-            context.font = this._f + 'px ' + Phrase.FONT;
-            context.textBaseline = 'top';
-            if (this._ss) {
-                context.shadowBlur =
-                    context.shadowOffsetX =
-                        context.shadowOffsetY = this._ss;
-                context.shadowColor = this._sc;
-            }
-            if (context.measureText(clob[0]).width > maxWidth) {
-                result = [0, 0];
-            }
-            else
-                result = compare(clob, maxWidth);
-            context.restore();
-            return result;
-        };
-        /**
-         * 绘制。
-         */
-        Phrase.prototype.d = function (context, x, y, offset, length) {
-            var clob = this._t.substr(offset || 0, length || this._t.length);
-            if (!clob.length)
-                return;
-            context.save();
-            context.fillStyle = this._c;
-            context.font = this._f + 'px ' + Phrase.FONT;
-            context.textBaseline = 'top';
-            if (this._ss) {
-                context.shadowBlur =
-                    context.shadowOffsetX =
-                        context.shadowOffsetY = this._ss;
-                context.shadowColor = this._sc;
-            }
-            context.fillText(clob, Math.ceil(x), Math.ceil(y));
-            context.restore();
-        };
-        /**
-         * 获取长度。
-         */
-        Phrase.prototype.gL = function () {
-            return this._t.length;
-        };
-        /**
-         * 截取。
-         */
-        Phrase.prototype.a = function (length) {
-            return (new Phrase())
-                .t(this._t.substr(0, length))
-                .c(this._c)
-                .f(this._f)
-                .s(this._ss, this._sc);
-        };
-        /**
-         * 字体。
-         */
-        Phrase.FONT = '"Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", Arial, sans-serif';
-        return Phrase;
-    })();
-    G.Phrase = Phrase;
-})(G || (G = {}));
-/**
- * 定义文字画面元素组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Element/Text.ts
- */
-/// <reference path="../Element.ts" />
-/// <reference path="../../Core/_G/ITextElement.ts" />
-/// <reference path="Phrase.ts" />
-var G;
-(function (G) {
-    var Util = __Bigine_Util;
-    var Text = (function (_super) {
-        __extends(Text, _super);
-        function Text(x, y, w, h, lineHeight, align, absolute) {
-            _super.call(this, x, y, w, h, absolute);
-            if (!x || 'number' == typeof x) {
-                this._h = lineHeight;
-                this._l = align;
-            }
-            else {
-                this._h = y;
-                this._l = w;
-            }
-            this._h |= 0;
-            var aligns = Core.ITextElement.Align;
-            switch (this._l) {
-                case aligns.Left:
-                case aligns.Center:
-                case aligns.Right:
-                    break;
-                default:
-                    this._l = aligns.Left;
-            }
-            this._d = [];
-        }
-        /**
-         * 绘制。
-         */
-        Text.prototype.d = function (context) {
-            var _this = this;
-            var opacity = this.gO(), schedules = [[]], // width, Phrase, offset, length
-            line = schedules[0], aligns = Core.ITextElement.Align, bounds = this.gB(), width = bounds.w, m, // length, width
-            offset;
-            if (opacity && this._d.length) {
-                Util.each(this._d, function (phrase) {
-                    offset = 0;
-                    while (offset != phrase.gL()) {
-                        m = phrase.m(context, width, offset);
-                        if (m[0]) {
-                            line.push([m[1], phrase, offset, m[0]]);
-                            width -= m[1];
-                            offset += m[0];
-                        }
-                        else {
-                            line = [];
-                            schedules.push(line);
-                            width = bounds.w;
-                        }
-                    }
-                });
-                if (1 != opacity) {
-                    context.save();
-                    context.globalAlpha = opacity;
-                }
-                Util.each(schedules, function (line2, index) {
-                    if (_this._l != aligns.Left) {
-                        width = 0;
-                        Util.each(line2, function (section) {
-                            width += section[0];
-                        });
-                        offset = bounds.w - width;
-                        if (_this._l == aligns.Center)
-                            offset = 0 | offset / 2;
-                    }
-                    else
-                        offset = 0; // x
-                    offset += bounds.x;
-                    width = bounds.y + _this._h * (1 + index); // y
-                    Util.each(line2, function (section) {
-                        section[1].d(context, offset, width - section[1].gF(), section[2], section[3]);
-                        offset += section[0];
-                    });
-                });
-                if (1 != opacity)
-                    context.restore();
-            }
-            return _super.prototype.d.call(this, context);
-        };
-        /**
-         * 添加文字。
-         */
-        Text.prototype.a = function (text) {
-            this._d.push(text);
-            return this.f();
-        };
-        /**
-         * 获取文字。
-         */
-        Text.prototype.gT = function () {
-            return this._d;
-        };
-        /**
-         * 清空所有已添加文字。
-         */
-        Text.prototype.c = function () {
-            this._d = [];
-            return this.f();
-        };
-        return Text;
-    })(G.Element);
-    G.Text = Text;
-})(G || (G = {}));
-/**
- * 定义等待点击动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/WaitForClick.ts
- */
-/// <reference path="../Animation.ts" />
-/// <reference path="../Event/Click.ts" />
-var G;
-(function (G) {
-    var WaitForClick = (function (_super) {
-        __extends(WaitForClick, _super);
-        /**
-         * 构造函数。
-         */
-        function WaitForClick(callback) {
-            _super.call(this, Infinity);
-            this._f = callback;
-        }
-        /**
-         * 执行。
-         */
-        WaitForClick.prototype.$p = function (element, elapsed, done) {
-            var _this = this;
-            if (1 == elapsed) {
-                var type = '$click', handler = function (event) {
-                    if (_this._f)
-                        _this._f.call(undefined, event);
-                    _this._r();
-                };
-                this._r = function () {
-                    element.removeEventListener(type, handler);
-                    done();
-                };
-                element.addEventListener(type, handler);
-            }
-        };
-        /**
-         * 中止。
-         */
-        WaitForClick.prototype.$h = function () {
-            if (this._r)
-                this._r();
-        };
-        return WaitForClick;
-    })(G.Animation);
-    G.WaitForClick = WaitForClick;
-})(G || (G = {}));
-/**
- * 定义打字效果动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/Type.ts
- */
-/// <reference path="../Animation.ts" />
-/// <reference path="../../Core/_G/ITextElement.ts" />
-var G;
-(function (G) {
-    var Util = __Bigine_Util;
-    var Type = (function (_super) {
-        __extends(Type, _super);
-        /**
-         * 构造函数。
-         */
-        function Type(rate) {
-            _super.call(this, 17);
-            this._r = rate || 1;
-            if (0 > this._r)
-                this._r = 1;
-        }
-        /**
-         * 帧执行。
-         */
-        Type.prototype.$p = function (element, elpased) {
-            var length = 0;
-            if (1 == elpased) {
-                Util.each(this._s = element.gT(), function (phrase) {
-                    length += phrase.gL();
-                });
-                this._d = 0 | length * this._r;
-                this._r = this._d / length;
-            }
-            elpased = 0 | elpased / this._r;
-            element.c().o(1);
-            Util.each(this._s, function (phrase) {
-                length = phrase.gL();
-                if (length < elpased) {
-                    element.a(phrase);
-                    elpased -= length;
-                }
-                else if (elpased) {
-                    element.a(phrase.a(elpased));
-                    elpased = 0;
-                }
-            });
-        };
-        /**
-         * 中止。
-         */
-        Type.prototype.$h = function () {
-            var _this = this;
-            this._t.c();
-            Util.each(this._s, function (phrase) {
-                _this._t.a(phrase);
-            });
-        };
-        return Type;
-    })(G.Animation);
-    G.Type = Type;
-})(G || (G = {}));
-/**
- * 定义打字延时动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/TypeDelay.ts
- */
-/// <reference path="Delay.ts" />
-/// <reference path="../../Core/_G/ITextElement.ts" />
-var G;
-(function (G) {
-    var Util = __Bigine_Util;
-    var TypeDelay = (function (_super) {
-        __extends(TypeDelay, _super);
-        /**
-         * 构造函数。
-         */
-        function TypeDelay(rate) {
-            _super.call(this, 17);
-            this._r = rate || 1;
-            if (0 > this._r)
-                this._r = 1;
-        }
-        /**
-         * 执行。
-         */
-        TypeDelay.prototype.$p = function (element, elapsed) {
-            if (1 == elapsed) {
-                var length = 0;
-                Util.each(element.gT(), function (phrase) {
-                    length += phrase.gL();
-                });
-                this._d = 0 | length * this._r;
-            }
-        };
-        return TypeDelay;
-    })(G.Delay);
-    G.TypeDelay = TypeDelay;
-})(G || (G = {}));
-/**
- * 声明位移动画元信息接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/IMoveMetas.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/**
- * 定义位移动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/Move.ts
- */
-/// <reference path="../Animation.ts" />
-/// <reference path="IMoveMetas.ts" />
-var G;
-(function (G) {
-    var Move = (function (_super) {
-        __extends(Move, _super);
-        /**
-         * 构造函数。
-         */
-        function Move(duration, metas) {
-            _super.call(this, duration, metas);
-        }
-        /**
-         * 帧执行。
-         */
-        Move.prototype.$p = function (element, elpased) {
-            if (1 == elpased) {
-                var bounds = element.gB();
-                this._x = bounds.x;
-                this._y = bounds.y;
-            }
-            element.x((this._m.x - this._x) * elpased / this._d + this._x)
-                .y((this._m.y - this._y) * elpased / this._d + this._y);
-        };
-        return Move;
-    })(G.Animation);
-    G.Move = Move;
-})(G || (G = {}));
-/**
- * 声明音频音量渐变动画元信息接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/IAudioFadeMetas.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/**
- * 定义透明度渐变动画组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_Animation/AudioFadeOut.ts
- */
-/// <reference path="../Animation.ts" />
-/// <reference path="IAudioFadeMetas.ts" />
-var G;
-(function (G) {
-    var AudioFadeOut = (function (_super) {
-        __extends(AudioFadeOut, _super);
-        /**
-         * 构造函数。
-         */
-        function AudioFadeOut(duration) {
-            _super.call(this, duration, {
-                volume: 0
-            });
-        }
-        /**
-         * 帧执行。
-         */
-        AudioFadeOut.prototype.$p = function (element, elpased) {
-            if (1 == elpased)
-                this._v = element.volume;
-            element.volume = this._v - this._v * elpased / this._d;
-        };
-        return AudioFadeOut;
-    })(G.Animation);
-    G.AudioFadeOut = AudioFadeOut;
-})(G || (G = {}));
-/**
- * 打包所有已定义地画面调度（含：元素、动画）组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      G/_pack.ts
- */
-/// <reference path="_Animation/Combo.ts" />
-/// <reference path="_Animation/FadeIn.ts" />
-/// <reference path="_Animation/FadeOut.ts" />
-/// <reference path="_Element/Image.ts" />
-/// <reference path="_Element/Color.ts" />
-/// <reference path="_Element/Button.ts" />
-/// <reference path="_Element/Stage.ts" />
-/// <reference path="_Animation/Delay.ts" />
-/// <reference path="_Element/Text.ts" />
-/// <reference path="_Animation/WaitForClick.ts" />
-/// <reference path="_Animation/Type.ts" />
-/// <reference path="_Animation/TypeDelay.ts" />
-/// <reference path="_Animation/Move.ts" />
-/// <reference path="_Animation/AudioFadeOut.ts" />
-/**
  * 声明（运行时）读档继续事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -3375,8 +1448,8 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/_Director/CanvasDirector.ts
  */
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="Director.ts" />
-/// <reference path="../../G/_pack.ts" />
 /// <reference path="../Event/Resume.ts" />
 /// <reference path="../Event/Save.ts" />
 /**
@@ -3420,6 +1493,7 @@ var Runtime;
 var Runtime;
 (function (Runtime) {
     var Util = __Bigine_Util;
+    var G = __Bigine_C2D;
     var CanvasDirector = (function (_super) {
         __extends(CanvasDirector, _super);
         /**
@@ -3515,7 +1589,7 @@ var Runtime;
             if (title) {
                 this._c.q('S')[0].q('t')[0]
                     .c()
-                    .a(new G.Phrase()
+                    .a(new G.TextPhrase()
                     .t(title)
                     .c(this._f['n']['c'])
                     .f(this._f['n']['f']));
@@ -3523,7 +1597,7 @@ var Runtime;
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
-                var gLogo = new G.Image(_this._i['o'], CanvasDirector.BOUNDS), gEntry = _this._c.q('$.')[0];
+                var gLogo = new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS), gEntry = _this._c.q('$.')[0];
                 _this._c.z()
                     .a(gLogo, 'C');
                 gEntry.o(0);
@@ -3537,7 +1611,7 @@ var Runtime;
                     var gAuthor = _this._c.q('A')[0].o(1);
                     gAuthor.q('t')[0]
                         .c()
-                        .a(new G.Phrase()
+                        .a(new G.TextPhrase()
                         .t(author)
                         .c(_this._f['a']['c'])
                         .f(_this._f['a']['f']));
@@ -3562,7 +1636,7 @@ var Runtime;
             var _this = this;
             return this.c([[this._i['e']]])
                 .then(function () {
-                var gED = new G.Image(_this._i['e'], CanvasDirector.BOUNDS);
+                var gED = new G.Image(_this._i['e'].o(), CanvasDirector.BOUNDS);
                 _this.playBGM();
                 _this.playSE();
                 return _this.lightOff()
@@ -3683,7 +1757,7 @@ var Runtime;
                     x = 800;
                     break;
             }
-            return new G.Image(resource, x, 0, w, bounds.h)
+            return new G.Image(resource.o(), x, 0, w, bounds.h)
                 .i(position)
                 .o(0);
         };
@@ -3694,9 +1768,9 @@ var Runtime;
             var _this = this;
             var code = theme[0], gFrame = this._c.q(code)[0], gAvatar = gFrame.q('a')[0], gName = gFrame.q('n')[0], gWords = gFrame.q('w')[0];
             if (avatar && gAvatar)
-                gAvatar.a(new G.Image(avatar, gAvatar.gB(), true));
+                gAvatar.a(new G.Image(avatar.o(), gAvatar.gB(), true));
             if (who && gName)
-                gName.a(new G.Phrase()
+                gName.a(new G.TextPhrase()
                     .t(who)
                     .f(42)
                     .c(this._f[code + 'n']['c'])
@@ -3764,7 +1838,7 @@ var Runtime;
             }
             return this.c([[this._i[key]]])
                 .then(function () {
-                var gStars = new G.Image(_this._i[key], CanvasDirector.BOUNDS);
+                var gStars = new G.Image(_this._i[key].o(), CanvasDirector.BOUNDS);
                 return _this.lightOff()
                     .then(function () {
                     _this._c.a(gStars, 'C');
@@ -3833,7 +1907,7 @@ var Runtime;
         CanvasDirector.prototype.showCG = function (resource) {
             var _this = this;
             return _super.prototype.showCG.call(this, resource).then(function (runtime) {
-                var bounds = CanvasDirector.BOUNDS, gChars = _this._c.q('c')[0], gCG = _this._c.q('g')[0], gImage = new G.Image(resource, bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p');
+                var bounds = CanvasDirector.BOUNDS, gChars = _this._c.q('c')[0], gCG = _this._c.q('g')[0], gImage = new G.Image(resource.o(), bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p');
                 gCG.a(gImage);
                 return _this.lightOn()
                     .then(function () {
@@ -3851,7 +1925,7 @@ var Runtime;
             var _this = this;
             if (time === void 0) { time = false; }
             return _super.prototype.asRoom.call(this, resource).then(function (runtime) {
-                var gCurtain = _this._c.q('C')[0], gOld = _this._c.q('b')[0], gNew = new G.Image(resource, CanvasDirector.BOUNDS).i('b')
+                var gCurtain = _this._c.q('C')[0], gOld = _this._c.q('b')[0], gNew = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
                     .o(0);
                 _this._c.a(gNew, 'M');
                 if (!time || gCurtain.gO()) {
@@ -3877,7 +1951,7 @@ var Runtime;
                     .b(function () {
                     _this.playSE(_this._i['c']);
                     point.p(_this._r);
-                }, new G.Image(point.o(), bounds, true))
+                }, new G.Image(point.o().o(), bounds, true))
                     .addEventListener('$focus', function () {
                     _this.playSE(_this._i['f']);
                 });
@@ -3946,11 +2020,11 @@ var Runtime;
                             anime.h();
                             option.p(_this._r);
                             resolve(gOptions);
-                        }, new G.Image(_this._i['ch']), new G.Image(_this._i['cn']))
+                        }, new G.Image(_this._i['ch'].o()), new G.Image(_this._i['cn'].o()))
                             .addEventListener('$focus', function () {
                             _this.playSE(_this._i['f']);
-                        }).a(new G.Text(0, 0, w, h, h / 2 + 16, Core.ITextElement.Align.Center)
-                            .a(new G.Phrase()
+                        }).a(new G.Text(0, 0, w, h, h / 2 + 16, G.Text.Align.Center)
+                            .a(new G.TextPhrase()
                             .t(option.gT())
                             .f(32)
                             .c(_this._f['c']['c'])
@@ -3998,7 +2072,7 @@ var Runtime;
             var _this = this;
             return _super.prototype.setCG.call(this, resource).then(function (runtime) {
                 var bounds = CanvasDirector.BOUNDS;
-                _this._c.q('g')[0].a(new G.Image(resource, bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p'))
+                _this._c.q('g')[0].a(new G.Image(resource.o(), bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p'))
                     .o(1);
                 return runtime;
             });
@@ -4009,7 +2083,7 @@ var Runtime;
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
             var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], align = function (desc) {
-                var aligns = Core.ITextElement.Align;
+                var aligns = G.Text.Align;
                 switch (desc) {
                     case 'center':
                     case 'middle':
@@ -4019,10 +2093,10 @@ var Runtime;
                     default:
                         return aligns.Left;
                 }
-            }, gAuthor = this._c.q('A')[0], gStart = this._c.q('S')[0], gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gMenu = this._c.q('$')[0], gMenuWay = false, right = Core.ITextElement.Align.Right, gMenuEntry, gMenuMask, gMenuFeatures, gMenuSlots, gChoose;
+            }, gAuthor = this._c.q('A')[0], gStart = this._c.q('S')[0], gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gMenu = this._c.q('$')[0], gMenuWay = false, right = G.Text.Align.Right, gMenuEntry, gMenuMask, gMenuFeatures, gMenuSlots, gChoose;
             // 作品
             gAuthor.a(new G.Text(section, section['h'], align(section['align']))
-                .a(new G.Phrase()
+                .a(new G.TextPhrase()
                 .c(section['color'])
                 .f(section['size'])
                 .t('作品')));
@@ -4044,7 +2118,7 @@ var Runtime;
                 this._i['c'] // 4
             ]);
             // 背景图
-            gStart.a(new G.Image(resources[0][0], bounds))
+            gStart.a(new G.Image(resources[0][0].o(), bounds))
                 .a(new G.Button(section)
                 .b(function () {
                 _this.playSE(resources[0][4]);
@@ -4054,7 +2128,7 @@ var Runtime;
                         target: _this._r.gE()
                     }));
                 });
-            }, new G.Image(resources[0][2]), new G.Image(resources[0][1]))
+            }, new G.Image(resources[0][2].o()), new G.Image(resources[0][1].o()))
                 .addEventListener('$focus', function () {
                 _this.playSE(resources[0][3]);
             }));
@@ -4072,7 +2146,7 @@ var Runtime;
                         target: _this._r.gE()
                     }));
                 });
-            }, new G.Image(resources[0][6]), new G.Image(resources[0][5]))
+            }, new G.Image(resources[0][6].o()), new G.Image(resources[0][5].o()))
                 .addEventListener('$focus', function () {
                 _this.playSE(resources[0][3]);
             }));
@@ -4089,7 +2163,7 @@ var Runtime;
                 Runtime.Resource.g(url + section['image'], raw) // 0
             ]);
             // 背景图
-            gVoiceOver.a(new G.Image(resources[1][0], section));
+            gVoiceOver.a(new G.Image(resources[1][0].o(), section));
             section = chapter['text'];
             this._f['v'] = {
                 s: section['shadow'],
@@ -4107,7 +2181,7 @@ var Runtime;
                 Runtime.Resource.g(url + section['image'], raw) // 0
             ]);
             // 背景图
-            gMonolog.a(new G.Image(resources[2][0], section))
+            gMonolog.a(new G.Image(resources[2][0].o(), section))
                 .a(new G.Sprite(chapter['avatar'])
                 .i('a'));
             section = chapter['name'];
@@ -4135,7 +2209,7 @@ var Runtime;
                 Runtime.Resource.g(url + section['image'], raw) // 0
             ]);
             // 背景图
-            gSpeak.a(new G.Image(resources[3][0], section))
+            gSpeak.a(new G.Image(resources[3][0].o(), section))
                 .a(new G.Sprite(chapter['avatar'])
                 .i('a'));
             section = chapter['name'];
@@ -4163,7 +2237,7 @@ var Runtime;
                 Runtime.Resource.g(url + section['image'], raw) // 0
             ]);
             // 背景图
-            gTip.a(new G.Image(resources[4][0], section));
+            gTip.a(new G.Image(resources[4][0].o(), section));
             section = chapter['text'];
             this._f['t'] = {
                 s: section['shadow'],
@@ -4172,7 +2246,7 @@ var Runtime;
             };
             ;
             // 文字区域
-            gTip.a(new G.Text(section, 32, Core.ITextElement.Align.Center)
+            gTip.a(new G.Text(section, 32, G.Text.Align.Center)
                 .i('w'));
             // -------- choose --------
             chapter = theme['choose'];
@@ -4212,7 +2286,7 @@ var Runtime;
                 gMenuSlots.o(0);
                 gMenuFeatures.o(1);
                 gMenu.o(1);
-            }, new G.Image(resources[6][1]), new G.Image(resources[6][0]))).i('$.'), 'A');
+            }, new G.Image(resources[6][1].o()), new G.Image(resources[6][0].o()))).i('$.'), 'A');
             section = chapter['back'];
             resources[6].push(Runtime.Resource.g(url + section['image'], raw), // 2
             Runtime.Resource.g(url + section['hover'], raw) // 3
@@ -4223,7 +2297,7 @@ var Runtime;
                     _this._m.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
-            }, new G.Image(resources[6][3]), new G.Image(resources[6][2])));
+            }, new G.Image(resources[6][3].o()), new G.Image(resources[6][2].o())));
             // 返回按钮
             gMenuSlots.a(new G.Button(section).b(function () {
                 if (!gMenuWay) {
@@ -4232,7 +2306,7 @@ var Runtime;
                 }
                 gMenuSlots.o(0);
                 gMenuFeatures.o(1);
-            }, new G.Image(resources[6][3]), new G.Image(resources[6][2])));
+            }, new G.Image(resources[6][3].o()), new G.Image(resources[6][2].o())));
             section = chapter['save'];
             resources[6].push(Runtime.Resource.g(url + section['image'], raw), // 4
             Runtime.Resource.g(url + section['hover'], raw) // 5
@@ -4241,7 +2315,7 @@ var Runtime;
             gMenuFeatures.a(new G.Button(section).b(function () {
                 gMenuWay = true;
                 _this.qs(false, .4);
-            }, new G.Image(resources[6][5]), new G.Image(resources[6][4])));
+            }, new G.Image(resources[6][5].o()), new G.Image(resources[6][4].o())));
             section = chapter['load'];
             resources[6].push(Runtime.Resource.g(url + section['image'], raw), // 6
             Runtime.Resource.g(url + section['hover'], raw) // 7
@@ -4250,7 +2324,7 @@ var Runtime;
             gMenuFeatures.a(new G.Button(section).b(function () {
                 gMenuWay = true;
                 _this.qs(true, .4);
-            }, new G.Image(resources[6][7]), new G.Image(resources[6][6])));
+            }, new G.Image(resources[6][7].o()), new G.Image(resources[6][6].o())));
             section = chapter['auto'];
             resources[6].push(Runtime.Resource.g(url + section['image'], raw), // 8
             Runtime.Resource.g(url + section['hover'], raw) // 9
@@ -4259,14 +2333,14 @@ var Runtime;
             // 自动档按钮
             gMenuSlots.a(new G.Button(chapter['auto']).b(function () {
                 _this._r.l(_this._r.gS().q('auto')[0]);
-            }, new G.Image(resources[6][9]), new G.Image(resources[6][8]))
+            }, new G.Image(resources[6][9].o()), new G.Image(resources[6][8].o()))
                 .a(new G.Text(section, section['h'], right, true).i('t'))
                 .i('_'));
             // 自动档按钮（禁用状态）
             gMenuSlots.a(new G.Sprite(chapter['auto'])
-                .a(new G.Image(resources[6][8]))
+                .a(new G.Image(resources[6][8].o()))
                 .a(new G.Text(section, section['h'], right, true)
-                .a(new G.Phrase()
+                .a(new G.TextPhrase()
                 .t('无')
                 .f(chapter['disabled']['size'])
                 .c(chapter['disabled']['color']))).i('_.').o(0));
@@ -4286,14 +2360,14 @@ var Runtime;
                     _this._m.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
-            }, new G.Image(resources[6][11]), new G.Image(resources[6][10]))
+            }, new G.Image(resources[6][11].o()), new G.Image(resources[6][10].o()))
                 .a(new G.Text(section, section['h'], right, true).i('t'))
                 .i('1'));
             // 第一档按钮（禁用状态）
             gMenuSlots.a(new G.Sprite(chapter['1'])
-                .a(new G.Image(resources[6][10]))
+                .a(new G.Image(resources[6][10].o()))
                 .a(new G.Text(section, section['h'], right, true)
-                .a(new G.Phrase()
+                .a(new G.TextPhrase()
                 .t('无')
                 .f(chapter['disabled']['size'])
                 .c(chapter['disabled']['color']))).i('1.').o(0));
@@ -4301,17 +2375,17 @@ var Runtime;
             resources[6].push(Runtime.Resource.g(url + section['image'], raw) // 12
             );
             // 第二档按钮
-            gMenuSlots.a(new G.Image(resources[6][12], section));
+            gMenuSlots.a(new G.Image(resources[6][12].o(), section));
             section = chapter['3'];
             resources[6].push(Runtime.Resource.g(url + section['image'], raw) // 13
             );
             // 第三档按钮
-            gMenuSlots.a(new G.Image(resources[6][13], section));
+            gMenuSlots.a(new G.Image(resources[6][13].o(), section));
             section = chapter['4'];
             resources[6].push(Runtime.Resource.g(url + section['image'], raw) // 14
             );
             // 第二档按钮
-            gMenuSlots.a(new G.Image(resources[6][14], section));
+            gMenuSlots.a(new G.Image(resources[6][14].o(), section));
             section = chapter['enabled'];
             this._f['f'] = {
                 f: section['size'],
@@ -4407,7 +2481,7 @@ var Runtime;
             gAuto.o(load && slot ? 1 : 0);
             if (slot)
                 gAuto.q('t')[0].c()
-                    .a(new G.Phrase()
+                    .a(new G.TextPhrase()
                     .t(time(slot[1]))
                     .f(config['f'])
                     .c(config['c']));
@@ -4416,7 +2490,7 @@ var Runtime;
             g1.o(!load || slot ? 1 : 0);
             if (slot)
                 g1.q('t')[0].c()
-                    .a(new G.Phrase()
+                    .a(new G.TextPhrase()
                     .t(time(slot[1]))
                     .f(config['f'])
                     .c(config['c']));
@@ -4455,7 +2529,7 @@ var Runtime;
             element.c();
             for (ii = 0; ii < words.length; ii++) {
                 if ('【' == words[ii] && !hilite) {
-                    element.a(new G.Phrase()
+                    element.a(new G.TextPhrase()
                         .t(buffer)
                         .f(28)
                         .c(font['c'])
@@ -4464,7 +2538,7 @@ var Runtime;
                     hilite = true;
                 }
                 else if ('】' == words[ii] && hilite) {
-                    element.a(new G.Phrase()
+                    element.a(new G.TextPhrase()
                         .t(buffer)
                         .f(28)
                         .c(font['h'])
@@ -4476,7 +2550,7 @@ var Runtime;
                     buffer += words[ii];
             }
             if (buffer)
-                element.a(new G.Phrase()
+                element.a(new G.TextPhrase()
                     .t(buffer)
                     .f(28)
                     .c(font[hilite ? 'h' : 'c'])

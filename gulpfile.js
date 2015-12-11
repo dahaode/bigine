@@ -32,8 +32,9 @@ $gulp.task('dist', function () {
             })));
     return ts.js
         .pipe($replace(/\$\{BIGINE_VERSION\}/, pkg.version))
-        .pipe($insert.prepend('var __Bigine_Util = require("bigine.util");\n'))
-        .pipe($insert.append('module.exports = Bigine;'))
+        .pipe($insert.prepend('var __Bigine_Util = require("bigine.util");\n' +
+            'var __Bigine_C2D = require("bigine.c2d");\n'
+        )).pipe($insert.append('module.exports = Bigine;'))
         .pipe($smap.write('.'))
         .pipe($gulp.dest('var/build'));
 });
@@ -48,10 +49,17 @@ $gulp.task('tsd', ['lint'], function () {
         .pipe($replace('\n', '\n    '))
         .pipe($replace('    /// <', '/// <'))
         .pipe($replace('        import Util = __Bigine_Util;\n', ''))
+        .pipe($replace('        import G = __Bigine_C2D;\n', ''))
         .pipe($replace('declare ', ''))
-        .pipe($replace(/_raf.d.ts" \/>\n/, "$&declare namespace __Bigine {\n    import Util = __Bigine_Util;\n"))
-        .pipe($insert.append('}\n\ndeclare module "bigine" {\n    export = __Bigine.Bigine;\n}\n'))
-        .pipe($replace('\n    }\n    }\n', '\n    }\n}\n'))
+        .pipe($replace(/tsd.d.ts" \/>\n/, '$&declare namespace __Bigine {\n' +
+            '    import Util = __Bigine_Util;\n' +
+            '    import G = __Bigine_C2D;\n'
+        )).pipe($insert.append('}\n' +
+            '\n' +
+            'declare module "bigine" {\n' +
+            '    export = __Bigine.Bigine;\n' +
+            '}\n'
+        )).pipe($replace(/(\n {4}\}){2}\n/, '\n    }\n}\n'))
         .pipe($gulp.dest('.'));
 });
 
@@ -60,6 +68,7 @@ $gulp.task('bundle', ['dist'], function () {
             detectGlobals: false
         })
         .require('bigine.util')
+        .require('bigine.c2d')
         .require('./var/build/' + pkg.name, {
             expose: 'bigine'
         })
@@ -75,6 +84,7 @@ $gulp.task('minify', ['dist'], function () {
             detectGlobals: false
         })
         .require('bigine.util')
+        .require('bigine.c2d')
         .require('./var/build/' + pkg.name, {
             expose: 'bigine'
         })

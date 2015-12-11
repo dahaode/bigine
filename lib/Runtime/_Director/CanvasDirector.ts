@@ -7,8 +7,8 @@
  * @file      Runtime/_Director/CanvasDirector.ts
  */
 
+/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="Director.ts" />
-/// <reference path="../../G/_pack.ts" />
 /// <reference path="../Event/Resume.ts" />
 /// <reference path="../Event/Save.ts" />
 
@@ -52,12 +52,13 @@
  */
 namespace Runtime {
     import Util = __Bigine_Util;
+    import G = __Bigine_C2D;
 
     export class CanvasDirector extends Director {
         /**
          * 尺寸。
          */
-        public static BOUNDS: Core.IBounds = {
+        public static BOUNDS: G.IBounds = {
             x: 0,
             y: 0,
             w: 1280,
@@ -67,7 +68,7 @@ namespace Runtime {
         /**
          * 画板。
          */
-        private _c: Core.IStage;
+        private _c: G.Stage;
 
         /**
          * 声音。
@@ -87,17 +88,17 @@ namespace Runtime {
         /**
          * 自动播放相关动画。
          */
-        private _t: Core.IAnimation;
+        private _t: G.Animation;
 
         /**
          * 阻塞类相关动画。
          */
-        private _h: Core.IAnimation;
+        private _h: G.Animation;
 
         /**
          * 菜单暂停相关动画。
          */
-        private _m: Core.IAnimation;
+        private _m: G.Animation;
 
         /**
          * 阻塞类 Promise 。
@@ -123,7 +124,8 @@ namespace Runtime {
                 els: NodeList | HTMLElement[] = doc.querySelectorAll('.bg-work'),
                 canvas: HTMLCanvasElement = doc.createElement('canvas'),
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
-                bounds: Core.IBounds = CanvasDirector.BOUNDS;
+                bounds: G.IBounds = CanvasDirector.BOUNDS,
+                assets: string = '//s.dahao.de/theme/_/';
             canvas.width = bounds.w;
             canvas.height = bounds.h;
             canvas.className = 'viewport';
@@ -158,14 +160,14 @@ namespace Runtime {
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
             this._i = {
-                o: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/logo.png', raw),
-                e: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/thx.png', raw),
-                s: Resource.g<string>('//s.dahao.de/theme/_/oops.mp3', raw),
-                s3: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/3stars.png', raw),
-                s2: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/2stars.png', raw),
-                s1: Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/1star.png', raw),
-                f: Resource.g<string>('//s.dahao.de/theme/_/focus.mp3', raw),
-                c: Resource.g<string>('//s.dahao.de/theme/_/click.mp3', raw)
+                o: Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
+                e: Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
+                s: Resource.g<string>(assets + 'oops.mp3', raw),
+                s3: Resource.g<HTMLImageElement>(assets + '3stars.png', raw),
+                s2: Resource.g<HTMLImageElement>(assets + '2stars.png', raw),
+                s1: Resource.g<HTMLImageElement>(assets + '1star.png', raw),
+                f: Resource.g<string>(assets + 'focus.mp3', raw),
+                c: Resource.g<string>(assets + 'click.mp3', raw)
             };
             this._f = {};
             this._e = [0, 0];
@@ -184,7 +186,7 @@ namespace Runtime {
         public c(resources: Resource<string | HTMLImageElement>[][]): Promise<void> {
             var gLoading: G.Sprite = <G.Sprite> this._c.q('L')[0],
                 gElapsed: G.Element = gLoading.q('e')[0],
-                bounds: Core.IBounds = CanvasDirector.BOUNDS,
+                bounds: G.IBounds = CanvasDirector.BOUNDS,
                 progress: (done: boolean) => void = (done: boolean) => {
                     var e: [number, number] = this._e;
                     e[0 + <any> done]++;
@@ -211,9 +213,9 @@ namespace Runtime {
          */
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
             if (title) {
-                (<Core.ITextElement> (<Core.ISprite> this._c.q('S')[0]).q('t')[0])
+                (<G.Text> (<G.Sprite> this._c.q('S')[0]).q('t')[0])
                     .c()
-                    .a(new G.Phrase()
+                    .a(new G.TextPhrase()
                         .t(title)
                         .c(<string> this._f['n']['c'])
                         .f(<number> this._f['n']['f']));
@@ -221,8 +223,8 @@ namespace Runtime {
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
-                    var gLogo: G.Image = new G.Image(this._i['o'], CanvasDirector.BOUNDS),
-                        gEntry: Core.IGraphicElement = this._c.q('$.')[0];
+                    var gLogo: G.Image = new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS),
+                        gEntry: G.Element = this._c.q('$.')[0];
                     this._c.z()
                         .a(gLogo, 'C');
                     gEntry.o(0);
@@ -232,10 +234,10 @@ namespace Runtime {
                         .then(() => {
                             this._c.e(gLogo);
                             if (!author) return;
-                            var gAuthor: Core.ISprite = <Core.ISprite> this._c.q('A')[0].o(1);
-                            (<Core.ITextElement> gAuthor.q('t')[0])
+                            var gAuthor: G.Sprite = <G.Sprite> this._c.q('A')[0].o(1);
+                            (<G.Text> gAuthor.q('t')[0])
                                 .c()
-                                .a(new G.Phrase()
+                                .a(new G.TextPhrase()
                                     .t(author)
                                     .c(<string> this._f['a']['c'])
                                     .f(<number> this._f['a']['f']));
@@ -260,7 +262,7 @@ namespace Runtime {
         public ED(): Promise<Core.IRuntime> {
             return this.c([[this._i['e']]])
                 .then(() => {
-                    var gED: G.Image = new G.Image(this._i['e'], CanvasDirector.BOUNDS);
+                    var gED: G.Image = new G.Image(this._i['e'].o(), CanvasDirector.BOUNDS);
                     this.playBGM();
                     this.playSE();
                     return this.lightOff()
@@ -284,7 +286,7 @@ namespace Runtime {
         public charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             var states: Core.IStates = this._r.gS(),
                 gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
-                gCG: Core.IGraphicElement = this._c.q('g')[0],
+                gCG: G.Element = this._c.q('g')[0],
                 kamount: string = '$c',
                 gChar: G.Image = this.$c(resource, position);
             states.s(kamount, 1 + (<number> states.g(kamount) || 0));
@@ -326,7 +328,7 @@ namespace Runtime {
             var states: Core.IStates = this._r.gS(),
                 kamount: string = '$c',
                 gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
-                gCG: Core.IGraphicElement = this._c.q('g')[0],
+                gCG: G.Element = this._c.q('g')[0],
                 gChar: G.Element = gChars.q(<any> position)[0];
             if (gChar) {
                 gChars.e(gChar);
@@ -379,7 +381,7 @@ namespace Runtime {
          * 创建立绘。
          */
         protected $c(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image {
-            var bounds: Core.IBounds = CanvasDirector.BOUNDS,
+            var bounds: G.IBounds = CanvasDirector.BOUNDS,
                 pos: typeof Core.IDirector.Position = Core.IDirector.Position,
                 w: number = 0 | bounds.h / 3 * 2,
                 x: number;
@@ -400,7 +402,7 @@ namespace Runtime {
                     x = 800;
                     break;
             }
-            return <G.Image> new G.Image(resource, x, 0, w, bounds.h)
+            return <G.Image> new G.Image(resource.o(), x, 0, w, bounds.h)
                 .i(<any> position)
                 .o(0);
         }
@@ -415,9 +417,9 @@ namespace Runtime {
                 gName: G.Text = <G.Text> gFrame.q('n')[0],
                 gWords: G.Text = <G.Text> gFrame.q('w')[0];
             if (avatar && gAvatar)
-                gAvatar.a(new G.Image(avatar, gAvatar.gB(), true));
+                gAvatar.a(new G.Image(avatar.o(), gAvatar.gB(), true));
             if (who && gName)
-                gName.a(new G.Phrase()
+                gName.a(new G.TextPhrase()
                     .t(who)
                     .f(42)
                     .c(<string> this._f[code + 'n']['c'])
@@ -490,7 +492,7 @@ namespace Runtime {
             }
             return this.c([[this._i[key]]])
                 .then(() => {
-                    var gStars: G.Image = new G.Image(this._i[key], CanvasDirector.BOUNDS);
+                    var gStars: G.Image = new G.Image(this._i[key].o(), CanvasDirector.BOUNDS);
                     return this.lightOff()
                         .then(() => {
                             this._c.a(gStars, 'C');
@@ -549,7 +551,7 @@ namespace Runtime {
         public hideCG(): Promise<Core.IRuntime> {
             return super.hideCG().then((runtime: Core.IRuntime) => {
                 var gCG: G.Sprite = <G.Sprite> this._c.q('g')[0],
-                    gChars: Core.IGraphicElement = this._c.q('c')[0],
+                    gChars: G.Element = this._c.q('c')[0],
                     gImage: G.Element = gCG.q('p')[0];
                 return Promise.all([
                     gChars.p(new G.FadeIn(500)),
@@ -568,10 +570,10 @@ namespace Runtime {
          */
         public showCG(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             return super.showCG(resource).then((runtime: Core.IRuntime) => {
-                var bounds: Core.IBounds = CanvasDirector.BOUNDS,
-                    gChars: Core.IGraphicElement = this._c.q('c')[0],
+                var bounds: G.IBounds = CanvasDirector.BOUNDS,
+                    gChars: G.Element = this._c.q('c')[0],
                     gCG: G.Sprite = <G.Sprite> this._c.q('g')[0],
-                    gImage: G.Element = new G.Image(resource, bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p');
+                    gImage: G.Element = new G.Image(resource.o(), bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p');
                 gCG.a(gImage);
                 return this.lightOn()
                     .then(() => {
@@ -588,9 +590,9 @@ namespace Runtime {
          */
         public asRoom(resource: Resource<HTMLImageElement>, time: boolean = false): Promise<Core.IRuntime> {
             return super.asRoom(resource).then((runtime: Core.IRuntime) => {
-                var gCurtain: Core.IGraphicElement = this._c.q('C')[0],
-                    gOld: Core.IGraphicElement = this._c.q('b')[0],
-                    gNew: G.Element = new G.Image(resource, CanvasDirector.BOUNDS).i('b')
+                var gCurtain: G.Element = this._c.q('C')[0],
+                    gOld: G.Element = this._c.q('b')[0],
+                    gNew: G.Element = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
                         .o(0);
                 this._c.a(gNew, 'M');
                 if (!time || gCurtain.gO()) {
@@ -611,7 +613,7 @@ namespace Runtime {
         public asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime> {
             var gMap: G.Sprite = <G.Sprite> this._c.q('M')[0],
                 gPoints: [number, G.Button][] = [],
-                bounds: Core.IBounds = CanvasDirector.BOUNDS,
+                bounds: G.IBounds = CanvasDirector.BOUNDS,
                 gPoint: G.Button,
                 z: number,
                 added: boolean;
@@ -621,7 +623,7 @@ namespace Runtime {
                     .b(() => {
                         this.playSE(this._i['c']);
                         point.p(this._r);
-                    }, new G.Image(point.o(), bounds, true))
+                    }, new G.Image(point.o().o(), bounds, true))
                     .addEventListener('$focus', () => {
                         this.playSE(this._i['f']);
                     });
@@ -646,7 +648,7 @@ namespace Runtime {
          * 关灯（落幕）。
          */
         public lightOff(): Promise<Core.IRuntime> {
-            var gCurtain: Core.IGraphicElement = this._c.q('C')[0];
+            var gCurtain: G.Element = this._c.q('C')[0];
             if (gCurtain.gO())
                 return this._p;
             return gCurtain.p(new G.FadeIn(500))
@@ -657,7 +659,7 @@ namespace Runtime {
          * 开灯（开幕）。
          */
         public lightOn(): Promise<Core.IRuntime> {
-            var gCurtain: Core.IGraphicElement = this._c.q('C')[0];
+            var gCurtain: G.Element = this._c.q('C')[0];
             if (!gCurtain.gO())
                 return this._p;
             return gCurtain.p(new G.FadeOut(500))
@@ -696,11 +698,11 @@ namespace Runtime {
                                 anime.h();
                                 option.p(this._r);
                                 resolve(gOptions);
-                            }, new G.Image(this._i['ch']), new G.Image(this._i['cn']))
+                            }, new G.Image(this._i['ch'].o()), new G.Image(this._i['cn'].o()))
                             .addEventListener('$focus', () => {
                                 this.playSE(this._i['f']);
-                            }).a(new G.Text(0, 0, w, h, h / 2 + 16, Core.ITextElement.Align.Center)
-                                .a(new G.Phrase()
+                            }).a(new G.Text(0, 0, w, h, h / 2 + 16, G.Text.Align.Center)
+                                .a(new G.TextPhrase()
                                     .t(option.gT())
                                     .f(32)
                                     .c(<string> this._f['c']['c'])
@@ -726,7 +728,7 @@ namespace Runtime {
          */
         public reset(): Promise<Core.IRuntime> {
             return super.reset().then((runtime: Core.IRuntime) => {
-                var gBack: Core.IGraphicElement = this._c.q('b')[0],
+                var gBack: G.Element = this._c.q('b')[0],
                     gColor: G.Color = new G.Color(CanvasDirector.BOUNDS, '#000');
                 this._c.a(gColor, gBack)
                     .e(gBack);
@@ -750,8 +752,8 @@ namespace Runtime {
          */
         public setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime> {
             return super.setCG(resource).then((runtime: Core.IRuntime) => {
-                var bounds: Core.IBounds = CanvasDirector.BOUNDS;
-                (<G.Sprite> this._c.q('g')[0]).a(new G.Image(resource, bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p'))
+                var bounds: G.IBounds = CanvasDirector.BOUNDS;
+                (<G.Sprite> this._c.q('g')[0]).a(new G.Image(resource.o(), bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p'))
                     .o(1);
                 return runtime;
             });
@@ -765,10 +767,10 @@ namespace Runtime {
                 chapter: Util.IHashTable<any>  = theme['author'],
                 section: Util.IHashTable<any>  = chapter['director'],
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
-                bounds: Core.IBounds = CanvasDirector.BOUNDS,
+                bounds: G.IBounds = CanvasDirector.BOUNDS,
                 resources: Resource<string | HTMLImageElement>[][] = [],
-                align: (desc: string) => Core.ITextElement.Align = (desc: string) => {
-                    var aligns: typeof Core.ITextElement.Align = Core.ITextElement.Align;
+                align: (desc: string) => G.Text.Align = (desc: string) => {
+                    var aligns: typeof G.Text.Align = G.Text.Align;
                     switch (desc) {
                         case 'center':
                         case 'middle':
@@ -787,15 +789,15 @@ namespace Runtime {
                 gTip: G.Sprite = <G.Sprite> this._c.q('t')[0],
                 gMenu: G.Sprite = <G.Sprite> this._c.q('$')[0],
                 gMenuWay: boolean = false,
-                right: Core.ITextElement.Align = Core.ITextElement.Align.Right,
+                right: G.Text.Align = G.Text.Align.Right,
                 gMenuEntry: G.Button,
                 gMenuMask: G.Color,
                 gMenuFeatures: G.Sprite,
                 gMenuSlots: G.Sprite,
                 gChoose: G.Sprite;
             // 作品
-            gAuthor.a(new G.Text(<Core.IBounds> section, section['h'], align(section['align']))
-                .a(new G.Phrase()
+            gAuthor.a(new G.Text(<G.IBounds> section, section['h'], align(section['align']))
+                .a(new G.TextPhrase()
                     .c(section['color'])
                     .f(section['size'])
                     .t('作品'))
@@ -806,7 +808,7 @@ namespace Runtime {
                 f: section['size']
             };
             // 作者名
-            gAuthor.a(new G.Text(<Core.IBounds> section, section['h'], align(section['align'])).i('t'));
+            gAuthor.a(new G.Text(<G.IBounds> section, section['h'], align(section['align'])).i('t'));
             // -------- start --------
             chapter = theme['start'];
             section = chapter['new'];
@@ -818,9 +820,9 @@ namespace Runtime {
                 this._i['c'] // 4
             ]);
             // 背景图
-            gStart.a(new G.Image(resources[0][0], bounds))
+            gStart.a(new G.Image(resources[0][0].o(), bounds))
                 // 开始按钮
-                .a(new G.Button(<Core.IBounds> section)
+                .a(new G.Button(<G.IBounds> section)
                     .b(() => {
                         this.playSE(resources[0][4]);
                         this.lightOff().then(() => {
@@ -829,7 +831,7 @@ namespace Runtime {
                                 target: this._r.gE()
                             }));
                         });
-                    }, new G.Image(resources[0][2]), new G.Image(resources[0][1]))
+                    }, new G.Image(resources[0][2].o()), new G.Image(resources[0][1].o()))
                     .addEventListener('$focus', () => {
                         this.playSE(resources[0][3]);
                     })
@@ -840,7 +842,7 @@ namespace Runtime {
                 Resource.g<HTMLImageElement>(url + section['hover'], raw) // 6
             );
             // 读档按钮
-            gStart.a(new G.Button(<Core.IBounds> section)
+            gStart.a(new G.Button(<G.IBounds> section)
                 .b(() => {
                     this.playSE(resources[0][4]);
                     this.lightOff().then(() => {
@@ -849,7 +851,7 @@ namespace Runtime {
                             target: this._r.gE()
                         }));
                     });
-                }, new G.Image(resources[0][6]), new G.Image(resources[0][5]))
+                }, new G.Image(resources[0][6].o()), new G.Image(resources[0][5].o()))
                 .addEventListener('$focus', () => {
                     this.playSE(resources[0][3]);
                 })
@@ -859,7 +861,7 @@ namespace Runtime {
                 c: section['color'],
                 f: section['size']
             };
-            gStart.a(new G.Text(<Core.IBounds> section, section['h'], align(section['align'])).i('t'));
+            gStart.a(new G.Text(<G.IBounds> section, section['h'], align(section['align'])).i('t'));
             // -------- voiceover --------
             chapter = theme['voiceover'];
             section = chapter['back'];
@@ -867,7 +869,7 @@ namespace Runtime {
                 Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
             ]);
             // 背景图
-            gVoiceOver.a(new G.Image(resources[1][0], <Core.IBounds> section));
+            gVoiceOver.a(new G.Image(resources[1][0].o(), <G.IBounds> section));
             section = chapter['text'];
             this._f['v'] = {
                 s: section['shadow'],
@@ -876,7 +878,7 @@ namespace Runtime {
             };
             ;
             // 文字区域
-            gVoiceOver.a(new G.Text(<Core.IBounds> section, 32)
+            gVoiceOver.a(new G.Text(<G.IBounds> section, 32)
                 .i('w')
             );
             // -------- monolog --------
@@ -886,9 +888,9 @@ namespace Runtime {
                 Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
             ]);
             // 背景图
-            gMonolog.a(new G.Image(resources[2][0], <Core.IBounds> section))
+            gMonolog.a(new G.Image(resources[2][0].o(), <G.IBounds> section))
                 // 头像区域
-                .a(new G.Sprite(<Core.IBounds> chapter['avatar'])
+                .a(new G.Sprite(<G.IBounds> chapter['avatar'])
                     .i('a')
                 );
             section = chapter['name'];
@@ -897,7 +899,7 @@ namespace Runtime {
                 c: section['color']
             };
             // 名字区域
-            gMonolog.a(new G.Text(<Core.IBounds> section, 42)
+            gMonolog.a(new G.Text(<G.IBounds> section, 42)
                 .i('n')
             );
             section = chapter['text'];
@@ -908,7 +910,7 @@ namespace Runtime {
             };
             ;
             // 文字区域
-            gMonolog.a(new G.Text(<Core.IBounds> section, 32)
+            gMonolog.a(new G.Text(<G.IBounds> section, 32)
                 .i('w')
             );
             // -------- speak --------
@@ -918,9 +920,9 @@ namespace Runtime {
                 Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
             ]);
             // 背景图
-            gSpeak.a(new G.Image(resources[3][0], <Core.IBounds> section))
+            gSpeak.a(new G.Image(resources[3][0].o(), <G.IBounds> section))
                 // 头像区域
-                .a(new G.Sprite(<Core.IBounds> chapter['avatar'])
+                .a(new G.Sprite(<G.IBounds> chapter['avatar'])
                     .i('a')
                 );
             section = chapter['name'];
@@ -929,7 +931,7 @@ namespace Runtime {
                 c: section['color']
             };
             // 名字区域
-            gSpeak.a(new G.Text(<Core.IBounds> section, 42)
+            gSpeak.a(new G.Text(<G.IBounds> section, 42)
                 .i('n')
             );
             section = chapter['text'];
@@ -940,7 +942,7 @@ namespace Runtime {
             };
             ;
             // 文字区域
-            gSpeak.a(new G.Text(<Core.IBounds> section, 32)
+            gSpeak.a(new G.Text(<G.IBounds> section, 32)
                 .i('w')
             );
             // -------- tip --------
@@ -950,7 +952,7 @@ namespace Runtime {
                 Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
             ]);
             // 背景图
-            gTip.a(new G.Image(resources[4][0], <Core.IBounds> section));
+            gTip.a(new G.Image(resources[4][0].o(), <G.IBounds> section));
             section = chapter['text'];
             this._f['t'] = {
                 s: section['shadow'],
@@ -959,7 +961,7 @@ namespace Runtime {
             };
             ;
             // 文字区域
-            gTip.a(new G.Text(<Core.IBounds> section, 32, Core.ITextElement.Align.Center)
+            gTip.a(new G.Text(<G.IBounds> section, 32, G.Text.Align.Center)
                 .i('w')
             );
             // -------- choose --------
@@ -992,7 +994,7 @@ namespace Runtime {
                 Resource.g<HTMLImageElement>(url + section['hover'], raw) // 1
             ]);
             // 入口按钮
-            this._c.a((gMenuEntry = new G.Button(<Core.IBounds> section).b(() => {
+            this._c.a((gMenuEntry = new G.Button(<G.IBounds> section).b(() => {
                 if (this._m)
                     this._m.w();
                 gMenuEntry.o(0);
@@ -1000,48 +1002,48 @@ namespace Runtime {
                 gMenuSlots.o(0);
                 gMenuFeatures.o(1);
                 gMenu.o(1);
-            }, new G.Image(resources[6][1]), new G.Image(resources[6][0]))).i('$.'), 'A');
+            }, new G.Image(resources[6][1].o()), new G.Image(resources[6][0].o()))).i('$.'), 'A');
             section = chapter['back'];
             resources[6].push(
                 Resource.g<HTMLImageElement>(url + section['image'], raw), // 2
                 Resource.g<HTMLImageElement>(url + section['hover'], raw) // 3
             );
             // 关闭按钮
-            gMenuFeatures.a(new G.Button(<Core.IBounds> section).b(() => {
+            gMenuFeatures.a(new G.Button(<G.IBounds> section).b(() => {
                 if (this._m)
                     this._m.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
-            }, new G.Image(resources[6][3]), new G.Image(resources[6][2])));
+            }, new G.Image(resources[6][3].o()), new G.Image(resources[6][2].o())));
             // 返回按钮
-            gMenuSlots.a(new G.Button(<Core.IBounds> section).b(() => {
+            gMenuSlots.a(new G.Button(<G.IBounds> section).b(() => {
                 if (!gMenuWay) {
                     this.qh(false);
                     return;
                 }
                 gMenuSlots.o(0);
                 gMenuFeatures.o(1);
-            }, new G.Image(resources[6][3]), new G.Image(resources[6][2])));
+            }, new G.Image(resources[6][3].o()), new G.Image(resources[6][2].o())));
             section = chapter['save'];
             resources[6].push(
                 Resource.g<HTMLImageElement>(url + section['image'], raw), // 4
                 Resource.g<HTMLImageElement>(url + section['hover'], raw) // 5
             );
             // 存档按钮
-            gMenuFeatures.a(new G.Button(<Core.IBounds> section).b(() => {
+            gMenuFeatures.a(new G.Button(<G.IBounds> section).b(() => {
                 gMenuWay = true;
                 this.qs(false, .4);
-            }, new G.Image(resources[6][5]), new G.Image(resources[6][4])));
+            }, new G.Image(resources[6][5].o()), new G.Image(resources[6][4].o())));
             section = chapter['load'];
             resources[6].push(
                 Resource.g<HTMLImageElement>(url + section['image'], raw), // 6
                 Resource.g<HTMLImageElement>(url + section['hover'], raw) // 7
             );
             // 读档按钮
-            gMenuFeatures.a(new G.Button(<Core.IBounds> section).b(() => {
+            gMenuFeatures.a(new G.Button(<G.IBounds> section).b(() => {
                 gMenuWay = true;
                 this.qs(true, .4);
-            }, new G.Image(resources[6][7]), new G.Image(resources[6][6])));
+            }, new G.Image(resources[6][7].o()), new G.Image(resources[6][6].o())));
             section = chapter['auto'];
             resources[6].push(
                 Resource.g<HTMLImageElement>(url + section['image'], raw), // 8
@@ -1049,17 +1051,17 @@ namespace Runtime {
             );
             section = chapter['autotext'];
             // 自动档按钮
-            gMenuSlots.a(new G.Button(<Core.IBounds> chapter['auto']).b(() => {
+            gMenuSlots.a(new G.Button(<G.IBounds> chapter['auto']).b(() => {
                 this._r.l(this._r.gS().q('auto')[0]);
-            }, new G.Image(resources[6][9]), new G.Image(resources[6][8]))
-                .a(new G.Text(<Core.IBounds> section, section['h'], right, true).i('t'))
+            }, new G.Image(resources[6][9].o()), new G.Image(resources[6][8].o()))
+                .a(new G.Text(<G.IBounds> section, section['h'], right, true).i('t'))
                 .i('_')
             );
             // 自动档按钮（禁用状态）
-            gMenuSlots.a(new G.Sprite(<Core.IBounds> chapter['auto'])
-                .a(new G.Image(resources[6][8]))
-                .a(new G.Text(<Core.IBounds> section, section['h'], right, true)
-                    .a(new G.Phrase()
+            gMenuSlots.a(new G.Sprite(<G.IBounds> chapter['auto'])
+                .a(new G.Image(resources[6][8].o()))
+                .a(new G.Text(<G.IBounds> section, section['h'], right, true)
+                    .a(new G.TextPhrase()
                         .t('无')
                         .f(chapter['disabled']['size'])
                         .c(chapter['disabled']['color'])
@@ -1073,7 +1075,7 @@ namespace Runtime {
             );
             section = chapter['1text'];
             // 第一档按钮
-            gMenuSlots.a(new G.Button(<Core.IBounds> chapter['1']).b(() => {
+            gMenuSlots.a(new G.Button(<G.IBounds> chapter['1']).b(() => {
                 if (this._o) {
                     this._r.l(this._r.gS().q('1')[0]);
                     return;
@@ -1083,15 +1085,15 @@ namespace Runtime {
                     this._m.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
-            }, new G.Image(resources[6][11]), new G.Image(resources[6][10]))
-                .a(new G.Text(<Core.IBounds> section, section['h'], right, true).i('t'))
+            }, new G.Image(resources[6][11].o()), new G.Image(resources[6][10].o()))
+                .a(new G.Text(<G.IBounds> section, section['h'], right, true).i('t'))
                 .i('1')
             );
             // 第一档按钮（禁用状态）
-            gMenuSlots.a(new G.Sprite(<Core.IBounds> chapter['1'])
-                .a(new G.Image(resources[6][10]))
-                .a(new G.Text(<Core.IBounds> section, section['h'], right, true)
-                    .a(new G.Phrase()
+            gMenuSlots.a(new G.Sprite(<G.IBounds> chapter['1'])
+                .a(new G.Image(resources[6][10].o()))
+                .a(new G.Text(<G.IBounds> section, section['h'], right, true)
+                    .a(new G.TextPhrase()
                         .t('无')
                         .f(chapter['disabled']['size'])
                         .c(chapter['disabled']['color'])
@@ -1103,19 +1105,19 @@ namespace Runtime {
                 Resource.g<HTMLImageElement>(url + section['image'], raw) // 12
             );
             // 第二档按钮
-            gMenuSlots.a(new G.Image(resources[6][12], <Core.IBounds> section));
+            gMenuSlots.a(new G.Image(resources[6][12].o(), <G.IBounds> section));
             section = chapter['3'];
             resources[6].push(
                 Resource.g<HTMLImageElement>(url + section['image'], raw) // 13
             );
             // 第三档按钮
-            gMenuSlots.a(new G.Image(resources[6][13], <Core.IBounds> section));
+            gMenuSlots.a(new G.Image(resources[6][13].o(), <G.IBounds> section));
             section = chapter['4'];
             resources[6].push(
                 Resource.g<HTMLImageElement>(url + section['image'], raw) // 14
             );
             // 第二档按钮
-            gMenuSlots.a(new G.Image(resources[6][14], <Core.IBounds> section));
+            gMenuSlots.a(new G.Image(resources[6][14].o(), <G.IBounds> section));
             section = chapter['enabled'];
             this._f['f'] = {
                 f: section['size'],
@@ -1208,7 +1210,7 @@ namespace Runtime {
          */
         public qs(load: boolean = true, opacity: number = 1): Promise<Core.IRuntime> {
             super.qs(load, opacity);
-            var gEntry: Core.IGraphicElement = this._c.q('$.')[0],
+            var gEntry: G.Element = this._c.q('$.')[0],
                 gMenu: G.Sprite = <G.Sprite> this._c.q('$')[0],
                 gMask: G.Element = gMenu.q('m')[0],
                 gFeatures: G.Sprite = <G.Sprite> gMenu.q('f')[0],
@@ -1235,7 +1237,7 @@ namespace Runtime {
             gAuto.o(load && slot ? 1 : 0);
             if (slot)
                 (<G.Text> gAuto.q('t')[0]).c()
-                    .a(new G.Phrase()
+                    .a(new G.TextPhrase()
                         .t(time(slot[1]))
                         .f(<number> config['f'])
                         .c(<string> config['c'])
@@ -1245,7 +1247,7 @@ namespace Runtime {
             g1.o(!load || slot ? 1 : 0);
             if (slot)
                 (<G.Text> g1.q('t')[0]).c()
-                    .a(new G.Phrase()
+                    .a(new G.TextPhrase()
                         .t(time(slot[1]))
                         .f(<number> config['f'])
                         .c(<string> config['c'])
@@ -1289,7 +1291,7 @@ namespace Runtime {
             element.c();
             for (ii = 0; ii < words.length; ii++) {
                 if ('【' == words[ii] && !hilite) {
-                    element.a(new G.Phrase()
+                    element.a(new G.TextPhrase()
                         .t(buffer)
                         .f(28)
                         .c(<string> font['c'])
@@ -1298,7 +1300,7 @@ namespace Runtime {
                     buffer = '';
                     hilite = true;
                 } else if ('】' == words[ii] && hilite) {
-                    element.a(new G.Phrase()
+                    element.a(new G.TextPhrase()
                         .t(buffer)
                         .f(28)
                         .c(<string> font['h'])
@@ -1310,7 +1312,7 @@ namespace Runtime {
                     buffer += words[ii];
             }
             if (buffer)
-                element.a(new G.Phrase()
+                element.a(new G.TextPhrase()
                     .t(buffer)
                     .f(28)
                     .c(<string> font[hilite ? 'h' : 'c'])
