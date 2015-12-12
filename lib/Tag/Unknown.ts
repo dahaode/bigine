@@ -75,9 +75,16 @@ namespace Tag {
             } else if (1 == schema[2] && !content.length)
                 throw new E(E.TAG_CONTENT_REQUIRED, lineNo);
             this._c = content;
-            Util.each<number[]>(schema[3] || {}, (value: number[], index: number) => {
-                var counter: number[] = value.slice(0);
-                counter[2] = 0;
+            Util.each<number[]>(schema[3] || {}, (value: number[] | number, index: number) => {
+                var counter: number[];
+                if ('number' == typeof value) {
+                    counter = [<number> value, <number> value];
+                } else {
+                    counter = (<number[]> value).slice(0);
+                    if (1 == counter.length)
+                        counter[1] = Infinity;
+                }
+                counter[2] = counter[3] = 0;
                 contraints[index] = counter;
             });
             Util.each(children, (tag: Unknown) => {
@@ -85,10 +92,14 @@ namespace Tag {
                 if (!(index in contraints))
                     throw new E(E.SCHEMA_CHILD_NOT_ALLOWED, tag.gL());
                 contraints[index][2]++;
+                contraints[index][3] = tag.gL();
                 tag.$u(this);
             });
-            Util.every(contraints, (counter: number[]) => {
-                return true;
+            Util.each(contraints, (counter: number[]) => {
+                if (-1 != counter[0] && counter[0] > counter[2])
+                    throw new E(E.TAG_CHILDREN_TOO_FEW, counter[3] || lineNo);
+                if (counter[1] < counter[2])
+                    throw new E(E.TAG_CHILDREN_TOO_MANY, counter[3]);
             });
             this._s = children;
         }

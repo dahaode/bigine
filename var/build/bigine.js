@@ -2839,7 +2839,7 @@ var Tag;
         '-1': ['Root', 0, -1, {
                 54: [0, 1],
                 55: [0, 1],
-                56: [0, 1],
+                56: 1,
                 57: 1,
                 49: [1],
                 33: [0],
@@ -3164,8 +3164,16 @@ var Tag;
                 throw new E(E.TAG_CONTENT_REQUIRED, lineNo);
             this._c = content;
             Util.each(schema[3] || {}, function (value, index) {
-                var counter = value.slice(0);
-                counter[2] = 0;
+                var counter;
+                if ('number' == typeof value) {
+                    counter = [value, value];
+                }
+                else {
+                    counter = value.slice(0);
+                    if (1 == counter.length)
+                        counter[1] = Infinity;
+                }
+                counter[2] = counter[3] = 0;
                 contraints[index] = counter;
             });
             Util.each(children, function (tag) {
@@ -3173,10 +3181,14 @@ var Tag;
                 if (!(index in contraints))
                     throw new E(E.SCHEMA_CHILD_NOT_ALLOWED, tag.gL());
                 contraints[index][2]++;
+                contraints[index][3] = tag.gL();
                 tag.$u(_this);
             });
-            Util.every(contraints, function (counter) {
-                return true;
+            Util.each(contraints, function (counter) {
+                if (-1 != counter[0] && counter[0] > counter[2])
+                    throw new E(E.TAG_CHILDREN_TOO_FEW, counter[3] || lineNo);
+                if (counter[1] < counter[2])
+                    throw new E(E.TAG_CHILDREN_TOO_MANY, counter[3]);
             });
             this._s = children;
         }
