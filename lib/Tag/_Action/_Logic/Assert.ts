@@ -23,9 +23,12 @@ namespace Tag {
          */
         public t(states: Core.IStates): boolean {
             var real: number | string = this.$v(<string> states.g(this._p[0])),
-                expected: number | string = this.$v(this._p[1]),
+                expected: number | string = states.g(this._p[1]),
                 depth: number = states.g('$d'),
                 ret: boolean;
+            expected = this.$v(undefined === expected ?
+                this._p[1] :
+                <string> expected);
             switch (this._p[2] || '等于') {
                 case '等于':
                     this._p.splice(2);

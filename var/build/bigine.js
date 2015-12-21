@@ -6322,7 +6322,10 @@ var Tag;
          * （执行）检查。
          */
         Assert.prototype.t = function (states) {
-            var real = this.$v(states.g(this._p[0])), expected = this.$v(this._p[1]), depth = states.g('$d'), ret;
+            var real = this.$v(states.g(this._p[0])), expected = states.g(this._p[1]), depth = states.g('$d'), ret;
+            expected = this.$v(undefined === expected ?
+                this._p[1] :
+                expected);
             switch (this._p[2] || '等于') {
                 case '等于':
                     this._p.splice(2);
@@ -8148,8 +8151,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.17.0';
+    Bigine.version = '0.17.1';
 })(Bigine || (Bigine = {}));
-//export = Bigine;
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map
