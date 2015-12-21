@@ -1,8 +1,10 @@
 /*
 
 !.gitignore
-!Gulpfile.js
+!gulpfile.js
+!LICENSE
 !package.json
+!README.md
 !tsconfig.json
 !tsd.json
 !tslint.json
