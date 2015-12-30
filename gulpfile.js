@@ -46,14 +46,15 @@ $gulp.task('tsd', ['lint'], function () {
                 removeComments: true
             })));
     return ts.dts
+        .pipe($replace(/\/{3} <reference path=".+\.d\.ts" \/>\n/g, ''))
         .pipe($replace('\n', '\n    '))
-        .pipe($replace('    /// <', '/// <'))
         .pipe($replace('        import Util = __Bigine_Util;\n', ''))
         .pipe($replace('        import G = __Bigine_C2D;\n', ''))
         .pipe($replace('declare ', ''))
-        .pipe($replace(/tsd.d.ts" \/>\n/, '$&declare namespace __Bigine {\n' +
+        .pipe($insert.prepend('declare namespace __Bigine {\n' +
             '    import Util = __Bigine_Util;\n' +
-            '    import G = __Bigine_C2D;\n'
+            '    import G = __Bigine_C2D;\n' +
+            '    '
         )).pipe($insert.append('}\n' +
             '\n' +
             'declare module "bigine" {\n' +

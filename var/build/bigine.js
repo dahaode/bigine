@@ -8151,7 +8151,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.17.1';
+    Bigine.version = '0.17.2';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

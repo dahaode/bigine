@@ -3,5 +3,10 @@
 	"repo": "borisyankov/DefinitelyTyped",
 	"ref": "master",
 	"path": "include",
-	"bundle": "include/tsd.d.ts"
+	"bundle": "include/tsd.d.ts",
+	"installed": {
+		"es6-promise/es6-promise.d.ts": {
+			"commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
+		}
+	}
 }

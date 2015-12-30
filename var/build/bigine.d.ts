@@ -1,4 +1,3 @@
-/// <reference path="../../include/tsd.d.ts" />
 declare namespace __Bigine {
     import Util = __Bigine_Util;
     import G = __Bigine_C2D;
