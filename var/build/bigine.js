@@ -886,6 +886,49 @@ var Runtime;
     })(Event = Runtime.Event || (Runtime.Event = {}));
 })(Runtime || (Runtime = {}));
 /**
+ * 声明（运行时）数据变化时向外暴露元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Runtime/Event/IStateMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）存档事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Runtime/Event/State.ts
+ */
+/// <reference path="Event.ts" />
+/// <reference path="IStateMetas.ts" />
+var Runtime;
+(function (Runtime) {
+    var Event;
+    (function (Event) {
+        var State = (function (_super) {
+            __extends(State, _super);
+            /**
+             * 构造函数。
+             */
+            function State(metas) {
+                _super.call(this, metas);
+                this.data = metas.data;
+            }
+            /**
+             * 获取类型。
+             */
+            State.prototype.gT = function () {
+                return 'state';
+            };
+            return State;
+        })(Event.Event);
+        Event.State = State;
+    })(Event = Runtime.Event || (Runtime.Event = {}));
+})(Runtime || (Runtime = {}));
+/**
  * 定义（运行时）数据状态管理器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -897,6 +940,7 @@ var Runtime;
 /// <reference path="../Core/_Runtime/IRuntime.ts" />
 /// <reference path="Event/Query.ts" />
 /// <reference path="Event/Save.ts" />
+/// <reference path="Event/State.ts" />
 var Runtime;
 (function (Runtime) {
     var Util = __Bigine_Util;
@@ -983,6 +1027,12 @@ var Runtime;
                 if ('.' != key[0] && '$' != key[0] && undefined != value)
                     _this._p[key] = value;
             });
+            //start:生成快照的时候，向外暴露
+            this._r.dispatchEvent(new Runtime.Event.State({
+                target: this,
+                data: this._p
+            }));
+            //ended:生成快照的时候，向外暴露
             return this;
         };
         /**

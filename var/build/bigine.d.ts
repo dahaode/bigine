@@ -337,6 +337,22 @@ declare namespace __Bigine {
         }
     }
     namespace Runtime {
+        namespace Event {
+            interface IStateMetas extends Util.IEventMetas<Core.IStates> {
+                data: Util.IHashTable<any>;
+            }
+        }
+    }
+    namespace Runtime {
+        namespace Event {
+            class State extends Event<Core.IStates> {
+                data: Util.IHashTable<any>;
+                constructor(metas: IStateMetas);
+                gT(): string;
+            }
+        }
+    }
+    namespace Runtime {
         class States implements Core.IStates {
             private _d;
             private _r;

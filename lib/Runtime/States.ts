@@ -11,6 +11,7 @@
 /// <reference path="../Core/_Runtime/IRuntime.ts" />
 /// <reference path="Event/Query.ts" />
 /// <reference path="Event/Save.ts" />
+/// <reference path="Event/State.ts" />
 
 namespace Runtime {
     import Util = __Bigine_Util;
@@ -128,6 +129,12 @@ namespace Runtime {
                 if ('.' != key[0] && '$' != key[0] && undefined != value)
                     this._p[key] = value;
             });
+            //start:生成快照的时候，向外暴露
+            this._r.dispatchEvent(new Event.State({
+                target: this,
+                data: this._p
+            }));
+            //ended:生成快照的时候，向外暴露
             return this;
         }
 
