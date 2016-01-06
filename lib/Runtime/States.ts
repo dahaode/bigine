@@ -2,16 +2,16 @@
  * 定义（运行时）数据状态管理器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/States.ts
  */
 
 /// <reference path="../Core/_Runtime/IStates.ts" />
 /// <reference path="../Core/_Runtime/IRuntime.ts" />
-/// <reference path="Event/Query.ts" />
-/// <reference path="Event/Save.ts" />
-/// <reference path="Event/State.ts" />
+/// <reference path="../Ev/_Runtime/Query.ts" />
+/// <reference path="../Ev/_Runtime/Save.ts" />
+/// <reference path="../Ev/_Runtime/State.ts" />
 
 namespace Runtime {
     import Util = __Bigine_Util;
@@ -130,7 +130,7 @@ namespace Runtime {
                     this._p[key] = value;
             });
             //start:生成快照的时候，向外暴露
-            this._r.dispatchEvent(new Event.State({
+            this._r.dispatchEvent(new Ev.State({
                 target: this,
                 data: this._p
             }));
@@ -149,7 +149,7 @@ namespace Runtime {
             var save: (id: string) => void = (id: string) => {
                     this._s[manual ? '1' : 'auto'] = [id, + new Date()];
                 };
-            this._r.dispatchEvent(new Event.Save({
+            this._r.dispatchEvent(new Ev.Save({
                 target: this,
                 manual: manual,
                 data: this._p,
@@ -183,7 +183,7 @@ namespace Runtime {
             var query: (slots: Util.IHashTable<[string, number]>) => void = (slots: Util.IHashTable<[string, number]>) => {
                 this._s = slots;
             };
-            this._r.dispatchEvent(new Event.Query({
+            this._r.dispatchEvent(new Ev.Query({
                 target: this,
                 callback: query
             }));

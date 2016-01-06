@@ -2,14 +2,14 @@
  * 定义抽象（运行时）场效调度器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/_Director/Director.ts
  */
 
 /// <reference path="../../Core/_Runtime/IDirector.ts" />
 /// <reference path="../_Resource/Prefetcher.ts" />
-/// <reference path="../Event/Begin.ts" />
+/// <reference path="../../Ev/_Runtime/Begin.ts" />
 
 namespace Runtime {
     import Util = __Bigine_Util;
@@ -71,7 +71,7 @@ namespace Runtime {
          */
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
             if (!start)
-                this._r.dispatchEvent(new Event.Begin({
+                this._r.dispatchEvent(new Ev.Begin({
                     target: this._r.gE()
                 }));
             return this._p;

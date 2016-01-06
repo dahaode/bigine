@@ -2,14 +2,14 @@
  * 定义（运行时）作品组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/Episode.ts
  */
 
-/// <reference path="Event/Ready.ts" />
-/// <reference path="Event/Error.ts" />
-/// <reference path="Event/End.ts" />
+/// <reference path="../Ev/_Runtime/Ready.ts" />
+/// <reference path="../Ev/_Runtime/Error.ts" />
+/// <reference path="../Ev/_Runtime/End.ts" />
 /// <reference path="_Resource/Resource.ts" />
 
 namespace Runtime {
@@ -78,11 +78,11 @@ namespace Runtime {
                     });
                 })
             ]).then(() => {
-                runtime.dispatchEvent(new Event.Ready({
+                runtime.dispatchEvent(new Ev.Ready({
                     target: this
                 }));
             })['catch']((error: any) => {
-                runtime.dispatchEvent(new Event.Error({
+                runtime.dispatchEvent(new Ev.Error({
                     target: this,
                     error: error
                 }));
@@ -115,7 +115,7 @@ namespace Runtime {
                 q = Promise.resolve(runtime);
             return q.then(() => {
                 if (Core.ISceneTag.Type.End == type)
-                    runtime.dispatchEvent(new Event.End({
+                    runtime.dispatchEvent(new Ev.End({
                         target: this
                     }));
                 return runtime;

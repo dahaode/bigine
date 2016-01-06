@@ -8,11 +8,17 @@
  */
 
 /// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../Core/_Runtime/IResource.ts" />
 
 namespace Sprite {
     import G = __Bigine_C2D;
 
     export abstract class Sprite extends G.Sprite {
+        /**
+         * 远端资源列表。
+         */
+        protected _rr: Core.IResource<HTMLImageElement | string>[];
+
         /**
          * 显示。
          */
@@ -33,6 +39,13 @@ namespace Sprite {
             if (!this._o)
                 return Promise.resolve(this);
             return <Promise<Sprite>> this.p(new G.FadeOut(500));
+        }
+
+        /**
+         * 获取远端资源列表。
+         */
+        public l(): Core.IResource<HTMLImageElement | string>[] {
+            return this._rr || [];
         }
     }
 }

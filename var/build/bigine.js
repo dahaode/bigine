@@ -4,33 +4,30 @@ var __Bigine_C2D = require("bigine.c2d");
  * 定义（运行时）抽象事件组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Event.ts
+ * @file      Ev/Event.ts
  */
-/// <reference path="../../../include/tsd.d.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event_1) {
-        var Event = (function () {
-            /**
-             * 构造函数。
-             */
-            function Event(metas) {
-                this.target = metas.target;
-            }
-            /**
-             * 获取类型。
-             */
-            Event.prototype.gT = function () {
-                return '';
-            };
-            return Event;
-        })();
-        Event_1.Event = Event;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+/// <reference path="../../include/tsd.d.ts" />
+var Ev;
+(function (Ev) {
+    var Event = (function () {
+        /**
+         * 构造函数。
+         */
+        function Event(metas) {
+            this.target = metas.target;
+        }
+        /**
+         * 获取类型。
+         */
+        Event.prototype.gT = function () {
+            return '';
+        };
+        return Event;
+    })();
+    Ev.Event = Event;
+})(Ev || (Ev = {}));
 /**
  * 声明标签接口规范。
  *
@@ -383,99 +380,93 @@ var Core;
  * 声明（运行时）（播放准备）就绪事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/IReadyMetas.ts
+ * @file      Ev/_Runtime/IReadyMetas.ts
  */
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 /**
  * 定义（运行时）（播放准备）就绪事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Ready.ts
+ * @file      Ev/_Runtime/Ready.ts
  */
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="IReadyMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var Ready = (function (_super) {
-            __extends(Ready, _super);
-            /**
-             * 构造函数。
-             */
-            function Ready(metas) {
-                _super.call(this, metas);
-            }
-            /**
-             * 获取类型。
-             */
-            Ready.prototype.gT = function () {
-                return 'ready';
-            };
-            return Ready;
-        })(Event.Event);
-        Event.Ready = Ready;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var Ready = (function (_super) {
+        __extends(Ready, _super);
+        /**
+         * 构造函数。
+         */
+        function Ready(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        Ready.prototype.gT = function () {
+            return 'ready';
+        };
+        return Ready;
+    })(Ev.Event);
+    Ev.Ready = Ready;
+})(Ev || (Ev = {}));
 /**
  * 声明（运行时）错误事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/IErrorMetas.ts
+ * @file      Ev/_Runtime/IErrorMetas.ts
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /**
  * 定义（运行时）异常事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Error.ts
+ * @file      Ev/_Runtime/Error.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="IErrorMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var Error = (function (_super) {
-            __extends(Error, _super);
-            /**
-             * 构造函数。
-             */
-            function Error(metas) {
-                _super.call(this, metas);
-                this.error = metas.error;
-            }
-            /**
-             * 获取类型。
-             */
-            Error.prototype.gT = function () {
-                return 'error';
-            };
-            return Error;
-        })(Event.Event);
-        Event.Error = Error;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var Error = (function (_super) {
+        __extends(Error, _super);
+        /**
+         * 构造函数。
+         */
+        function Error(metas) {
+            _super.call(this, metas);
+            this.error = metas.error;
+        }
+        /**
+         * 获取类型。
+         */
+        Error.prototype.gT = function () {
+            return 'error';
+        };
+        return Error;
+    })(Ev.Event);
+    Ev.Error = Error;
+})(Ev || (Ev = {}));
 /**
  * 声明（运行时）完结事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/IEndMetas.ts
+ * @file      Ev/_Runtime/IEndMetas.ts
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
@@ -483,35 +474,32 @@ var Runtime;
  * 定义（运行时）完结事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/End.ts
+ * @file      Ev/_Runtime/End.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="IEndMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var End = (function (_super) {
-            __extends(End, _super);
-            /**
-             * 构造函数。
-             */
-            function End(metas) {
-                _super.call(this, metas);
-            }
-            /**
-             * 获取类型。
-             */
-            End.prototype.gT = function () {
-                return 'end';
-            };
-            return End;
-        })(Event.Event);
-        Event.End = End;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var End = (function (_super) {
+        __extends(End, _super);
+        /**
+         * 构造函数。
+         */
+        function End(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        End.prototype.gT = function () {
+            return 'end';
+        };
+        return End;
+    })(Ev.Event);
+    Ev.End = End;
+})(Ev || (Ev = {}));
 /**
  * 定义（运行时）资源组件。
  *
@@ -653,13 +641,13 @@ var Runtime;
  * 定义（运行时）作品组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/Episode.ts
  */
-/// <reference path="Event/Ready.ts" />
-/// <reference path="Event/Error.ts" />
-/// <reference path="Event/End.ts" />
+/// <reference path="../Ev/_Runtime/Ready.ts" />
+/// <reference path="../Ev/_Runtime/Error.ts" />
+/// <reference path="../Ev/_Runtime/End.ts" />
 /// <reference path="_Resource/Resource.ts" />
 var Runtime;
 (function (Runtime) {
@@ -698,11 +686,11 @@ var Runtime;
                     });
                 })
             ]).then(function () {
-                runtime.dispatchEvent(new Runtime.Event.Ready({
+                runtime.dispatchEvent(new Ev.Ready({
                     target: _this
                 }));
             })['catch'](function (error) {
-                runtime.dispatchEvent(new Runtime.Event.Error({
+                runtime.dispatchEvent(new Ev.Error({
                     target: _this,
                     error: error
                 }));
@@ -735,7 +723,7 @@ var Runtime;
                 q = Promise.resolve(runtime);
             return q.then(function () {
                 if (Core.ISceneTag.Type.End == type)
-                    runtime.dispatchEvent(new Runtime.Event.End({
+                    runtime.dispatchEvent(new Ev.End({
                         target: _this
                     }));
                 return runtime;
@@ -801,97 +789,91 @@ var Runtime;
  * 声明（运行时）查询存档数据事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/IQueryMetas.ts
+ * @file      Ev/_Runtime/IQueryMetas.ts
  */
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 /**
  * 定义（运行时）查询存档数据事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Query.ts
+ * @file      Ev/_Runtime/Query.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="IQueryMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var Query = (function (_super) {
-            __extends(Query, _super);
-            /**
-             * 构造函数。
-             */
-            function Query(metas) {
-                _super.call(this, metas);
-                this.callback = metas.callback;
-            }
-            /**
-             * 获取类型。
-             */
-            Query.prototype.gT = function () {
-                return 'query';
-            };
-            return Query;
-        })(Event.Event);
-        Event.Query = Query;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var Query = (function (_super) {
+        __extends(Query, _super);
+        /**
+         * 构造函数。
+         */
+        function Query(metas) {
+            _super.call(this, metas);
+            this.callback = metas.callback;
+        }
+        /**
+         * 获取类型。
+         */
+        Query.prototype.gT = function () {
+            return 'query';
+        };
+        return Query;
+    })(Ev.Event);
+    Ev.Query = Query;
+})(Ev || (Ev = {}));
 /**
  * 声明（运行时）存档事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/ISaveMetas.ts
+ * @file      Ev/_Runtime/ISaveMetas.ts
  */
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 /**
  * 定义（运行时）存档事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Save.ts
+ * @file      Ev/_Runtime/Save.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="ISaveMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var Save = (function (_super) {
-            __extends(Save, _super);
-            /**
-             * 构造函数。
-             */
-            function Save(metas) {
-                _super.call(this, metas);
-                this.data = metas.data;
-                this.manual = metas.manual;
-                this.callback = metas.callback;
-            }
-            /**
-             * 获取类型。
-             */
-            Save.prototype.gT = function () {
-                return 'save';
-            };
-            return Save;
-        })(Event.Event);
-        Event.Save = Save;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var Save = (function (_super) {
+        __extends(Save, _super);
+        /**
+         * 构造函数。
+         */
+        function Save(metas) {
+            _super.call(this, metas);
+            this.data = metas.data;
+            this.manual = metas.manual;
+            this.callback = metas.callback;
+        }
+        /**
+         * 获取类型。
+         */
+        Save.prototype.gT = function () {
+            return 'save';
+        };
+        return Save;
+    })(Ev.Event);
+    Ev.Save = Save;
+})(Ev || (Ev = {}));
 /**
  * 声明（运行时）数据变化时向外暴露元信息接口规范。
  *
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/IStateMetas.ts
+ * @file      Ev/_Runtime/IStateMetas.ts
  */
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 /**
@@ -900,47 +882,44 @@ var Runtime;
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/State.ts
+ * @file      Ev/_Runtime/State.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="IStateMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var State = (function (_super) {
-            __extends(State, _super);
-            /**
-             * 构造函数。
-             */
-            function State(metas) {
-                _super.call(this, metas);
-                this.data = metas.data;
-            }
-            /**
-             * 获取类型。
-             */
-            State.prototype.gT = function () {
-                return 'state';
-            };
-            return State;
-        })(Event.Event);
-        Event.State = State;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var State = (function (_super) {
+        __extends(State, _super);
+        /**
+         * 构造函数。
+         */
+        function State(metas) {
+            _super.call(this, metas);
+            this.data = metas.data;
+        }
+        /**
+         * 获取类型。
+         */
+        State.prototype.gT = function () {
+            return 'state';
+        };
+        return State;
+    })(Ev.Event);
+    Ev.State = State;
+})(Ev || (Ev = {}));
 /**
  * 定义（运行时）数据状态管理器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/States.ts
  */
 /// <reference path="../Core/_Runtime/IStates.ts" />
 /// <reference path="../Core/_Runtime/IRuntime.ts" />
-/// <reference path="Event/Query.ts" />
-/// <reference path="Event/Save.ts" />
-/// <reference path="Event/State.ts" />
+/// <reference path="../Ev/_Runtime/Query.ts" />
+/// <reference path="../Ev/_Runtime/Save.ts" />
+/// <reference path="../Ev/_Runtime/State.ts" />
 var Runtime;
 (function (Runtime) {
     var Util = __Bigine_Util;
@@ -1028,7 +1007,7 @@ var Runtime;
                     _this._p[key] = value;
             });
             //start:生成快照的时候，向外暴露
-            this._r.dispatchEvent(new Runtime.Event.State({
+            this._r.dispatchEvent(new Ev.State({
                 target: this,
                 data: this._p
             }));
@@ -1047,7 +1026,7 @@ var Runtime;
             var save = function (id) {
                 _this._s[manual ? '1' : 'auto'] = [id, +new Date()];
             };
-            this._r.dispatchEvent(new Runtime.Event.Save({
+            this._r.dispatchEvent(new Ev.Save({
                 target: this,
                 manual: manual,
                 data: this._p,
@@ -1080,7 +1059,7 @@ var Runtime;
             var query = function (slots) {
                 _this._s = slots;
             };
-            this._r.dispatchEvent(new Runtime.Event.Query({
+            this._r.dispatchEvent(new Ev.Query({
                 target: this,
                 callback: query
             }));
@@ -1155,9 +1134,9 @@ var Runtime;
  * 声明（运行时）开场事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/IBeginMetas.ts
+ * @file      Ev/_Runtime/IBeginMetas.ts
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
@@ -1165,46 +1144,43 @@ var Runtime;
  * 定义（运行时）开场事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Begin.ts
+ * @file      Ev/_Runtime/Begin.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="IBeginMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var Begin = (function (_super) {
-            __extends(Begin, _super);
-            /**
-             * 构造函数。
-             */
-            function Begin(metas) {
-                _super.call(this, metas);
-            }
-            /**
-             * 获取类型。
-             */
-            Begin.prototype.gT = function () {
-                return 'begin';
-            };
-            return Begin;
-        })(Event.Event);
-        Event.Begin = Begin;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var Begin = (function (_super) {
+        __extends(Begin, _super);
+        /**
+         * 构造函数。
+         */
+        function Begin(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        Begin.prototype.gT = function () {
+            return 'begin';
+        };
+        return Begin;
+    })(Ev.Event);
+    Ev.Begin = Begin;
+})(Ev || (Ev = {}));
 /**
  * 定义抽象（运行时）场效调度器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/_Director/Director.ts
  */
 /// <reference path="../../Core/_Runtime/IDirector.ts" />
 /// <reference path="../_Resource/Prefetcher.ts" />
-/// <reference path="../Event/Begin.ts" />
+/// <reference path="../../Ev/_Runtime/Begin.ts" />
 var Runtime;
 (function (Runtime) {
     var Director = (function () {
@@ -1232,7 +1208,7 @@ var Runtime;
          */
         Director.prototype.OP = function (start, title, author) {
             if (!start)
-                this._r.dispatchEvent(new Runtime.Event.Begin({
+                this._r.dispatchEvent(new Ev.Begin({
                     target: this._r.gE()
                 }));
             return this._p;
@@ -1452,44 +1428,41 @@ var Runtime;
  * 声明（运行时）读档继续事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/IResumeMetas.ts
+ * @file      Ev/_Runtime/IResumeMetas.ts
  */
 /// <reference path="../../Core/_Runtime/IEpisode.ts" />
 /**
  * 定义（运行时）读档继续事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Resume.ts
+ * @file      Ev/_Runtime/Resume.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="IResumeMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var Resume = (function (_super) {
-            __extends(Resume, _super);
-            /**
-             * 构造函数。
-             */
-            function Resume(metas) {
-                _super.call(this, metas);
-            }
-            /**
-             * 获取类型。
-             */
-            Resume.prototype.gT = function () {
-                return 'resume';
-            };
-            return Resume;
-        })(Event.Event);
-        Event.Resume = Resume;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var Resume = (function (_super) {
+        __extends(Resume, _super);
+        /**
+         * 构造函数。
+         */
+        function Resume(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        Resume.prototype.gT = function () {
+            return 'resume';
+        };
+        return Resume;
+    })(Ev.Event);
+    Ev.Resume = Resume;
+})(Ev || (Ev = {}));
 /**
  * 定义画面调度抽象组件。
  *
@@ -1499,6 +1472,7 @@ var Runtime;
  * @file      Sprite/Sprite.ts
  */
 /// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../Core/_Runtime/IResource.ts" />
 var Sprite;
 (function (Sprite_1) {
     var G = __Bigine_C2D;
@@ -1528,6 +1502,12 @@ var Sprite;
             if (!this._o)
                 return Promise.resolve(this);
             return this.p(new G.FadeOut(500));
+        };
+        /**
+         * 获取远端资源列表。
+         */
+        Sprite.prototype.l = function () {
+            return this._rr || [];
         };
         return Sprite;
     })(G.Sprite);
@@ -1627,13 +1607,13 @@ var Sprite;
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/_Director/CanvasDirector.ts
  */
 /// <reference path="Director.ts" />
-/// <reference path="../Event/Resume.ts" />
-/// <reference path="../Event/Save.ts" />
+/// <reference path="../../Ev/_Runtime/Resume.ts" />
+/// <reference path="../../Ev/_Runtime/Save.ts" />
 /// <reference path="../../Sprite/_pack.ts" />
 /**
  * * b - 背景
@@ -2281,7 +2261,7 @@ var Runtime;
                 _this.playSE(resources[0][4]);
                 _this.lightOff().then(function () {
                     gStart.o(0);
-                    _this._r.dispatchEvent(new Runtime.Event.Begin({
+                    _this._r.dispatchEvent(new Ev.Begin({
                         target: _this._r.gE()
                     }));
                 });
@@ -2299,7 +2279,7 @@ var Runtime;
                 _this.playSE(resources[0][4]);
                 _this.lightOff().then(function () {
                     gStart.o(0);
-                    _this._r.dispatchEvent(new Runtime.Event.Resume({
+                    _this._r.dispatchEvent(new Ev.Resume({
                         target: _this._r.gE()
                     }));
                 });
@@ -2758,53 +2738,50 @@ var Runtime;
  * 声明（运行时）读档事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/ILoadMetas.ts
+ * @file      Ev/_Runtime/ILoadMetas.ts
  */
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 /**
  * 定义（运行时）读档事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Load.ts
+ * @file      Ev/_Runtime/Load.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="ILoadMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var Load = (function (_super) {
-            __extends(Load, _super);
-            /**
-             * 构造函数。
-             */
-            function Load(metas) {
-                _super.call(this, metas);
-                this.callback = metas.callback;
-                this.id = metas.id;
-            }
-            /**
-             * 获取类型。
-             */
-            Load.prototype.gT = function () {
-                return 'load';
-            };
-            return Load;
-        })(Event.Event);
-        Event.Load = Load;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var Load = (function (_super) {
+        __extends(Load, _super);
+        /**
+         * 构造函数。
+         */
+        function Load(metas) {
+            _super.call(this, metas);
+            this.callback = metas.callback;
+            this.id = metas.id;
+        }
+        /**
+         * 获取类型。
+         */
+        Load.prototype.gT = function () {
+            return 'load';
+        };
+        return Load;
+    })(Ev.Event);
+    Ev.Load = Load;
+})(Ev || (Ev = {}));
 /**
  * 声明（运行时）剧情事件播报事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/ISceneMetas.ts
+ * @file      Ev/_Runtime/ISceneMetas.ts
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Tag/ISceneTag.ts" />
@@ -2812,45 +2789,42 @@ var Runtime;
  * 定义（运行时）剧情事件播报事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Scene.ts
+ * @file      Ev/_Runtime/Scene.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="ISceneMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var Scene = (function (_super) {
-            __extends(Scene, _super);
-            /**
-             * 构造函数。
-             */
-            function Scene(metas) {
-                _super.call(this, metas);
-                this.id = metas.target.gI();
-                this.title = metas.title;
-                this.actions = metas.actions;
-            }
-            /**
-             * 获取类型。
-             */
-            Scene.prototype.gT = function () {
-                return 'scene';
-            };
-            return Scene;
-        })(Event.Event);
-        Event.Scene = Scene;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var Scene = (function (_super) {
+        __extends(Scene, _super);
+        /**
+         * 构造函数。
+         */
+        function Scene(metas) {
+            _super.call(this, metas);
+            this.id = metas.target.gI();
+            this.title = metas.title;
+            this.actions = metas.actions;
+        }
+        /**
+         * 获取类型。
+         */
+        Scene.prototype.gT = function () {
+            return 'scene';
+        };
+        return Scene;
+    })(Ev.Event);
+    Ev.Scene = Scene;
+})(Ev || (Ev = {}));
 /**
  * 声明（运行时）关键帧播报事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/IActionMetas.ts
+ * @file      Ev/_Runtime/IActionMetas.ts
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../../Core/_Tag/IIdableTag.ts" />
@@ -2858,37 +2832,34 @@ var Runtime;
  * 定义（运行时）关键帧播报事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/Event/Action.ts
+ * @file      Ev/_Runtime/Action.ts
  */
-/// <reference path="Event.ts" />
+/// <reference path="../Event.ts" />
 /// <reference path="IActionMetas.ts" />
-var Runtime;
-(function (Runtime) {
-    var Event;
-    (function (Event) {
-        var Action = (function (_super) {
-            __extends(Action, _super);
-            /**
-             * 构造函数。
-             */
-            function Action(metas) {
-                _super.call(this, metas);
-                this.id = metas.target.gI();
-                this.kind = metas.target.gN().toLowerCase();
-            }
-            /**
-             * 获取类型。
-             */
-            Action.prototype.gT = function () {
-                return 'action';
-            };
-            return Action;
-        })(Event.Event);
-        Event.Action = Action;
-    })(Event = Runtime.Event || (Runtime.Event = {}));
-})(Runtime || (Runtime = {}));
+var Ev;
+(function (Ev) {
+    var Action = (function (_super) {
+        __extends(Action, _super);
+        /**
+         * 构造函数。
+         */
+        function Action(metas) {
+            _super.call(this, metas);
+            this.id = metas.target.gI();
+            this.kind = metas.target.gN().toLowerCase();
+        }
+        /**
+         * 获取类型。
+         */
+        Action.prototype.gT = function () {
+            return 'action';
+        };
+        return Action;
+    })(Ev.Event);
+    Ev.Action = Action;
+})(Ev || (Ev = {}));
 /**
  * 定义语法规约。
  *
@@ -7815,18 +7786,18 @@ var Tag;
  * 定义（作品）运行时组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/Runtime.ts
  */
 /// <reference path="Episode.ts" />
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
-/// <reference path="Event/Begin.ts" />
-/// <reference path="Event/Load.ts" />
-/// <reference path="Event/Query.ts" />
-/// <reference path="Event/Scene.ts" />
-/// <reference path="Event/Action.ts" />
+/// <reference path="../Ev/_Runtime/Begin.ts" />
+/// <reference path="../Ev/_Runtime/Load.ts" />
+/// <reference path="../Ev/_Runtime/Query.ts" />
+/// <reference path="../Ev/_Runtime/Scene.ts" />
+/// <reference path="../Ev/_Runtime/Action.ts" />
 /// <reference path="../Tag/_pack.ts" />
 var Runtime;
 (function (Runtime_1) {
@@ -8012,7 +7983,7 @@ var Runtime;
         Runtime.prototype.s = function (scene, title, actions) {
             this._s.s('_s', scene.gI())
                 .d('_a');
-            this.dispatchEvent(new Runtime_1.Event.Scene({
+            this.dispatchEvent(new Ev.Scene({
                 target: scene,
                 title: title,
                 actions: actions
@@ -8025,7 +7996,7 @@ var Runtime;
         Runtime.prototype.a = function (action) {
             this._s.s('_a', action.gI())
                 .p();
-            this.dispatchEvent(new Runtime_1.Event.Action({
+            this.dispatchEvent(new Ev.Action({
                 target: action
             }));
             return this;
@@ -8058,7 +8029,7 @@ var Runtime;
                     if (!fresh)
                         states.i(data);
                     if (fresh || !states.g(ks))
-                        return _this.dispatchEvent(new Runtime_1.Event.Begin({
+                        return _this.dispatchEvent(new Ev.Begin({
                             target: episode
                         }));
                     states.m('_a', '.a') // 识别重建用状态数据
@@ -8091,7 +8062,7 @@ var Runtime;
                     });
                 });
             };
-            this.dispatchEvent(new Runtime_1.Event.Load({
+            this.dispatchEvent(new Ev.Load({
                 target: this._s,
                 callback: load,
                 id: id

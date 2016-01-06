@@ -2,14 +2,14 @@
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/_Director/CanvasDirector.ts
  */
 
 /// <reference path="Director.ts" />
-/// <reference path="../Event/Resume.ts" />
-/// <reference path="../Event/Save.ts" />
+/// <reference path="../../Ev/_Runtime/Resume.ts" />
+/// <reference path="../../Ev/_Runtime/Save.ts" />
 /// <reference path="../../Sprite/_pack.ts" />
 
 /**
@@ -800,7 +800,7 @@ namespace Runtime {
                         this.playSE(resources[0][4]);
                         this.lightOff().then(() => {
                             gStart.o(0);
-                            this._r.dispatchEvent(new Event.Begin({
+                            this._r.dispatchEvent(new Ev.Begin({
                                 target: this._r.gE()
                             }));
                         });
@@ -820,7 +820,7 @@ namespace Runtime {
                     this.playSE(resources[0][4]);
                     this.lightOff().then(() => {
                         gStart.o(0);
-                        this._r.dispatchEvent(new Event.Resume({
+                        this._r.dispatchEvent(new Ev.Resume({
                             target: this._r.gE()
                         }));
                     });

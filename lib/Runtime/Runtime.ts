@@ -2,7 +2,7 @@
  * 定义（作品）运行时组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Runtime/Runtime.ts
  */
@@ -10,11 +10,11 @@
 /// <reference path="Episode.ts" />
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
-/// <reference path="Event/Begin.ts" />
-/// <reference path="Event/Load.ts" />
-/// <reference path="Event/Query.ts" />
-/// <reference path="Event/Scene.ts" />
-/// <reference path="Event/Action.ts" />
+/// <reference path="../Ev/_Runtime/Begin.ts" />
+/// <reference path="../Ev/_Runtime/Load.ts" />
+/// <reference path="../Ev/_Runtime/Query.ts" />
+/// <reference path="../Ev/_Runtime/Scene.ts" />
+/// <reference path="../Ev/_Runtime/Action.ts" />
 /// <reference path="../Tag/_pack.ts" />
 
 namespace Runtime {
@@ -150,7 +150,7 @@ namespace Runtime {
         /**
          * 发生事件。
          */
-        public dispatchEvent<T>(event: Event.Event<T>): Runtime {
+        public dispatchEvent<T>(event: Ev.Event<T>): Runtime {
             var type: string = event.gT();
             this._l.d('[event]', event);
             if (!(type in this._a))
@@ -280,7 +280,7 @@ namespace Runtime {
         public s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime {
             this._s.s('_s', scene.gI())
                 .d('_a');
-            this.dispatchEvent(new Event.Scene({
+            this.dispatchEvent(new Ev.Scene({
                 target: scene,
                 title: title,
                 actions: actions
@@ -294,7 +294,7 @@ namespace Runtime {
         public a(action: Core.IIdableTag): Runtime {
             this._s.s('_a', action.gI())
                 .p();
-            this.dispatchEvent(new Event.Action({
+            this.dispatchEvent(new Ev.Action({
                 target: action
             }));
             return this;
@@ -342,7 +342,7 @@ namespace Runtime {
                     if (!fresh)
                         states.i(data);
                     if (fresh || !states.g(ks)) // 无存档或存档无事件特征
-                        return this.dispatchEvent(new Event.Begin({
+                        return this.dispatchEvent(new Ev.Begin({
                             target: episode
                         }));
                     states.m('_a', '.a') // 识别重建用状态数据
@@ -375,7 +375,7 @@ namespace Runtime {
                     });
                 });
             };
-            this.dispatchEvent(new Event.Load({
+            this.dispatchEvent(new Ev.Load({
                 target: this._s,
                 callback: load,
                 id: id
