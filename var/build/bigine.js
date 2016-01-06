@@ -1482,6 +1482,7 @@ var Ev;
  * @file      Sprite/Sprite.ts
  */
 /// <reference path="../Core/_Sprite/ISprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
 var Sprite;
 (function (Sprite_1) {
     var G = __Bigine_C2D;
@@ -1517,6 +1518,20 @@ var Sprite;
          */
         Sprite.prototype.l = function () {
             return this._rr || [];
+        };
+        /**
+         * 识别文本对齐方式。
+         */
+        Sprite.prototype.$a = function (desc) {
+            var aligns = G.Text.Align;
+            switch (desc) {
+                case 'center':
+                case 'middle':
+                    return aligns.Center;
+                case 'right':
+                    return aligns.Right;
+            }
+            return aligns.Left;
         };
         return Sprite;
     })(G.Sprite);
@@ -1567,26 +1582,15 @@ var Sprite;
          * 构造函数。
          */
         function Author(theme) {
-            var w = 1280, h = 720, _director = theme['director'], _title = theme['title'], a = function (desc) {
-                var aligns = G.Text.Align;
-                switch (desc) {
-                    case 'center':
-                    case 'middle':
-                        return aligns.Center;
-                    case 'right':
-                        return aligns.Right;
-                    default:
-                        return aligns.Left;
-                }
-            };
+            var w = 1280, h = 720, _director = theme['director'], _title = theme['title'];
             _super.call(this, 0, 0, w, h);
             this.o(0)
                 .a(new G.Color(0, 0, w, h, '#000'))
-                .a(new G.Text(_director, _director['h'], a(_director['align']))
+                .a(new G.Text(_director, _director['h'], this.$a(_director['align']))
                 .a(new G.TextPhrase()
                 .c(_director['color'])
                 .f(_director['size'])
-                .t('作品'))).a(new G.Text(_title, _title['h'], a(_title['align']))
+                .t('作品'))).a(new G.Text(_title, _title['h'], this.$a(_title['align']))
                 .a(this._x = new G.TextPhrase()
                 .c(_title['color'])
                 .f(_title['size'])));
@@ -1603,6 +1607,162 @@ var Sprite;
     Sprite.Author = Author;
 })(Sprite || (Sprite = {}));
 /**
+ * 声明画面调度开始菜单组件接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Sprite/IStart.ts
+ */
+/// <reference path="ISprite.ts" />
+/**
+ * 声明（画面调度）开始菜单新游戏事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IStartNewMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IStart.ts" />
+/**
+ * 定义（画面调度）开始菜单新游戏事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/StartNew.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IStartNewMetas.ts" />
+var Ev;
+(function (Ev) {
+    var StartNew = (function (_super) {
+        __extends(StartNew, _super);
+        /**
+         * 构造函数。
+         */
+        function StartNew(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        StartNew.prototype.gT = function () {
+            return 'start.new';
+        };
+        return StartNew;
+    })(Ev.Event);
+    Ev.StartNew = StartNew;
+})(Ev || (Ev = {}));
+/**
+ * 声明（画面调度）开始菜单继续游戏事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IStartLoadMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IStart.ts" />
+/**
+ * 定义（画面调度）开始菜单继续游戏事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/StartLoad.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IStartLoadMetas.ts" />
+var Ev;
+(function (Ev) {
+    var StartLoad = (function (_super) {
+        __extends(StartLoad, _super);
+        /**
+         * 构造函数。
+         */
+        function StartLoad(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        StartLoad.prototype.gT = function () {
+            return 'start.load';
+        };
+        return StartLoad;
+    })(Ev.Event);
+    Ev.StartLoad = StartLoad;
+})(Ev || (Ev = {}));
+/**
+ * 定义画面调度开始菜单组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Start.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/StartNew.ts" />
+/// <reference path="../Ev/_Sprite/StartLoad.ts" />
+var Sprite;
+(function (Sprite) {
+    var G = __Bigine_C2D;
+    var Start = (function (_super) {
+        __extends(Start, _super);
+        /**
+         * 构造函数。
+         */
+        function Start(id, theme) {
+            var _this = this;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _new = theme['new'], _load = theme['load'], _title = theme['title'], $new = false, $load = false;
+            _super.call(this, 0, 0, w, h);
+            this._rr = [
+                rr.g(url + theme['image'], raw),
+                rr.g(url + _new['image'], raw),
+                rr.g(url + _new['hover'], raw),
+                rr.g(url + _load['image'], raw),
+                rr.g(url + _load['hover'], raw)
+            ];
+            this.o(0)
+                .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
+                .a(new G.Button(_new)
+                .b(function () {
+                if ($new)
+                    return;
+                $new = true;
+                _this.dispatchEvent(new Ev.StartNew({ target: _this }));
+                _this.p(new G.Delay(100)).then(function () {
+                    $new = false;
+                });
+            }, new G.Image(this._rr[2].o(), _new, true), new G.Image(this._rr[1].o(), _new, true))).a(new G.Button(_load)
+                .b(function () {
+                if ($load)
+                    return;
+                $load = true;
+                _this.dispatchEvent(new Ev.StartLoad({ target: _this }));
+                _this.p(new G.Delay(100)).then(function () {
+                    $load = false;
+                });
+            }, new G.Image(this._rr[4].o(), _load, true), new G.Image(this._rr[3].o(), _load, true))).a(new G.Text(_title, _title['h'], this.$a(_title['align']))
+                .a(this._x = new G.TextPhrase()
+                .c(_title['color'])
+                .f(_title['size'])));
+        }
+        /**
+         * 设置名称。
+         */
+        Start.prototype.u = function (title) {
+            this._x.t(title);
+            return this.o(1);
+        };
+        return Start;
+    })(Sprite.Sprite);
+    Sprite.Start = Start;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1612,6 +1772,7 @@ var Sprite;
  */
 /// <reference path="Curtain.ts" />
 /// <reference path="Author.ts" />
+/// <reference path="Start.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -1695,7 +1856,6 @@ var Runtime;
                 .a(new G.Sprite(bounds).i('m').o(0))
                 .a(new G.Sprite(bounds).i('v').o(0))
                 .a(new G.Sprite(bounds).i('t').o(0))
-                .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Sprite(bounds).i('$').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
@@ -1759,12 +1919,7 @@ var Runtime;
         CanvasDirector.prototype.OP = function (start, title, author) {
             var _this = this;
             if (title) {
-                this._c.q('S')[0].q('t')[0]
-                    .c()
-                    .a(new G.TextPhrase()
-                    .t(title)
-                    .c(this._f['n']['c'])
-                    .f(this._f['n']['f']));
+                this._x['s'].u(title);
             }
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
@@ -1790,7 +1945,7 @@ var Runtime;
                     gEntry.o(1);
                     if (!start)
                         return runtime;
-                    _this._c.q('S')[0].o(1);
+                    _this._x['s'].o(1);
                     return _this.lightOn();
                 });
             });
@@ -2240,68 +2395,24 @@ var Runtime;
          */
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
-            var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], align = function (desc) {
-                var aligns = G.Text.Align;
-                switch (desc) {
-                    case 'center':
-                    case 'middle':
-                        return aligns.Center;
-                    case 'right':
-                        return aligns.Right;
-                    default:
-                        return aligns.Left;
-                }
-            }, gStart = this._c.q('S')[0], gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gMenu = this._c.q('$')[0], gMenuWay = false, right = G.Text.Align.Right, gMenuEntry, gMenuMask, gMenuFeatures, gMenuSlots, gChoose;
+            var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gMenu = this._c.q('$')[0], gMenuWay = false, right = G.Text.Align.Right, gMenuEntry, gMenuMask, gMenuFeatures, gMenuSlots, gChoose;
+            this._x['s'] = new Sprite.Start(id, theme['start'])
+                .addEventListener('start.new', function (event) {
+                _this.playSE(_this._i['c']);
+                _this.lightOff().then(function () {
+                    event.target.h(true);
+                    _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
+                });
+            }).addEventListener('start.load', function (event) {
+                _this.playSE(_this._i['c']);
+                _this.lightOff().then(function () {
+                    event.target.h(true);
+                    _this._r.dispatchEvent(new Ev.Resume({ target: _this._r.gE() }));
+                });
+            });
+            resources.push(this._x['s'].l());
+            this._c.a(this._x['s'], this._x['c']);
             this._c.a(this._x['a'] = new Sprite.Author(chapter), this._x['c']);
-            // -------- start --------
-            chapter = theme['start'];
-            section = chapter['new'];
-            resources.push([
-                Resource.Resource.g(url + chapter['image'], raw),
-                Resource.Resource.g(url + section['image'], raw),
-                Resource.Resource.g(url + section['hover'], raw),
-                this._i['f'],
-                this._i['c'] // 4
-            ]);
-            // 背景图
-            gStart.a(new G.Image(resources[0][0].o(), bounds))
-                .a(new G.Button(section)
-                .b(function () {
-                _this.playSE(resources[0][4]);
-                _this.lightOff().then(function () {
-                    gStart.o(0);
-                    _this._r.dispatchEvent(new Ev.Begin({
-                        target: _this._r.gE()
-                    }));
-                });
-            }, new G.Image(resources[0][2].o()), new G.Image(resources[0][1].o()))
-                .addEventListener('$focus', function () {
-                _this.playSE(resources[0][3]);
-            }));
-            section = chapter['load'];
-            resources[0].push(Resource.Resource.g(url + section['image'], raw), // 5
-            Resource.Resource.g(url + section['hover'], raw) // 6
-            );
-            // 读档按钮
-            gStart.a(new G.Button(section)
-                .b(function () {
-                _this.playSE(resources[0][4]);
-                _this.lightOff().then(function () {
-                    gStart.o(0);
-                    _this._r.dispatchEvent(new Ev.Resume({
-                        target: _this._r.gE()
-                    }));
-                });
-            }, new G.Image(resources[0][6].o()), new G.Image(resources[0][5].o()))
-                .addEventListener('$focus', function () {
-                _this.playSE(resources[0][3]);
-            }));
-            section = chapter['title'];
-            this._f['n'] = {
-                c: section['color'],
-                f: section['size']
-            };
-            gStart.a(new G.Text(section, section['h'], align(section['align'])).i('t'));
             // -------- voiceover --------
             chapter = theme['voiceover'];
             section = chapter['back'];
@@ -2412,7 +2523,7 @@ var Runtime;
                 s: section['shadow'],
                 c: section['color']
             };
-            this._c.a(gChoose, 'S');
+            this._c.a(gChoose, this._x['s']);
             // -------- menu --------
             chapter = theme['menu'];
             gMenu.a((gMenuMask = new G.Color(bounds, chapter['mask']['color0'])).i('m'))
@@ -2652,7 +2763,7 @@ var Runtime;
             return this.lightOff()
                 .then(function () {
                 _this._c.q('$.')[0].o(1);
-                _this._c.q('S')[0].o(succeed ? 0 : 1);
+                _this._x['s'].o(succeed ? 0 : 1);
                 _this._c.q('$')[0].o(0);
             }).then(function () {
                 return succeed ?

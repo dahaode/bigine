@@ -148,7 +148,6 @@ namespace Runtime {
                 .a(new G.Sprite(bounds).i('m').o(0))
                 .a(new G.Sprite(bounds).i('v').o(0))
                 .a(new G.Sprite(bounds).i('t').o(0))
-                .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Sprite(bounds).i('$').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
@@ -215,12 +214,7 @@ namespace Runtime {
          */
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
             if (title) {
-                (<G.Text> (<G.Sprite> this._c.q('S')[0]).q('t')[0])
-                    .c()
-                    .a(new G.TextPhrase()
-                        .t(title)
-                        .c(<string> this._f['n']['c'])
-                        .f(<number> this._f['n']['f']));
+                (<Sprite.Start> this._x['s']).u(title);
             }
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
@@ -246,7 +240,7 @@ namespace Runtime {
                             gEntry.o(1);
                             if (!start)
                                 return runtime;
-                            this._c.q('S')[0].o(1);
+                            this._x['s'].o(1);
                             return this.lightOn();
                         });
                 });
@@ -756,19 +750,6 @@ namespace Runtime {
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
                 resources: Resource.Resource<string | HTMLImageElement>[][] = [],
-                align: (desc: string) => G.Text.Align = (desc: string) => {
-                    var aligns: typeof G.Text.Align = G.Text.Align;
-                    switch (desc) {
-                        case 'center':
-                        case 'middle':
-                            return aligns.Center;
-                        case 'right':
-                            return aligns.Right;
-                        default:
-                            return aligns.Left;
-                    }
-                },
-                gStart: G.Sprite = <G.Sprite> this._c.q('S')[0],
                 gVoiceOver: G.Sprite = <G.Sprite> this._c.q('v')[0],
                 gMonolog: G.Sprite = <G.Sprite> this._c.q('m')[0],
                 gSpeak: G.Sprite = <G.Sprite> this._c.q('s')[0],
@@ -781,60 +762,23 @@ namespace Runtime {
                 gMenuFeatures: G.Sprite,
                 gMenuSlots: G.Sprite,
                 gChoose: G.Sprite;
-            this._c.a(this._x['a'] = new Sprite.Author(chapter), this._x['c']);
-            // -------- start --------
-            chapter = theme['start'];
-            section = chapter['new'];
-            resources.push([ // 0
-                Resource.Resource.g<HTMLImageElement>(url + chapter['image'], raw), // 0
-                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 1
-                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw), // 2
-                this._i['f'], // 3
-                this._i['c'] // 4
-            ]);
-            // 背景图
-            gStart.a(new G.Image(resources[0][0].o(), bounds))
-                // 开始按钮
-                .a(new G.Button(<G.IBounds> section)
-                    .b(() => {
-                        this.playSE(resources[0][4]);
-                        this.lightOff().then(() => {
-                            gStart.o(0);
-                            this._r.dispatchEvent(new Ev.Begin({
-                                target: this._r.gE()
-                            }));
-                        });
-                    }, new G.Image(resources[0][2].o()), new G.Image(resources[0][1].o()))
-                    .addEventListener('$focus', () => {
-                        this.playSE(resources[0][3]);
-                    })
-            );
-            section = chapter['load'];
-            resources[0].push(
-                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 5
-                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 6
-            );
-            // 读档按钮
-            gStart.a(new G.Button(<G.IBounds> section)
-                .b(() => {
-                    this.playSE(resources[0][4]);
+            this._x['s'] = <Sprite.Start> new Sprite.Start(id, theme['start'])
+                .addEventListener('start.new', (event: Ev.StartNew) => {
+                    this.playSE(this._i['c']);
                     this.lightOff().then(() => {
-                        gStart.o(0);
-                        this._r.dispatchEvent(new Ev.Resume({
-                            target: this._r.gE()
-                        }));
+                        event.target.h(true);
+                        this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
-                }, new G.Image(resources[0][6].o()), new G.Image(resources[0][5].o()))
-                .addEventListener('$focus', () => {
-                    this.playSE(resources[0][3]);
-                })
-            );
-            section = chapter['title'];
-            this._f['n'] = {
-                c: section['color'],
-                f: section['size']
-            };
-            gStart.a(new G.Text(<G.IBounds> section, section['h'], align(section['align'])).i('t'));
+                }).addEventListener('start.load', (event: Ev.StartLoad) => {
+                    this.playSE(this._i['c']);
+                    this.lightOff().then(() => {
+                        event.target.h(true);
+                        this._r.dispatchEvent(new Ev.Resume({ target: this._r.gE() }));
+                    });
+                });
+            resources.push(this._x['s'].l());
+            this._c.a(this._x['s'], this._x['c']);
+            this._c.a(this._x['a'] = new Sprite.Author(chapter), this._x['c']);
             // -------- voiceover --------
             chapter = theme['voiceover'];
             section = chapter['back'];
@@ -955,7 +899,7 @@ namespace Runtime {
                 s: section['shadow'],
                 c: section['color']
             };
-            this._c.a(gChoose, 'S');
+            this._c.a(gChoose, this._x['s']);
             // -------- menu --------
             chapter = theme['menu'];
             gMenu.a((gMenuMask = new G.Color(bounds, chapter['mask']['color0'])).i('m'))
@@ -1237,7 +1181,7 @@ namespace Runtime {
             return this.lightOff()
                 .then(() => {
                     this._c.q('$.')[0].o(1);
-                    this._c.q('S')[0].o(succeed ? 0 : 1);
+                    this._x['s'].o(succeed ? 0 : 1);
                     this._c.q('$')[0].o(0);
                 }).then(() => {
                     return succeed ?

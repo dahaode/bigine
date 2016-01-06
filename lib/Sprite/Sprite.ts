@@ -8,6 +8,7 @@
  */
 
 /// <reference path="../Core/_Sprite/ISprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
 
 namespace Sprite {
     import G = __Bigine_C2D;
@@ -16,7 +17,7 @@ namespace Sprite {
         /**
          * 远端资源列表。
          */
-        protected _rr: Core.IResource<HTMLImageElement | string>[];
+        protected _rr: Resource.Resource<string | HTMLImageElement>[];
 
         /**
          * 显示。
@@ -43,8 +44,23 @@ namespace Sprite {
         /**
          * 获取远端资源列表。
          */
-        public l(): Core.IResource<HTMLImageElement | string>[] {
+        public l(): Resource.Resource<string | HTMLImageElement>[] {
             return this._rr || [];
+        }
+
+        /**
+         * 识别文本对齐方式。
+         */
+        protected $a(desc: string): G.Text.Align {
+            let aligns: typeof G.Text.Align = G.Text.Align;
+            switch (desc) {
+                case 'center':
+                case 'middle':
+                    return aligns.Center;
+                case 'right':
+                    return aligns.Right;
+            }
+            return aligns.Left;
         }
     }
 }

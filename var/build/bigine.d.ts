@@ -427,15 +427,16 @@ declare namespace __Bigine {
         interface ISprite extends G.Sprite {
             v(immediately?: boolean): Promise<ISprite>;
             h(immediately?: boolean): Promise<ISprite>;
-            l(): Core.IResource<HTMLImageElement | string>[];
+            l(): Core.IResource<string | HTMLImageElement>[];
         }
     }
     namespace Sprite {
         abstract class Sprite extends G.Sprite implements Core.ISprite {
-            protected _rr: Core.IResource<HTMLImageElement | string>[];
+            protected _rr: Resource.Resource<string | HTMLImageElement>[];
             v(immediately?: boolean): Promise<Sprite>;
             h(immediately?: boolean): Promise<Sprite>;
-            l(): Core.IResource<HTMLImageElement | string>[];
+            l(): Resource.Resource<string | HTMLImageElement>[];
+            protected $a(desc: string): G.Text.Align;
         }
     }
     namespace Sprite {
@@ -448,6 +449,38 @@ declare namespace __Bigine {
             private _x;
             constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
             u(title: string): Author;
+        }
+    }
+    namespace Core {
+        interface IStart extends ISprite {
+            u(title: string): IStart;
+        }
+    }
+    namespace Ev {
+        interface IStartNewMetas extends Util.IEventMetas<Core.IStart> {
+        }
+    }
+    namespace Ev {
+        class StartNew extends Event<Core.IStart> {
+            constructor(metas: IStartNewMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IStartLoadMetas extends Util.IEventMetas<Core.IStart> {
+        }
+    }
+    namespace Ev {
+        class StartLoad extends Event<Core.IStart> {
+            constructor(metas: IStartLoadMetas);
+            gT(): string;
+        }
+    }
+    namespace Sprite {
+        class Start extends Sprite implements Core.IStart {
+            private _x;
+            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            u(title: string): Start;
         }
     }
     namespace Runtime {

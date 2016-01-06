@@ -26,29 +26,17 @@ namespace Sprite {
             let w: number = 1280,
                 h: number = 720,
                 _director: Util.IHashTable<any> = theme['director'],
-                _title: Util.IHashTable<any> = theme['title'],
-                a: (desc: string) => G.Text.Align = (desc: string) => {
-                    let aligns: typeof G.Text.Align = G.Text.Align;
-                    switch (desc) {
-                        case 'center':
-                        case 'middle':
-                            return aligns.Center;
-                        case 'right':
-                            return aligns.Right;
-                        default:
-                            return aligns.Left;
-                    }
-                };
+                _title: Util.IHashTable<any> = theme['title'];
             super(0, 0, w, h);
             (<Author> this.o(0))
                 .a(new G.Color(0, 0, w, h, '#000'))
-                .a(new G.Text(<G.IBounds> _director, _director['h'], a(_director['align']))
+                .a(new G.Text(<G.IBounds> _director, _director['h'], this.$a(_director['align']))
                     .a(new G.TextPhrase()
                         .c(_director['color'])
                         .f(_director['size'])
                         .t('作品')
                     )
-                ).a(new G.Text(<G.IBounds> _title, _title['h'], a(_title['align']))
+                ).a(new G.Text(<G.IBounds> _title, _title['h'], this.$a(_title['align']))
                     .a(this._x = new G.TextPhrase()
                         .c(_title['color'])
                         .f(_title['size'])

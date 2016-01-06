@@ -27,6 +27,6 @@ namespace Core {
         /**
          * 获取远端资源列表。
          */
-        l(): Core.IResource<HTMLImageElement | string>[];
+        l(): Core.IResource<string | HTMLImageElement>[];
     }
 }
