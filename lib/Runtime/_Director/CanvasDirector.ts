@@ -148,7 +148,6 @@ namespace Runtime {
                 .a(new G.Sprite(bounds).i('m').o(0))
                 .a(new G.Sprite(bounds).i('v').o(0))
                 .a(new G.Sprite(bounds).i('t').o(0))
-                .a(new G.Sprite(bounds).i('A').o(0))
                 .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Sprite(bounds).i('$').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
@@ -237,13 +236,7 @@ namespace Runtime {
                         .then(() => {
                             this._c.e(gLogo);
                             if (!author) return;
-                            var gAuthor: G.Sprite = <G.Sprite> this._c.q('A')[0].o(1);
-                            (<G.Text> gAuthor.q('t')[0])
-                                .c()
-                                .a(new G.TextPhrase()
-                                    .t(author)
-                                    .c(<string> this._f['a']['c'])
-                                    .f(<number> this._f['a']['f']));
+                            let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author);
                             return this.lightOn()
                                 .then(() => gAuthor.p(new G.Delay(1000)))
                                 .then(() => this.lightOff())
@@ -775,7 +768,6 @@ namespace Runtime {
                             return aligns.Left;
                     }
                 },
-                gAuthor: G.Sprite = <G.Sprite> this._c.q('A')[0],
                 gStart: G.Sprite = <G.Sprite> this._c.q('S')[0],
                 gVoiceOver: G.Sprite = <G.Sprite> this._c.q('v')[0],
                 gMonolog: G.Sprite = <G.Sprite> this._c.q('m')[0],
@@ -789,20 +781,7 @@ namespace Runtime {
                 gMenuFeatures: G.Sprite,
                 gMenuSlots: G.Sprite,
                 gChoose: G.Sprite;
-            // 作品
-            gAuthor.a(new G.Text(<G.IBounds> section, section['h'], align(section['align']))
-                .a(new G.TextPhrase()
-                    .c(section['color'])
-                    .f(section['size'])
-                    .t('作品'))
-            );
-            section = chapter['title'];
-            this._f['a'] = {
-                c: section['color'],
-                f: section['size']
-            };
-            // 作者名
-            gAuthor.a(new G.Text(<G.IBounds> section, section['h'], align(section['align'])).i('t'));
+            this._c.a(this._x['a'] = new Sprite.Author(chapter), this._x['c']);
             // -------- start --------
             chapter = theme['start'];
             section = chapter['new'];

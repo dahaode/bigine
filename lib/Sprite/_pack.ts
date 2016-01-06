@@ -8,3 +8,4 @@
  */
 
 /// <reference path="Curtain.ts" />
+/// <reference path="Author.ts" />

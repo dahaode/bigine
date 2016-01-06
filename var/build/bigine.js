@@ -1561,6 +1561,59 @@ var Sprite;
     Sprite.Curtain = Curtain;
 })(Sprite || (Sprite = {}));
 /**
+ * 定义画面调度作者信息组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Author.ts
+ */
+/// <reference path="Sprite.ts" />
+var Sprite;
+(function (Sprite) {
+    var G = __Bigine_C2D;
+    var Author = (function (_super) {
+        __extends(Author, _super);
+        /**
+         * 构造函数。
+         */
+        function Author(theme) {
+            var w = 1280, h = 720, _director = theme['director'], _title = theme['title'], a = function (desc) {
+                var aligns = G.Text.Align;
+                switch (desc) {
+                    case 'center':
+                    case 'middle':
+                        return aligns.Center;
+                    case 'right':
+                        return aligns.Right;
+                    default:
+                        return aligns.Left;
+                }
+            };
+            _super.call(this, 0, 0, w, h);
+            this.o(0)
+                .a(new G.Color(0, 0, w, h, '#000'))
+                .a(new G.Text(_director, _director['h'], a(_director['align']))
+                .a(new G.TextPhrase()
+                .c(_director['color'])
+                .f(_director['size'])
+                .t('作品'))).a(new G.Text(_title, _title['h'], a(_title['align']))
+                .a(this._x = new G.TextPhrase()
+                .c(_title['color'])
+                .f(_title['size'])));
+        }
+        /**
+         * 设置名称。
+         */
+        Author.prototype.u = function (title) {
+            this._x.t(title);
+            return this.o(1);
+        };
+        return Author;
+    })(Sprite.Sprite);
+    Sprite.Author = Author;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1569,6 +1622,7 @@ var Sprite;
  * @file      Sprite/_pack.ts
  */
 /// <reference path="Curtain.ts" />
+/// <reference path="Author.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -1652,7 +1706,6 @@ var Runtime;
                 .a(new G.Sprite(bounds).i('m').o(0))
                 .a(new G.Sprite(bounds).i('v').o(0))
                 .a(new G.Sprite(bounds).i('t').o(0))
-                .a(new G.Sprite(bounds).i('A').o(0))
                 .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Sprite(bounds).i('$').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
@@ -1738,13 +1791,7 @@ var Runtime;
                     _this._c.e(gLogo);
                     if (!author)
                         return;
-                    var gAuthor = _this._c.q('A')[0].o(1);
-                    gAuthor.q('t')[0]
-                        .c()
-                        .a(new G.TextPhrase()
-                        .t(author)
-                        .c(_this._f['a']['c'])
-                        .f(_this._f['a']['f']));
+                    var gAuthor = _this._x['a'].u(author);
                     return _this.lightOn()
                         .then(function () { return gAuthor.p(new G.Delay(1000)); })
                         .then(function () { return _this.lightOff(); })
@@ -2215,20 +2262,8 @@ var Runtime;
                     default:
                         return aligns.Left;
                 }
-            }, gAuthor = this._c.q('A')[0], gStart = this._c.q('S')[0], gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gMenu = this._c.q('$')[0], gMenuWay = false, right = G.Text.Align.Right, gMenuEntry, gMenuMask, gMenuFeatures, gMenuSlots, gChoose;
-            // 作品
-            gAuthor.a(new G.Text(section, section['h'], align(section['align']))
-                .a(new G.TextPhrase()
-                .c(section['color'])
-                .f(section['size'])
-                .t('作品')));
-            section = chapter['title'];
-            this._f['a'] = {
-                c: section['color'],
-                f: section['size']
-            };
-            // 作者名
-            gAuthor.a(new G.Text(section, section['h'], align(section['align'])).i('t'));
+            }, gStart = this._c.q('S')[0], gVoiceOver = this._c.q('v')[0], gMonolog = this._c.q('m')[0], gSpeak = this._c.q('s')[0], gTip = this._c.q('t')[0], gMenu = this._c.q('$')[0], gMenuWay = false, right = G.Text.Align.Right, gMenuEntry, gMenuMask, gMenuFeatures, gMenuSlots, gChoose;
+            this._c.a(this._x['a'] = new Sprite.Author(chapter), this._x['c']);
             // -------- start --------
             chapter = theme['start'];
             section = chapter['new'];

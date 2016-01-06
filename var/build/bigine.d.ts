@@ -468,6 +468,13 @@ declare namespace __Bigine {
             constructor(color?: string);
         }
     }
+    namespace Sprite {
+        class Author extends Sprite {
+            private _x;
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            u(title: string): Author;
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;
