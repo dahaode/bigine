@@ -457,6 +457,17 @@ declare namespace __Bigine {
             }
         }
     }
+    namespace Sprite {
+        abstract class Sprite extends G.Sprite {
+            v(immediately?: boolean): Promise<Sprite>;
+            h(immediately?: boolean): Promise<Sprite>;
+        }
+    }
+    namespace Sprite {
+        class Curtain extends Sprite {
+            constructor(color?: string);
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;
@@ -470,6 +481,7 @@ declare namespace __Bigine {
             private _q;
             private _e;
             private _l;
+            private _x;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource<string | HTMLImageElement>[][]): Promise<void>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;

@@ -1491,6 +1491,85 @@ var Runtime;
     })(Event = Runtime.Event || (Runtime.Event = {}));
 })(Runtime || (Runtime = {}));
 /**
+ * 定义画面调度抽象组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Sprite.ts
+ */
+/// <reference path="../../include/tsd.d.ts" />
+var Sprite;
+(function (Sprite_1) {
+    var G = __Bigine_C2D;
+    var Sprite = (function (_super) {
+        __extends(Sprite, _super);
+        function Sprite() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 显示。
+         */
+        Sprite.prototype.v = function (immediately) {
+            if (immediately === void 0) { immediately = false; }
+            if (immediately)
+                this.o(1);
+            if (this._o)
+                return Promise.resolve(this);
+            return this.p(new G.FadeIn(500));
+        };
+        /**
+         * 隐藏。
+         */
+        Sprite.prototype.h = function (immediately) {
+            if (immediately === void 0) { immediately = false; }
+            if (immediately)
+                this.o(0);
+            if (!this._o)
+                return Promise.resolve(this);
+            return this.p(new G.FadeOut(500));
+        };
+        return Sprite;
+    })(G.Sprite);
+    Sprite_1.Sprite = Sprite;
+})(Sprite || (Sprite = {}));
+/**
+ * 定义画面调度幕帘组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Curtain.ts
+ */
+/// <reference path="Sprite.ts" />
+var Sprite;
+(function (Sprite) {
+    var G = __Bigine_C2D;
+    var Curtain = (function (_super) {
+        __extends(Curtain, _super);
+        /**
+         * 构造函数。
+         */
+        function Curtain(color) {
+            if (color === void 0) { color = '#000'; }
+            var w = 1280, h = 720;
+            _super.call(this, 0, 0, w, h);
+            this.a(new G.Color(0, 0, w, h, color));
+        }
+        return Curtain;
+    })(Sprite.Sprite);
+    Sprite.Curtain = Curtain;
+})(Sprite || (Sprite = {}));
+/**
+ * 打包所有已定义地画面调度组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/_pack.ts
+ */
+/// <reference path="Curtain.ts" />
+/**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1498,10 +1577,10 @@ var Runtime;
  * @license   GPL-3.0
  * @file      Runtime/_Director/CanvasDirector.ts
  */
-/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="Director.ts" />
 /// <reference path="../Event/Resume.ts" />
 /// <reference path="../Event/Save.ts" />
+/// <reference path="../../Sprite/_pack.ts" />
 /**
  * * b - 背景
  * * M - 地图
@@ -1563,6 +1642,7 @@ var Runtime;
                 doc.body.appendChild(els[0]);
             }
             els[0].appendChild(canvas);
+            this._x = {};
             this._c = new G.Stage(canvas.getContext('2d'))
                 .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
@@ -1575,7 +1655,7 @@ var Runtime;
                 .a(new G.Sprite(bounds).i('A').o(0))
                 .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Sprite(bounds).i('$').o(0))
-                .a(new G.Color(bounds, '#000').i('C'))
+                .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
             this._s = {
@@ -1649,7 +1729,7 @@ var Runtime;
                 .then(function () {
                 var gLogo = new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS), gEntry = _this._c.q('$.')[0];
                 _this._c.z()
-                    .a(gLogo, 'C');
+                    .a(gLogo, _this._x['c']);
                 gEntry.o(0);
                 return _this.lightOn()
                     .then(function () { return gLogo.p(new G.Delay(1000)); })
@@ -1691,7 +1771,7 @@ var Runtime;
                 _this.playSE();
                 return _this.lightOff()
                     .then(function () {
-                    _this._c.a(gED, 'C');
+                    _this._c.a(gED, _this._x['c']);
                     _this._c.q('$.')[0].o(0);
                     _this._c.q('$')[0].o(0);
                     return _this.lightOn();
@@ -1891,7 +1971,7 @@ var Runtime;
                 var gStars = new G.Image(_this._i[key].o(), CanvasDirector.BOUNDS);
                 return _this.lightOff()
                     .then(function () {
-                    _this._c.a(gStars, 'C');
+                    _this._c.a(gStars, _this._x['c']);
                     return _this.lightOn();
                 }).then(function () { return gStars.p(new G.Delay(2000)); })
                     .then(function () { return _this.lightOff(); })
@@ -1975,10 +2055,10 @@ var Runtime;
             var _this = this;
             if (time === void 0) { time = false; }
             return _super.prototype.asRoom.call(this, resource).then(function (runtime) {
-                var gCurtain = _this._c.q('C')[0], gOld = _this._c.q('b')[0], gNew = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
+                var gOld = _this._c.q('b')[0], gNew = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
                     .o(0);
                 _this._c.a(gNew, 'M');
-                if (!time || gCurtain.gO()) {
+                if (!time || _this._x['c'].gO()) {
                     gNew.o(1);
                     _this._c.e(gOld);
                     return runtime;
@@ -2026,22 +2106,14 @@ var Runtime;
          */
         CanvasDirector.prototype.lightOff = function () {
             var _this = this;
-            var gCurtain = this._c.q('C')[0];
-            if (gCurtain.gO())
-                return this._p;
-            return gCurtain.p(new G.FadeIn(500))
-                .then(function () { return _this._r; });
+            return this._x['c'].v().then(function () { return _this._r; });
         };
         /**
          * 开灯（开幕）。
          */
         CanvasDirector.prototype.lightOn = function () {
             var _this = this;
-            var gCurtain = this._c.q('C')[0];
-            if (!gCurtain.gO())
-                return this._p;
-            return gCurtain.p(new G.FadeOut(500))
-                .then(function () { return _this._r; });
+            return this._x['c'].h().then(function () { return _this._r; });
         };
         /**
          * 选择。

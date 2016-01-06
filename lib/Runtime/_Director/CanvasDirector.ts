@@ -7,10 +7,10 @@
  * @file      Runtime/_Director/CanvasDirector.ts
  */
 
-/// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="Director.ts" />
 /// <reference path="../Event/Resume.ts" />
 /// <reference path="../Event/Save.ts" />
+/// <reference path="../../Sprite/_pack.ts" />
 
 /**
  * * b - 背景
@@ -115,6 +115,8 @@ namespace Runtime {
          */
         private _l: (event: KeyboardEvent) => void;
 
+        private _x: Util.IHashTable<Sprite.Sprite>;
+
         /**
          * 构造函数。
          */
@@ -136,6 +138,7 @@ namespace Runtime {
                 doc.body.appendChild(els[0]);
             }
             els[0].appendChild(canvas);
+            this._x = {};
             this._c = <G.Stage> new G.Stage(canvas.getContext('2d'))
                 .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
@@ -148,7 +151,7 @@ namespace Runtime {
                 .a(new G.Sprite(bounds).i('A').o(0))
                 .a(new G.Sprite(bounds).i('S').o(0))
                 .a(new G.Sprite(bounds).i('$').o(0))
-                .a(new G.Color(bounds, '#000').i('C'))
+                .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
             this._s = {
@@ -226,7 +229,7 @@ namespace Runtime {
                     var gLogo: G.Image = new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS),
                         gEntry: G.Element = this._c.q('$.')[0];
                     this._c.z()
-                        .a(gLogo, 'C');
+                        .a(gLogo, this._x['c']);
                     gEntry.o(0);
                     return this.lightOn()
                         .then(() => gLogo.p(new G.Delay(1000)))
@@ -267,7 +270,7 @@ namespace Runtime {
                     this.playSE();
                     return this.lightOff()
                         .then(() => {
-                            this._c.a(gED, 'C');
+                            this._c.a(gED, this._x['c']);
                             this._c.q('$.')[0].o(0);
                             this._c.q('$')[0].o(0);
                             return this.lightOn();
@@ -495,7 +498,7 @@ namespace Runtime {
                     var gStars: G.Image = new G.Image(this._i[key].o(), CanvasDirector.BOUNDS);
                     return this.lightOff()
                         .then(() => {
-                            this._c.a(gStars, 'C');
+                            this._c.a(gStars, this._x['c']);
                             return this.lightOn();
                         }).then(() => gStars.p(new G.Delay(2000)))
                         .then(() => this.lightOff())
@@ -590,12 +593,11 @@ namespace Runtime {
          */
         public asRoom(resource: Resource<HTMLImageElement>, time: boolean = false): Promise<Core.IRuntime> {
             return super.asRoom(resource).then((runtime: Core.IRuntime) => {
-                var gCurtain: G.Element = this._c.q('C')[0],
-                    gOld: G.Element = this._c.q('b')[0],
+                var gOld: G.Element = this._c.q('b')[0],
                     gNew: G.Element = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
                         .o(0);
                 this._c.a(gNew, 'M');
-                if (!time || gCurtain.gO()) {
+                if (!time || this._x['c'].gO()) {
                     gNew.o(1);
                     this._c.e(gOld);
                     return runtime;
@@ -648,22 +650,14 @@ namespace Runtime {
          * 关灯（落幕）。
          */
         public lightOff(): Promise<Core.IRuntime> {
-            var gCurtain: G.Element = this._c.q('C')[0];
-            if (gCurtain.gO())
-                return this._p;
-            return gCurtain.p(new G.FadeIn(500))
-                .then(() => this._r);
+            return this._x['c'].v().then(() => this._r);
         }
 
         /**
          * 开灯（开幕）。
          */
         public lightOn(): Promise<Core.IRuntime> {
-            var gCurtain: G.Element = this._c.q('C')[0];
-            if (!gCurtain.gO())
-                return this._p;
-            return gCurtain.p(new G.FadeOut(500))
-                .then(() => this._r);
+            return this._x['c'].h().then(() => this._r);
         }
 
         /**
