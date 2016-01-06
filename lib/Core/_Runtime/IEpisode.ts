@@ -10,7 +10,7 @@
 /// <reference path="../_Tag/ISceneHost.ts" />
 /// <reference path="IRuntime.ts" />
 /// <reference path="../_Tag/IEntityTag.ts" />
-/// <reference path="IResource.ts" />
+/// <reference path="../_Resource/IResource.ts" />
 
 namespace Core {
     // ISceneHost:a()

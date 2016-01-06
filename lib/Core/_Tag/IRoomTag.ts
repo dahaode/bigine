@@ -9,7 +9,7 @@
 
 /// <reference path="IMapTag.ts" />
 /// <reference path="ISceneHost.ts" />
-/// <reference path="../_Runtime/IResource.ts" />
+/// <reference path="../_Resource/IResource.ts" />
 
 namespace Core {
     // ITag:gL()

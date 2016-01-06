@@ -8,7 +8,7 @@
  */
 
 /// <reference path="../../Core/_Runtime/IDirector.ts" />
-/// <reference path="../_Resource/Prefetcher.ts" />
+/// <reference path="../../Resource/Prefetcher.ts" />
 /// <reference path="../../Ev/_Runtime/Begin.ts" />
 
 namespace Runtime {
@@ -62,8 +62,8 @@ namespace Runtime {
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        public c(resources: Resource<string | HTMLImageElement>[][]): Promise<void> {
-            return Prefecher.c(resources, this._r.gL());
+        public c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void> {
+            return Resource.Prefecher.c(resources, this._r.gL());
         }
 
         /**
@@ -94,7 +94,7 @@ namespace Runtime {
         /**
          * 人物出场。
          */
-        public charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
+        public charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             return this.charSet(resource, position);
         }
 
@@ -108,7 +108,7 @@ namespace Runtime {
         /**
          * 设置人物。
          */
-        public charSet(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
+        public charSet(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             return this._p;
         }
 
@@ -122,7 +122,7 @@ namespace Runtime {
         /**
          * 某白。
          */
-        public words(words: string, theme: string, who?: string, avatar?: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
+        public words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             return this._p;
         }
 
@@ -143,14 +143,14 @@ namespace Runtime {
         /**
          * 播放背景音乐。
          */
-        public playBGM(resource?: Resource<string>): Promise<Core.IRuntime> {
+        public playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 播放音效。
          */
-        public playSE(resource?: Resource<string>): Promise<Core.IRuntime> {
+        public playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime> {
             return this._p;
         }
 
@@ -164,14 +164,14 @@ namespace Runtime {
         /**
          * 展示特写。
          */
-        public showCG(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
+        public showCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 设置房间。
          */
-        public asRoom(resource: Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime> {
+        public asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime> {
             return this._p;
         }
 

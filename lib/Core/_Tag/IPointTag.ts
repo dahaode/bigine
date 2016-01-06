@@ -9,7 +9,7 @@
 
 /// <reference path="IRoomTag.ts" />
 /// <reference path="../_Runtime/IButtonable.ts" />
-/// <reference path="../_Runtime/IResource.ts" />
+/// <reference path="../_Resource/IResource.ts" />
 
 namespace Core {
     // ITag:gL()

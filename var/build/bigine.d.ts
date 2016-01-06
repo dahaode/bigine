@@ -253,7 +253,7 @@ declare namespace __Bigine {
             gT(): string;
         }
     }
-    namespace Runtime {
+    namespace Resource {
         class Resource<T> implements Core.IResource<T> {
             private _l;
             private _q;
@@ -279,7 +279,7 @@ declare namespace __Bigine {
             p(type: Core.ISceneTag.Type, runtime: Core.IRuntime): Promise<Core.IRuntime>;
             f(tag: Core.IEntityTag): Episode;
             q(id: string, type: Core.IEpisode.Entity, lineNo?: number): Core.IEntityTag;
-            r(uri: string, type: Core.IResource.Type): Resource<string | HTMLImageElement>;
+            r(uri: string, type: Core.IResource.Type): Resource.Resource<string | HTMLImageElement>;
             gS(): string;
             gT(): string;
             gA(): boolean;
@@ -348,7 +348,7 @@ declare namespace __Bigine {
             l(): void;
         }
     }
-    namespace Runtime {
+    namespace Resource {
         class Prefecher {
             private _p;
             constructor();
@@ -375,22 +375,22 @@ declare namespace __Bigine {
             protected _v: number;
             protected _o: boolean;
             constructor(runtime: Core.IRuntime);
-            c(resources: Resource<string | HTMLImageElement>[][]): Promise<void>;
+            c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             FAIL(): Promise<Core.IRuntime>;
-            charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
+            charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
             charOff(position: Core.IDirector.Position): Promise<Core.IRuntime>;
-            charSet(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
+            charSet(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
             charMove(from: Core.IDirector.Position, to: Core.IDirector.Position): Promise<Core.IRuntime>;
-            words(words: string, theme: string, who?: string, avatar?: Resource<HTMLImageElement>): Promise<Core.IRuntime>;
+            words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             tip(words: string): Promise<Core.IRuntime>;
             stars(rank: Core.IDirector.Stars): Promise<Core.IRuntime>;
-            playBGM(resource?: Resource<string>): Promise<Core.IRuntime>;
-            playSE(resource?: Resource<string>): Promise<Core.IRuntime>;
+            playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
+            playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
             hideCG(): Promise<Core.IRuntime>;
-            showCG(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime>;
-            asRoom(resource: Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime>;
+            showCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
+            asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime>;
             asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime>;
             lightOff(): Promise<Core.IRuntime>;
             lightOn(): Promise<Core.IRuntime>;
@@ -423,8 +423,15 @@ declare namespace __Bigine {
             gT(): string;
         }
     }
+    namespace Core {
+        interface ISprite extends G.Sprite {
+            v(immediately?: boolean): Promise<ISprite>;
+            h(immediately?: boolean): Promise<ISprite>;
+            l(): Core.IResource<HTMLImageElement | string>[];
+        }
+    }
     namespace Sprite {
-        abstract class Sprite extends G.Sprite {
+        abstract class Sprite extends G.Sprite implements Core.ISprite {
             protected _rr: Core.IResource<HTMLImageElement | string>[];
             v(immediately?: boolean): Promise<Sprite>;
             h(immediately?: boolean): Promise<Sprite>;
@@ -458,22 +465,22 @@ declare namespace __Bigine {
             private _l;
             private _x;
             constructor(runtime: Core.IRuntime);
-            c(resources: Resource<string | HTMLImageElement>[][]): Promise<void>;
+            c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
-            charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
+            charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
             charOff(position: Core.IDirector.Position): Promise<Core.IRuntime>;
-            charSet(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
+            charSet(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
             charMove(from: Core.IDirector.Position, to: Core.IDirector.Position): Promise<Core.IRuntime>;
-            protected $c(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image;
-            words(words: string, theme: string, who?: string, avatar?: Resource<HTMLImageElement>): Promise<Core.IRuntime>;
+            protected $c(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image;
+            words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             tip(words: string): Promise<Core.IRuntime>;
             stars(rank: Core.IDirector.Stars): Promise<Core.IRuntime>;
-            playBGM(resource?: Resource<string>): Promise<Core.IRuntime>;
-            playSE(resource?: Resource<string>): Promise<Core.IRuntime>;
+            playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
+            playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
             hideCG(): Promise<Core.IRuntime>;
-            showCG(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime>;
-            asRoom(resource: Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime>;
+            showCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
+            asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime>;
             asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime>;
             lightOff(): Promise<Core.IRuntime>;
             lightOn(): Promise<Core.IRuntime>;

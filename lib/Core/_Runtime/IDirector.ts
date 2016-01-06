@@ -7,7 +7,7 @@
  * @file      Core/_Runtime/IDirector.ts
  */
 
-/// <reference path="IResource.ts" />
+/// <reference path="../_Resource/IResource.ts" />
 /// <reference path="IRuntime.ts" />
 /// <reference path="../_Tag/IPointTag.ts" />
 /// <reference path="../_Tag/IOptionTag.ts" />

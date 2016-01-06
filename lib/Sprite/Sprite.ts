@@ -7,13 +7,12 @@
  * @file      Sprite/Sprite.ts
  */
 
-/// <reference path="../../include/tsd.d.ts" />
-/// <reference path="../Core/_Runtime/IResource.ts" />
+/// <reference path="../Core/_Sprite/ISprite.ts" />
 
 namespace Sprite {
     import G = __Bigine_C2D;
 
-    export abstract class Sprite extends G.Sprite {
+    export abstract class Sprite extends G.Sprite implements Core.ISprite {
         /**
          * 远端资源列表。
          */

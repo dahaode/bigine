@@ -1,15 +1,15 @@
 /**
- * 定义（运行时）（资源）预加载器组件。
+ * 定义（资源）预加载器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/_Resource/Prefetcher.ts
+ * @file      Resource/Prefetcher.ts
  */
 
 /// <reference path="Resource.ts" />
 
-namespace Runtime {
+namespace Resource {
     import Util = __Bigine_Util;
 
     /**

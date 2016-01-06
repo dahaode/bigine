@@ -1,22 +1,22 @@
 /**
- * 定义（运行时）资源组件。
+ * 定义资源组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/_Resource/Resource.ts
+ * @file      Resource/Resource.ts
  */
 
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../../Core/_Runtime/IResource.ts" />
+/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../Core/_Resource/IResource.ts" />
 
-namespace Runtime {
+namespace Resource {
     import Util = __Bigine_Util;
 
     /**
      * 资源池。
      */
-    var $r: Util.IHashTable<Resource<any>> = {};
+    let $r: Util.IHashTable<Resource<any>> = {};
 
     export class Resource<T> implements Core.IResource<T> {
         /**

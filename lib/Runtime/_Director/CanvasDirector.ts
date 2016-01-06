@@ -78,7 +78,7 @@ namespace Runtime {
         /**
          * 基础图片。
          */
-        private _i: Util.IHashTable<Resource<string | HTMLImageElement>>;
+        private _i: Util.IHashTable<Resource.Resource<string | HTMLImageElement>>;
 
         /**
          * 文字配置。
@@ -162,14 +162,14 @@ namespace Runtime {
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
             this._i = {
-                o: Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
-                e: Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
-                s: Resource.g<string>(assets + 'oops.mp3', raw),
-                s3: Resource.g<HTMLImageElement>(assets + '3stars.png', raw),
-                s2: Resource.g<HTMLImageElement>(assets + '2stars.png', raw),
-                s1: Resource.g<HTMLImageElement>(assets + '1star.png', raw),
-                f: Resource.g<string>(assets + 'focus.mp3', raw),
-                c: Resource.g<string>(assets + 'click.mp3', raw)
+                o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
+                e: Resource.Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
+                s: Resource.Resource.g<string>(assets + 'oops.mp3', raw),
+                s3: Resource.Resource.g<HTMLImageElement>(assets + '3stars.png', raw),
+                s2: Resource.Resource.g<HTMLImageElement>(assets + '2stars.png', raw),
+                s1: Resource.Resource.g<HTMLImageElement>(assets + '1star.png', raw),
+                f: Resource.Resource.g<string>(assets + 'focus.mp3', raw),
+                c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
             };
             this._f = {};
             this._e = [0, 0];
@@ -185,7 +185,7 @@ namespace Runtime {
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        public c(resources: Resource<string | HTMLImageElement>[][]): Promise<void> {
+        public c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void> {
             var gLoading: G.Sprite = <G.Sprite> this._c.q('L')[0],
                 gElapsed: G.Element = gLoading.q('e')[0],
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
@@ -199,15 +199,15 @@ namespace Runtime {
                     gElapsed.x((e[1] / e[0] - 1) * bounds.w);
                     gLoading.o(1);
                 };
-            Util.each(resources, (frame: Resource<string | HTMLImageElement>[]) => {
-                Util.each(frame, (resource: Resource<string | HTMLImageElement>) => {
+            Util.each(resources, (frame: Resource.Resource<string | HTMLImageElement>[]) => {
+                Util.each(frame, (resource: Resource.Resource<string | HTMLImageElement>) => {
                     progress(false);
                     resource.w((value: string | HTMLImageElement) => {
                         progress(true);
                     });
                 });
             });
-            return Prefecher.c(resources, this._r.gL());
+            return Resource.Prefecher.c(resources, this._r.gL());
         }
 
         /**
@@ -279,7 +279,7 @@ namespace Runtime {
         /**
          * 人物出场。
          */
-        public charOn(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
+        public charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             var states: Core.IStates = this._r.gS(),
                 gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
                 gCG: G.Element = this._c.q('g')[0],
@@ -320,7 +320,7 @@ namespace Runtime {
         /**
          * 设置人物。
          */
-        public charSet(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
+        public charSet(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             var states: Core.IStates = this._r.gS(),
                 kamount: string = '$c',
                 gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
@@ -370,13 +370,13 @@ namespace Runtime {
             })).then(() => {
                 gChar.i(<any> to);
                 return this._r;
-            });
+                });
         }
 
         /**
          * 创建立绘。
          */
-        protected $c(resource: Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image {
+        protected $c(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image {
             var bounds: G.IBounds = CanvasDirector.BOUNDS,
                 pos: typeof Core.IDirector.Position = Core.IDirector.Position,
                 w: number = 0 | bounds.h / 3 * 2,
@@ -406,7 +406,7 @@ namespace Runtime {
         /**
          * 某白。
          */
-        public words(words: string, theme: string, who?: string, avatar?: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
+        public words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             var code: string = theme[0],
                 gFrame: G.Sprite = <G.Sprite> this._c.q(code)[0],
                 gAvatar: G.Sprite = <G.Sprite> gFrame.q('a')[0],
@@ -505,7 +505,7 @@ namespace Runtime {
         /**
          * 播放背景音乐。
          */
-        public playBGM(resource?: Resource<string>): Promise<Core.IRuntime> {
+        public playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime> {
             var oops: string = this._i['s'].l(),
                 url: string = resource ? resource.l() : oops,
                 bgm: HTMLAudioElement = this._s['b'],
@@ -526,7 +526,7 @@ namespace Runtime {
         /**
          * 播放音效。
          */
-        public playSE(resource?: Resource<string>): Promise<Core.IRuntime> {
+        public playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime> {
             var url: string = (resource || this._i['s']).l(),
                 se: HTMLAudioElement = this._s['e'],
                 type: string = 'ended',
@@ -557,14 +557,14 @@ namespace Runtime {
                         gChars.o(0);
                     gCG.e(gImage);
                     return runtime;
-                });
+                    });
             });
         }
 
         /**
          * 展示特写。
          */
-        public showCG(resource: Resource<HTMLImageElement>): Promise<Core.IRuntime> {
+        public showCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             return super.showCG(resource).then((runtime: Core.IRuntime) => {
                 var bounds: G.IBounds = CanvasDirector.BOUNDS,
                     gChars: G.Element = this._c.q('c')[0],
@@ -584,7 +584,7 @@ namespace Runtime {
         /**
          * 设置房间。
          */
-        public asRoom(resource: Resource<HTMLImageElement>, time: boolean = false): Promise<Core.IRuntime> {
+        public asRoom(resource: Resource.Resource<HTMLImageElement>, time: boolean = false): Promise<Core.IRuntime> {
             return super.asRoom(resource).then((runtime: Core.IRuntime) => {
                 var gOld: G.Element = this._c.q('b')[0],
                     gNew: G.Element = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
@@ -751,11 +751,11 @@ namespace Runtime {
          */
         public t(id: string, theme: Util.IHashTable<Util.IHashTable<any> >): CanvasDirector {
             var url: string = '//s.dahao.de/theme/' + id + '/',
-                chapter: Util.IHashTable<any>  = theme['author'],
-                section: Util.IHashTable<any>  = chapter['director'],
+                chapter: Util.IHashTable<any> = theme['author'],
+                section: Util.IHashTable<any> = chapter['director'],
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
-                resources: Resource<string | HTMLImageElement>[][] = [],
+                resources: Resource.Resource<string | HTMLImageElement>[][] = [],
                 align: (desc: string) => G.Text.Align = (desc: string) => {
                     var aligns: typeof G.Text.Align = G.Text.Align;
                     switch (desc) {
@@ -786,9 +786,9 @@ namespace Runtime {
             chapter = theme['start'];
             section = chapter['new'];
             resources.push([ // 0
-                Resource.g<HTMLImageElement>(url + chapter['image'], raw), // 0
-                Resource.g<HTMLImageElement>(url + section['image'], raw), // 1
-                Resource.g<HTMLImageElement>(url + section['hover'], raw), // 2
+                Resource.Resource.g<HTMLImageElement>(url + chapter['image'], raw), // 0
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 1
+                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw), // 2
                 this._i['f'], // 3
                 this._i['c'] // 4
             ]);
@@ -808,11 +808,11 @@ namespace Runtime {
                     .addEventListener('$focus', () => {
                         this.playSE(resources[0][3]);
                     })
-                );
+            );
             section = chapter['load'];
             resources[0].push(
-                Resource.g<HTMLImageElement>(url + section['image'], raw), // 5
-                Resource.g<HTMLImageElement>(url + section['hover'], raw) // 6
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 5
+                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 6
             );
             // 读档按钮
             gStart.a(new G.Button(<G.IBounds> section)
@@ -839,7 +839,7 @@ namespace Runtime {
             chapter = theme['voiceover'];
             section = chapter['back'];
             resources.push([ // 1
-                Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
             ]);
             // 背景图
             gVoiceOver.a(new G.Image(resources[1][0].o(), <G.IBounds> section));
@@ -858,7 +858,7 @@ namespace Runtime {
             chapter = theme['monolog'];
             section = chapter['back'];
             resources.push([ // 2
-                Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
             ]);
             // 背景图
             gMonolog.a(new G.Image(resources[2][0].o(), <G.IBounds> section))
@@ -890,7 +890,7 @@ namespace Runtime {
             chapter = theme['speak'];
             section = chapter['back'];
             resources.push([ // 3
-                Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
             ]);
             // 背景图
             gSpeak.a(new G.Image(resources[3][0].o(), <G.IBounds> section))
@@ -922,7 +922,7 @@ namespace Runtime {
             chapter = theme['tip'];
             section = chapter['back'];
             resources.push([ // 4
-                Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
             ]);
             // 背景图
             gTip.a(new G.Image(resources[4][0].o(), <G.IBounds> section));
@@ -945,8 +945,8 @@ namespace Runtime {
             chapter = chapter['option'];
             section = chapter['back'];
             resources.push([ // 5
-                Resource.g<HTMLImageElement>(url + section['image'], raw), // 0
-                Resource.g<HTMLImageElement>(url + section['hover'], raw) // 1
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 0
+                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 1
             ]);
             this._i['cn'] = resources[5][0];
             this._i['ch'] = resources[5][1];
@@ -963,8 +963,8 @@ namespace Runtime {
                 .a((gMenuSlots = new G.Sprite(bounds)).i('s').o(0));
             section = chapter['enter'];
             resources.push([ // 6
-                Resource.g<HTMLImageElement>(url + section['image'], raw), // 0
-                Resource.g<HTMLImageElement>(url + section['hover'], raw) // 1
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 0
+                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 1
             ]);
             // 入口按钮
             this._c.a((gMenuEntry = new G.Button(<G.IBounds> section).b(() => {
@@ -978,8 +978,8 @@ namespace Runtime {
             }, new G.Image(resources[6][1].o()), new G.Image(resources[6][0].o()))).i('$.'), 'A');
             section = chapter['back'];
             resources[6].push(
-                Resource.g<HTMLImageElement>(url + section['image'], raw), // 2
-                Resource.g<HTMLImageElement>(url + section['hover'], raw) // 3
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 2
+                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 3
             );
             // 关闭按钮
             gMenuFeatures.a(new G.Button(<G.IBounds> section).b(() => {
@@ -999,8 +999,8 @@ namespace Runtime {
             }, new G.Image(resources[6][3].o()), new G.Image(resources[6][2].o())));
             section = chapter['save'];
             resources[6].push(
-                Resource.g<HTMLImageElement>(url + section['image'], raw), // 4
-                Resource.g<HTMLImageElement>(url + section['hover'], raw) // 5
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 4
+                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 5
             );
             // 存档按钮
             gMenuFeatures.a(new G.Button(<G.IBounds> section).b(() => {
@@ -1009,8 +1009,8 @@ namespace Runtime {
             }, new G.Image(resources[6][5].o()), new G.Image(resources[6][4].o())));
             section = chapter['load'];
             resources[6].push(
-                Resource.g<HTMLImageElement>(url + section['image'], raw), // 6
-                Resource.g<HTMLImageElement>(url + section['hover'], raw) // 7
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 6
+                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 7
             );
             // 读档按钮
             gMenuFeatures.a(new G.Button(<G.IBounds> section).b(() => {
@@ -1019,8 +1019,8 @@ namespace Runtime {
             }, new G.Image(resources[6][7].o()), new G.Image(resources[6][6].o())));
             section = chapter['auto'];
             resources[6].push(
-                Resource.g<HTMLImageElement>(url + section['image'], raw), // 8
-                Resource.g<HTMLImageElement>(url + section['hover'], raw) // 9
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 8
+                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 9
             );
             section = chapter['autotext'];
             // 自动档按钮
@@ -1038,13 +1038,13 @@ namespace Runtime {
                         .t('无')
                         .f(chapter['disabled']['size'])
                         .c(chapter['disabled']['color'])
-                    )
-                ).i('_.').o(0)
+                )
+            ).i('_.').o(0)
             );
             section = chapter['1'];
             resources[6].push(
-                Resource.g<HTMLImageElement>(url + section['image'], raw), // 10
-                Resource.g<HTMLImageElement>(url + section['hover'], raw) // 11
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 10
+                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 11
             );
             section = chapter['1text'];
             // 第一档按钮
@@ -1071,23 +1071,23 @@ namespace Runtime {
                         .f(chapter['disabled']['size'])
                         .c(chapter['disabled']['color'])
                     )
-                ).i('1.').o(0)
+            ).i('1.').o(0)
             );
             section = chapter['2'];
             resources[6].push(
-                Resource.g<HTMLImageElement>(url + section['image'], raw) // 12
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 12
             );
             // 第二档按钮
             gMenuSlots.a(new G.Image(resources[6][12].o(), <G.IBounds> section));
             section = chapter['3'];
             resources[6].push(
-                Resource.g<HTMLImageElement>(url + section['image'], raw) // 13
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 13
             );
             // 第三档按钮
             gMenuSlots.a(new G.Image(resources[6][13].o(), <G.IBounds> section));
             section = chapter['4'];
             resources[6].push(
-                Resource.g<HTMLImageElement>(url + section['image'], raw) // 14
+                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 14
             );
             // 第二档按钮
             gMenuSlots.a(new G.Image(resources[6][14].o(), <G.IBounds> section));

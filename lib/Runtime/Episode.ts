@@ -10,7 +10,7 @@
 /// <reference path="../Ev/_Runtime/Ready.ts" />
 /// <reference path="../Ev/_Runtime/Error.ts" />
 /// <reference path="../Ev/_Runtime/End.ts" />
-/// <reference path="_Resource/Resource.ts" />
+/// <reference path="../Resource/Resource.ts" />
 
 namespace Runtime {
     import Util = __Bigine_Util;
@@ -148,8 +148,8 @@ namespace Runtime {
         /**
          * 注册资源。
          */
-        public r(uri: string, type: Core.IResource.Type): Resource<string | HTMLImageElement> {
-            return Resource.g<string | HTMLImageElement>(uri, type);
+        public r(uri: string, type: Core.IResource.Type): Resource.Resource<string | HTMLImageElement> {
+            return Resource.Resource.g<string | HTMLImageElement>(uri, type);
         }
 
         /**

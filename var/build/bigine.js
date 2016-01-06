@@ -78,9 +78,9 @@ var Ev;
  * 声明（运行时）资源（如：图片、音频等）组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Core/_Runtime/IResource.ts
+ * @file      Core/_Resource/IResource.ts
  */
 var Core;
 (function (Core) {
@@ -146,7 +146,7 @@ var Core;
  */
 /// <reference path="IMapTag.ts" />
 /// <reference path="ISceneHost.ts" />
-/// <reference path="../_Runtime/IResource.ts" />
+/// <reference path="../_Resource/IResource.ts" />
 /**
  * 声明（运行时场效）交互按钮接口规范。
  *
@@ -166,7 +166,7 @@ var Core;
  */
 /// <reference path="IRoomTag.ts" />
 /// <reference path="../_Runtime/IButtonable.ts" />
-/// <reference path="../_Runtime/IResource.ts" />
+/// <reference path="../_Resource/IResource.ts" />
 /**
  * 声明选项动作标签接口规范。
  *
@@ -185,7 +185,7 @@ var Core;
  * @license   GPL-3.0
  * @file      Core/_Runtime/IDirector.ts
  */
-/// <reference path="IResource.ts" />
+/// <reference path="../_Resource/IResource.ts" />
 /// <reference path="IRuntime.ts" />
 /// <reference path="../_Tag/IPointTag.ts" />
 /// <reference path="../_Tag/IOptionTag.ts" />
@@ -331,7 +331,7 @@ var Core;
 /// <reference path="../_Tag/ISceneHost.ts" />
 /// <reference path="IRuntime.ts" />
 /// <reference path="../_Tag/IEntityTag.ts" />
-/// <reference path="IResource.ts" />
+/// <reference path="../_Resource/IResource.ts" />
 var Core;
 (function (Core) {
     var IEpisode;
@@ -501,17 +501,17 @@ var Ev;
     Ev.End = End;
 })(Ev || (Ev = {}));
 /**
- * 定义（运行时）资源组件。
+ * 定义资源组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/_Resource/Resource.ts
+ * @file      Resource/Resource.ts
  */
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../../Core/_Runtime/IResource.ts" />
-var Runtime;
-(function (Runtime) {
+/// <reference path="../../include/tsd.d.ts" />
+/// <reference path="../Core/_Resource/IResource.ts" />
+var Resource;
+(function (Resource_1) {
     var Util = __Bigine_Util;
     /**
      * 资源池。
@@ -635,8 +635,8 @@ var Runtime;
         };
         return Resource;
     })();
-    Runtime.Resource = Resource;
-})(Runtime || (Runtime = {}));
+    Resource_1.Resource = Resource;
+})(Resource || (Resource = {}));
 /**
  * 定义（运行时）作品组件。
  *
@@ -648,7 +648,7 @@ var Runtime;
 /// <reference path="../Ev/_Runtime/Ready.ts" />
 /// <reference path="../Ev/_Runtime/Error.ts" />
 /// <reference path="../Ev/_Runtime/End.ts" />
-/// <reference path="_Resource/Resource.ts" />
+/// <reference path="../Resource/Resource.ts" />
 var Runtime;
 (function (Runtime) {
     var Util = __Bigine_Util;
@@ -753,7 +753,7 @@ var Runtime;
          * 注册资源。
          */
         Episode.prototype.r = function (uri, type) {
-            return Runtime.Resource.g(uri, type);
+            return Resource.Resource.g(uri, type);
         };
         /**
          * 获取素材包名称。
@@ -1069,16 +1069,16 @@ var Runtime;
     Runtime.States = States;
 })(Runtime || (Runtime = {}));
 /**
- * 定义（运行时）（资源）预加载器组件。
+ * 定义（资源）预加载器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Runtime/_Resource/Prefetcher.ts
+ * @file      Resource/Prefetcher.ts
  */
 /// <reference path="Resource.ts" />
-var Runtime;
-(function (Runtime) {
+var Resource;
+(function (Resource) {
     var Util = __Bigine_Util;
     /**
      * 唯一实例。
@@ -1128,8 +1128,8 @@ var Runtime;
         };
         return Prefecher;
     })();
-    Runtime.Prefecher = Prefecher;
-})(Runtime || (Runtime = {}));
+    Resource.Prefecher = Prefecher;
+})(Resource || (Resource = {}));
 /**
  * 声明（运行时）开场事件元信息接口规范。
  *
@@ -1179,7 +1179,7 @@ var Ev;
  * @file      Runtime/_Director/Director.ts
  */
 /// <reference path="../../Core/_Runtime/IDirector.ts" />
-/// <reference path="../_Resource/Prefetcher.ts" />
+/// <reference path="../../Resource/Prefetcher.ts" />
 /// <reference path="../../Ev/_Runtime/Begin.ts" />
 var Runtime;
 (function (Runtime) {
@@ -1201,7 +1201,7 @@ var Runtime;
          * @param resources 一个（作品）事件所包含地所有资源
          */
         Director.prototype.c = function (resources) {
-            return Runtime.Prefecher.c(resources, this._r.gL());
+            return Resource.Prefecher.c(resources, this._r.gL());
         };
         /**
          * 开始动画。
@@ -1464,6 +1464,16 @@ var Ev;
     Ev.Resume = Resume;
 })(Ev || (Ev = {}));
 /**
+ * 声明画面调度组件接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Sprite/ISprite.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../_Resource/IResource.ts" />
+/**
  * 定义画面调度抽象组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1471,8 +1481,7 @@ var Ev;
  * @license   GPL-3.0
  * @file      Sprite/Sprite.ts
  */
-/// <reference path="../../include/tsd.d.ts" />
-/// <reference path="../Core/_Runtime/IResource.ts" />
+/// <reference path="../Core/_Sprite/ISprite.ts" />
 var Sprite;
 (function (Sprite_1) {
     var G = __Bigine_C2D;
@@ -1700,14 +1709,14 @@ var Runtime;
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
             this._i = {
-                o: Runtime.Resource.g(assets + 'logo.png', raw),
-                e: Runtime.Resource.g(assets + 'thx.png', raw),
-                s: Runtime.Resource.g(assets + 'oops.mp3', raw),
-                s3: Runtime.Resource.g(assets + '3stars.png', raw),
-                s2: Runtime.Resource.g(assets + '2stars.png', raw),
-                s1: Runtime.Resource.g(assets + '1star.png', raw),
-                f: Runtime.Resource.g(assets + 'focus.mp3', raw),
-                c: Runtime.Resource.g(assets + 'click.mp3', raw)
+                o: Resource.Resource.g(assets + 'logo.png', raw),
+                e: Resource.Resource.g(assets + 'thx.png', raw),
+                s: Resource.Resource.g(assets + 'oops.mp3', raw),
+                s3: Resource.Resource.g(assets + '3stars.png', raw),
+                s2: Resource.Resource.g(assets + '2stars.png', raw),
+                s1: Resource.Resource.g(assets + '1star.png', raw),
+                f: Resource.Resource.g(assets + 'focus.mp3', raw),
+                c: Resource.Resource.g(assets + 'click.mp3', raw)
             };
             this._f = {};
             this._e = [0, 0];
@@ -1742,7 +1751,7 @@ var Runtime;
                     });
                 });
             });
-            return Runtime.Prefecher.c(resources, this._r.gL());
+            return Resource.Prefecher.c(resources, this._r.gL());
         };
         /**
          * 开始动画。
@@ -2248,9 +2257,9 @@ var Runtime;
             chapter = theme['start'];
             section = chapter['new'];
             resources.push([
-                Runtime.Resource.g(url + chapter['image'], raw),
-                Runtime.Resource.g(url + section['image'], raw),
-                Runtime.Resource.g(url + section['hover'], raw),
+                Resource.Resource.g(url + chapter['image'], raw),
+                Resource.Resource.g(url + section['image'], raw),
+                Resource.Resource.g(url + section['hover'], raw),
                 this._i['f'],
                 this._i['c'] // 4
             ]);
@@ -2270,8 +2279,8 @@ var Runtime;
                 _this.playSE(resources[0][3]);
             }));
             section = chapter['load'];
-            resources[0].push(Runtime.Resource.g(url + section['image'], raw), // 5
-            Runtime.Resource.g(url + section['hover'], raw) // 6
+            resources[0].push(Resource.Resource.g(url + section['image'], raw), // 5
+            Resource.Resource.g(url + section['hover'], raw) // 6
             );
             // 读档按钮
             gStart.a(new G.Button(section)
@@ -2297,7 +2306,7 @@ var Runtime;
             chapter = theme['voiceover'];
             section = chapter['back'];
             resources.push([
-                Runtime.Resource.g(url + section['image'], raw) // 0
+                Resource.Resource.g(url + section['image'], raw) // 0
             ]);
             // 背景图
             gVoiceOver.a(new G.Image(resources[1][0].o(), section));
@@ -2315,7 +2324,7 @@ var Runtime;
             chapter = theme['monolog'];
             section = chapter['back'];
             resources.push([
-                Runtime.Resource.g(url + section['image'], raw) // 0
+                Resource.Resource.g(url + section['image'], raw) // 0
             ]);
             // 背景图
             gMonolog.a(new G.Image(resources[2][0].o(), section))
@@ -2343,7 +2352,7 @@ var Runtime;
             chapter = theme['speak'];
             section = chapter['back'];
             resources.push([
-                Runtime.Resource.g(url + section['image'], raw) // 0
+                Resource.Resource.g(url + section['image'], raw) // 0
             ]);
             // 背景图
             gSpeak.a(new G.Image(resources[3][0].o(), section))
@@ -2371,7 +2380,7 @@ var Runtime;
             chapter = theme['tip'];
             section = chapter['back'];
             resources.push([
-                Runtime.Resource.g(url + section['image'], raw) // 0
+                Resource.Resource.g(url + section['image'], raw) // 0
             ]);
             // 背景图
             gTip.a(new G.Image(resources[4][0].o(), section));
@@ -2393,8 +2402,8 @@ var Runtime;
             chapter = chapter['option'];
             section = chapter['back'];
             resources.push([
-                Runtime.Resource.g(url + section['image'], raw),
-                Runtime.Resource.g(url + section['hover'], raw) // 1
+                Resource.Resource.g(url + section['image'], raw),
+                Resource.Resource.g(url + section['hover'], raw) // 1
             ]);
             this._i['cn'] = resources[5][0];
             this._i['ch'] = resources[5][1];
@@ -2411,8 +2420,8 @@ var Runtime;
                 .a((gMenuSlots = new G.Sprite(bounds)).i('s').o(0));
             section = chapter['enter'];
             resources.push([
-                Runtime.Resource.g(url + section['image'], raw),
-                Runtime.Resource.g(url + section['hover'], raw) // 1
+                Resource.Resource.g(url + section['image'], raw),
+                Resource.Resource.g(url + section['hover'], raw) // 1
             ]);
             // 入口按钮
             this._c.a((gMenuEntry = new G.Button(section).b(function () {
@@ -2425,8 +2434,8 @@ var Runtime;
                 gMenu.o(1);
             }, new G.Image(resources[6][1].o()), new G.Image(resources[6][0].o()))).i('$.'), 'A');
             section = chapter['back'];
-            resources[6].push(Runtime.Resource.g(url + section['image'], raw), // 2
-            Runtime.Resource.g(url + section['hover'], raw) // 3
+            resources[6].push(Resource.Resource.g(url + section['image'], raw), // 2
+            Resource.Resource.g(url + section['hover'], raw) // 3
             );
             // 关闭按钮
             gMenuFeatures.a(new G.Button(section).b(function () {
@@ -2445,8 +2454,8 @@ var Runtime;
                 gMenuFeatures.o(1);
             }, new G.Image(resources[6][3].o()), new G.Image(resources[6][2].o())));
             section = chapter['save'];
-            resources[6].push(Runtime.Resource.g(url + section['image'], raw), // 4
-            Runtime.Resource.g(url + section['hover'], raw) // 5
+            resources[6].push(Resource.Resource.g(url + section['image'], raw), // 4
+            Resource.Resource.g(url + section['hover'], raw) // 5
             );
             // 存档按钮
             gMenuFeatures.a(new G.Button(section).b(function () {
@@ -2454,8 +2463,8 @@ var Runtime;
                 _this.qs(false, .4);
             }, new G.Image(resources[6][5].o()), new G.Image(resources[6][4].o())));
             section = chapter['load'];
-            resources[6].push(Runtime.Resource.g(url + section['image'], raw), // 6
-            Runtime.Resource.g(url + section['hover'], raw) // 7
+            resources[6].push(Resource.Resource.g(url + section['image'], raw), // 6
+            Resource.Resource.g(url + section['hover'], raw) // 7
             );
             // 读档按钮
             gMenuFeatures.a(new G.Button(section).b(function () {
@@ -2463,8 +2472,8 @@ var Runtime;
                 _this.qs(true, .4);
             }, new G.Image(resources[6][7].o()), new G.Image(resources[6][6].o())));
             section = chapter['auto'];
-            resources[6].push(Runtime.Resource.g(url + section['image'], raw), // 8
-            Runtime.Resource.g(url + section['hover'], raw) // 9
+            resources[6].push(Resource.Resource.g(url + section['image'], raw), // 8
+            Resource.Resource.g(url + section['hover'], raw) // 9
             );
             section = chapter['autotext'];
             // 自动档按钮
@@ -2482,8 +2491,8 @@ var Runtime;
                 .f(chapter['disabled']['size'])
                 .c(chapter['disabled']['color']))).i('_.').o(0));
             section = chapter['1'];
-            resources[6].push(Runtime.Resource.g(url + section['image'], raw), // 10
-            Runtime.Resource.g(url + section['hover'], raw) // 11
+            resources[6].push(Resource.Resource.g(url + section['image'], raw), // 10
+            Resource.Resource.g(url + section['hover'], raw) // 11
             );
             section = chapter['1text'];
             // 第一档按钮
@@ -2509,17 +2518,17 @@ var Runtime;
                 .f(chapter['disabled']['size'])
                 .c(chapter['disabled']['color']))).i('1.').o(0));
             section = chapter['2'];
-            resources[6].push(Runtime.Resource.g(url + section['image'], raw) // 12
+            resources[6].push(Resource.Resource.g(url + section['image'], raw) // 12
             );
             // 第二档按钮
             gMenuSlots.a(new G.Image(resources[6][12].o(), section));
             section = chapter['3'];
-            resources[6].push(Runtime.Resource.g(url + section['image'], raw) // 13
+            resources[6].push(Resource.Resource.g(url + section['image'], raw) // 13
             );
             // 第三档按钮
             gMenuSlots.a(new G.Image(resources[6][13].o(), section));
             section = chapter['4'];
-            resources[6].push(Runtime.Resource.g(url + section['image'], raw) // 14
+            resources[6].push(Resource.Resource.g(url + section['image'], raw) // 14
             );
             // 第二档按钮
             gMenuSlots.a(new G.Image(resources[6][14].o(), section));
