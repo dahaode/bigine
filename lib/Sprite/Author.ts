@@ -30,17 +30,12 @@ namespace Sprite {
             super(0, 0, w, h);
             (<Author> this.o(0))
                 .a(new G.Color(0, 0, w, h, '#000'))
-                .a(new G.Text(<G.IBounds> _director, _director['h'], this.$a(_director['align']))
-                    .a(new G.TextPhrase()
-                        .c(_director['color'])
-                        .f(_director['size'])
-                        .t('作品')
-                    )
-                ).a(new G.Text(<G.IBounds> _title, _title['h'], this.$a(_title['align']))
-                    .a(this._x = new G.TextPhrase()
-                        .c(_title['color'])
-                        .f(_title['size'])
-                    )
+                .a(new G.Text(<G.IBounds> _director, _director['size'], _director['h'], this.$a(_director['align']))
+                    .tc(_director['color'])
+                    .a(new G.TextPhrase('作品'))
+                ).a(new G.Text(<G.IBounds> _title, _title['size'], _title['h'], this.$a(_title['align']))
+                    .tc(_title['color'])
+                    .a(this._x = new G.TextPhrase())
                 );
         }
 

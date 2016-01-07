@@ -1586,14 +1586,11 @@ var Sprite;
             _super.call(this, 0, 0, w, h);
             this.o(0)
                 .a(new G.Color(0, 0, w, h, '#000'))
-                .a(new G.Text(_director, _director['h'], this.$a(_director['align']))
-                .a(new G.TextPhrase()
-                .c(_director['color'])
-                .f(_director['size'])
-                .t('作品'))).a(new G.Text(_title, _title['h'], this.$a(_title['align']))
-                .a(this._x = new G.TextPhrase()
-                .c(_title['color'])
-                .f(_title['size'])));
+                .a(new G.Text(_director, _director['size'], _director['h'], this.$a(_director['align']))
+                .tc(_director['color'])
+                .a(new G.TextPhrase('作品'))).a(new G.Text(_title, _title['size'], _title['h'], this.$a(_title['align']))
+                .tc(_title['color'])
+                .a(this._x = new G.TextPhrase()));
         }
         /**
          * 设置名称。
@@ -1746,10 +1743,9 @@ var Sprite;
                 _this.p(new G.Delay(100)).then(function () {
                     $load = false;
                 });
-            }, new G.Image(this._rr[4].o(), _load, true), new G.Image(this._rr[3].o(), _load, true))).a(new G.Text(_title, _title['h'], this.$a(_title['align']))
-                .a(this._x = new G.TextPhrase()
-                .c(_title['color'])
-                .f(_title['size'])));
+            }, new G.Image(this._rr[4].o(), _load, true), new G.Image(this._rr[3].o(), _load, true))).a(new G.Text(_title, _title['size'], _title['h'], this.$a(_title['align']))
+                .tc(_title['color'])
+                .a(this._x = new G.TextPhrase()));
         }
         /**
          * 设置名称。
@@ -2091,12 +2087,8 @@ var Runtime;
             if (avatar && gAvatar)
                 gAvatar.a(new G.Image(avatar.o(), gAvatar.gB(), true));
             if (who && gName)
-                gName.a(new G.TextPhrase()
-                    .t(who)
-                    .f(42)
-                    .c(this._f[code + 'n']['c'])
-                    .s(this._f[code + 'n']['s']));
-            this.$w(gWords.o(0), words, this._f[code]);
+                gName.a(new G.TextPhrase(who));
+            this.$w(gWords.o(0), words, this._f[code]['h']);
             gFrame.o(1);
             return this.lightOn()
                 .then(function () {
@@ -2130,7 +2122,7 @@ var Runtime;
         CanvasDirector.prototype.tip = function (words) {
             var _this = this;
             var gTip = this._c.q('t')[0], gWords = gTip.q('w')[0];
-            this.$w(gWords, words, this._f['t']);
+            this.$w(gWords, words, this._f['t']['h']);
             return this.lightOn()
                 .then(function () { return gTip.p(_this._h = new G.FadeIn(250)
                 .c(new G.WaitForClick())
@@ -2336,12 +2328,9 @@ var Runtime;
                         }, new G.Image(_this._i['ch'].o()), new G.Image(_this._i['cn'].o()))
                             .addEventListener('$focus', function () {
                             _this.playSE(_this._i['f']);
-                        }).a(new G.Text(0, 0, w, h, h / 2 + 16, G.Text.Align.Center)
-                            .a(new G.TextPhrase()
-                            .t(option.gT())
-                            .f(32)
-                            .c(_this._f['c']['c'])
-                            .s(_this._f['c']['s'])));
+                        }).a(new G.Text(0, 0, w, h, 32, h / 2 + 16, G.Text.Align.Center)
+                            .ts(_this._f['c']['s'], _this._f['c']['s'], _this._f['c']['s'])
+                            .a(new G.TextPhrase(option.gT(), _this._f['c']['c'])));
                         gOptions.push(gOption);
                         gChoose.a(gOption);
                     });
@@ -2423,13 +2412,12 @@ var Runtime;
             gVoiceOver.a(new G.Image(resources[1][0].o(), section));
             section = chapter['text'];
             this._f['v'] = {
-                s: section['shadow'],
-                c: section['color'],
                 h: section['color2']
             };
-            ;
             // 文字区域
-            gVoiceOver.a(new G.Text(section, 32)
+            gVoiceOver.a(new G.Text(section, 28, 32)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('w'));
             // -------- monolog --------
             chapter = theme['monolog'];
@@ -2442,22 +2430,19 @@ var Runtime;
                 .a(new G.Sprite(chapter['avatar'])
                 .i('a'));
             section = chapter['name'];
-            this._f['mn'] = {
-                s: section['shadow'],
-                c: section['color']
-            };
             // 名字区域
-            gMonolog.a(new G.Text(section, 42)
+            gMonolog.a(new G.Text(section, 42, 42)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('n'));
             section = chapter['text'];
             this._f['m'] = {
-                s: section['shadow'],
-                c: section['color'],
                 h: section['color2']
             };
-            ;
             // 文字区域
-            gMonolog.a(new G.Text(section, 32)
+            gMonolog.a(new G.Text(section, 28, 32)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('w'));
             // -------- speak --------
             chapter = theme['speak'];
@@ -2470,22 +2455,20 @@ var Runtime;
                 .a(new G.Sprite(chapter['avatar'])
                 .i('a'));
             section = chapter['name'];
-            this._f['sn'] = {
-                s: section['shadow'],
-                c: section['color']
-            };
             // 名字区域
             gSpeak.a(new G.Text(section, 42)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('n'));
             section = chapter['text'];
             this._f['s'] = {
-                s: section['shadow'],
-                c: section['color'],
                 h: section['color2']
             };
             ;
             // 文字区域
-            gSpeak.a(new G.Text(section, 32)
+            gSpeak.a(new G.Text(section, 28, 32)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('w'));
             // -------- tip --------
             chapter = theme['tip'];
@@ -2497,13 +2480,13 @@ var Runtime;
             gTip.a(new G.Image(resources[4][0].o(), section));
             section = chapter['text'];
             this._f['t'] = {
-                s: section['shadow'],
-                c: section['color'],
                 h: section['color2']
             };
             ;
             // 文字区域
-            gTip.a(new G.Text(section, 32, G.Text.Align.Center)
+            gTip.a(new G.Text(section, 28, 32, G.Text.Align.Center)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('w'));
             // -------- choose --------
             chapter = theme['choose'];
@@ -2591,16 +2574,15 @@ var Runtime;
             gMenuSlots.a(new G.Button(chapter['auto']).b(function () {
                 _this._r.l(_this._r.gS().q('auto')[0]);
             }, new G.Image(resources[6][9].o()), new G.Image(resources[6][8].o()))
-                .a(new G.Text(section, section['h'], right, true).i('t'))
-                .i('_'));
+                .a(new G.Text(section, section['size'], section['h'], right, true)
+                .tc(section['color'])
+                .i('t')).i('_'));
             // 自动档按钮（禁用状态）
             gMenuSlots.a(new G.Sprite(chapter['auto'])
                 .a(new G.Image(resources[6][8].o()))
-                .a(new G.Text(section, section['h'], right, true)
-                .a(new G.TextPhrase()
-                .t('无')
-                .f(chapter['disabled']['size'])
-                .c(chapter['disabled']['color']))).i('_.').o(0));
+                .a(new G.Text(section, chapter['disabled']['size'], section['h'], right, true)
+                .tc(chapter['disabled']['color'])
+                .a(new G.TextPhrase('无'))).i('_.').o(0));
             section = chapter['1'];
             resources[6].push(Resource.Resource.g(url + section['image'], raw), // 10
             Resource.Resource.g(url + section['hover'], raw) // 11
@@ -2618,16 +2600,15 @@ var Runtime;
                 gMenuEntry.o(1);
                 gMenu.o(0);
             }, new G.Image(resources[6][11].o()), new G.Image(resources[6][10].o()))
-                .a(new G.Text(section, section['h'], right, true).i('t'))
-                .i('1'));
+                .a(new G.Text(section, section['size'], section['h'], right, true)
+                .tc(section['color'])
+                .i('t')).i('1'));
             // 第一档按钮（禁用状态）
             gMenuSlots.a(new G.Sprite(chapter['1'])
                 .a(new G.Image(resources[6][10].o()))
-                .a(new G.Text(section, section['h'], right, true)
-                .a(new G.TextPhrase()
-                .t('无')
-                .f(chapter['disabled']['size'])
-                .c(chapter['disabled']['color']))).i('1.').o(0));
+                .a(new G.Text(section, chapter['disabled']['size'], section['h'], right, true)
+                .tc(chapter['disabled']['color'])
+                .a(new G.TextPhrase('无'))).i('1.').o(0));
             section = chapter['2'];
             resources[6].push(Resource.Resource.g(url + section['image'], raw) // 12
             );
@@ -2644,10 +2625,6 @@ var Runtime;
             // 第二档按钮
             gMenuSlots.a(new G.Image(resources[6][14].o(), section));
             section = chapter['enabled'];
-            this._f['f'] = {
-                f: section['size'],
-                c: section['color']
-            };
             this.c(resources);
             return this;
         };
@@ -2725,7 +2702,7 @@ var Runtime;
             if (load === void 0) { load = true; }
             if (opacity === void 0) { opacity = 1; }
             _super.prototype.qs.call(this, load, opacity);
-            var gEntry = this._c.q('$.')[0], gMenu = this._c.q('$')[0], gMask = gMenu.q('m')[0], gFeatures = gMenu.q('f')[0], gSlots = gMenu.q('s')[0], gAuto = gSlots.q('_')[0], gAutoDisabled = gSlots.q('_.')[0], g1 = gSlots.q('1')[0], g1Disabled = gSlots.q('1.')[0], states = this._r.gS(), slot = states.q('auto'), config = this._f['f'], time = function (stamp) {
+            var gEntry = this._c.q('$.')[0], gMenu = this._c.q('$')[0], gMask = gMenu.q('m')[0], gFeatures = gMenu.q('f')[0], gSlots = gMenu.q('s')[0], gAuto = gSlots.q('_')[0], gAutoDisabled = gSlots.q('_.')[0], g1 = gSlots.q('1')[0], g1Disabled = gSlots.q('1.')[0], states = this._r.gS(), slot = states.q('auto'), time = function (stamp) {
                 var date = new Date(stamp), node = date.getHours(), clob = ' ' + (10 > node ? '0' : '') + node;
                 node = date.getMinutes();
                 clob += ':' + (10 > node ? '0' : '') + node;
@@ -2738,19 +2715,13 @@ var Runtime;
             gAuto.o(load && slot ? 1 : 0);
             if (slot)
                 gAuto.q('t')[0].c()
-                    .a(new G.TextPhrase()
-                    .t(time(slot[1]))
-                    .f(config['f'])
-                    .c(config['c']));
+                    .a(new G.TextPhrase(time(slot[1])));
             gAutoDisabled.o(load && !slot ? 1 : 0);
             slot = states.q('1');
             g1.o(!load || slot ? 1 : 0);
             if (slot)
                 g1.q('t')[0].c()
-                    .a(new G.TextPhrase()
-                    .t(time(slot[1]))
-                    .f(config['f'])
-                    .c(config['c']));
+                    .a(new G.TextPhrase(time(slot[1])));
             g1Disabled.o(load && !slot ? 1 : 0);
             gMenu.o(1);
             return this.lightOn();
@@ -2781,25 +2752,17 @@ var Runtime;
         /**
          * 将文本添加至画面文字元素中。
          */
-        CanvasDirector.prototype.$w = function (element, words, font) {
+        CanvasDirector.prototype.$w = function (element, words, hiColor) {
             var buffer = '', hilite = false, ii;
             element.c();
             for (ii = 0; ii < words.length; ii++) {
                 if ('【' == words[ii] && !hilite) {
-                    element.a(new G.TextPhrase()
-                        .t(buffer)
-                        .f(28)
-                        .c(font['c'])
-                        .s(font['s']));
+                    element.a(new G.TextPhrase(buffer));
                     buffer = '';
                     hilite = true;
                 }
                 else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase()
-                        .t(buffer)
-                        .f(28)
-                        .c(font['h'])
-                        .s(font['s']));
+                    element.a(new G.TextPhrase(buffer, hiColor));
                     buffer = '';
                     hilite = false;
                 }
@@ -2807,11 +2770,7 @@ var Runtime;
                     buffer += words[ii];
             }
             if (buffer)
-                element.a(new G.TextPhrase()
-                    .t(buffer)
-                    .f(28)
-                    .c(font[hilite ? 'h' : 'c'])
-                    .s(font['s']));
+                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
             return element;
         };
         /**

@@ -64,11 +64,9 @@ namespace Sprite {
                             $load = false;
                         });
                     }, new G.Image(this._rr[4].o(), <G.IBounds> _load, true), new G.Image(this._rr[3].o(), <G.IBounds> _load, true))
-                ).a(new G.Text(<G.IBounds> _title, _title['h'], this.$a(_title['align']))
-                    .a(this._x = new G.TextPhrase()
-                        .c(_title['color'])
-                        .f(_title['size'])
-                    )
+                ).a(new G.Text(<G.IBounds> _title, _title['size'], _title['h'], this.$a(_title['align']))
+                    .tc(_title['color'])
+                    .a(this._x = new G.TextPhrase())
                 );
         }
 

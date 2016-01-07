@@ -529,7 +529,7 @@ declare namespace __Bigine {
             qs(load?: boolean, opacity?: number): Promise<Core.IRuntime>;
             qh(succeed: boolean): Promise<Core.IRuntime>;
             b(viewport: HTMLElement): Director;
-            private $w(element, words, font);
+            private $w(element, words, hiColor);
         }
     }
     namespace Runtime {

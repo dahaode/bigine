@@ -409,13 +409,8 @@ namespace Runtime {
             if (avatar && gAvatar)
                 gAvatar.a(new G.Image(avatar.o(), gAvatar.gB(), true));
             if (who && gName)
-                gName.a(new G.TextPhrase()
-                    .t(who)
-                    .f(42)
-                    .c(<string> this._f[code + 'n']['c'])
-                    .s(<number> this._f[code + 'n']['s'])
-                );
-            this.$w(<G.Text> gWords.o(0), words, this._f[code]);
+                gName.a(new G.TextPhrase(who));
+            this.$w(<G.Text> gWords.o(0), words, <string> this._f[code]['h']);
             gFrame.o(1);
             return this.lightOn()
                 .then(() => {
@@ -451,7 +446,7 @@ namespace Runtime {
         public tip(words: string): Promise<Core.IRuntime> {
             var gTip: G.Sprite = <G.Sprite> this._c.q('t')[0],
                 gWords: G.Text = <G.Text> gTip.q('w')[0];
-            this.$w(gWords, words, this._f['t']);
+            this.$w(gWords, words, <string> this._f['t']['h']);
             return this.lightOn()
                 .then(() => gTip.p(this._h = new G.FadeIn(250)
                     .c(new G.WaitForClick())
@@ -682,13 +677,9 @@ namespace Runtime {
                             }, new G.Image(this._i['ch'].o()), new G.Image(this._i['cn'].o()))
                             .addEventListener('$focus', () => {
                                 this.playSE(this._i['f']);
-                            }).a(new G.Text(0, 0, w, h, h / 2 + 16, G.Text.Align.Center)
-                                .a(new G.TextPhrase()
-                                    .t(option.gT())
-                                    .f(32)
-                                    .c(<string> this._f['c']['c'])
-                                    .s(<number> this._f['c']['s'])
-                                )
+                            }).a(new G.Text(0, 0, w, h, 32, h / 2 + 16, G.Text.Align.Center)
+                                .ts(<number> this._f['c']['s'], <number> this._f['c']['s'], <number> this._f['c']['s'])
+                                .a(new G.TextPhrase(option.gT(), <string> this._f['c']['c']))
                             );
                         gOptions.push(gOption);
                         gChoose.a(gOption);
@@ -789,13 +780,12 @@ namespace Runtime {
             gVoiceOver.a(new G.Image(resources[1][0].o(), <G.IBounds> section));
             section = chapter['text'];
             this._f['v'] = {
-                s: section['shadow'],
-                c: section['color'],
                 h: section['color2']
             };
-            ;
             // 文字区域
-            gVoiceOver.a(new G.Text(<G.IBounds> section, 32)
+            gVoiceOver.a(new G.Text(<G.IBounds> section, 28, 32)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('w')
             );
             // -------- monolog --------
@@ -811,23 +801,20 @@ namespace Runtime {
                     .i('a')
                 );
             section = chapter['name'];
-            this._f['mn'] = {
-                s: section['shadow'],
-                c: section['color']
-            };
             // 名字区域
-            gMonolog.a(new G.Text(<G.IBounds> section, 42)
+            gMonolog.a(new G.Text(<G.IBounds> section, 42, 42)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('n')
             );
             section = chapter['text'];
             this._f['m'] = {
-                s: section['shadow'],
-                c: section['color'],
                 h: section['color2']
             };
-            ;
             // 文字区域
-            gMonolog.a(new G.Text(<G.IBounds> section, 32)
+            gMonolog.a(new G.Text(<G.IBounds> section, 28, 32)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('w')
             );
             // -------- speak --------
@@ -843,23 +830,21 @@ namespace Runtime {
                     .i('a')
                 );
             section = chapter['name'];
-            this._f['sn'] = {
-                s: section['shadow'],
-                c: section['color']
-            };
             // 名字区域
             gSpeak.a(new G.Text(<G.IBounds> section, 42)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('n')
             );
             section = chapter['text'];
             this._f['s'] = {
-                s: section['shadow'],
-                c: section['color'],
                 h: section['color2']
             };
             ;
             // 文字区域
-            gSpeak.a(new G.Text(<G.IBounds> section, 32)
+            gSpeak.a(new G.Text(<G.IBounds> section, 28, 32)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('w')
             );
             // -------- tip --------
@@ -872,13 +857,13 @@ namespace Runtime {
             gTip.a(new G.Image(resources[4][0].o(), <G.IBounds> section));
             section = chapter['text'];
             this._f['t'] = {
-                s: section['shadow'],
-                c: section['color'],
                 h: section['color2']
             };
             ;
             // 文字区域
-            gTip.a(new G.Text(<G.IBounds> section, 32, G.Text.Align.Center)
+            gTip.a(new G.Text(<G.IBounds> section, 28, 32, G.Text.Align.Center)
+                .tc(section['color'])
+                .ts(section['shadow'], section['shadow'], section['shadow'])
                 .i('w')
             );
             // -------- choose --------
@@ -971,19 +956,18 @@ namespace Runtime {
             gMenuSlots.a(new G.Button(<G.IBounds> chapter['auto']).b(() => {
                 this._r.l(this._r.gS().q('auto')[0]);
             }, new G.Image(resources[6][9].o()), new G.Image(resources[6][8].o()))
-                .a(new G.Text(<G.IBounds> section, section['h'], right, true).i('t'))
-                .i('_')
+                .a(new G.Text(<G.IBounds> section, section['size'], section['h'], right, true)
+                    .tc(section['color'])
+                    .i('t')
+                ).i('_')
             );
             // 自动档按钮（禁用状态）
             gMenuSlots.a(new G.Sprite(<G.IBounds> chapter['auto'])
                 .a(new G.Image(resources[6][8].o()))
-                .a(new G.Text(<G.IBounds> section, section['h'], right, true)
-                    .a(new G.TextPhrase()
-                        .t('无')
-                        .f(chapter['disabled']['size'])
-                        .c(chapter['disabled']['color'])
-                )
-            ).i('_.').o(0)
+                .a(new G.Text(<G.IBounds> section, chapter['disabled']['size'], section['h'], right, true)
+                    .tc(chapter['disabled']['color'])
+                    .a(new G.TextPhrase('无'))
+                ).i('_.').o(0)
             );
             section = chapter['1'];
             resources[6].push(
@@ -1003,19 +987,18 @@ namespace Runtime {
                 gMenuEntry.o(1);
                 gMenu.o(0);
             }, new G.Image(resources[6][11].o()), new G.Image(resources[6][10].o()))
-                .a(new G.Text(<G.IBounds> section, section['h'], right, true).i('t'))
-                .i('1')
+                .a(new G.Text(<G.IBounds> section, section['size'], section['h'], right, true)
+                    .tc(section['color'])
+                    .i('t')
+                ).i('1')
             );
             // 第一档按钮（禁用状态）
             gMenuSlots.a(new G.Sprite(<G.IBounds> chapter['1'])
                 .a(new G.Image(resources[6][10].o()))
-                .a(new G.Text(<G.IBounds> section, section['h'], right, true)
-                    .a(new G.TextPhrase()
-                        .t('无')
-                        .f(chapter['disabled']['size'])
-                        .c(chapter['disabled']['color'])
-                    )
-            ).i('1.').o(0)
+                .a(new G.Text(<G.IBounds> section, chapter['disabled']['size'], section['h'], right, true)
+                    .tc(chapter['disabled']['color'])
+                    .a(new G.TextPhrase('无'))
+                ).i('1.').o(0)
             );
             section = chapter['2'];
             resources[6].push(
@@ -1036,10 +1019,6 @@ namespace Runtime {
             // 第二档按钮
             gMenuSlots.a(new G.Image(resources[6][14].o(), <G.IBounds> section));
             section = chapter['enabled'];
-            this._f['f'] = {
-                f: section['size'],
-                c: section['color']
-            };
             this.c(resources);
             return this;
         }
@@ -1138,7 +1117,6 @@ namespace Runtime {
                 g1Disabled: G.Element = gSlots.q('1.')[0],
                 states: Core.IStates = this._r.gS(),
                 slot: [string, number] = states.q('auto'),
-                config: Util.IHashTable<string | number> = this._f['f'],
                 time: (stamp: number) => string = (stamp: number) => {
                     var date: Date = new Date(stamp),
                         node: number = date.getHours(),
@@ -1154,21 +1132,13 @@ namespace Runtime {
             gAuto.o(load && slot ? 1 : 0);
             if (slot)
                 (<G.Text> gAuto.q('t')[0]).c()
-                    .a(new G.TextPhrase()
-                        .t(time(slot[1]))
-                        .f(<number> config['f'])
-                        .c(<string> config['c'])
-                    );
+                    .a(new G.TextPhrase(time(slot[1])));
             gAutoDisabled.o(load && !slot ? 1 : 0);
             slot = states.q('1');
             g1.o(!load || slot ? 1 : 0);
             if (slot)
                 (<G.Text> g1.q('t')[0]).c()
-                    .a(new G.TextPhrase()
-                        .t(time(slot[1]))
-                        .f(<number> config['f'])
-                        .c(<string> config['c'])
-                    );
+                    .a(new G.TextPhrase(time(slot[1])));
             g1Disabled.o(load && !slot ? 1 : 0);
             gMenu.o(1);
             return this.lightOn();
@@ -1201,40 +1171,25 @@ namespace Runtime {
         /**
          * 将文本添加至画面文字元素中。
          */
-        private $w(element: G.Text, words: string, font: Util.IHashTable<string | number>): G.Text {
+        private $w(element: G.Text, words: string, hiColor: string): G.Text {
             var buffer: string = '',
                 hilite: boolean = false,
                 ii: number;
             element.c();
             for (ii = 0; ii < words.length; ii++) {
                 if ('【' == words[ii] && !hilite) {
-                    element.a(new G.TextPhrase()
-                        .t(buffer)
-                        .f(28)
-                        .c(<string> font['c'])
-                        .s(<number> font['s'])
-                    );
+                    element.a(new G.TextPhrase(buffer));
                     buffer = '';
                     hilite = true;
                 } else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase()
-                        .t(buffer)
-                        .f(28)
-                        .c(<string> font['h'])
-                        .s(<number> font['s'])
-                    );
+                    element.a(new G.TextPhrase(buffer, hiColor));
                     buffer = '';
                     hilite = false;
                 } else
                     buffer += words[ii];
             }
             if (buffer)
-                element.a(new G.TextPhrase()
-                    .t(buffer)
-                    .f(28)
-                    .c(<string> font[hilite ? 'h' : 'c'])
-                    .s(<number> font['s'])
-                );
+                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
             return element;
         }
     }
