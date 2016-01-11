@@ -483,6 +483,21 @@ declare namespace __Bigine {
             u(title: string): Start;
         }
     }
+    namespace Sprite {
+        class Words extends Sprite {
+            private _x;
+            private _c;
+            private _h;
+            private _bs;
+            constructor(id: string, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>);
+            h(immediately?: boolean): Promise<Words>;
+            vv(clob: string, auto?: boolean): Promise<Words>;
+            vm(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
+            vs(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
+            private $v(text, auto);
+            private $w(element, words, hiColor);
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;

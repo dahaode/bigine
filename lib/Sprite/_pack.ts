@@ -10,3 +10,4 @@
 /// <reference path="Curtain.ts" />
 /// <reference path="Author.ts" />
 /// <reference path="Start.ts" />
+/// <reference path="Words.ts" />

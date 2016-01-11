@@ -18,24 +18,10 @@
  * * c - 人物
  * * g - 特写
  *     * p - 图片
- * * s - 对白
- *     * a - 头像
- *     * n - 名称
- *     * w - 文本
- * * m - 独白
- *     * a - 头像
- *     * n - 名称
- *     * w - 文本
- * * v - 旁白
- *     * w - 文本
  * * t - 提醒
  *     * w - 文本
  * * D - 选择
  * * $. - 功能菜单按钮
- * * A - 作者
- *     * t - 作者名
- * * S - 开始菜单
- *     * t - 作品名
  * * $ - 功能菜单
  *     * m - 遮罩层
  *     * f - 功能层
@@ -144,9 +130,6 @@ namespace Runtime {
                 .a(new G.Sprite(bounds).i('M').o(0))
                 .a(new G.Sprite(bounds).i('c').o(0))
                 .a(new G.Sprite(bounds).i('g').o(0))
-                .a(new G.Sprite(bounds).i('s').o(0))
-                .a(new G.Sprite(bounds).i('m').o(0))
-                .a(new G.Sprite(bounds).i('v').o(0))
                 .a(new G.Sprite(bounds).i('t').o(0))
                 .a(new G.Sprite(bounds).i('$').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
@@ -401,43 +384,13 @@ namespace Runtime {
          * 某白。
          */
         public words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
-            var code: string = theme[0],
-                gFrame: G.Sprite = <G.Sprite> this._c.q(code)[0],
-                gAvatar: G.Sprite = <G.Sprite> gFrame.q('a')[0],
-                gName: G.Text = <G.Text> gFrame.q('n')[0],
-                gWords: G.Text = <G.Text> gFrame.q('w')[0];
-            if (avatar && gAvatar)
-                gAvatar.a(new G.Image(avatar.o(), gAvatar.gB(), true));
-            if (who && gName)
-                gName.a(new G.TextPhrase(who));
-            this.$w(<G.Text> gWords.o(0), words, <string> this._f[code]['h']);
-            gFrame.o(1);
-            return this.lightOn()
-                .then(() => {
-                    var aType: G.Type = this._m = new G.Type(1),
-                        aWFC: G.WaitForClick;
-                    if (this._a)
-                        return gWords.p(aType);
-                    this._t = aWFC = new G.WaitForClick(() => {
-                        aType.h();
-                    });
-                    return Promise.race<any>([
-                        gWords.p(aType).then(() => aWFC.h()),
-                        gFrame.p(aWFC)
-                    ]);
-                }).then(() => {
-                    if (this._a)
-                        return gWords.p(this._h = this._t = this._m = new G.TypeDelay(9));
-                    return gFrame.p(this._h = this._t = this._m = new G.WaitForClick());
-                }).then(() => {
-                    gFrame.o(0);
-                    if (gAvatar)
-                        gAvatar.c();
-                    if (gName)
-                        gName.c();
-                    gWords.c();
-                    return this._r;
-                });
+            return this.lightOn().then(() => {
+                let sprite: Sprite.Words = <Sprite.Words> this._x['w'],
+                    type: string = theme[0];
+                if ('v' == type)
+                    return sprite.vv(words, this._a);
+                return sprite['v' + type](avatar, who, words, this._a);
+            }).then(() => this._r);
         }
 
         /**
@@ -710,9 +663,7 @@ namespace Runtime {
                     .o(0);
                 (<G.Sprite> this._c.q('g')[0]).c()
                     .o(0);
-                this._c.q('s')[0].o(0);
-                this._c.q('m')[0].o(0);
-                this._c.q('v')[0].o(0);
+                this._x['w'].h(true);
                 this._c.q('t')[0].o(0);
                 this._c.q('D')[0].o(0);
                 return runtime;
@@ -741,9 +692,6 @@ namespace Runtime {
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
                 resources: Resource.Resource<string | HTMLImageElement>[][] = [],
-                gVoiceOver: G.Sprite = <G.Sprite> this._c.q('v')[0],
-                gMonolog: G.Sprite = <G.Sprite> this._c.q('m')[0],
-                gSpeak: G.Sprite = <G.Sprite> this._c.q('s')[0],
                 gTip: G.Sprite = <G.Sprite> this._c.q('t')[0],
                 gMenu: G.Sprite = <G.Sprite> this._c.q('$')[0],
                 gMenuWay: boolean = false,
@@ -753,6 +701,9 @@ namespace Runtime {
                 gMenuFeatures: G.Sprite,
                 gMenuSlots: G.Sprite,
                 gChoose: G.Sprite;
+            this._x['w'] = <Sprite.Words> new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
+            resources.push(this._x['w'].l());
+            this._c.a(this._x['w'], this._x['c']);
             this._x['s'] = <Sprite.Start> new Sprite.Start(id, theme['start'])
                 .addEventListener('start.new', (event: Ev.StartNew) => {
                     this.playSE(this._i['c']);
@@ -770,91 +721,14 @@ namespace Runtime {
             resources.push(this._x['s'].l());
             this._c.a(this._x['s'], this._x['c']);
             this._c.a(this._x['a'] = new Sprite.Author(chapter), this._x['c']);
-            // -------- voiceover --------
-            chapter = theme['voiceover'];
-            section = chapter['back'];
-            resources.push([ // 1
-                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
-            ]);
-            // 背景图
-            gVoiceOver.a(new G.Image(resources[1][0].o(), <G.IBounds> section));
-            section = chapter['text'];
-            this._f['v'] = {
-                h: section['color2']
-            };
-            // 文字区域
-            gVoiceOver.a(new G.Text(<G.IBounds> section, 28, 32)
-                .tc(section['color'])
-                .ts(section['shadow'], section['shadow'], section['shadow'])
-                .i('w')
-            );
-            // -------- monolog --------
-            chapter = theme['monolog'];
+            // -------- tip --------
+            chapter = theme['tip'];
             section = chapter['back'];
             resources.push([ // 2
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
             ]);
             // 背景图
-            gMonolog.a(new G.Image(resources[2][0].o(), <G.IBounds> section))
-                // 头像区域
-                .a(new G.Sprite(<G.IBounds> chapter['avatar'])
-                    .i('a')
-                );
-            section = chapter['name'];
-            // 名字区域
-            gMonolog.a(new G.Text(<G.IBounds> section, 42, 42)
-                .tc(section['color'])
-                .ts(section['shadow'], section['shadow'], section['shadow'])
-                .i('n')
-            );
-            section = chapter['text'];
-            this._f['m'] = {
-                h: section['color2']
-            };
-            // 文字区域
-            gMonolog.a(new G.Text(<G.IBounds> section, 28, 32)
-                .tc(section['color'])
-                .ts(section['shadow'], section['shadow'], section['shadow'])
-                .i('w')
-            );
-            // -------- speak --------
-            chapter = theme['speak'];
-            section = chapter['back'];
-            resources.push([ // 3
-                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
-            ]);
-            // 背景图
-            gSpeak.a(new G.Image(resources[3][0].o(), <G.IBounds> section))
-                // 头像区域
-                .a(new G.Sprite(<G.IBounds> chapter['avatar'])
-                    .i('a')
-                );
-            section = chapter['name'];
-            // 名字区域
-            gSpeak.a(new G.Text(<G.IBounds> section, 42)
-                .tc(section['color'])
-                .ts(section['shadow'], section['shadow'], section['shadow'])
-                .i('n')
-            );
-            section = chapter['text'];
-            this._f['s'] = {
-                h: section['color2']
-            };
-            ;
-            // 文字区域
-            gSpeak.a(new G.Text(<G.IBounds> section, 28, 32)
-                .tc(section['color'])
-                .ts(section['shadow'], section['shadow'], section['shadow'])
-                .i('w')
-            );
-            // -------- tip --------
-            chapter = theme['tip'];
-            section = chapter['back'];
-            resources.push([ // 4
-                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
-            ]);
-            // 背景图
-            gTip.a(new G.Image(resources[4][0].o(), <G.IBounds> section));
+            gTip.a(new G.Image(resources[2][0].o(), <G.IBounds> section));
             section = chapter['text'];
             this._f['t'] = {
                 h: section['color2']
@@ -873,12 +747,12 @@ namespace Runtime {
                 .o(0);
             chapter = chapter['option'];
             section = chapter['back'];
-            resources.push([ // 5
+            resources.push([ // 3
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 0
                 Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 1
             ]);
-            this._i['cn'] = resources[5][0];
-            this._i['ch'] = resources[5][1];
+            this._i['cn'] = resources[3][0];
+            this._i['ch'] = resources[3][1];
             section = chapter['text'];
             this._f['c'] = {
                 s: section['shadow'],
@@ -891,7 +765,7 @@ namespace Runtime {
                 .a((gMenuFeatures = new G.Sprite(bounds)).i('f'))
                 .a((gMenuSlots = new G.Sprite(bounds)).i('s').o(0));
             section = chapter['enter'];
-            resources.push([ // 6
+            resources.push([ // 4
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 0
                 Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 1
             ]);
@@ -904,9 +778,9 @@ namespace Runtime {
                 gMenuSlots.o(0);
                 gMenuFeatures.o(1);
                 gMenu.o(1);
-            }, new G.Image(resources[6][1].o()), new G.Image(resources[6][0].o()))).i('$.'), 'A');
+            }, new G.Image(resources[4][1].o()), new G.Image(resources[4][0].o()))).i('$.'), 'A');
             section = chapter['back'];
-            resources[6].push(
+            resources[4].push(
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 2
                 Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 3
             );
@@ -916,7 +790,7 @@ namespace Runtime {
                     this._m.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
-            }, new G.Image(resources[6][3].o()), new G.Image(resources[6][2].o())));
+            }, new G.Image(resources[4][3].o()), new G.Image(resources[4][2].o())));
             // 返回按钮
             gMenuSlots.a(new G.Button(<G.IBounds> section).b(() => {
                 if (!gMenuWay) {
@@ -925,9 +799,9 @@ namespace Runtime {
                 }
                 gMenuSlots.o(0);
                 gMenuFeatures.o(1);
-            }, new G.Image(resources[6][3].o()), new G.Image(resources[6][2].o())));
+            }, new G.Image(resources[4][3].o()), new G.Image(resources[4][2].o())));
             section = chapter['save'];
-            resources[6].push(
+            resources[4].push(
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 4
                 Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 5
             );
@@ -935,9 +809,9 @@ namespace Runtime {
             gMenuFeatures.a(new G.Button(<G.IBounds> section).b(() => {
                 gMenuWay = true;
                 this.qs(false, .4);
-            }, new G.Image(resources[6][5].o()), new G.Image(resources[6][4].o())));
+            }, new G.Image(resources[4][5].o()), new G.Image(resources[4][4].o())));
             section = chapter['load'];
-            resources[6].push(
+            resources[4].push(
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 6
                 Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 7
             );
@@ -945,9 +819,9 @@ namespace Runtime {
             gMenuFeatures.a(new G.Button(<G.IBounds> section).b(() => {
                 gMenuWay = true;
                 this.qs(true, .4);
-            }, new G.Image(resources[6][7].o()), new G.Image(resources[6][6].o())));
+            }, new G.Image(resources[4][7].o()), new G.Image(resources[4][6].o())));
             section = chapter['auto'];
-            resources[6].push(
+            resources[4].push(
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 8
                 Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 9
             );
@@ -955,7 +829,7 @@ namespace Runtime {
             // 自动档按钮
             gMenuSlots.a(new G.Button(<G.IBounds> chapter['auto']).b(() => {
                 this._r.l(this._r.gS().q('auto')[0]);
-            }, new G.Image(resources[6][9].o()), new G.Image(resources[6][8].o()))
+            }, new G.Image(resources[4][9].o()), new G.Image(resources[4][8].o()))
                 .a(new G.Text(<G.IBounds> section, section['size'], section['h'], right, true)
                     .tc(section['color'])
                     .i('t')
@@ -963,14 +837,14 @@ namespace Runtime {
             );
             // 自动档按钮（禁用状态）
             gMenuSlots.a(new G.Sprite(<G.IBounds> chapter['auto'])
-                .a(new G.Image(resources[6][8].o()))
+                .a(new G.Image(resources[4][8].o()))
                 .a(new G.Text(<G.IBounds> section, chapter['disabled']['size'], section['h'], right, true)
                     .tc(chapter['disabled']['color'])
                     .a(new G.TextPhrase('无'))
                 ).i('_.').o(0)
             );
             section = chapter['1'];
-            resources[6].push(
+            resources[4].push(
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 10
                 Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 11
             );
@@ -986,7 +860,7 @@ namespace Runtime {
                     this._m.r();
                 gMenuEntry.o(1);
                 gMenu.o(0);
-            }, new G.Image(resources[6][11].o()), new G.Image(resources[6][10].o()))
+            }, new G.Image(resources[4][11].o()), new G.Image(resources[4][10].o()))
                 .a(new G.Text(<G.IBounds> section, section['size'], section['h'], right, true)
                     .tc(section['color'])
                     .i('t')
@@ -994,30 +868,30 @@ namespace Runtime {
             );
             // 第一档按钮（禁用状态）
             gMenuSlots.a(new G.Sprite(<G.IBounds> chapter['1'])
-                .a(new G.Image(resources[6][10].o()))
+                .a(new G.Image(resources[4][10].o()))
                 .a(new G.Text(<G.IBounds> section, chapter['disabled']['size'], section['h'], right, true)
                     .tc(chapter['disabled']['color'])
                     .a(new G.TextPhrase('无'))
                 ).i('1.').o(0)
             );
             section = chapter['2'];
-            resources[6].push(
+            resources[4].push(
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 12
             );
             // 第二档按钮
-            gMenuSlots.a(new G.Image(resources[6][12].o(), <G.IBounds> section));
+            gMenuSlots.a(new G.Image(resources[4][12].o(), <G.IBounds> section));
             section = chapter['3'];
-            resources[6].push(
+            resources[4].push(
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 13
             );
             // 第三档按钮
-            gMenuSlots.a(new G.Image(resources[6][13].o(), <G.IBounds> section));
+            gMenuSlots.a(new G.Image(resources[4][13].o(), <G.IBounds> section));
             section = chapter['4'];
-            resources[6].push(
+            resources[4].push(
                 Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 14
             );
             // 第二档按钮
-            gMenuSlots.a(new G.Image(resources[6][14].o(), <G.IBounds> section));
+            gMenuSlots.a(new G.Image(resources[4][14].o(), <G.IBounds> section));
             section = chapter['enabled'];
             this.c(resources);
             return this;
