@@ -25,9 +25,8 @@ namespace Sprite {
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 url: string = '//s.dahao.de/theme/' + id + '/',
-                _menu: Util.IHashTable<any> = theme['menu'],
-                $menu: boolean = false;
-            super(0, 0, w, h);
+                _menu: Util.IHashTable<any> = theme['menu'];
+            super(0, 0, w, h, true);
             this._rr = [
                 rr.g<HTMLImageElement>(url + _menu['i'], raw),
                 rr.g<HTMLImageElement>(url + _menu['ih'], raw)
@@ -35,12 +34,7 @@ namespace Sprite {
             (<Tray> this.o(0))
                 .a(new G.Button(<G.IBounds> _menu)
                     .b(() => {
-                        if ($menu) return;
-                        $menu = true;
                         this.dispatchEvent(new Ev.TrayMenu({ target: this }));
-                        this.p(new G.Delay(100)).then(() => {
-                            $menu = false;
-                        });
                     }, new G.Image(this._rr[1].o(), <G.IBounds> _menu, true), new G.Image(this._rr[0].o(), <G.IBounds> _menu, true))
                 );
         }

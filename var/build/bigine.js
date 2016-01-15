@@ -1714,7 +1714,7 @@ var Sprite;
          */
         function Start(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _new = theme['new'], _load = theme['load'], _title = theme['title'], $new = false, $load = false;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _new = theme['new'], _load = theme['load'], _title = theme['title'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + theme['i'], raw),
@@ -1727,22 +1727,10 @@ var Sprite;
                 .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
                 .a(new G.Button(_new)
                 .b(function () {
-                if ($new)
-                    return;
-                $new = true;
                 _this.dispatchEvent(new Ev.StartNew({ target: _this }));
-                _this.p(new G.Delay(100)).then(function () {
-                    $new = false;
-                });
             }, new G.Image(this._rr[2].o(), _new, true), new G.Image(this._rr[1].o(), _new, true))).a(new G.Button(_load)
                 .b(function () {
-                if ($load)
-                    return;
-                $load = true;
                 _this.dispatchEvent(new Ev.StartLoad({ target: _this }));
-                _this.p(new G.Delay(100)).then(function () {
-                    $load = false;
-                });
             }, new G.Image(this._rr[4].o(), _load, true), new G.Image(this._rr[3].o(), _load, true))).a(new G.Text(_title, _title['s'], _title['lh'], this.$a(_title['a']))
                 .tc(_title['c'])
                 .a(this._x = new G.TextPhrase()));
@@ -2021,8 +2009,8 @@ var Sprite;
          */
         function Tray(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _menu = theme['menu'], $menu = false;
-            _super.call(this, 0, 0, w, h);
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _menu = theme['menu'];
+            _super.call(this, 0, 0, w, h, true);
             this._rr = [
                 rr.g(url + _menu['i'], raw),
                 rr.g(url + _menu['ih'], raw)
@@ -2030,13 +2018,7 @@ var Sprite;
             this.o(0)
                 .a(new G.Button(_menu)
                 .b(function () {
-                if ($menu)
-                    return;
-                $menu = true;
                 _this.dispatchEvent(new Ev.TrayMenu({ target: _this }));
-                _this.p(new G.Delay(100)).then(function () {
-                    $menu = false;
-                });
             }, new G.Image(this._rr[1].o(), _menu, true), new G.Image(this._rr[0].o(), _menu, true)));
         }
         return Tray;

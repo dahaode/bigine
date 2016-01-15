@@ -33,9 +33,7 @@ namespace Sprite {
                 url: string = '//s.dahao.de/theme/' + id + '/',
                 _new: Util.IHashTable<any> = theme['new'],
                 _load: Util.IHashTable<any> = theme['load'],
-                _title: Util.IHashTable<any> = theme['title'],
-                $new: boolean = false,
-                $load: boolean = false;
+                _title: Util.IHashTable<any> = theme['title'];
             super(0, 0, w, h);
             this._rr = [
                 rr.g<HTMLImageElement>(url + theme['i'], raw),
@@ -48,21 +46,11 @@ namespace Sprite {
                 .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
                 .a(new G.Button(<G.IBounds> _new)
                     .b(() => {
-                        if ($new) return;
-                        $new = true;
                         this.dispatchEvent(new Ev.StartNew({ target: this }));
-                        this.p(new G.Delay(100)).then(() => {
-                            $new = false;
-                        });
                     }, new G.Image(this._rr[2].o(), <G.IBounds> _new, true), new G.Image(this._rr[1].o(), <G.IBounds> _new, true))
                 ).a(new G.Button(<G.IBounds> _load)
                     .b(() => {
-                        if ($load) return;
-                        $load = true;
                         this.dispatchEvent(new Ev.StartLoad({ target: this }));
-                        this.p(new G.Delay(100)).then(() => {
-                            $load = false;
-                        });
                     }, new G.Image(this._rr[4].o(), <G.IBounds> _load, true), new G.Image(this._rr[3].o(), <G.IBounds> _load, true))
                 ).a(new G.Text(<G.IBounds> _title, _title['s'], _title['lh'], this.$a(_title['a']))
                     .tc(_title['c'])
