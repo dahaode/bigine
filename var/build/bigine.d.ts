@@ -517,6 +517,45 @@ declare namespace __Bigine {
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
         }
     }
+    namespace Core {
+        interface IMenu extends ISprite {
+        }
+    }
+    namespace Ev {
+        interface IMenuCloseMetas extends Util.IEventMetas<Core.IMenu> {
+        }
+    }
+    namespace Ev {
+        class MenuClose extends Event<Core.IMenu> {
+            constructor(metas: IMenuCloseMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IMenuSaveMetas extends Util.IEventMetas<Core.IMenu> {
+        }
+    }
+    namespace Ev {
+        class MenuSave extends Event<Core.IMenu> {
+            constructor(metas: IMenuSaveMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IMenuLoadMetas extends Util.IEventMetas<Core.IMenu> {
+        }
+    }
+    namespace Ev {
+        class MenuLoad extends Event<Core.IMenu> {
+            constructor(metas: IMenuLoadMetas);
+            gT(): string;
+        }
+    }
+    namespace Sprite {
+        class Menu extends Sprite {
+            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;

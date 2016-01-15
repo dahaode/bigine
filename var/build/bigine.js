@@ -2026,6 +2026,185 @@ var Sprite;
     Sprite.Tray = Tray;
 })(Sprite || (Sprite = {}));
 /**
+ * 声明画面调度功能菜单组件接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Sprite/IMenu.ts
+ */
+/// <reference path="ISprite.ts" />
+/**
+ * 声明（画面调度）功能菜单关闭事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IMenuCloseMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IMenu.ts" />
+/**
+ * 定义（画面调度）功能菜单关闭事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/MenuClose.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IMenuCloseMetas.ts" />
+var Ev;
+(function (Ev) {
+    var MenuClose = (function (_super) {
+        __extends(MenuClose, _super);
+        /**
+         * 构造函数。
+         */
+        function MenuClose(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        MenuClose.prototype.gT = function () {
+            return 'menu.close';
+        };
+        return MenuClose;
+    })(Ev.Event);
+    Ev.MenuClose = MenuClose;
+})(Ev || (Ev = {}));
+/**
+ * 声明（画面调度）功能菜单存档事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IMenuSaveMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IMenu.ts" />
+/**
+ * 定义（画面调度）功能菜单存档事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/MenuSave.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IMenuSaveMetas.ts" />
+var Ev;
+(function (Ev) {
+    var MenuSave = (function (_super) {
+        __extends(MenuSave, _super);
+        /**
+         * 构造函数。
+         */
+        function MenuSave(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        MenuSave.prototype.gT = function () {
+            return 'menu.save';
+        };
+        return MenuSave;
+    })(Ev.Event);
+    Ev.MenuSave = MenuSave;
+})(Ev || (Ev = {}));
+/**
+ * 声明（画面调度）功能菜单读档事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IMenuLoadMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IMenu.ts" />
+/**
+ * 定义（画面调度）功能菜单读档事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/MenuLoad.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IMenuLoadMetas.ts" />
+var Ev;
+(function (Ev) {
+    var MenuLoad = (function (_super) {
+        __extends(MenuLoad, _super);
+        /**
+         * 构造函数。
+         */
+        function MenuLoad(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        MenuLoad.prototype.gT = function () {
+            return 'menu.load';
+        };
+        return MenuLoad;
+    })(Ev.Event);
+    Ev.MenuLoad = MenuLoad;
+})(Ev || (Ev = {}));
+/**
+ * 定义画面调度功能菜单组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Menu.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/MenuClose.ts" />
+/// <reference path="../Ev/_Sprite/MenuSave.ts" />
+/// <reference path="../Ev/_Sprite/MenuLoad.ts" />
+var Sprite;
+(function (Sprite) {
+    var G = __Bigine_C2D;
+    var Menu = (function (_super) {
+        __extends(Menu, _super);
+        /**
+         * 构造函数。
+         */
+        function Menu(id, theme) {
+            var _this = this;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _close = theme['close'], _mask = theme['mask'], _save = theme['save'], _load = theme['load'];
+            _super.call(this, 0, 0, w, h);
+            this._rr = [
+                rr.g(url + _close['i'], raw),
+                rr.g(url + _close['ih'], raw),
+                rr.g(url + _save['i'], raw),
+                rr.g(url + _save['ih'], raw),
+                rr.g(url + _load['i'], raw),
+                rr.g(url + _load['ih'], raw)
+            ];
+            this.o(0)
+                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Button(_close)
+                .b(function () {
+                _this.dispatchEvent(new Ev.MenuClose({ target: _this }));
+            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true))).a(new G.Button(_save)
+                .b(function () {
+                _this.dispatchEvent(new Ev.MenuSave({ target: _this }));
+            }, new G.Image(this._rr[3].o(), _save, true), new G.Image(this._rr[2].o(), _save, true))).a(new G.Button(_load)
+                .b(function () {
+                _this.dispatchEvent(new Ev.MenuLoad({ target: _this }));
+            }, new G.Image(this._rr[5].o(), _load, true), new G.Image(this._rr[4].o(), _load, true)));
+        }
+        return Menu;
+    })(Sprite.Sprite);
+    Sprite.Menu = Menu;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2038,6 +2217,7 @@ var Sprite;
 /// <reference path="Start.ts" />
 /// <reference path="Words.ts" />
 /// <reference path="Tray.ts" />
+/// <reference path="Menu.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -2612,9 +2792,20 @@ var Runtime;
             this._x['W'] = new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
-            this._x['t'] = new Sprite.Tray(id, theme['tray']);
+            this._x['t'] = new Sprite.Tray(id, theme['tray'])
+                .addEventListener('tray.menu', function () {
+                _this._x['m'].v();
+                _this._x['t'].h();
+            });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
+            this._x['m'] = new Sprite.Menu(id, theme['menu'])
+                .addEventListener('menu.close', function () {
+                _this._x['t'].v();
+                _this._x['m'].h();
+            });
+            resources.unshift(this._x['m'].l());
+            this._c.a(this._x['m'], gCurtain);
             this._x['s'] = new Sprite.Start(id, theme['start'])
                 .addEventListener('start.new', function (event) {
                 _this.playSE(_this._i['c']);

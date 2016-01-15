@@ -698,9 +698,20 @@ namespace Runtime {
             this._x['W'] = <Sprite.Words> new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
-            this._x['t'] = <Sprite.Tray> new Sprite.Tray(id, theme['tray']);
+            this._x['t'] = <Sprite.Tray> new Sprite.Tray(id, theme['tray'])
+                .addEventListener('tray.menu', () => {
+                    this._x['m'].v();
+                    this._x['t'].h();
+                });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
+            this._x['m'] = <Sprite.Menu> new Sprite.Menu(id, theme['menu'])
+                .addEventListener('menu.close', () => {
+                    this._x['t'].v();
+                    this._x['m'].h();
+                });
+            resources.unshift(this._x['m'].l());
+            this._c.a(this._x['m'], gCurtain);
             this._x['s'] = <Sprite.Start> new Sprite.Start(id, theme['start'])
                 .addEventListener('start.new', (event: Ev.StartNew) => {
                     this.playSE(this._i['c']);

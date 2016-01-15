@@ -12,3 +12,4 @@
 /// <reference path="Start.ts" />
 /// <reference path="Words.ts" />
 /// <reference path="Tray.ts" />
+/// <reference path="Menu.ts" />
