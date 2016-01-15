@@ -38,11 +38,11 @@ namespace Sprite {
                 $load: boolean = false;
             super(0, 0, w, h);
             this._rr = [
-                rr.g<HTMLImageElement>(url + theme['image'], raw),
-                rr.g<HTMLImageElement>(url + _new['image'], raw),
-                rr.g<HTMLImageElement>(url + _new['hover'], raw),
-                rr.g<HTMLImageElement>(url + _load['image'], raw),
-                rr.g<HTMLImageElement>(url + _load['hover'], raw)
+                rr.g<HTMLImageElement>(url + theme['i'], raw),
+                rr.g<HTMLImageElement>(url + _new['i'], raw),
+                rr.g<HTMLImageElement>(url + _new['ih'], raw),
+                rr.g<HTMLImageElement>(url + _load['i'], raw),
+                rr.g<HTMLImageElement>(url + _load['ih'], raw)
             ];
             (<Start> this.o(0))
                 .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
@@ -64,8 +64,8 @@ namespace Sprite {
                             $load = false;
                         });
                     }, new G.Image(this._rr[4].o(), <G.IBounds> _load, true), new G.Image(this._rr[3].o(), <G.IBounds> _load, true))
-                ).a(new G.Text(<G.IBounds> _title, _title['size'], _title['h'], this.$a(_title['align']))
-                    .tc(_title['color'])
+                ).a(new G.Text(<G.IBounds> _title, _title['s'], _title['lh'], this.$a(_title['a']))
+                    .tc(_title['c'])
                     .a(this._x = new G.TextPhrase())
                 );
         }

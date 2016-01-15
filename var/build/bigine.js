@@ -1586,10 +1586,10 @@ var Sprite;
             _super.call(this, 0, 0, w, h);
             this.o(0)
                 .a(new G.Color(0, 0, w, h, '#000'))
-                .a(new G.Text(_director, _director['size'], _director['h'], this.$a(_director['align']))
-                .tc(_director['color'])
-                .a(new G.TextPhrase('作品'))).a(new G.Text(_title, _title['size'], _title['h'], this.$a(_title['align']))
-                .tc(_title['color'])
+                .a(new G.Text(_director, _director['s'], _director['h'], this.$a(_director['a']))
+                .tc(_director['c'])
+                .a(new G.TextPhrase('作品'))).a(new G.Text(_title, _title['s'], _title['h'], this.$a(_title['a']))
+                .tc(_title['c'])
                 .a(this._x = new G.TextPhrase()));
         }
         /**
@@ -1717,11 +1717,11 @@ var Sprite;
             var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _new = theme['new'], _load = theme['load'], _title = theme['title'], $new = false, $load = false;
             _super.call(this, 0, 0, w, h);
             this._rr = [
-                rr.g(url + theme['image'], raw),
-                rr.g(url + _new['image'], raw),
-                rr.g(url + _new['hover'], raw),
-                rr.g(url + _load['image'], raw),
-                rr.g(url + _load['hover'], raw)
+                rr.g(url + theme['i'], raw),
+                rr.g(url + _new['i'], raw),
+                rr.g(url + _new['ih'], raw),
+                rr.g(url + _load['i'], raw),
+                rr.g(url + _load['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
@@ -1743,8 +1743,8 @@ var Sprite;
                 _this.p(new G.Delay(100)).then(function () {
                     $load = false;
                 });
-            }, new G.Image(this._rr[4].o(), _load, true), new G.Image(this._rr[3].o(), _load, true))).a(new G.Text(_title, _title['size'], _title['h'], this.$a(_title['align']))
-                .tc(_title['color'])
+            }, new G.Image(this._rr[4].o(), _load, true), new G.Image(this._rr[3].o(), _load, true))).a(new G.Text(_title, _title['s'], _title['lh'], this.$a(_title['a']))
+                .tc(_title['c'])
                 .a(this._x = new G.TextPhrase()));
         }
         /**
@@ -1777,18 +1777,18 @@ var Sprite;
          * 构造函数。
          */
         function Words(id, voiceover, monolog, speak) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _vback = voiceover['back'], _vtext = voiceover['text'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mtext = monolog['text'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _stext = speak['text'], ts = 28, th = 32, ns = 42, nh = 42, left = G.Text.Align.Left;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _vback = voiceover['back'], _vtext = voiceover['text'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mtext = monolog['text'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _stext = speak['text'], left = G.Text.Align.Left;
             _super.call(this, 0, 0, w, h);
             this._rr = [
-                rr.g(url + _vback['image'], raw),
-                rr.g(url + _mback['image'], raw),
-                rr.g(url + _sback['image'], raw)
+                rr.g(url + _vback['i'], raw),
+                rr.g(url + _mback['i'], raw),
+                rr.g(url + _sback['i'], raw)
             ];
             this._x = {};
             this._c = {
-                v: _vtext['color2'],
-                m: _mtext['color2'],
-                s: _stext['color2']
+                v: _vtext['ch'],
+                m: _mtext['ch'],
+                s: _stext['ch']
             };
             this._bs = {
                 m: _mavat,
@@ -1797,25 +1797,25 @@ var Sprite;
             this.o(0)
                 .a(this._x['v'] = new G.Sprite(_vback)
                 .a(new G.Image(this._rr[0].o(), _vback, true))
-                .a(this._x['vt'] = new G.Text(_vtext, ts, th, left, true)
-                .tc(_vtext['color'])
-                .ts(_vtext['shadow'], _vtext['shadow'], _vtext['shadow'])).o(0)).a(this._x['m'] = new G.Sprite(_mback)
+                .a(this._x['vt'] = new G.Text(_vtext, _vtext['s'], _vtext['lh'], left, true)
+                .tc(_vtext['c'])
+                .ts(_vtext['ss'], _vtext['ss'], _vtext['ss'])).o(0)).a(this._x['m'] = new G.Sprite(_mback)
                 .a(new G.Image(this._rr[1].o(), _mback, true))
                 .a(this._x['ma'] = new G.Sprite(_mavat, true))
-                .a(new G.Text(_mname, ns, nh, left, true)
-                .tc(_mname['color'])
-                .ts(_mname['shadow'], _mname['shadow'], _mname['shadow'])
-                .a(this._x['mn'] = new G.TextPhrase())).a(this._x['mt'] = new G.Text(_mtext, ts, th, left, true)
-                .tc(_mtext['color'])
-                .ts(_mtext['shadow'], _mtext['shadow'], _mtext['shadow'])).o(0)).a(this._x['s'] = new G.Sprite(_sback)
+                .a(new G.Text(_mname, _mname['s'], _mname['lh'], left, true)
+                .tc(_mname['c'])
+                .ts(_mname['ss'], _mname['ss'], _mname['ss'])
+                .a(this._x['mn'] = new G.TextPhrase())).a(this._x['mt'] = new G.Text(_mtext, _mtext['s'], _mtext['lh'], left, true)
+                .tc(_mtext['c'])
+                .ts(_mtext['ss'], _mtext['ss'], _mtext['ss'])).o(0)).a(this._x['s'] = new G.Sprite(_sback)
                 .a(new G.Image(this._rr[2].o(), _sback, true))
                 .a(this._x['sa'] = new G.Sprite(_savat, true))
-                .a(new G.Text(_sname, ns, nh, left, true)
-                .tc(_sname['color'])
-                .ts(_sname['shadow'], _sname['shadow'], _sname['shadow'])
-                .a(this._x['sn'] = new G.TextPhrase())).a(this._x['st'] = new G.Text(_stext, ts, th, left, true)
-                .tc(_stext['color'])
-                .ts(_stext['shadow'], _stext['shadow'], _stext['shadow'])).o(0));
+                .a(new G.Text(_sname, _sname['s'], _sname['lh'], left, true)
+                .tc(_sname['c'])
+                .ts(_sname['ss'], _sname['ss'], _sname['ss'])
+                .a(this._x['sn'] = new G.TextPhrase())).a(this._x['st'] = new G.Text(_stext, _stext['s'], _stext['lh'], left, true)
+                .tc(_stext['c'])
+                .ts(_stext['ss'], _stext['ss'], _stext['ss'])).o(0));
         }
         /**
          * 隐藏。

@@ -54,22 +54,18 @@ namespace Sprite {
                 _savat: Util.IHashTable<any> = speak['avatar'],
                 _sname: Util.IHashTable<any> = speak['name'],
                 _stext: Util.IHashTable<any> = speak['text'],
-                ts: number = 28,
-                th: number = 32,
-                ns: number = 42,
-                nh: number = 42,
                 left: G.Text.Align = G.Text.Align.Left;
             super(0, 0, w, h);
             this._rr = [
-                rr.g<HTMLImageElement>(url + _vback['image'], raw),
-                rr.g<HTMLImageElement>(url + _mback['image'], raw),
-                rr.g<HTMLImageElement>(url + _sback['image'], raw)
+                rr.g<HTMLImageElement>(url + _vback['i'], raw),
+                rr.g<HTMLImageElement>(url + _mback['i'], raw),
+                rr.g<HTMLImageElement>(url + _sback['i'], raw)
             ];
             this._x = {};
             this._c = {
-                v: _vtext['color2'],
-                m: _mtext['color2'],
-                s: _stext['color2']
+                v: _vtext['ch'],
+                m: _mtext['ch'],
+                s: _stext['ch']
             };
             this._bs = {
                 m: <G.IBounds> _mavat,
@@ -78,31 +74,31 @@ namespace Sprite {
             (<Words> this.o(0))
                 .a(this._x['v'] = new G.Sprite(<G.IBounds> _vback)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _vback, true))
-                    .a(this._x['vt'] = new G.Text(<G.IBounds> _vtext, ts, th, left, true)
-                        .tc(_vtext['color'])
-                        .ts(_vtext['shadow'], _vtext['shadow'], _vtext['shadow'])
+                    .a(this._x['vt'] = new G.Text(<G.IBounds> _vtext, _vtext['s'], _vtext['lh'], left, true)
+                        .tc(_vtext['c'])
+                        .ts(_vtext['ss'], _vtext['ss'], _vtext['ss'])
                     ).o(0)
                 ).a(this._x['m'] = new G.Sprite(<G.IBounds> _mback)
                     .a(new G.Image(this._rr[1].o(), <G.IBounds> _mback, true))
                     .a(this._x['ma'] = new G.Sprite(<G.IBounds> _mavat, true))
-                    .a(new G.Text(<G.IBounds> _mname, ns, nh, left, true)
-                        .tc(_mname['color'])
-                        .ts(_mname['shadow'], _mname['shadow'], _mname['shadow'])
+                    .a(new G.Text(<G.IBounds> _mname, _mname['s'], _mname['lh'], left, true)
+                        .tc(_mname['c'])
+                        .ts(_mname['ss'], _mname['ss'], _mname['ss'])
                         .a(this._x['mn'] = new G.TextPhrase())
-                    ).a(this._x['mt'] = new G.Text(<G.IBounds> _mtext, ts, th, left, true)
-                        .tc(_mtext['color'])
-                        .ts(_mtext['shadow'], _mtext['shadow'], _mtext['shadow'])
+                    ).a(this._x['mt'] = new G.Text(<G.IBounds> _mtext, _mtext['s'], _mtext['lh'], left, true)
+                        .tc(_mtext['c'])
+                        .ts(_mtext['ss'], _mtext['ss'], _mtext['ss'])
                     ).o(0)
                 ).a(this._x['s'] = new G.Sprite(<G.IBounds> _sback)
                     .a(new G.Image(this._rr[2].o(), <G.IBounds> _sback, true))
                     .a(this._x['sa'] = new G.Sprite(<G.IBounds> _savat, true))
-                    .a(new G.Text(<G.IBounds> _sname, ns, nh, left, true)
-                        .tc(_sname['color'])
-                        .ts(_sname['shadow'], _sname['shadow'], _sname['shadow'])
+                    .a(new G.Text(<G.IBounds> _sname, _sname['s'], _sname['lh'], left, true)
+                        .tc(_sname['c'])
+                        .ts(_sname['ss'], _sname['ss'], _sname['ss'])
                         .a(this._x['sn'] = new G.TextPhrase())
-                    ).a(this._x['st'] = new G.Text(<G.IBounds> _stext, ts, th, left, true)
-                        .tc(_stext['color'])
-                        .ts(_stext['shadow'], _stext['shadow'], _stext['shadow'])
+                    ).a(this._x['st'] = new G.Text(<G.IBounds> _stext, _stext['s'], _stext['lh'], left, true)
+                        .tc(_stext['c'])
+                        .ts(_stext['ss'], _stext['ss'], _stext['ss'])
                     ).o(0)
                 );
         }
