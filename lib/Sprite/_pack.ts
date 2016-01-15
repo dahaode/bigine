@@ -11,3 +11,4 @@
 /// <reference path="Author.ts" />
 /// <reference path="Start.ts" />
 /// <reference path="Words.ts" />
+/// <reference path="Tray.ts" />

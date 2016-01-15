@@ -1952,6 +1952,98 @@ var Sprite;
     Sprite.Words = Words;
 })(Sprite || (Sprite = {}));
 /**
+ * 声明画面调度常驻按钮组件接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Sprite/ITray.ts
+ */
+/// <reference path="ISprite.ts" />
+/**
+ * 声明（画面调度）常驻按钮菜单事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/ITrayMenuMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/ITray.ts" />
+/**
+ * 定义（画面调度）常驻按钮菜单事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/TrayMenu.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="ITrayMenuMetas.ts" />
+var Ev;
+(function (Ev) {
+    var TrayMenu = (function (_super) {
+        __extends(TrayMenu, _super);
+        /**
+         * 构造函数。
+         */
+        function TrayMenu(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        TrayMenu.prototype.gT = function () {
+            return 'tray.menu';
+        };
+        return TrayMenu;
+    })(Ev.Event);
+    Ev.TrayMenu = TrayMenu;
+})(Ev || (Ev = {}));
+/**
+ * 定义画面调度常驻按钮栏组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Start.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/TrayMenu.ts" />
+var Sprite;
+(function (Sprite) {
+    var G = __Bigine_C2D;
+    var Tray = (function (_super) {
+        __extends(Tray, _super);
+        /**
+         * 构造函数。
+         */
+        function Tray(id, theme) {
+            var _this = this;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _menu = theme['menu'], $menu = false;
+            _super.call(this, 0, 0, w, h);
+            this._rr = [
+                rr.g(url + _menu['i'], raw),
+                rr.g(url + _menu['ih'], raw)
+            ];
+            this.o(0)
+                .a(new G.Button(_menu)
+                .b(function () {
+                if ($menu)
+                    return;
+                $menu = true;
+                _this.dispatchEvent(new Ev.TrayMenu({ target: _this }));
+                _this.p(new G.Delay(100)).then(function () {
+                    $menu = false;
+                });
+            }, new G.Image(this._rr[1].o(), _menu, true), new G.Image(this._rr[0].o(), _menu, true)));
+        }
+        return Tray;
+    })(Sprite.Sprite);
+    Sprite.Tray = Tray;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1963,6 +2055,7 @@ var Sprite;
 /// <reference path="Author.ts" />
 /// <reference path="Start.ts" />
 /// <reference path="Words.ts" />
+/// <reference path="Tray.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -2029,7 +2122,6 @@ var Runtime;
                 .a(new G.Sprite(bounds).i('c').o(0))
                 .a(new G.Sprite(bounds).i('g').o(0))
                 .a(new G.Sprite(bounds).i('t').o(0))
-                .a(new G.Sprite(bounds).i('$').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
@@ -2097,10 +2189,11 @@ var Runtime;
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
-                var gLogo = new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS), gEntry = _this._c.q('$.')[0];
+                var gLogo = new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS);
+                // gEntry: G.Element = this._c.q('$.')[0];
                 _this._c.z()
                     .a(gLogo, _this._x['c']);
-                gEntry.o(0);
+                // gEntry.o(0);
                 return _this.lightOn()
                     .then(function () { return gLogo.p(new G.Delay(1000)); })
                     .then(function () { return _this.lightOff(); })
@@ -2115,7 +2208,7 @@ var Runtime;
                         .then(function () { return gAuthor.o(0); });
                 }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
                     .then(function (runtime) {
-                    gEntry.o(1);
+                    // gEntry.o(1);
                     if (!start)
                         return runtime;
                     _this._x['s'].o(1);
@@ -2136,8 +2229,8 @@ var Runtime;
                 return _this.lightOff()
                     .then(function () {
                     _this._c.a(gED, _this._x['c']);
-                    _this._c.q('$.')[0].o(0);
-                    _this._c.q('$')[0].o(0);
+                    // this._c.q('$.')[0].o(0);
+                    // this._c.q('$')[0].o(0);
                     return _this.lightOn();
                 }).then(function () { return gED.p(new G.Delay(2000)); })
                     .then(function () { return _this.lightOff(); })
@@ -2261,7 +2354,7 @@ var Runtime;
         CanvasDirector.prototype.words = function (words, theme, who, avatar) {
             var _this = this;
             return this.lightOn().then(function () {
-                var sprite = _this._x['w'], type = theme[0];
+                var sprite = _this._x['W'], type = theme[0];
                 if ('v' == type)
                     return sprite.vv(words, _this._a);
                 return sprite['v' + type](avatar, who, words, _this._a);
@@ -2510,7 +2603,7 @@ var Runtime;
                     .o(0);
                 _this._c.q('g')[0].c()
                     .o(0);
-                _this._x['w'].h(true);
+                _this._x['W'].h(true);
                 _this._c.q('t')[0].o(0);
                 _this._c.q('D')[0].o(0);
                 return runtime;
@@ -2533,14 +2626,18 @@ var Runtime;
          */
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
-            var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], gTip = this._c.q('t')[0], gMenu = this._c.q('$')[0], gMenuWay = false, right = G.Text.Align.Right, gMenuEntry, gMenuMask, gMenuFeatures, gMenuSlots, gChoose;
-            this._x['w'] = new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
-            resources.push(this._x['w'].l());
-            this._c.a(this._x['w'], this._x['c']);
+            var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], gCurtain = this._x['c'], gTip = this._c.q('t')[0], gChoose;
+            this._x['W'] = new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
+            resources.unshift(this._x['W'].l());
+            this._c.a(this._x['W'], gCurtain);
+            this._x['t'] = new Sprite.Tray(id, theme['tray']);
+            resources.unshift(this._x['t'].l());
+            this._c.a(this._x['t'], gCurtain);
             this._x['s'] = new Sprite.Start(id, theme['start'])
                 .addEventListener('start.new', function (event) {
                 _this.playSE(_this._i['c']);
                 _this.lightOff().then(function () {
+                    _this._x['t'].v(true);
                     event.target.h(true);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
@@ -2551,9 +2648,9 @@ var Runtime;
                     _this._r.dispatchEvent(new Ev.Resume({ target: _this._r.gE() }));
                 });
             });
-            resources.push(this._x['s'].l());
-            this._c.a(this._x['s'], this._x['c']);
-            this._c.a(this._x['a'] = new Sprite.Author(chapter), this._x['c']);
+            resources.unshift(this._x['s'].l());
+            this._c.a(this._x['s'], gCurtain);
+            this._c.a(this._x['a'] = new Sprite.Author(chapter), gCurtain);
             // -------- tip --------
             chapter = theme['tip'];
             section = chapter['back'];
@@ -2566,7 +2663,6 @@ var Runtime;
             this._f['t'] = {
                 h: section['color2']
             };
-            ;
             // 文字区域
             gTip.a(new G.Text(section, 28, 32, G.Text.Align.Center)
                 .tc(section['color'])
@@ -2591,124 +2687,6 @@ var Runtime;
                 c: section['color']
             };
             this._c.a(gChoose, this._x['s']);
-            // -------- menu --------
-            chapter = theme['menu'];
-            gMenu.a((gMenuMask = new G.Color(bounds, chapter['mask']['color0'])).i('m'))
-                .a((gMenuFeatures = new G.Sprite(bounds)).i('f'))
-                .a((gMenuSlots = new G.Sprite(bounds)).i('s').o(0));
-            section = chapter['enter'];
-            resources.push([
-                Resource.Resource.g(url + section['image'], raw),
-                Resource.Resource.g(url + section['hover'], raw) // 1
-            ]);
-            // 入口按钮
-            this._c.a((gMenuEntry = new G.Button(section).b(function () {
-                if (_this._m)
-                    _this._m.w();
-                gMenuEntry.o(0);
-                gMenuMask.o(.4);
-                gMenuSlots.o(0);
-                gMenuFeatures.o(1);
-                gMenu.o(1);
-            }, new G.Image(resources[4][1].o()), new G.Image(resources[4][0].o()))).i('$.'), 'A');
-            section = chapter['back'];
-            resources[4].push(Resource.Resource.g(url + section['image'], raw), // 2
-            Resource.Resource.g(url + section['hover'], raw) // 3
-            );
-            // 关闭按钮
-            gMenuFeatures.a(new G.Button(section).b(function () {
-                if (_this._m)
-                    _this._m.r();
-                gMenuEntry.o(1);
-                gMenu.o(0);
-            }, new G.Image(resources[4][3].o()), new G.Image(resources[4][2].o())));
-            // 返回按钮
-            gMenuSlots.a(new G.Button(section).b(function () {
-                if (!gMenuWay) {
-                    _this.qh(false);
-                    return;
-                }
-                gMenuSlots.o(0);
-                gMenuFeatures.o(1);
-            }, new G.Image(resources[4][3].o()), new G.Image(resources[4][2].o())));
-            section = chapter['save'];
-            resources[4].push(Resource.Resource.g(url + section['image'], raw), // 4
-            Resource.Resource.g(url + section['hover'], raw) // 5
-            );
-            // 存档按钮
-            gMenuFeatures.a(new G.Button(section).b(function () {
-                gMenuWay = true;
-                _this.qs(false, .4);
-            }, new G.Image(resources[4][5].o()), new G.Image(resources[4][4].o())));
-            section = chapter['load'];
-            resources[4].push(Resource.Resource.g(url + section['image'], raw), // 6
-            Resource.Resource.g(url + section['hover'], raw) // 7
-            );
-            // 读档按钮
-            gMenuFeatures.a(new G.Button(section).b(function () {
-                gMenuWay = true;
-                _this.qs(true, .4);
-            }, new G.Image(resources[4][7].o()), new G.Image(resources[4][6].o())));
-            section = chapter['auto'];
-            resources[4].push(Resource.Resource.g(url + section['image'], raw), // 8
-            Resource.Resource.g(url + section['hover'], raw) // 9
-            );
-            section = chapter['autotext'];
-            // 自动档按钮
-            gMenuSlots.a(new G.Button(chapter['auto']).b(function () {
-                _this._r.l(_this._r.gS().q('auto')[0]);
-            }, new G.Image(resources[4][9].o()), new G.Image(resources[4][8].o()))
-                .a(new G.Text(section, section['size'], section['h'], right, true)
-                .tc(section['color'])
-                .i('t')).i('_'));
-            // 自动档按钮（禁用状态）
-            gMenuSlots.a(new G.Sprite(chapter['auto'])
-                .a(new G.Image(resources[4][8].o()))
-                .a(new G.Text(section, chapter['disabled']['size'], section['h'], right, true)
-                .tc(chapter['disabled']['color'])
-                .a(new G.TextPhrase('无'))).i('_.').o(0));
-            section = chapter['1'];
-            resources[4].push(Resource.Resource.g(url + section['image'], raw), // 10
-            Resource.Resource.g(url + section['hover'], raw) // 11
-            );
-            section = chapter['1text'];
-            // 第一档按钮
-            gMenuSlots.a(new G.Button(chapter['1']).b(function () {
-                if (_this._o) {
-                    _this._r.l(_this._r.gS().q('1')[0]);
-                    return;
-                }
-                _this._r.gS().e(true);
-                if (_this._m)
-                    _this._m.r();
-                gMenuEntry.o(1);
-                gMenu.o(0);
-            }, new G.Image(resources[4][11].o()), new G.Image(resources[4][10].o()))
-                .a(new G.Text(section, section['size'], section['h'], right, true)
-                .tc(section['color'])
-                .i('t')).i('1'));
-            // 第一档按钮（禁用状态）
-            gMenuSlots.a(new G.Sprite(chapter['1'])
-                .a(new G.Image(resources[4][10].o()))
-                .a(new G.Text(section, chapter['disabled']['size'], section['h'], right, true)
-                .tc(chapter['disabled']['color'])
-                .a(new G.TextPhrase('无'))).i('1.').o(0));
-            section = chapter['2'];
-            resources[4].push(Resource.Resource.g(url + section['image'], raw) // 12
-            );
-            // 第二档按钮
-            gMenuSlots.a(new G.Image(resources[4][12].o(), section));
-            section = chapter['3'];
-            resources[4].push(Resource.Resource.g(url + section['image'], raw) // 13
-            );
-            // 第三档按钮
-            gMenuSlots.a(new G.Image(resources[4][13].o(), section));
-            section = chapter['4'];
-            resources[4].push(Resource.Resource.g(url + section['image'], raw) // 14
-            );
-            // 第二档按钮
-            gMenuSlots.a(new G.Image(resources[4][14].o(), section));
-            section = chapter['enabled'];
             this.c(resources);
             return this;
         };
@@ -2786,45 +2764,13 @@ var Runtime;
             if (load === void 0) { load = true; }
             if (opacity === void 0) { opacity = 1; }
             _super.prototype.qs.call(this, load, opacity);
-            var gEntry = this._c.q('$.')[0], gMenu = this._c.q('$')[0], gMask = gMenu.q('m')[0], gFeatures = gMenu.q('f')[0], gSlots = gMenu.q('s')[0], gAuto = gSlots.q('_')[0], gAutoDisabled = gSlots.q('_.')[0], g1 = gSlots.q('1')[0], g1Disabled = gSlots.q('1.')[0], states = this._r.gS(), slot = states.q('auto'), time = function (stamp) {
-                var date = new Date(stamp), node = date.getHours(), clob = ' ' + (10 > node ? '0' : '') + node;
-                node = date.getMinutes();
-                clob += ':' + (10 > node ? '0' : '') + node;
-                return date.getFullYear() + '-' + (1 + date.getMonth()) + '-' + date.getDate() + clob;
-            };
-            gEntry.o(0);
-            gMask.o(0);
-            gFeatures.o(0);
-            gSlots.o(1);
-            gAuto.o(load && slot ? 1 : 0);
-            if (slot)
-                gAuto.q('t')[0].c()
-                    .a(new G.TextPhrase(time(slot[1])));
-            gAutoDisabled.o(load && !slot ? 1 : 0);
-            slot = states.q('1');
-            g1.o(!load || slot ? 1 : 0);
-            if (slot)
-                g1.q('t')[0].c()
-                    .a(new G.TextPhrase(time(slot[1])));
-            g1Disabled.o(load && !slot ? 1 : 0);
-            gMenu.o(1);
             return this.lightOn();
         };
         /**
          * 隐藏存档读档菜单。
          */
         CanvasDirector.prototype.qh = function (succeed) {
-            var _this = this;
-            return this.lightOff()
-                .then(function () {
-                _this._c.q('$.')[0].o(1);
-                _this._x['s'].o(succeed ? 0 : 1);
-                _this._c.q('$')[0].o(0);
-            }).then(function () {
-                return succeed ?
-                    _this.reset() :
-                    _this.lightOn();
-            });
+            return this.lightOff();
         };
         /**
          * 绑定视图。

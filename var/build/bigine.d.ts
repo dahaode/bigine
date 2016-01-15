@@ -498,6 +498,25 @@ declare namespace __Bigine {
             private $w(element, words, hiColor);
         }
     }
+    namespace Core {
+        interface ITray extends ISprite {
+        }
+    }
+    namespace Ev {
+        interface ITrayMenuMetas extends Util.IEventMetas<Core.ITray> {
+        }
+    }
+    namespace Ev {
+        class TrayMenu extends Event<Core.ITray> {
+            constructor(metas: ITrayMenuMetas);
+            gT(): string;
+        }
+    }
+    namespace Sprite {
+        class Tray extends Sprite {
+            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;
