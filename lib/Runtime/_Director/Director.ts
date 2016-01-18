@@ -234,6 +234,13 @@ namespace Runtime {
         }
 
         /**
+         * 配置状态。
+         */
+        public s(sheet: [string, string][]): Director {
+            return this;
+        }
+
+        /**
          * 设置自动播放。
          */
         public a(auto: boolean): boolean {

@@ -38,6 +38,7 @@ declare namespace __Bigine {
             gS(): string;
             t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
             gT(): string;
+            s(): [string, string][];
         }
     }
     namespace Core {
@@ -399,6 +400,7 @@ declare namespace __Bigine {
             setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
+            s(sheet: [string, string][]): Director;
             a(auto: boolean): boolean;
             v(volume: number): Director;
             f(): void;
@@ -631,6 +633,7 @@ declare namespace __Bigine {
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
+            s(sheet: [string, string][]): Director;
             a(auto: boolean): boolean;
             v(volume: number): CanvasDirector;
             f(): void;
@@ -1120,6 +1123,12 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
+        class Status extends Unknown {
+            gN(): string;
+            l(): [string, string][];
+        }
+    }
+    namespace Tag {
         class Root extends Unknown implements Core.IRootTag {
             static SERIALS: string;
             constructor(children: Unknown[]);
@@ -1133,6 +1142,7 @@ declare namespace __Bigine {
             gS(): string;
             t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
             gT(): string;
+            s(): [string, string][];
         }
     }
     namespace Tag {

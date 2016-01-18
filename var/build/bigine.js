@@ -59,7 +59,7 @@ var Ev;
  * 声明根标签接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Core/_Tag/IRootTag.ts
  */
@@ -1347,6 +1347,12 @@ var Runtime;
          * 使用主题。
          */
         Director.prototype.t = function (id, theme) {
+            return this;
+        };
+        /**
+         * 配置状态。
+         */
+        Director.prototype.s = function (sheet) {
             return this;
         };
         /**
@@ -3092,6 +3098,12 @@ var Runtime;
             return this;
         };
         /**
+         * 配置状态。
+         */
+        CanvasDirector.prototype.s = function (sheet) {
+            return this;
+        };
+        /**
          * 设置自动播放。
          */
         CanvasDirector.prototype.a = function (auto) {
@@ -3393,6 +3405,7 @@ var Tag;
         Player: '主角',
         Resources: '素材包',
         Theme: '主题',
+        Status: '状态',
         Scene: '事件',
         Type: '类型',
         Conditions: '条件',
@@ -3477,6 +3490,9 @@ var Tag;
         55: ['Player', 0, 1],
         56: ['Resources', 0, 1],
         57: ['Theme', 0, 1],
+        73: ['Status', 0, -1, {
+                53: [0, 6]
+            }],
         49: ['Scene', 0, 1, {
                 50: 1,
                 51: [0, 1],
@@ -6179,10 +6195,57 @@ var Tag;
     Tag.Scene = Scene;
 })(Tag || (Tag = {}));
 /**
+ * 定义状态标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/Status.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Status = (function (_super) {
+        __extends(Status, _super);
+        function Status() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Status.prototype.gN = function () {
+            return 'Status';
+        };
+        /**
+         * 列举配置。
+         */
+        Status.prototype.l = function () {
+            var sheet = [];
+            Util.each(this._s, function (tag) {
+                var title = tag.$p(0), value = tag.$c();
+                if ('空' == title)
+                    title = value = '';
+                sheet.push([title, value || title]);
+            });
+            Util.some(Util.clone(sheet).reverse(), function (item) {
+                if (item[0])
+                    return true;
+                sheet.pop();
+                return false;
+            });
+            return sheet;
+        };
+        return Status;
+    })(Tag.Unknown);
+    Tag.Status = Status;
+})(Tag || (Tag = {}));
+/**
  * 定义（作品）根标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Tag/_Structure/Root.ts
  */
@@ -6190,6 +6253,7 @@ var Tag;
 /// <reference path="../../Core/_Tag/IRootTag.ts" />
 /// <reference path="Resources.ts" />
 /// <reference path="Theme.ts" />
+/// <reference path="Status.ts" />
 var Tag;
 (function (Tag) {
     var Util = __Bigine_Util;
@@ -6330,6 +6394,15 @@ var Tag;
          */
         Root.prototype.gT = function () {
             return this.$q('Theme')[0].$c();
+        };
+        /**
+         * 获取状态配置。
+         */
+        Root.prototype.s = function () {
+            var status = this.$q('Status')[0];
+            if (!status)
+                return [];
+            return status.l();
         };
         /**
          * 压缩键名序列。
@@ -8277,6 +8350,7 @@ var Tag;
 /// <reference path="_Action/_Logic/Copy.ts" />
 /// <reference path="_Action/_Logic/Add.ts" />
 /// <reference path="_Action/_Logic/Subtract.ts" />
+/// <reference path="_Structure/Status.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -8317,7 +8391,8 @@ var Runtime;
             this._t = Promise.resolve(this);
             this.addEventListener('ready', function () {
                 _this._s.l();
-                _this._d.t(_this._e.gT(), _this._e.gC());
+                _this._d.t(_this._e.gT(), _this._e.gC())
+                    .s(ep.s());
                 _this._fr = true;
                 if (_this._fp) {
                     _this._fp = false;

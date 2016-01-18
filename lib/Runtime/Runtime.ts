@@ -104,7 +104,8 @@ namespace Runtime {
             this._t = Promise.resolve(this);
             this.addEventListener<Episode>('ready', () => {
                 this._s.l();
-                this._d.t(this._e.gT(), this._e.gC());
+                this._d.t(this._e.gT(), this._e.gC())
+                    .s(ep.s());
                 this._fr = true;
                 if (this._fp) {
                     this._fp = false;

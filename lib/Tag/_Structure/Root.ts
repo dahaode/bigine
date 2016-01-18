@@ -2,7 +2,7 @@
  * 定义（作品）根标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Tag/_Structure/Root.ts
  */
@@ -11,6 +11,7 @@
 /// <reference path="../../Core/_Tag/IRootTag.ts" />
 /// <reference path="Resources.ts" />
 /// <reference path="Theme.ts" />
+/// <reference path="Status.ts" />
 
 namespace Tag {
     import Util = __Bigine_Util;
@@ -177,6 +178,16 @@ namespace Tag {
          */
         public gT(): string {
             return this.$q('Theme')[0].$c();
+        }
+
+        /**
+         * 获取状态配置。
+         */
+        public s(): [string, string][] {
+            let status: Status = <Status> this.$q('Status')[0];
+            if (!status)
+                return [];
+            return status.l();
         }
     }
 }

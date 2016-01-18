@@ -38,6 +38,7 @@ namespace Tag {
         Player: '主角',
         Resources: '素材包',
         Theme: '主题',
+        Status: '状态',
 
         Scene: '事件',
         Type: '类型',
@@ -112,7 +113,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 73
+    export var S: { [index: number]: any[] } = { // next 74
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -132,6 +133,9 @@ namespace Tag {
         55: ['Player', 0, 1], // 人物名
         56: ['Resources', 0, 1], // 素材包名
         57: ['Theme', 0, 1], // 主题名
+        73: ['Status', 0, -1, {
+            53: [0, 6]
+        }],
 
         49: ['Scene', 0, 1, { // 名称
             50: 1,
