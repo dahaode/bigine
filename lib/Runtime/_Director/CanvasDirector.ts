@@ -708,10 +708,19 @@ namespace Runtime {
                     this._x['m'].v();
                     this._x['t'].h();
                 }).addEventListener('tray.panel', () => {
+                    this._x['P'].v();
                     this._x['t'].h();
                 });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
+            // 面板。
+            this._x['P'] = <Sprite.Panel> new Sprite.Panel(id, theme['panel'])
+                .addEventListener('panel.close', () => {
+                    this._x['t'].v();
+                    this._x['P'].h();
+                });
+            resources.unshift(this._x['P'].l());
+            this._c.a(this._x['P'], gCurtain);
             // 功能菜单。
             this._x['m'] = <Sprite.Menu> new Sprite.Menu(id, theme['menu'])
                 .addEventListener('menu.close', () => {
@@ -814,6 +823,17 @@ namespace Runtime {
         public s(sheet: [string, string][]): Director {
             if (sheet.length)
                 (<Sprite.Status> this._x['S']).u(sheet, this._r);
+            return this;
+        }
+
+        /**
+         * 配置面板。
+         */
+        public p(sheet: [string, string][]): Director {
+            if (sheet.length) {
+                (<Sprite.Panel> this._x['P']).u(sheet, this._r);
+            } else
+                (<Sprite.Tray> this._x['t']).u(false);
             return this;
         }
 

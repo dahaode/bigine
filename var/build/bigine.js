@@ -1356,6 +1356,12 @@ var Runtime;
             return this;
         };
         /**
+         * 配置面板。
+         */
+        Director.prototype.p = function (sheet) {
+            return this;
+        };
+        /**
          * 设置自动播放。
          */
         Director.prototype.a = function (auto) {
@@ -2015,11 +2021,18 @@ var Sprite;
                 .a(new G.Button(_menu)
                 .b(function () {
                 _this.dispatchEvent(new Ev.TrayMenu({ target: _this }));
-            }, new G.Image(this._rr[1].o(), _menu, true), new G.Image(this._rr[0].o(), _menu, true))).a(new G.Button(_panel)
+            }, new G.Image(this._rr[1].o(), _menu, true), new G.Image(this._rr[0].o(), _menu, true))).a(this._x = new G.Button(_panel)
                 .b(function () {
                 _this.dispatchEvent(new Ev.TrayPanel({ target: _this }));
             }, new G.Image(this._rr[3].o(), _panel, true), new G.Image(this._rr[2].o(), _panel, true)));
         }
+        /**
+         * 配置面板。
+         */
+        Tray.prototype.u = function (panel) {
+            this._x.o(0 + panel);
+            return this;
+        };
         return Tray;
     })(Sprite.Sprite);
     Sprite.Tray = Tray;
@@ -2529,6 +2542,132 @@ var Sprite;
     Sprite.Status = Status;
 })(Sprite || (Sprite = {}));
 /**
+ * 声明画面调度面板组件接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Sprite/IPanel.ts
+ */
+/// <reference path="ISprite.ts" />
+/// <reference path="../_Runtime/IRuntime.ts" />
+/**
+ * 声明（画面调度）面板关闭事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IPanelCloseMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IPanel.ts" />
+/**
+ * 定义（画面调度）面板关闭事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/PanelClose.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IPanelCloseMetas.ts" />
+var Ev;
+(function (Ev) {
+    var PanelClose = (function (_super) {
+        __extends(PanelClose, _super);
+        /**
+         * 构造函数。
+         */
+        function PanelClose(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        PanelClose.prototype.gT = function () {
+            return 'panel.close';
+        };
+        return PanelClose;
+    })(Ev.Event);
+    Ev.PanelClose = PanelClose;
+})(Ev || (Ev = {}));
+/**
+ * 定义画面调度面板信息组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Panel.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/PanelClose.ts" />
+/// <reference path="../Ev/_Runtime/State.ts" />
+var Sprite;
+(function (Sprite) {
+    var Util = __Bigine_Util;
+    var G = __Bigine_C2D;
+    var Panel = (function (_super) {
+        __extends(Panel, _super);
+        /**
+         * 构造函数。
+         */
+        function Panel(id, theme) {
+            var _this = this;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', left = G.Text.Align.Left, right = G.Text.Align.Right, _back = theme['back'], _close = theme['close'], i = 1, j;
+            _super.call(this, 0, 0, w, h, true);
+            this._rr = [
+                rr.g(url + _back['i'], raw),
+                rr.g(url + _close['i'], raw),
+                rr.g(url + _close['ih'], raw)
+            ];
+            this.o(0)
+                .a(new G.Image(this._rr[0].o(), _back))
+                .a(new G.Button(_close)
+                .b(function () {
+                _this.dispatchEvent(new Ev.PanelClose({ target: _this }));
+            }, new G.Image(this._rr[2].o(), _close, true), new G.Image(this._rr[1].o(), _close, true)));
+            this._x = {};
+            this._y = {};
+            for (; i < 13; i++) {
+                j = theme[i];
+                this.a(this._x[i + 't'] = new G.Text(j['title'], j['title']['s'], j['title']['lh'], left)
+                    .tc(j['title']['c'])
+                    .o(0)).a(this._x[i + 'v'] = new G.Text(j['value'], j['value']['s'], j['value']['lh'], right)
+                    .tc(j['value']['c'])
+                    .o(0));
+            }
+        }
+        /**
+         * 配置。
+         */
+        Panel.prototype.u = function (sheet, runtime) {
+            var _this = this;
+            Util.each(sheet, function (item, index) {
+                if (!item[0])
+                    return;
+                _this._x[++index + 't'].o(1)
+                    .c()
+                    .a(new G.TextPhrase(item[0]));
+                _this._x[index + 'v'].o(1);
+                _this._y[item[1]] = [index + 'v', ''];
+            });
+            runtime.addEventListener('state', function (ev) {
+                Util.each(_this._y, function (conf, name) {
+                    var value = ev.data[name] || '';
+                    if (value == conf[1])
+                        return;
+                    _this._y[name][1] = value;
+                    _this._x[conf[0]].c().a(new G.TextPhrase(value));
+                });
+            });
+            return this;
+        };
+        return Panel;
+    })(Sprite.Sprite);
+    Sprite.Panel = Panel;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2544,6 +2683,7 @@ var Sprite;
 /// <reference path="Menu.ts" />
 /// <reference path="Slots.ts" />
 /// <reference path="Status.ts" />
+/// <reference path="Panel.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -3127,10 +3267,19 @@ var Runtime;
                 _this._x['m'].v();
                 _this._x['t'].h();
             }).addEventListener('tray.panel', function () {
+                _this._x['P'].v();
                 _this._x['t'].h();
             });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
+            // 面板。
+            this._x['P'] = new Sprite.Panel(id, theme['panel'])
+                .addEventListener('panel.close', function () {
+                _this._x['t'].v();
+                _this._x['P'].h();
+            });
+            resources.unshift(this._x['P'].l());
+            this._c.a(this._x['P'], gCurtain);
             // 功能菜单。
             this._x['m'] = new Sprite.Menu(id, theme['menu'])
                 .addEventListener('menu.close', function () {
@@ -3231,6 +3380,17 @@ var Runtime;
         CanvasDirector.prototype.s = function (sheet) {
             if (sheet.length)
                 this._x['S'].u(sheet, this._r);
+            return this;
+        };
+        /**
+         * 配置面板。
+         */
+        CanvasDirector.prototype.p = function (sheet) {
+            if (sheet.length) {
+                this._x['P'].u(sheet, this._r);
+            }
+            else
+                this._x['t'].u(false);
             return this;
         };
         /**

@@ -402,6 +402,7 @@ declare namespace __Bigine {
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
             s(sheet: [string, string][]): Director;
+            p(sheet: [string, string][]): Director;
             a(auto: boolean): boolean;
             v(volume: number): Director;
             f(): void;
@@ -491,6 +492,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface ITray extends ISprite {
+            u(panel: boolean): ITray;
         }
     }
     namespace Ev {
@@ -515,7 +517,9 @@ declare namespace __Bigine {
     }
     namespace Sprite {
         class Tray extends Sprite implements Core.ITray {
+            private _x;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            u(panel: boolean): Tray;
         }
     }
     namespace Core {
@@ -614,6 +618,29 @@ declare namespace __Bigine {
             u(sheet: [string, string][], runtime: Core.IRuntime): Status;
         }
     }
+    namespace Core {
+        interface IPanel extends ISprite {
+            u(sheet: [string, string][], runtime: IRuntime): IPanel;
+        }
+    }
+    namespace Ev {
+        interface IPanelCloseMetas extends Util.IEventMetas<Core.IPanel> {
+        }
+    }
+    namespace Ev {
+        class PanelClose extends Event<Core.IPanel> {
+            constructor(metas: IPanelCloseMetas);
+            gT(): string;
+        }
+    }
+    namespace Sprite {
+        class Panel extends Sprite {
+            private _x;
+            private _y;
+            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            u(sheet: [string, string][], runtime: Core.IRuntime): Panel;
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;
@@ -653,6 +680,7 @@ declare namespace __Bigine {
             setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             s(sheet: [string, string][]): Director;
+            p(sheet: [string, string][]): Director;
             a(auto: boolean): boolean;
             v(volume: number): CanvasDirector;
             f(): void;

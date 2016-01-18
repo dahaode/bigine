@@ -15,3 +15,4 @@
 /// <reference path="Menu.ts" />
 /// <reference path="Slots.ts" />
 /// <reference path="Status.ts" />
+/// <reference path="Panel.ts" />

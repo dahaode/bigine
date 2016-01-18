@@ -11,5 +11,9 @@
 
 namespace Core {
     export interface ITray extends ISprite {
+        /**
+         * 配置面板。
+         */
+        u(panel: boolean): ITray;
     }
 }
