@@ -694,9 +694,15 @@ namespace Runtime {
                 slotsFromStart: boolean = false,
                 gTip: G.Sprite = <G.Sprite> this._c.q('t')[0],
                 gChoose: G.Sprite;
+            // 状态。
+            this._x['S'] = <Sprite.Status> new Sprite.Status(id, theme['status']);
+            resources.unshift(this._x['S'].l());
+            this._c.a(this._x['S'], gCurtain);
+            // 某白。
             this._x['W'] = <Sprite.Words> new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
+            // 常驻按钮。
             this._x['t'] = <Sprite.Tray> new Sprite.Tray(id, theme['tray'])
                 .addEventListener('tray.menu', () => {
                     this._x['m'].v();
@@ -704,6 +710,7 @@ namespace Runtime {
                 });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
+            // 功能菜单。
             this._x['m'] = <Sprite.Menu> new Sprite.Menu(id, theme['menu'])
                 .addEventListener('menu.close', () => {
                     this._x['t'].v();
@@ -719,6 +726,7 @@ namespace Runtime {
                 });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
+            // 开始菜单。
             this._x['s'] = <Sprite.Start> new Sprite.Start(id, theme['start'])
                 .addEventListener('start.new', (event: Ev.StartNew) => {
                     this.playSE(this._i['c']);
@@ -739,6 +747,7 @@ namespace Runtime {
                 });
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
+            // 档位菜单。
             this._x['sl'] = <Sprite.Slots> new Sprite.Slots(id, theme['slots'])
                 .addEventListener('slots.close', () => {
                     this._x[slotsFromStart ? 's' : 'm'].v();
@@ -801,6 +810,8 @@ namespace Runtime {
          * 配置状态。
          */
         public s(sheet: [string, string][]): Director {
+            if (sheet.length)
+                (<Sprite.Status> this._x['S']).u(sheet, this._r);
             return this;
         }
 

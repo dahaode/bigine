@@ -595,6 +595,14 @@ declare namespace __Bigine {
             private $d(stamp);
         }
     }
+    namespace Sprite {
+        class Status extends Sprite {
+            private _x;
+            private _y;
+            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            u(sheet: [string, string][], runtime: Core.IRuntime): Status;
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;

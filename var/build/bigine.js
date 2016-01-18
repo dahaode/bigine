@@ -2413,6 +2413,76 @@ var Sprite;
     Sprite.Slots = Slots;
 })(Sprite || (Sprite = {}));
 /**
+ * 定义画面调度状态信息组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Status.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Core/_Runtime/IRuntime.ts" />
+/// <reference path="../Ev/_Runtime/State.ts" />
+var Sprite;
+(function (Sprite) {
+    var Util = __Bigine_Util;
+    var G = __Bigine_C2D;
+    var Status = (function (_super) {
+        __extends(Status, _super);
+        /**
+         * 构造函数。
+         */
+        function Status(id, theme) {
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', left = G.Text.Align.Left, right = G.Text.Align.Right, _back = theme['back'], i = 1, j;
+            _super.call(this, 0, 0, w, h, true);
+            this._rr = [
+                rr.g(url + _back['i'], raw)
+            ];
+            this.o(0)
+                .a(new G.Image(this._rr[0].o(), _back));
+            this._x = {};
+            this._y = {};
+            for (; i < 7; i++) {
+                j = theme[i];
+                this.a(this._x[i + 't'] = new G.Text(j['title'], j['title']['s'], j['title']['lh'], left)
+                    .tc(j['title']['c'])
+                    .o(0)).a(this._x[i + 'v'] = new G.Text(j['value'], j['value']['s'], j['value']['lh'], right)
+                    .tc(j['value']['c'])
+                    .o(0));
+            }
+        }
+        /**
+         * 配置。
+         */
+        Status.prototype.u = function (sheet, runtime) {
+            var _this = this;
+            Util.each(sheet, function (item, index) {
+                if (!item[0])
+                    return;
+                _this._x[++index + 't'].o(1)
+                    .c()
+                    .a(new G.TextPhrase(item[0]));
+                _this._x[index + 'v'].o(1);
+                _this._y[item[1]] = [index + 'v', ''];
+            });
+            runtime.addEventListener('state', function (ev) {
+                Util.each(_this._y, function (conf, name) {
+                    var value = ev.data[name] || '';
+                    if (value == conf[1])
+                        return;
+                    _this._y[name][1] = value;
+                    _this._x[conf[0]].c().a(new G.TextPhrase(value));
+                });
+            });
+            this.v(true);
+            return this;
+        };
+        return Status;
+    })(Sprite.Sprite);
+    Sprite.Status = Status;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2427,6 +2497,7 @@ var Sprite;
 /// <reference path="Tray.ts" />
 /// <reference path="Menu.ts" />
 /// <reference path="Slots.ts" />
+/// <reference path="Status.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -2996,9 +3067,15 @@ var Runtime;
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
             var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], gCurtain = this._x['c'], slotsFromStart = false, gTip = this._c.q('t')[0], gChoose;
+            // 状态。
+            this._x['S'] = new Sprite.Status(id, theme['status']);
+            resources.unshift(this._x['S'].l());
+            this._c.a(this._x['S'], gCurtain);
+            // 某白。
             this._x['W'] = new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
+            // 常驻按钮。
             this._x['t'] = new Sprite.Tray(id, theme['tray'])
                 .addEventListener('tray.menu', function () {
                 _this._x['m'].v();
@@ -3006,6 +3083,7 @@ var Runtime;
             });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
+            // 功能菜单。
             this._x['m'] = new Sprite.Menu(id, theme['menu'])
                 .addEventListener('menu.close', function () {
                 _this._x['t'].v();
@@ -3021,6 +3099,7 @@ var Runtime;
             });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
+            // 开始菜单。
             this._x['s'] = new Sprite.Start(id, theme['start'])
                 .addEventListener('start.new', function (event) {
                 _this.playSE(_this._i['c']);
@@ -3041,6 +3120,7 @@ var Runtime;
             });
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
+            // 档位菜单。
             this._x['sl'] = new Sprite.Slots(id, theme['slots'])
                 .addEventListener('slots.close', function () {
                 _this._x[slotsFromStart ? 's' : 'm'].v();
@@ -3101,6 +3181,8 @@ var Runtime;
          * 配置状态。
          */
         CanvasDirector.prototype.s = function (sheet) {
+            if (sheet.length)
+                this._x['S'].u(sheet, this._r);
             return this;
         };
         /**
@@ -3477,6 +3559,7 @@ var Tag;
                 55: [0, 1],
                 56: 1,
                 57: 1,
+                73: [0, 1],
                 49: [1],
                 33: [0],
                 34: [0],
@@ -8844,7 +8927,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.17.2';
+    Bigine.version = '0.18.0';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map
