@@ -8,8 +8,6 @@
  */
 
 /// <reference path="Director.ts" />
-/// <reference path="../../Ev/_Runtime/Resume.ts" />
-/// <reference path="../../Ev/_Runtime/Save.ts" />
 /// <reference path="../../Sprite/_pack.ts" />
 
 /**
@@ -686,13 +684,14 @@ namespace Runtime {
          * 使用主题。
          */
         public t(id: string, theme: Util.IHashTable<Util.IHashTable<any> >): CanvasDirector {
-            var url: string = '//s.dahao.de/theme/' + id + '/',
+            let url: string = '//s.dahao.de/theme/' + id + '/',
                 chapter: Util.IHashTable<any> = theme['author'],
                 section: Util.IHashTable<any> = chapter['director'],
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
                 resources: Resource.Resource<string | HTMLImageElement>[][] = [],
                 gCurtain: Sprite.Curtain = this._x['c'],
+                slotsFromStart: boolean = false,
                 gTip: G.Sprite = <G.Sprite> this._c.q('t')[0],
                 gChoose: G.Sprite;
             this._x['W'] = <Sprite.Words> new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
@@ -709,6 +708,14 @@ namespace Runtime {
                 .addEventListener('menu.close', () => {
                     this._x['t'].v();
                     this._x['m'].h();
+                }).addEventListener('menu.save', () => {
+                    slotsFromStart = false;
+                    (<Sprite.Slots> this._x['sl']).vs(this._r.gS());
+                    this._x['m'].h();
+                }).addEventListener('menu.load', () => {
+                    slotsFromStart = false;
+                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS());
+                    this._x['m'].h();
                 });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
@@ -721,14 +728,33 @@ namespace Runtime {
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
                 }).addEventListener('start.load', (event: Ev.StartLoad) => {
+                    slotsFromStart = true;
                     this.playSE(this._i['c']);
-                    this.lightOff().then(() => {
+                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS());
+                    this._x['s'].h();
+                    /* this.lightOff().then(() => {
                         event.target.h(true);
                         this._r.dispatchEvent(new Ev.Resume({ target: this._r.gE() }));
-                    });
+                    }); */
                 });
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
+            this._x['sl'] = <Sprite.Slots> new Sprite.Slots(id, theme['slots'])
+                .addEventListener('slots.close', () => {
+                    this._x[slotsFromStart ? 's' : 'm'].v();
+                    this._x['sl'].h();
+                }).addEventListener('slots.save', () => {
+                    this._x[slotsFromStart ? 's' : 'm'].v();
+                    this._x['sl'].h();
+                    this._r.gS().e(true);
+                }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
+                    this.lightOn().then(() => {
+                        this._x['sl'].h(true);
+                        this._r.l(ev.id);
+                    });
+                });
+            resources.push(this._x['sl'].l());
+            this._c.a(this._x['sl'], gCurtain);
             this._c.a(this._x['a'] = new Sprite.Author(chapter), gCurtain);
             // -------- tip --------
             chapter = theme['tip'];
@@ -847,21 +873,6 @@ namespace Runtime {
             }
             this.playBGM();
             this.playSE();
-        }
-
-        /**
-         * 显示存档读档菜单。
-         */
-        public qs(load: boolean = true, opacity: number = 1): Promise<Core.IRuntime> {
-            super.qs(load, opacity);
-            return this.lightOn();
-        }
-
-        /**
-         * 隐藏存档读档菜单。
-         */
-        public qh(succeed: boolean): Promise<Core.IRuntime> {
-            return this.lightOff();
         }
 
         /**

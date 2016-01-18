@@ -180,7 +180,8 @@ namespace Runtime {
         public l(): void {
             if (this._l) return;
             this._l = true;
-            var query: (slots: Util.IHashTable<[string, number]>) => void = (slots: Util.IHashTable<[string, number]>) => {
+            this._s = {};
+            let query: (slots: Util.IHashTable<[string, number]>) => void = (slots: Util.IHashTable<[string, number]>) => {
                 this._s = slots;
             };
             this._r.dispatchEvent(new Ev.Query({

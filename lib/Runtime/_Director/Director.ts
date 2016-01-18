@@ -270,21 +270,6 @@ namespace Runtime {
         }
 
         /**
-         * 显示存档读档菜单。
-         */
-        public qs(load: boolean = true, opacity: number = 1): Promise<Core.IRuntime> {
-            this._o = load;
-            return this._p;
-        }
-
-        /**
-         * 隐藏存档读档菜单。
-         */
-        public qh(succeed: boolean): Promise<Core.IRuntime> {
-            return this._p;
-        }
-
-        /**
          * 绑定视图。
          */
         public b(viewport: HTMLElement): Director {

@@ -1,21 +1,21 @@
 /**
- * 定义（运行时）读档继续事件。
+ * 定义（画面调度）档位菜单存档事件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Ev/_Runtime/Resume.ts
+ * @file      Ev/_Sprite/SlotsSave.ts
  */
 
 /// <reference path="../Event.ts" />
-/// <reference path="IResumeMetas.ts" />
+/// <reference path="ISlotsSaveMetas.ts" />
 
 namespace Ev {
-    export class Resume extends Event<Core.IEpisode> {
+    export class SlotsSave extends Event<Core.ISlots> {
         /**
          * 构造函数。
          */
-        constructor(metas: IResumeMetas) {
+        constructor(metas: ISlotsSaveMetas) {
             super(metas);
         }
 
@@ -23,7 +23,7 @@ namespace Ev {
          * 获取类型。
          */
         public gT(): string {
-            return 'resume';
+            return 'slots.save';
         }
     }
 }

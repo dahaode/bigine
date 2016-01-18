@@ -15,7 +15,7 @@ namespace Sprite {
     import Util = __Bigine_Util;
     import G = __Bigine_C2D;
 
-    export class Tray extends Sprite {
+    export class Tray extends Sprite implements Core.ITray {
         /**
          * 构造函数。
          */

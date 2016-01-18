@@ -17,7 +17,7 @@ namespace Sprite {
     import Util = __Bigine_Util;
     import G = __Bigine_C2D;
 
-    export class Menu extends Sprite {
+    export class Menu extends Sprite implements Core.IMenu {
         /**
          * 构造函数。
          */

@@ -404,23 +404,11 @@ declare namespace __Bigine {
             f(): void;
             d(): void;
             h(): void;
-            qs(load?: boolean, opacity?: number): Promise<Core.IRuntime>;
-            qh(succeed: boolean): Promise<Core.IRuntime>;
             b(viewport: HTMLElement): Director;
         }
     }
     namespace Runtime {
         class NodeDirector extends Director {
-        }
-    }
-    namespace Ev {
-        interface IResumeMetas extends Util.IEventMetas<Core.IEpisode> {
-        }
-    }
-    namespace Ev {
-        class Resume extends Event<Core.IEpisode> {
-            constructor(metas: IResumeMetas);
-            gT(): string;
         }
     }
     namespace Core {
@@ -513,7 +501,7 @@ declare namespace __Bigine {
         }
     }
     namespace Sprite {
-        class Tray extends Sprite {
+        class Tray extends Sprite implements Core.ITray {
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
         }
     }
@@ -552,8 +540,57 @@ declare namespace __Bigine {
         }
     }
     namespace Sprite {
-        class Menu extends Sprite {
+        class Menu extends Sprite implements Core.IMenu {
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+        }
+    }
+    namespace Core {
+        interface ISlots extends ISprite {
+            vs(states: IStates): Promise<ISlots>;
+            vl(states: IStates): Promise<ISlots>;
+        }
+    }
+    namespace Ev {
+        interface ISlotsCloseMetas extends Util.IEventMetas<Core.ISlots> {
+        }
+    }
+    namespace Ev {
+        class SlotsClose extends Event<Core.ISlots> {
+            constructor(metas: ISlotsCloseMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface ISlotsLoadMetas extends Util.IEventMetas<Core.ISlots> {
+            id: string;
+        }
+    }
+    namespace Ev {
+        class SlotsLoad extends Event<Core.ISlots> {
+            id: string;
+            constructor(metas: ISlotsLoadMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface ISlotsSaveMetas extends Util.IEventMetas<Core.ISlots> {
+        }
+    }
+    namespace Ev {
+        class SlotsSave extends Event<Core.ISlots> {
+            constructor(metas: ISlotsSaveMetas);
+            gT(): string;
+        }
+    }
+    namespace Sprite {
+        class Slots extends Sprite implements Core.ISlots {
+            private _c;
+            private _x;
+            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            vs(states: Core.IStates): Promise<Slots>;
+            vl(states: Core.IStates): Promise<Slots>;
+            h(immediately?: boolean): Promise<Slots>;
+            private $d(stamp);
         }
     }
     namespace Runtime {
@@ -599,8 +636,6 @@ declare namespace __Bigine {
             f(): void;
             d(): void;
             h(): void;
-            qs(load?: boolean, opacity?: number): Promise<Core.IRuntime>;
-            qh(succeed: boolean): Promise<Core.IRuntime>;
             b(viewport: HTMLElement): Director;
             private $w(element, words, hiColor);
         }
