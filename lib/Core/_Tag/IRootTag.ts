@@ -50,5 +50,10 @@ namespace Core {
          * 获取状态配置。
          */
         s(): [string, string][];
+
+        /**
+         * 获取面板配置。
+         */
+        p(): [string, string][];
     }
 }

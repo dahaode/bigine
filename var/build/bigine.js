@@ -3488,6 +3488,7 @@ var Tag;
         Resources: '素材包',
         Theme: '主题',
         Status: '状态',
+        Panel: '面板',
         Scene: '事件',
         Type: '类型',
         Conditions: '条件',
@@ -3560,6 +3561,7 @@ var Tag;
                 56: 1,
                 57: 1,
                 73: [0, 1],
+                74: [0, 1],
                 49: [1],
                 33: [0],
                 34: [0],
@@ -3575,6 +3577,9 @@ var Tag;
         57: ['Theme', 0, 1],
         73: ['Status', 0, -1, {
                 53: [0, 6]
+            }],
+        74: ['Panel', 0, -1, {
+                53: [0, 12]
             }],
         49: ['Scene', 0, 1, {
                 50: 1,
@@ -6325,6 +6330,53 @@ var Tag;
     Tag.Status = Status;
 })(Tag || (Tag = {}));
 /**
+ * 定义面板标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/Panel.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Panel = (function (_super) {
+        __extends(Panel, _super);
+        function Panel() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Panel.prototype.gN = function () {
+            return 'Panel';
+        };
+        /**
+         * 列举配置。
+         */
+        Panel.prototype.l = function () {
+            var sheet = [];
+            Util.each(this._s, function (tag) {
+                var title = tag.$p(0), value = tag.$c();
+                if ('空' == title)
+                    title = value = '';
+                sheet.push([title, value || title]);
+            });
+            Util.some(Util.clone(sheet).reverse(), function (item) {
+                if (item[0])
+                    return true;
+                sheet.pop();
+                return false;
+            });
+            return sheet;
+        };
+        return Panel;
+    })(Tag.Unknown);
+    Tag.Panel = Panel;
+})(Tag || (Tag = {}));
+/**
  * 定义（作品）根标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -6337,6 +6389,7 @@ var Tag;
 /// <reference path="Resources.ts" />
 /// <reference path="Theme.ts" />
 /// <reference path="Status.ts" />
+/// <reference path="Panel.ts" />
 var Tag;
 (function (Tag) {
     var Util = __Bigine_Util;
@@ -6486,6 +6539,15 @@ var Tag;
             if (!status)
                 return [];
             return status.l();
+        };
+        /**
+         * 获取面板配置。
+         */
+        Root.prototype.p = function () {
+            var panel = this.$q('Panel')[0];
+            if (!panel)
+                return [];
+            return panel.l();
         };
         /**
          * 压缩键名序列。

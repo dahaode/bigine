@@ -39,6 +39,7 @@ declare namespace __Bigine {
             t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
             gT(): string;
             s(): [string, string][];
+            p(): [string, string][];
         }
     }
     namespace Core {
@@ -1137,6 +1138,12 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
+        class Panel extends Unknown {
+            gN(): string;
+            l(): [string, string][];
+        }
+    }
+    namespace Tag {
         class Root extends Unknown implements Core.IRootTag {
             static SERIALS: string;
             constructor(children: Unknown[]);
@@ -1151,6 +1158,7 @@ declare namespace __Bigine {
             t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
             gT(): string;
             s(): [string, string][];
+            p(): [string, string][];
         }
     }
     namespace Tag {

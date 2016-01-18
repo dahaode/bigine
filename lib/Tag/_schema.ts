@@ -39,6 +39,7 @@ namespace Tag {
         Resources: '素材包',
         Theme: '主题',
         Status: '状态',
+        Panel: '面板',
 
         Scene: '事件',
         Type: '类型',
@@ -113,13 +114,14 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 74
+    export var S: { [index: number]: any[] } = { // next 75
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
             56: 1,
             57: 1,
             73: [0, 1],
+            74: [0, 1],
             49: [1],
             33: [0],
             34: [0],
@@ -136,6 +138,9 @@ namespace Tag {
         57: ['Theme', 0, 1], // 主题名
         73: ['Status', 0, -1, {
             53: [0, 6]
+        }],
+        74: ['Panel', 0, -1, {
+            53: [0, 12]
         }],
 
         49: ['Scene', 0, 1, { // 名称
