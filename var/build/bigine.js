@@ -1942,6 +1942,46 @@ var Ev;
     Ev.TrayMenu = TrayMenu;
 })(Ev || (Ev = {}));
 /**
+ * 声明（画面调度）常驻按钮面板事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/ITrayPanelMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/ITray.ts" />
+/**
+ * 定义（画面调度）常驻按钮面板事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/TrayPanel.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="ITrayPanelMetas.ts" />
+var Ev;
+(function (Ev) {
+    var TrayPanel = (function (_super) {
+        __extends(TrayPanel, _super);
+        /**
+         * 构造函数。
+         */
+        function TrayPanel(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        TrayPanel.prototype.gT = function () {
+            return 'tray.panel';
+        };
+        return TrayPanel;
+    })(Ev.Event);
+    Ev.TrayPanel = TrayPanel;
+})(Ev || (Ev = {}));
+/**
  * 定义画面调度常驻按钮栏组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1952,6 +1992,7 @@ var Ev;
 /// <reference path="Sprite.ts" />
 /// <reference path="../Resource/Resource.ts" />
 /// <reference path="../Ev/_Sprite/TrayMenu.ts" />
+/// <reference path="../Ev/_Sprite/TrayPanel.ts" />
 var Sprite;
 (function (Sprite) {
     var G = __Bigine_C2D;
@@ -1962,17 +2003,22 @@ var Sprite;
          */
         function Tray(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _menu = theme['menu'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _menu = theme['menu'], _panel = theme['panel'];
             _super.call(this, 0, 0, w, h, true);
             this._rr = [
                 rr.g(url + _menu['i'], raw),
-                rr.g(url + _menu['ih'], raw)
+                rr.g(url + _menu['ih'], raw),
+                rr.g(url + _panel['i'], raw),
+                rr.g(url + _panel['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Button(_menu)
                 .b(function () {
                 _this.dispatchEvent(new Ev.TrayMenu({ target: _this }));
-            }, new G.Image(this._rr[1].o(), _menu, true), new G.Image(this._rr[0].o(), _menu, true)));
+            }, new G.Image(this._rr[1].o(), _menu, true), new G.Image(this._rr[0].o(), _menu, true))).a(new G.Button(_panel)
+                .b(function () {
+                _this.dispatchEvent(new Ev.TrayPanel({ target: _this }));
+            }, new G.Image(this._rr[3].o(), _panel, true), new G.Image(this._rr[2].o(), _panel, true)));
         }
         return Tray;
     })(Sprite.Sprite);
@@ -3079,6 +3125,8 @@ var Runtime;
             this._x['t'] = new Sprite.Tray(id, theme['tray'])
                 .addEventListener('tray.menu', function () {
                 _this._x['m'].v();
+                _this._x['t'].h();
+            }).addEventListener('tray.panel', function () {
                 _this._x['t'].h();
             });
             resources.unshift(this._x['t'].l());

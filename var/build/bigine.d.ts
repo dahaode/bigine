@@ -503,6 +503,16 @@ declare namespace __Bigine {
             gT(): string;
         }
     }
+    namespace Ev {
+        interface ITrayPanelMetas extends Util.IEventMetas<Core.ITray> {
+        }
+    }
+    namespace Ev {
+        class TrayPanel extends Event<Core.ITray> {
+            constructor(metas: ITrayPanelMetas);
+            gT(): string;
+        }
+    }
     namespace Sprite {
         class Tray extends Sprite implements Core.ITray {
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);

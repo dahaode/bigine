@@ -707,6 +707,8 @@ namespace Runtime {
                 .addEventListener('tray.menu', () => {
                     this._x['m'].v();
                     this._x['t'].h();
+                }).addEventListener('tray.panel', () => {
+                    this._x['t'].h();
                 });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
