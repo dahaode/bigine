@@ -16,21 +16,6 @@
  * * c - 人物
  * * g - 特写
  *     * p - 图片
- * * t - 提醒
- *     * w - 文本
- * * D - 选择
- * * $. - 功能菜单按钮
- * * $ - 功能菜单
- *     * m - 遮罩层
- *     * f - 功能层
- *     * s - 档位层
- *         * _ - 自动档
- *             * t - 时间
- *         * _. - 自动档禁止状态
- *         * 1 - 第一档
- *             * t - 时间
- *         * 1. - 第一档禁止状态
- * * C - 幕帘
  * * L - 加载进度条
  *     * e - 完成进度条
  */
@@ -589,52 +574,23 @@ namespace Runtime {
          * 选择。
          */
         public choose(options: Core.IOptionTag[]): Promise<Core.IRuntime> {
-            return Promise.all([
-                this._i['cn'].o(),
-                this._i['ch'].o()
-            ]).then((images: HTMLImageElement[]) => {
-                var w: number = images[0].width,
-                    h: number = images[0].height,
-                    m: number = 16,
-                    t: number = 0 | (CanvasDirector.BOUNDS.h - options.length * (h + m) + m) / 2,
-                    gChoose: G.Sprite = <G.Sprite> this._c.q('D')[0],
-                    gOptions: G.Button[] = [],
-                    gOption: G.Button;
-                return new Promise((resolve: (value?: G.Button[] | Thenable<G.Button[]>) => void, reject: (reason?: any) => void) => {
-                    var anime: G.FadeIn = new G.FadeIn(250),
-                        clicked: boolean = false;
-                    this._q = () => {
-                        E.doHalt<Core.IRuntime>()['catch']((error: any) => {
-                            reject(error);
+            return new Promise((resolve: (data: Core.IRuntime) => void, reject: (reason?: any) => void) => {
+                this._q = () => {
+                    E.doHalt<Core.IRuntime>()['catch']((error: any) => {
+                        reject(error);
+                    });
+                };
+                let gChoose: Sprite.Choose = <Sprite.Choose> this._x['C'],
+                    event: string = 'choose',
+                    handler: () => void = () => {
+                        gChoose.removeEventListener(event, handler);
+                        gChoose.h().then(() => {
+                            resolve(this._r);
                         });
                     };
-                    Util.each(options, (option: Core.IOptionTag, index: number) => {
-                        gOption = <G.Button> new G.Button(0, t + index * (h + m), w, h)
-                            .b(() => {
-                                if (clicked) return;
-                                clicked = true;
-                                this.playSE(this._i['c']);
-                                anime.h();
-                                option.p(this._r);
-                                resolve(gOptions);
-                            }, new G.Image(this._i['ch'].o()), new G.Image(this._i['cn'].o()))
-                            .addEventListener('$focus', () => {
-                                this.playSE(this._i['f']);
-                            }).a(new G.Text(0, 0, w, h, 32, h / 2 + 16, G.Text.Align.Center)
-                                .ts(<number> this._f['c']['s'], <number> this._f['c']['s'], <number> this._f['c']['s'])
-                                .a(new G.TextPhrase(option.gT(), <string> this._f['c']['c']))
-                            );
-                        gOptions.push(gOption);
-                        gChoose.a(gOption);
-                    });
-                    gChoose.o(0);
-                    this.lightOn()
-                        .then(() => gChoose.p(anime));
-                }).then(() => {
-                    return gChoose.p(new G.FadeOut(250))
-                        .then(() => gChoose.c())
-                        .then(() => this._r);
-                });
+                gChoose.u(options).addEventListener(event, handler);
+                this.lightOn()
+                    .then(() => gChoose.v());
             });
         }
 
@@ -655,7 +611,7 @@ namespace Runtime {
                     .o(0);
                 this._x['W'].h(true);
                 this._x['T'].h(true);
-                this._c.q('D')[0].o(0);
+                this._x['C'].h(true);
                 return runtime;
             });
         }
@@ -676,15 +632,9 @@ namespace Runtime {
          * 使用主题。
          */
         public t(id: string, theme: Util.IHashTable<Util.IHashTable<any> >): CanvasDirector {
-            let url: string = '//s.dahao.de/theme/' + id + '/',
-                chapter: Util.IHashTable<any> = theme['author'],
-                section: Util.IHashTable<any> = chapter['director'],
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
-                bounds: G.IBounds = CanvasDirector.BOUNDS,
-                resources: Resource.Resource<string | HTMLImageElement>[][] = [],
+            let resources: Resource.Resource<string | HTMLImageElement>[][] = [],
                 gCurtain: Sprite.Curtain = this._x['c'],
-                slotsFromStart: boolean = false,
-                gChoose: G.Sprite;
+                slotsFromStart: boolean = false;
             // 状态。
             this._x['S'] = <Sprite.Status> new Sprite.Status(id, theme['status']);
             resources.unshift(this._x['S'].l());
@@ -693,6 +643,13 @@ namespace Runtime {
             this._x['W'] = <Sprite.Words> new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
+            // 选择。
+            this._x['C'] = <Sprite.Choose> new Sprite.Choose(id, theme['choose'])
+                .addEventListener('choose', (ev: Ev.Choose) => {
+                    ev.choice.p(this._r);
+                });
+            resources.unshift(this._x['C'].l());
+            this._c.a(this._x['C'], gCurtain);
             // 常驻按钮。
             this._x['t'] = <Sprite.Tray> new Sprite.Tray(id, theme['tray'])
                 .addEventListener('tray.menu', () => {
@@ -770,26 +727,7 @@ namespace Runtime {
                 });
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
-            this._c.a(this._x['a'] = new Sprite.Author(chapter), gCurtain);
-            // -------- choose --------
-            chapter = theme['choose'];
-            gChoose = <G.Sprite> new G.Sprite((bounds.w - chapter['w']) / 2, 0, chapter['w'], bounds.h)
-                .i('D')
-                .o(0);
-            chapter = chapter['option'];
-            section = chapter['back'];
-            resources.push([ // 3
-                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw), // 0
-                Resource.Resource.g<HTMLImageElement>(url + section['hover'], raw) // 1
-            ]);
-            this._i['cn'] = resources[3][0];
-            this._i['ch'] = resources[3][1];
-            section = chapter['text'];
-            this._f['c'] = {
-                s: section['shadow'],
-                c: section['color']
-            };
-            this._c.a(gChoose, this._x['s']);
+            this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
             this.c(resources);
             return this;
         }
@@ -884,7 +822,7 @@ namespace Runtime {
                 this._h = undefined;
             }
             if (this._q) {
-                (<G.Sprite> this._c.q('D')[0]).c().o(0);
+                this._x['C'].c().o(0);
                 this._q();
                 this._q = undefined;
             }

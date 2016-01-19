@@ -17,3 +17,4 @@
 /// <reference path="Status.ts" />
 /// <reference path="Panel.ts" />
 /// <reference path="Tip.ts" />
+/// <reference path="Choose.ts" />

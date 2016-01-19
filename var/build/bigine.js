@@ -2709,6 +2709,113 @@ var Sprite;
     Sprite.Tip = Tip;
 })(Sprite || (Sprite = {}));
 /**
+ * 声明画面调度功能选择组件接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Sprite/IChoose.ts
+ */
+/// <reference path="ISprite.ts" />
+/// <reference path="../_Tag/IOptionTag.ts" />
+/**
+ * 声明（画面调度）选择事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IChooseMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IChoose.ts" />
+/**
+ * 定义（画面调度）选择事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/Choose.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IChooseMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Choose = (function (_super) {
+        __extends(Choose, _super);
+        /**
+         * 构造函数。
+         */
+        function Choose(metas) {
+            _super.call(this, metas);
+            this.choice = metas.choice;
+        }
+        /**
+         * 获取类型。
+         */
+        Choose.prototype.gT = function () {
+            return 'choose';
+        };
+        return Choose;
+    })(Ev.Event);
+    Ev.Choose = Choose;
+})(Ev || (Ev = {}));
+/**
+ * 定义画面调度选择组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Choose.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/Choose.ts" />
+var Sprite;
+(function (Sprite) {
+    var Util = __Bigine_Util;
+    var G = __Bigine_C2D;
+    var Choose = (function (_super) {
+        __extends(Choose, _super);
+        /**
+         * 构造函数。
+         */
+        function Choose(id, theme) {
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/';
+            _super.call(this, 0, 0, w, h);
+            this._rr = [
+                rr.g(url + theme['back']['i'], raw),
+                rr.g(url + theme['back']['ih'], raw)
+            ];
+            this._c = theme;
+            this.o(0);
+        }
+        /**
+         * 配置。
+         */
+        Choose.prototype.u = function (options) {
+            var _this = this;
+            var margin = this._c['m'], _back = this._c['back'], _text = this._c['text'], opts = options.slice(0, 6), x = 0 | (1280 - _back['w']) / 2, y = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
+            this.c();
+            Util.each(options.slice(0, 6), function (option) {
+                var text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['s'], _text['lh'], G.Text.Align.Center)
+                    .tc(_text['c'])
+                    .ts(_text['ss']);
+                _this.$w(text, option.gT(), _text['ch']);
+                _this.a(new G.Button(x, y, _back['w'], _back['h'])
+                    .b(function () {
+                    _this.dispatchEvent(new Ev.Choose({
+                        target: _this,
+                        choice: option
+                    }));
+                }, new G.Image(_this._rr[1].o(), x, y, _back['w'], _back['h'], true), new G.Image(_this._rr[0].o(), x, y, _back['w'], _back['h'], true))).a(text);
+            });
+            return this;
+        };
+        return Choose;
+    })(Sprite.Sprite);
+    Sprite.Choose = Choose;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2726,6 +2833,7 @@ var Sprite;
 /// <reference path="Status.ts" />
 /// <reference path="Panel.ts" />
 /// <reference path="Tip.ts" />
+/// <reference path="Choose.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -2742,21 +2850,6 @@ var Sprite;
  * * c - 人物
  * * g - 特写
  *     * p - 图片
- * * t - 提醒
- *     * w - 文本
- * * D - 选择
- * * $. - 功能菜单按钮
- * * $ - 功能菜单
- *     * m - 遮罩层
- *     * f - 功能层
- *     * s - 档位层
- *         * _ - 自动档
- *             * t - 时间
- *         * _. - 自动档禁止状态
- *         * 1 - 第一档
- *             * t - 时间
- *         * 1. - 第一档禁止状态
- * * C - 幕帘
  * * L - 加载进度条
  *     * e - 完成进度条
  */
@@ -3211,45 +3304,21 @@ var Runtime;
          */
         CanvasDirector.prototype.choose = function (options) {
             var _this = this;
-            return Promise.all([
-                this._i['cn'].o(),
-                this._i['ch'].o()
-            ]).then(function (images) {
-                var w = images[0].width, h = images[0].height, m = 16, t = 0 | (CanvasDirector.BOUNDS.h - options.length * (h + m) + m) / 2, gChoose = _this._c.q('D')[0], gOptions = [], gOption;
-                return new Promise(function (resolve, reject) {
-                    var anime = new G.FadeIn(250), clicked = false;
-                    _this._q = function () {
-                        E.doHalt()['catch'](function (error) {
-                            reject(error);
-                        });
-                    };
-                    Util.each(options, function (option, index) {
-                        gOption = new G.Button(0, t + index * (h + m), w, h)
-                            .b(function () {
-                            if (clicked)
-                                return;
-                            clicked = true;
-                            _this.playSE(_this._i['c']);
-                            anime.h();
-                            option.p(_this._r);
-                            resolve(gOptions);
-                        }, new G.Image(_this._i['ch'].o()), new G.Image(_this._i['cn'].o()))
-                            .addEventListener('$focus', function () {
-                            _this.playSE(_this._i['f']);
-                        }).a(new G.Text(0, 0, w, h, 32, h / 2 + 16, G.Text.Align.Center)
-                            .ts(_this._f['c']['s'], _this._f['c']['s'], _this._f['c']['s'])
-                            .a(new G.TextPhrase(option.gT(), _this._f['c']['c'])));
-                        gOptions.push(gOption);
-                        gChoose.a(gOption);
+            return new Promise(function (resolve, reject) {
+                _this._q = function () {
+                    E.doHalt()['catch'](function (error) {
+                        reject(error);
                     });
-                    gChoose.o(0);
-                    _this.lightOn()
-                        .then(function () { return gChoose.p(anime); });
-                }).then(function () {
-                    return gChoose.p(new G.FadeOut(250))
-                        .then(function () { return gChoose.c(); })
-                        .then(function () { return _this._r; });
-                });
+                };
+                var gChoose = _this._x['C'], event = 'choose', handler = function () {
+                    gChoose.removeEventListener(event, handler);
+                    gChoose.h().then(function () {
+                        resolve(_this._r);
+                    });
+                };
+                gChoose.u(options).addEventListener(event, handler);
+                _this.lightOn()
+                    .then(function () { return gChoose.v(); });
             });
         };
         /**
@@ -3269,7 +3338,7 @@ var Runtime;
                     .o(0);
                 _this._x['W'].h(true);
                 _this._x['T'].h(true);
-                _this._c.q('D')[0].o(0);
+                _this._x['C'].h(true);
                 return runtime;
             });
         };
@@ -3290,7 +3359,7 @@ var Runtime;
          */
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
-            var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], gCurtain = this._x['c'], slotsFromStart = false, gChoose;
+            var resources = [], gCurtain = this._x['c'], slotsFromStart = false;
             // 状态。
             this._x['S'] = new Sprite.Status(id, theme['status']);
             resources.unshift(this._x['S'].l());
@@ -3299,6 +3368,13 @@ var Runtime;
             this._x['W'] = new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
+            // 选择。
+            this._x['C'] = new Sprite.Choose(id, theme['choose'])
+                .addEventListener('choose', function (ev) {
+                ev.choice.p(_this._r);
+            });
+            resources.unshift(this._x['C'].l());
+            this._c.a(this._x['C'], gCurtain);
             // 常驻按钮。
             this._x['t'] = new Sprite.Tray(id, theme['tray'])
                 .addEventListener('tray.menu', function () {
@@ -3376,26 +3452,7 @@ var Runtime;
             });
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
-            this._c.a(this._x['a'] = new Sprite.Author(chapter), gCurtain);
-            // -------- choose --------
-            chapter = theme['choose'];
-            gChoose = new G.Sprite((bounds.w - chapter['w']) / 2, 0, chapter['w'], bounds.h)
-                .i('D')
-                .o(0);
-            chapter = chapter['option'];
-            section = chapter['back'];
-            resources.push([
-                Resource.Resource.g(url + section['image'], raw),
-                Resource.Resource.g(url + section['hover'], raw) // 1
-            ]);
-            this._i['cn'] = resources[3][0];
-            this._i['ch'] = resources[3][1];
-            section = chapter['text'];
-            this._f['c'] = {
-                s: section['shadow'],
-                c: section['color']
-            };
-            this._c.a(gChoose, this._x['s']);
+            this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
             this.c(resources);
             return this;
         };
@@ -3478,7 +3535,7 @@ var Runtime;
                 this._h = undefined;
             }
             if (this._q) {
-                this._c.q('D')[0].c().o(0);
+                this._x['C'].c().o(0);
                 this._q();
                 this._q = undefined;
             }

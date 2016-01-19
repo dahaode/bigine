@@ -646,7 +646,31 @@ declare namespace __Bigine {
             private _x;
             private _c;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
-            u(clob: string): Promise<Tip>;
+            u(clob: string): Tip;
+        }
+    }
+    namespace Core {
+        interface IChoose extends ISprite {
+            u(options: IOptionTag[]): IChoose;
+        }
+    }
+    namespace Ev {
+        interface IChooseMetas extends Util.IEventMetas<Core.IChoose> {
+            choice: Core.IOptionTag;
+        }
+    }
+    namespace Ev {
+        class Choose extends Event<Core.IChoose> {
+            choice: Core.IOptionTag;
+            constructor(metas: IChooseMetas);
+            gT(): string;
+        }
+    }
+    namespace Sprite {
+        class Choose extends Sprite implements Core.IChoose {
+            private _c;
+            constructor(id: string, theme: Util.IHashTable<any>);
+            u(options: Core.IOptionTag[]): Choose;
         }
     }
     namespace Runtime {
