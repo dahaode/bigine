@@ -105,7 +105,8 @@ namespace Runtime {
             this.addEventListener<Episode>('ready', () => {
                 this._s.l();
                 this._d.t(this._e.gT(), this._e.gC())
-                    .s(ep.s());
+                    .s(ep.s())
+                    .p(ep.p());
                 this._fr = true;
                 if (this._fp) {
                     this._fp = false;

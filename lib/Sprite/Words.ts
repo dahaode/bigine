@@ -207,30 +207,5 @@ namespace Sprite {
                 return target.p(animation);
             });
         }
-
-        /**
-         * 处理文本高亮规则。
-         */
-        private $w(element: G.Text, words: string, hiColor: string): Words {
-            let buffer: string = '',
-                hilite: boolean = false,
-                ii: number;
-            element.c();
-            for (ii = 0; ii < words.length; ii++) {
-                if ('【' == words[ii] && !hilite) {
-                    element.a(new G.TextPhrase(buffer));
-                    buffer = '';
-                    hilite = true;
-                } else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase(buffer, hiColor));
-                    buffer = '';
-                    hilite = false;
-                } else
-                    buffer += words[ii];
-            }
-            if (buffer)
-                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
-            return this;
-        }
     }
 }

@@ -1492,6 +1492,30 @@ var Sprite;
             }
             return aligns.Left;
         };
+        /**
+         * 处理文本高亮规则。
+         */
+        Sprite.prototype.$w = function (element, words, hiColor) {
+            var buffer = '', hilite = false, ii;
+            element.c();
+            for (ii = 0; ii < words.length; ii++) {
+                if ('【' == words[ii] && !hilite) {
+                    element.a(new G.TextPhrase(buffer));
+                    buffer = '';
+                    hilite = true;
+                }
+                else if ('】' == words[ii] && hilite) {
+                    element.a(new G.TextPhrase(buffer, hiColor));
+                    buffer = '';
+                    hilite = false;
+                }
+                else
+                    buffer += words[ii];
+            }
+            if (buffer)
+                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
+            return this;
+        };
         return Sprite;
     })(G.Sprite);
     Sprite_1.Sprite = Sprite;
@@ -1869,30 +1893,6 @@ var Sprite;
                 _this._h = animation.gI();
                 return target.p(animation);
             });
-        };
-        /**
-         * 处理文本高亮规则。
-         */
-        Words.prototype.$w = function (element, words, hiColor) {
-            var buffer = '', hilite = false, ii;
-            element.c();
-            for (ii = 0; ii < words.length; ii++) {
-                if ('【' == words[ii] && !hilite) {
-                    element.a(new G.TextPhrase(buffer));
-                    buffer = '';
-                    hilite = true;
-                }
-                else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase(buffer, hiColor));
-                    buffer = '';
-                    hilite = false;
-                }
-                else
-                    buffer += words[ii];
-            }
-            if (buffer)
-                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
-            return this;
         };
         return Words;
     })(Sprite.Sprite);
@@ -2668,6 +2668,47 @@ var Sprite;
     Sprite.Panel = Panel;
 })(Sprite || (Sprite = {}));
 /**
+ * 定义画面调度提示组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Tip.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+var Sprite;
+(function (Sprite) {
+    var G = __Bigine_C2D;
+    var Tip = (function (_super) {
+        __extends(Tip, _super);
+        /**
+         * 构造函数。
+         */
+        function Tip(id, theme) {
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _back = theme['back'], _text = theme['text'];
+            _super.call(this, 0, 0, w, h);
+            this._rr = [
+                rr.g(url + _back['i'], raw)
+            ];
+            this._c = _text['ch'];
+            this.o(0)
+                .a(new G.Image(this._rr[0].o(), _back))
+                .a(this._x = new G.Text(_text, _text['s'], _text['lh'], G.Text.Align.Center)
+                .tc(_text['c'])
+                .ts(_text['ss']));
+        }
+        /**
+         * 更新文本。
+         */
+        Tip.prototype.u = function (clob) {
+            return this.$w(this._x, clob, this._c);
+        };
+        return Tip;
+    })(Sprite.Sprite);
+    Sprite.Tip = Tip;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2684,6 +2725,7 @@ var Sprite;
 /// <reference path="Slots.ts" />
 /// <reference path="Status.ts" />
 /// <reference path="Panel.ts" />
+/// <reference path="Tip.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -2747,7 +2789,6 @@ var Runtime;
                 .a(new G.Sprite(bounds).i('M').o(0))
                 .a(new G.Sprite(bounds).i('c').o(0))
                 .a(new G.Sprite(bounds).i('g').o(0))
-                .a(new G.Sprite(bounds).i('t').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
@@ -2991,15 +3032,12 @@ var Runtime;
          */
         CanvasDirector.prototype.tip = function (words) {
             var _this = this;
-            var gTip = this._c.q('t')[0], gWords = gTip.q('w')[0];
-            this.$w(gWords, words, this._f['t']['h']);
+            var gTip = this._x['T'];
             return this.lightOn()
-                .then(function () { return gTip.p(_this._h = new G.FadeIn(250)
-                .c(new G.WaitForClick())
-                .c(new G.FadeOut(250))); }).then(function () {
-                gWords.c();
-                return _this._r;
-            });
+                .then(function () { return gTip.u(words).v(); })
+                .then(function () { return gTip.p(new G.WaitForClick()); })
+                .then(function () { return gTip.h(); })
+                .then(function () { return _this._r; });
         };
         ;
         /**
@@ -3230,7 +3268,7 @@ var Runtime;
                 _this._c.q('g')[0].c()
                     .o(0);
                 _this._x['W'].h(true);
-                _this._c.q('t')[0].o(0);
+                _this._x['T'].h(true);
                 _this._c.q('D')[0].o(0);
                 return runtime;
             });
@@ -3252,7 +3290,7 @@ var Runtime;
          */
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
-            var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], gCurtain = this._x['c'], slotsFromStart = false, gTip = this._c.q('t')[0], gChoose;
+            var url = '//s.dahao.de/theme/' + id + '/', chapter = theme['author'], section = chapter['director'], raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, resources = [], gCurtain = this._x['c'], slotsFromStart = false, gChoose;
             // 状态。
             this._x['S'] = new Sprite.Status(id, theme['status']);
             resources.unshift(this._x['S'].l());
@@ -3272,6 +3310,10 @@ var Runtime;
             });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
+            // 提示。
+            this._x['T'] = new Sprite.Tip(id, theme['tip']);
+            resources.unshift(this._x['T'].l());
+            this._c.a(this._x['T'], gCurtain);
             // 面板。
             this._x['P'] = new Sprite.Panel(id, theme['panel'])
                 .addEventListener('panel.close', function () {
@@ -3335,23 +3377,6 @@ var Runtime;
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
             this._c.a(this._x['a'] = new Sprite.Author(chapter), gCurtain);
-            // -------- tip --------
-            chapter = theme['tip'];
-            section = chapter['back'];
-            resources.push([
-                Resource.Resource.g(url + section['image'], raw) // 0
-            ]);
-            // 背景图
-            gTip.a(new G.Image(resources[2][0].o(), section));
-            section = chapter['text'];
-            this._f['t'] = {
-                h: section['color2']
-            };
-            // 文字区域
-            gTip.a(new G.Text(section, 28, 32, G.Text.Align.Center)
-                .tc(section['color'])
-                .ts(section['shadow'], section['shadow'], section['shadow'])
-                .i('w'));
             // -------- choose --------
             chapter = theme['choose'];
             gChoose = new G.Sprite((bounds.w - chapter['w']) / 2, 0, chapter['w'], bounds.h)
@@ -3466,30 +3491,6 @@ var Runtime;
         CanvasDirector.prototype.b = function (viewport) {
             this._c.b(viewport);
             return this;
-        };
-        /**
-         * 将文本添加至画面文字元素中。
-         */
-        CanvasDirector.prototype.$w = function (element, words, hiColor) {
-            var buffer = '', hilite = false, ii;
-            element.c();
-            for (ii = 0; ii < words.length; ii++) {
-                if ('【' == words[ii] && !hilite) {
-                    element.a(new G.TextPhrase(buffer));
-                    buffer = '';
-                    hilite = true;
-                }
-                else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase(buffer, hiColor));
-                    buffer = '';
-                    hilite = false;
-                }
-                else
-                    buffer += words[ii];
-            }
-            if (buffer)
-                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
-            return element;
         };
         /**
          * 尺寸。
@@ -8745,7 +8746,8 @@ var Runtime;
             this.addEventListener('ready', function () {
                 _this._s.l();
                 _this._d.t(_this._e.gT(), _this._e.gC())
-                    .s(ep.s());
+                    .s(ep.s())
+                    .p(ep.p());
                 _this._fr = true;
                 if (_this._fp) {
                     _this._fp = false;

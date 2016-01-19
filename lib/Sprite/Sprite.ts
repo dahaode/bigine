@@ -62,5 +62,30 @@ namespace Sprite {
             }
             return aligns.Left;
         }
+
+        /**
+         * 处理文本高亮规则。
+         */
+        protected $w(element: G.Text, words: string, hiColor: string): Sprite {
+            let buffer: string = '',
+                hilite: boolean = false,
+                ii: number;
+            element.c();
+            for (ii = 0; ii < words.length; ii++) {
+                if ('【' == words[ii] && !hilite) {
+                    element.a(new G.TextPhrase(buffer));
+                    buffer = '';
+                    hilite = true;
+                } else if ('】' == words[ii] && hilite) {
+                    element.a(new G.TextPhrase(buffer, hiColor));
+                    buffer = '';
+                    hilite = false;
+                } else
+                    buffer += words[ii];
+            }
+            if (buffer)
+                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
+            return this;
+        }
     }
 }

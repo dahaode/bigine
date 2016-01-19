@@ -429,6 +429,7 @@ declare namespace __Bigine {
             h(immediately?: boolean): Promise<Sprite>;
             l(): Resource.Resource<string | HTMLImageElement>[];
             protected $a(desc: string): G.Text.Align;
+            protected $w(element: G.Text, words: string, hiColor: string): Sprite;
         }
     }
     namespace Sprite {
@@ -487,7 +488,6 @@ declare namespace __Bigine {
             vm(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
             vs(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
             private $v(text, auto);
-            private $w(element, words, hiColor);
         }
     }
     namespace Core {
@@ -641,6 +641,14 @@ declare namespace __Bigine {
             u(sheet: [string, string][], runtime: Core.IRuntime): Panel;
         }
     }
+    namespace Sprite {
+        class Tip extends Sprite {
+            private _x;
+            private _c;
+            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            u(clob: string): Promise<Tip>;
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;
@@ -687,7 +695,6 @@ declare namespace __Bigine {
             d(): void;
             h(): void;
             b(viewport: HTMLElement): Director;
-            private $w(element, words, hiColor);
         }
     }
     namespace Runtime {

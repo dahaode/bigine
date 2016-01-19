@@ -128,8 +128,6 @@ namespace Runtime {
                 .a(new G.Sprite(bounds).i('M').o(0))
                 .a(new G.Sprite(bounds).i('c').o(0))
                 .a(new G.Sprite(bounds).i('g').o(0))
-                .a(new G.Sprite(bounds).i('t').o(0))
-                // .a(new G.Sprite(bounds).i('$').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
@@ -395,18 +393,12 @@ namespace Runtime {
          * 提示。
          */
         public tip(words: string): Promise<Core.IRuntime> {
-            var gTip: G.Sprite = <G.Sprite> this._c.q('t')[0],
-                gWords: G.Text = <G.Text> gTip.q('w')[0];
-            this.$w(gWords, words, <string> this._f['t']['h']);
+            let gTip: Sprite.Tip = <Sprite.Tip> this._x['T'];
             return this.lightOn()
-                .then(() => gTip.p(this._h = new G.FadeIn(250)
-                    .c(new G.WaitForClick())
-                    .c(new G.FadeOut(250))
-                )
-                ).then(() => {
-                    gWords.c();
-                    return this._r;
-                });
+                .then(() => gTip.u(words).v())
+                .then(() => gTip.p(new G.WaitForClick()))
+                .then(() => gTip.h())
+                .then(() => this._r);
         };
 
         /**
@@ -662,7 +654,7 @@ namespace Runtime {
                 (<G.Sprite> this._c.q('g')[0]).c()
                     .o(0);
                 this._x['W'].h(true);
-                this._c.q('t')[0].o(0);
+                this._x['T'].h(true);
                 this._c.q('D')[0].o(0);
                 return runtime;
             });
@@ -692,7 +684,6 @@ namespace Runtime {
                 resources: Resource.Resource<string | HTMLImageElement>[][] = [],
                 gCurtain: Sprite.Curtain = this._x['c'],
                 slotsFromStart: boolean = false,
-                gTip: G.Sprite = <G.Sprite> this._c.q('t')[0],
                 gChoose: G.Sprite;
             // 状态。
             this._x['S'] = <Sprite.Status> new Sprite.Status(id, theme['status']);
@@ -713,6 +704,10 @@ namespace Runtime {
                 });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
+            // 提示。
+            this._x['T'] = <Sprite.Tip> new Sprite.Tip(id, theme['tip']);
+            resources.unshift(this._x['T'].l());
+            this._c.a(this._x['T'], gCurtain);
             // 面板。
             this._x['P'] = <Sprite.Panel> new Sprite.Panel(id, theme['panel'])
                 .addEventListener('panel.close', () => {
@@ -776,24 +771,6 @@ namespace Runtime {
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
             this._c.a(this._x['a'] = new Sprite.Author(chapter), gCurtain);
-            // -------- tip --------
-            chapter = theme['tip'];
-            section = chapter['back'];
-            resources.push([ // 2
-                Resource.Resource.g<HTMLImageElement>(url + section['image'], raw) // 0
-            ]);
-            // 背景图
-            gTip.a(new G.Image(resources[2][0].o(), <G.IBounds> section));
-            section = chapter['text'];
-            this._f['t'] = {
-                h: section['color2']
-            };
-            // 文字区域
-            gTip.a(new G.Text(<G.IBounds> section, 28, 32, G.Text.Align.Center)
-                .tc(section['color'])
-                .ts(section['shadow'], section['shadow'], section['shadow'])
-                .i('w')
-            );
             // -------- choose --------
             chapter = theme['choose'];
             gChoose = <G.Sprite> new G.Sprite((bounds.w - chapter['w']) / 2, 0, chapter['w'], bounds.h)
@@ -921,31 +898,6 @@ namespace Runtime {
         public b(viewport: HTMLElement): Director {
             this._c.b(viewport);
             return this;
-        }
-
-        /**
-         * 将文本添加至画面文字元素中。
-         */
-        private $w(element: G.Text, words: string, hiColor: string): G.Text {
-            var buffer: string = '',
-                hilite: boolean = false,
-                ii: number;
-            element.c();
-            for (ii = 0; ii < words.length; ii++) {
-                if ('【' == words[ii] && !hilite) {
-                    element.a(new G.TextPhrase(buffer));
-                    buffer = '';
-                    hilite = true;
-                } else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase(buffer, hiColor));
-                    buffer = '';
-                    hilite = false;
-                } else
-                    buffer += words[ii];
-            }
-            if (buffer)
-                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
-            return element;
         }
     }
 }
