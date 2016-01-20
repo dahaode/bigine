@@ -753,8 +753,13 @@ namespace Runtime {
          */
         public a(auto: boolean): boolean {
             let tray: Sprite.Sprite = this._x['t'];
-            if (tray)
+            if (tray) {
                 tray[auto ? 'h' : 'v']();
+                if (auto) {
+                    this._x['m'].h();
+                    this._x['P'].h();
+                }
+            }
             if (this._t) {
                 this._t.h();
                 this._t = undefined;
