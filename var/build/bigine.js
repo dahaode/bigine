@@ -2885,6 +2885,39 @@ var Sprite;
     Sprite.Choose = Choose;
 })(Sprite || (Sprite = {}));
 /**
+ * 定义画面调度特写组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/CG.ts
+ */
+/// <reference path="Sprite.ts" />
+var Sprite;
+(function (Sprite) {
+    var G = __Bigine_C2D;
+    var CG = (function (_super) {
+        __extends(CG, _super);
+        /**
+         * 构造函数。
+         */
+        function CG(theme) {
+            _super.call(this, 0, 0, 1280, 720);
+            this._c = theme;
+            this.o(0);
+        }
+        /**
+         * 更新图片。
+         */
+        CG.prototype.u = function (image) {
+            return this.c()
+                .a(new G.Image(image.o(), this._c));
+        };
+        return CG;
+    })(Sprite.Sprite);
+    Sprite.CG = CG;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2903,6 +2936,7 @@ var Sprite;
 /// <reference path="Panel.ts" />
 /// <reference path="Tip.ts" />
 /// <reference path="Choose.ts" />
+/// <reference path="CG.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -2917,8 +2951,6 @@ var Sprite;
  * * b - 背景
  * * M - 地图
  * * c - 人物
- * * g - 特写
- *     * p - 图片
  * * L - 加载进度条
  *     * e - 完成进度条
  */
@@ -2950,7 +2982,6 @@ var Runtime;
                 .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
                 .a(new G.Sprite(bounds).i('c').o(0))
-                .a(new G.Sprite(bounds).i('g').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
@@ -3074,10 +3105,10 @@ var Runtime;
          */
         CanvasDirector.prototype.charOn = function (resource, position) {
             var _this = this;
-            var states = this._r.gS(), gChars = this._c.q('c')[0], gCG = this._c.q('g')[0], kamount = '$c', gChar = this.$c(resource, position);
+            var states = this._r.gS(), gChars = this._c.q('c')[0], kamount = '$c', gChar = this.$c(resource, position);
             states.s(kamount, 1 + (states.g(kamount) || 0));
             gChars.a(gChar.i(position));
-            if (gCG.gO()) {
+            if (this._x['G'].gO()) {
                 gChar.o(1);
                 return this._p;
             }
@@ -3106,7 +3137,7 @@ var Runtime;
          * 设置人物。
          */
         CanvasDirector.prototype.charSet = function (resource, position) {
-            var states = this._r.gS(), kamount = '$c', gChars = this._c.q('c')[0], gCG = this._c.q('g')[0], gChar = gChars.q(position)[0];
+            var states = this._r.gS(), kamount = '$c', gChars = this._c.q('c')[0], gChar = gChars.q(position)[0];
             if (gChar) {
                 gChars.e(gChar);
             }
@@ -3114,7 +3145,7 @@ var Runtime;
                 states.s(kamount, 1 + (states.g(kamount) || 0));
             gChar = this.$c(resource, position).o(1).i(position);
             gChars.a(gChar);
-            if (!gCG.gO())
+            if (!this._x['G'].gO())
                 gChars.o(1);
             return this._p;
         };
@@ -3272,14 +3303,13 @@ var Runtime;
         CanvasDirector.prototype.hideCG = function () {
             var _this = this;
             return _super.prototype.hideCG.call(this).then(function (runtime) {
-                var gCG = _this._c.q('g')[0], gChars = _this._c.q('c')[0], gImage = gCG.q('p')[0];
+                var gCG = _this._x['G'], gChars = _this._c.q('c')[0];
                 return Promise.all([
                     gChars.p(new G.FadeIn(500)),
-                    gCG.p(new G.FadeOut(500))
+                    gCG.h()
                 ]).then(function () {
                     if (!_this._r.gS().g('$c'))
                         gChars.o(0);
-                    gCG.e(gImage);
                     return runtime;
                 });
             });
@@ -3290,14 +3320,14 @@ var Runtime;
         CanvasDirector.prototype.showCG = function (resource) {
             var _this = this;
             return _super.prototype.showCG.call(this, resource).then(function (runtime) {
-                var bounds = CanvasDirector.BOUNDS, gChars = _this._c.q('c')[0], gCG = _this._c.q('g')[0], gImage = new G.Image(resource.o(), bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p');
-                gCG.a(gImage);
+                var gChars = _this._c.q('c')[0], gCG = _this._x['G'];
                 return _this.lightOn()
                     .then(function () {
                     return Promise.all([
                         gChars.p(new G.FadeOut(500)),
-                        gCG.p(new G.FadeIn(500))
-                    ]).then(function () { return gCG.p(_this._h = new G.WaitForClick()); });
+                        gCG.u(resource).v()
+                    ]).then(function () { return gCG.p(_this._h = new G.WaitForClick()); })
+                        .then(function () { return console.warn('clicked!'); });
                 }).then(function () { return runtime; });
             });
         };
@@ -3403,8 +3433,7 @@ var Runtime;
                 _this._c.q('M')[0].c();
                 _this._c.q('c')[0].c()
                     .o(0);
-                _this._c.q('g')[0].c()
-                    .o(0);
+                _this._x['G'].h(true);
                 _this._x['W'].h(true);
                 _this._x['T'].h(true);
                 _this._x['C'].h(true);
@@ -3417,9 +3446,7 @@ var Runtime;
         CanvasDirector.prototype.setCG = function (resource) {
             var _this = this;
             return _super.prototype.setCG.call(this, resource).then(function (runtime) {
-                var bounds = CanvasDirector.BOUNDS;
-                _this._c.q('g')[0].a(new G.Image(resource.o(), bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p'))
-                    .o(1);
+                _this._x['G'].u(resource).v(true);
                 return runtime;
             });
         };
@@ -3429,6 +3456,8 @@ var Runtime;
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
             var resources = [], gCurtain = this._x['c'], slotsFromStart = false;
+            // 特写。
+            this._c.a(this._x['G'] = new Sprite.CG(theme['cg']), gCurtain);
             // 状态。
             this._x['S'] = new Sprite.Status(id, theme['status']);
             resources.unshift(this._x['S'].l());

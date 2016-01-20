@@ -692,6 +692,13 @@ declare namespace __Bigine {
             u(options: Core.IOptionTag[]): Choose;
         }
     }
+    namespace Sprite {
+        class CG extends Sprite {
+            private _c;
+            constructor(theme: Util.IHashTable<any>);
+            u(image: Resource.Resource<HTMLImageElement>): CG;
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;
@@ -727,7 +734,7 @@ declare namespace __Bigine {
             lightOn(): Promise<Core.IRuntime>;
             choose(options: Core.IOptionTag[]): Promise<Core.IRuntime>;
             reset(): Promise<Core.IRuntime>;
-            setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
+            setCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             s(sheet: [string, string][]): Director;
             p(sheet: [string, string][]): Director;

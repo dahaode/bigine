@@ -18,3 +18,4 @@
 /// <reference path="Panel.ts" />
 /// <reference path="Tip.ts" />
 /// <reference path="Choose.ts" />
+/// <reference path="CG.ts" />

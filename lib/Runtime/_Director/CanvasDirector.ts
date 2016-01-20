@@ -14,8 +14,6 @@
  * * b - 背景
  * * M - 地图
  * * c - 人物
- * * g - 特写
- *     * p - 图片
  * * L - 加载进度条
  *     * e - 完成进度条
  */
@@ -107,7 +105,6 @@ namespace Runtime {
                 .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
                 .a(new G.Sprite(bounds).i('c').o(0))
-                .a(new G.Sprite(bounds).i('g').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
@@ -235,12 +232,11 @@ namespace Runtime {
         public charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime> {
             var states: Core.IStates = this._r.gS(),
                 gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
-                gCG: G.Element = this._c.q('g')[0],
                 kamount: string = '$c',
                 gChar: G.Image = this.$c(resource, position);
             states.s(kamount, 1 + (<number> states.g(kamount) || 0));
             gChars.a(gChar.i(<any> position));
-            if (gCG.gO()) {
+            if (this._x['G'].gO()) {
                 gChar.o(1);
                 return this._p;
             }
@@ -277,7 +273,6 @@ namespace Runtime {
             var states: Core.IStates = this._r.gS(),
                 kamount: string = '$c',
                 gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
-                gCG: G.Element = this._c.q('g')[0],
                 gChar: G.Element = gChars.q(<any> position)[0];
             if (gChar) {
                 gChars.e(gChar);
@@ -285,7 +280,7 @@ namespace Runtime {
                 states.s(kamount, 1 + (<number> states.g(kamount) || 0));
             gChar = this.$c(resource, position).o(1).i(<any> position);
             gChars.a(gChar);
-            if (!gCG.gO())
+            if (!this._x['G'].gO())
                 gChars.o(1);
             return this._p;
         }
@@ -458,18 +453,16 @@ namespace Runtime {
          */
         public hideCG(): Promise<Core.IRuntime> {
             return super.hideCG().then((runtime: Core.IRuntime) => {
-                var gCG: G.Sprite = <G.Sprite> this._c.q('g')[0],
-                    gChars: G.Element = this._c.q('c')[0],
-                    gImage: G.Element = gCG.q('p')[0];
+                let gCG: Sprite.CG = <Sprite.CG> this._x['G'],
+                    gChars: G.Element = this._c.q('c')[0];
                 return Promise.all([
                     gChars.p(new G.FadeIn(500)),
-                    gCG.p(new G.FadeOut(500))
+                    gCG.h()
                 ]).then(() => {
                     if (!this._r.gS().g('$c'))
                         gChars.o(0);
-                    gCG.e(gImage);
                     return runtime;
-                    });
+                });
             });
         }
 
@@ -478,17 +471,15 @@ namespace Runtime {
          */
         public showCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             return super.showCG(resource).then((runtime: Core.IRuntime) => {
-                var bounds: G.IBounds = CanvasDirector.BOUNDS,
-                    gChars: G.Element = this._c.q('c')[0],
-                    gCG: G.Sprite = <G.Sprite> this._c.q('g')[0],
-                    gImage: G.Element = new G.Image(resource.o(), bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p');
-                gCG.a(gImage);
+                var gChars: G.Element = this._c.q('c')[0],
+                    gCG: Sprite.CG = <Sprite.CG> this._x['G'];
                 return this.lightOn()
                     .then(() => {
                         return Promise.all([
                             gChars.p(new G.FadeOut(500)),
-                            gCG.p(new G.FadeIn(500))
-                        ]).then(() => gCG.p(this._h = new G.WaitForClick()));
+                            gCG.u(resource).v()
+                        ]).then(() => gCG.p(this._h = new G.WaitForClick()))
+                        .then(() => console.warn('clicked!'));
                     }).then(() => runtime);
             });
         }
@@ -602,8 +593,7 @@ namespace Runtime {
                 (<G.Sprite> this._c.q('M')[0]).c();
                 (<G.Sprite> this._c.q('c')[0]).c()
                     .o(0);
-                (<G.Sprite> this._c.q('g')[0]).c()
-                    .o(0);
+                this._x['G'].h(true);
                 this._x['W'].h(true);
                 this._x['T'].h(true);
                 this._x['C'].h(true);
@@ -614,11 +604,9 @@ namespace Runtime {
         /**
          * （读档继续时）设置特写。
          */
-        public setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime> {
+        public setCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             return super.setCG(resource).then((runtime: Core.IRuntime) => {
-                var bounds: G.IBounds = CanvasDirector.BOUNDS;
-                (<G.Sprite> this._c.q('g')[0]).a(new G.Image(resource.o(), bounds.w / 10, bounds.h / 10, bounds.w * 4 / 5, bounds.h * 4 / 5).i('p'))
-                    .o(1);
+                (<Sprite.CG> this._x['G']).u(resource).v(true);
                 return runtime;
             });
         }
@@ -630,6 +618,8 @@ namespace Runtime {
             let resources: Resource.Resource<string | HTMLImageElement>[][] = [],
                 gCurtain: Sprite.Curtain = this._x['c'],
                 slotsFromStart: boolean = false;
+            // 特写。
+            this._c.a(this._x['G'] = <Sprite.CG> new Sprite.CG(theme['cg']), gCurtain);
             // 状态。
             this._x['S'] = <Sprite.Status> new Sprite.Status(id, theme['status']);
             resources.unshift(this._x['S'].l());
