@@ -28,7 +28,7 @@
     "definition": "var/build/bigine.d.ts"
   },
   "dependencies": {
-    "bigine.c2d": "^0.2.2",
+    "bigine.c2d": "^0.2.3",
     "bigine.util": "^0.2.3",
     "es6-promise": "^3.0.2"
   },

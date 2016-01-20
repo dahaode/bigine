@@ -1580,7 +1580,7 @@ var Sprite;
          */
         Author.prototype.u = function (title) {
             this._x.t(title);
-            return this.o(1);
+            return this;
         };
         return Author;
     })(Sprite.Sprite);
@@ -1723,7 +1723,7 @@ var Sprite;
          */
         Start.prototype.u = function (title) {
             this._x.t(title);
-            return this.o(1);
+            return this;
         };
         return Start;
     })(Sprite.Sprite);
@@ -3071,6 +3071,7 @@ var Runtime;
                     if (!author)
                         return;
                     var gAuthor = _this._x['a'].u(author);
+                    gAuthor.v(true);
                     return _this.lightOn()
                         .then(function () { return gAuthor.p(new G.Delay(1000)); })
                         .then(function () { return _this.lightOff(); })
@@ -3079,7 +3080,7 @@ var Runtime;
                     .then(function (runtime) {
                     if (!start)
                         return runtime;
-                    _this._x['s'].o(1);
+                    _this._x['s'].v(true);
                     return _this.lightOn();
                 });
             });
@@ -3553,7 +3554,7 @@ var Runtime;
                 _this._x['sl'].h();
                 _this._r.gS().e(true);
             }).addEventListener('slots.load', function (ev) {
-                _this.lightOn().then(function () {
+                _this.lightOff().then(function () {
                     _this._x['sl'].h(true);
                     _this._r.l(ev.id);
                 });

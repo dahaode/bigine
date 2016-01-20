@@ -63,7 +63,7 @@ namespace Sprite {
          */
         public u(title: string): Start {
             this._x.t(title);
-            return <Start> this.o(1);
+            return this;
         }
     }
 }

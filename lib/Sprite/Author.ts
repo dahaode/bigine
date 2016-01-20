@@ -44,7 +44,7 @@ namespace Sprite {
          */
         public u(title: string): Author {
             this._x.t(title);
-            return <Author> this.o(1);
+            return this;
         }
     }
 }

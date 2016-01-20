@@ -185,6 +185,7 @@ namespace Runtime {
                             this._c.e(gLogo);
                             if (!author) return;
                             let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author);
+                            gAuthor.v(true);
                             return this.lightOn()
                                 .then(() => gAuthor.p(new G.Delay(1000)))
                                 .then(() => this.lightOff())
@@ -193,7 +194,7 @@ namespace Runtime {
                         .then((runtime: Core.IRuntime) => {
                             if (!start)
                                 return runtime;
-                            this._x['s'].o(1);
+                            this._x['s'].v(true);
                             return this.lightOn();
                         });
                 });
@@ -703,7 +704,7 @@ namespace Runtime {
                     this._x['sl'].h();
                     this._r.gS().e(true);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
-                    this.lightOn().then(() => {
+                    this.lightOff().then(() => {
                         this._x['sl'].h(true);
                         this._r.l(ev.id);
                     });
