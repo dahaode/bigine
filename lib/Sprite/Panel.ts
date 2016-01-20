@@ -38,6 +38,7 @@ namespace Sprite {
                 url: string = '//s.dahao.de/theme/' + id + '/',
                 left: G.Text.Align = G.Text.Align.Left,
                 right: G.Text.Align = G.Text.Align.Right,
+                _mask: Util.IHashTable<any> = theme['mask'],
                 _back: Util.IHashTable<any> = theme['back'],
                 _close: Util.IHashTable<any> = theme['close'],
                 i: number = 1,
@@ -49,6 +50,7 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(url + _close['ih'], raw)
             ];
             (<Panel> this.o(0))
+                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
                 .a(new G.Image(this._rr[0].o(), <G.IBounds> _back))
                 .a(new G.Button(<G.IBounds> _close)
                     .b(() => {

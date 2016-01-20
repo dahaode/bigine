@@ -2687,7 +2687,7 @@ var Sprite;
          */
         function Panel(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', left = G.Text.Align.Left, right = G.Text.Align.Right, _back = theme['back'], _close = theme['close'], i = 1, j;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', left = G.Text.Align.Left, right = G.Text.Align.Right, _mask = theme['mask'], _back = theme['back'], _close = theme['close'], i = 1, j;
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + _back['i'], raw),
@@ -2695,6 +2695,7 @@ var Sprite;
                 rr.g(url + _close['ih'], raw)
             ];
             this.o(0)
+                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
                 .a(new G.Image(this._rr[0].o(), _back))
                 .a(new G.Button(_close)
                 .b(function () {
