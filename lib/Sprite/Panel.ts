@@ -42,7 +42,7 @@ namespace Sprite {
                 _close: Util.IHashTable<any> = theme['close'],
                 i: number = 1,
                 j: Util.IHashTable<any>;
-            super(0, 0, w, h, true);
+            super(0, 0, w, h);
             this._rr = [
                 rr.g<HTMLImageElement>(url + _back['i'], raw),
                 rr.g<HTMLImageElement>(url + _close['i'], raw),

@@ -2615,7 +2615,7 @@ var Sprite;
         function Panel(id, theme) {
             var _this = this;
             var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', left = G.Text.Align.Left, right = G.Text.Align.Right, _back = theme['back'], _close = theme['close'], i = 1, j;
-            _super.call(this, 0, 0, w, h, true);
+            _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + _back['i'], raw),
                 rr.g(url + _close['i'], raw),
