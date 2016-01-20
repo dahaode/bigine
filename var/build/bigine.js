@@ -2808,6 +2808,7 @@ var Sprite;
                         choice: option
                     }));
                 }, new G.Image(_this._rr[1].o(), x, y, _back['w'], _back['h'], true), new G.Image(_this._rr[0].o(), x, y, _back['w'], _back['h'], true))).a(text);
+                y += _back['h'] + margin;
             });
             return this;
         };
