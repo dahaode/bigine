@@ -1730,15 +1730,67 @@ var Sprite;
     Sprite.Start = Start;
 })(Sprite || (Sprite = {}));
 /**
+ * 声明画面调度某白接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/IWords.ts
+ */
+/// <reference path="ISprite.ts" />
+/// <reference path="../_Resource/IResource.ts" />
+/**
+ * 声明（画面调度）某白动画事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IWordsAnimationMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IWords.ts" />
+/**
+ * 定义（画面调度）某白动画事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/WordsAnimation.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IWordsAnimationMetas.ts" />
+var Ev;
+(function (Ev) {
+    var WordsAnimation = (function (_super) {
+        __extends(WordsAnimation, _super);
+        /**
+         * 构造函数。
+         */
+        function WordsAnimation(metas) {
+            _super.call(this, metas);
+            this.animation = metas.animation;
+        }
+        /**
+         * 获取类型。
+         */
+        WordsAnimation.prototype.gT = function () {
+            return 'words.animation';
+        };
+        return WordsAnimation;
+    })(Ev.Event);
+    Ev.WordsAnimation = WordsAnimation;
+})(Ev || (Ev = {}));
+/**
  * 定义画面调度某白组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Sprite/Sprite.ts
+ * @file      Sprite/Words.ts
  */
 /// <reference path="Sprite.ts" />
 /// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/WordsAnimation.ts" />
 var Sprite;
 (function (Sprite) {
     var G = __Bigine_C2D;
@@ -1795,8 +1847,12 @@ var Sprite;
             var _this = this;
             if (immediately === void 0) { immediately = false; }
             if (this._h) {
-                G.ACenter.h(this._h);
-                this._h = 0;
+                this._h.h();
+                this._h = undefined;
+                this.dispatchEvent(new Ev.WordsAnimation({
+                    target: this,
+                    animation: undefined
+                }));
             }
             return _super.prototype.h.call(this, immediately).then(function () {
                 _this._x['v'].o(0);
@@ -1862,22 +1918,30 @@ var Sprite;
             var _this = this;
             this.o(1);
             return new Promise(function (resolve) {
-                var aType = new G.Type(1), typeId = aType.gI(), aWFC, wfcId;
+                var aType = new G.Type(1), aWFC;
                 if (auto)
                     return text.p(aType).then(function () {
                         resolve();
                     });
                 aWFC = new G.WaitForClick(function () {
-                    G.ACenter.h(typeId);
+                    aType.h();
                 });
-                _this._h = wfcId = aWFC.gI();
+                _this._h = aWFC;
+                _this.dispatchEvent(new Ev.WordsAnimation({
+                    target: _this,
+                    animation: aWFC
+                }));
                 Promise.race([
                     text.p(aType).then(function () {
-                        G.ACenter.h(wfcId);
+                        aWFC.h();
                     }),
                     _this.p(aWFC)
                 ]).then(function () {
-                    _this._h = 0;
+                    _this._h = undefined;
+                    _this.dispatchEvent(new Ev.WordsAnimation({
+                        target: _this,
+                        animation: undefined
+                    }));
                     resolve();
                 });
             }).then(function () {
@@ -1890,7 +1954,11 @@ var Sprite;
                     animation = new G.WaitForClick();
                     target = _this;
                 }
-                _this._h = animation.gI();
+                _this._h = animation;
+                _this.dispatchEvent(new Ev.WordsAnimation({
+                    target: _this,
+                    animation: animation
+                }));
                 return target.p(animation);
             });
         };
@@ -3366,7 +3434,10 @@ var Runtime;
             resources.unshift(this._x['S'].l());
             this._c.a(this._x['S'], gCurtain);
             // 某白。
-            this._x['W'] = new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
+            this._x['W'] = new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak'])
+                .addEventListener('words.animation', function (ev) {
+                _this._t = _this._h = ev.animation;
+            });
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 选择。

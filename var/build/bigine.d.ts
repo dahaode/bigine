@@ -476,8 +476,27 @@ declare namespace __Bigine {
             u(title: string): Start;
         }
     }
+    namespace Core {
+        interface IWords extends ISprite {
+            vv(clob: string, auto?: boolean): Promise<IWords>;
+            vm(avatar: IResource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<IWords>;
+            vs(avatar: IResource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<IWords>;
+        }
+    }
+    namespace Ev {
+        interface IWordsAnimationMetas extends Util.IEventMetas<Core.IWords> {
+            animation: G.Animation;
+        }
+    }
+    namespace Ev {
+        class WordsAnimation extends Event<Core.IWords> {
+            animation: G.Animation;
+            constructor(metas: IWordsAnimationMetas);
+            gT(): string;
+        }
+    }
     namespace Sprite {
-        class Words extends Sprite {
+        class Words extends Sprite implements Core.IWords {
             private _x;
             private _c;
             private _h;

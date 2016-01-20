@@ -4,17 +4,18 @@
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Sprite/Sprite.ts
+ * @file      Sprite/Words.ts
  */
 
 /// <reference path="Sprite.ts" />
 /// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/WordsAnimation.ts" />
 
 namespace Sprite {
     import Util = __Bigine_Util;
     import G = __Bigine_C2D;
 
-    export class Words extends Sprite {
+    export class Words extends Sprite implements Core.IWords {
         /**
          * 对象集合。
          */
@@ -26,9 +27,9 @@ namespace Sprite {
         private _c: Util.IHashTable<string>;
 
         /**
-         * 阻塞动画编号。
+         * 阻塞动画。
          */
-        private _h: number;
+        private _h: G.Animation;
 
         /**
          * 头像尺寸集合。
@@ -108,8 +109,12 @@ namespace Sprite {
          */
         public h(immediately: boolean = false): Promise<Words> {
             if (this._h) {
-                G.ACenter.h(this._h);
-                this._h = 0;
+                this._h.h();
+                this._h = undefined;
+                this.dispatchEvent(new Ev.WordsAnimation({
+                    target: this,
+                    animation: undefined
+                }));
             }
             return super.h(immediately).then(() => {
                 (<G.Sprite> this._x['v']).o(0);
@@ -173,24 +178,30 @@ namespace Sprite {
             this.o(1);
             return new Promise<void>((resolve: () => void) => {
                 let aType: G.Type = new G.Type(1),
-                    typeId: number = aType.gI(),
-                    aWFC: G.WaitForClick,
-                    wfcId: number;
+                    aWFC: G.WaitForClick;
                 if (auto)
                     return text.p(aType).then(() => {
                         resolve();
                     });
                 aWFC = new G.WaitForClick(() => {
-                    G.ACenter.h(typeId);
+                    aType.h();
                 });
-                this._h = wfcId = aWFC.gI();
+                this._h = aWFC;
+                this.dispatchEvent(new Ev.WordsAnimation({
+                    target: this,
+                    animation: aWFC
+                }));
                 Promise.race<any>([
                     text.p(aType).then(() => {
-                        G.ACenter.h(wfcId);
+                        aWFC.h();
                     }),
                     this.p(aWFC)
                 ]).then(() => {
-                    this._h = 0;
+                    this._h = undefined;
+                    this.dispatchEvent(new Ev.WordsAnimation({
+                        target: this,
+                        animation: undefined
+                    }));
                     resolve();
                 });
             }).then(() => {
@@ -203,7 +214,11 @@ namespace Sprite {
                     animation = new G.WaitForClick();
                     target = this;
                 }
-                this._h = animation.gI();
+                this._h = animation;
+                this.dispatchEvent(new Ev.WordsAnimation({
+                    target: this,
+                    animation: animation
+                }));
                 return target.p(animation);
             });
         }

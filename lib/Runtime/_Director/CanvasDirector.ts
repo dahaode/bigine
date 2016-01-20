@@ -635,7 +635,10 @@ namespace Runtime {
             resources.unshift(this._x['S'].l());
             this._c.a(this._x['S'], gCurtain);
             // 某白。
-            this._x['W'] = <Sprite.Words> new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak']);
+            this._x['W'] = <Sprite.Words> new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak'])
+                .addEventListener('words.animation', (ev: Ev.WordsAnimation) => {
+                    this._t = this._h = ev.animation;
+                });
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 选择。
