@@ -3014,7 +3014,7 @@ var Runtime;
                 return this._p;
             }
             gChars.o(1);
-            return gChar.p(this._m = new G.FadeIn(500))
+            return gChar.p(new G.FadeIn(500))
                 .then(function () { return _this._r; });
         };
         /**
@@ -3025,7 +3025,7 @@ var Runtime;
             var states = this._r.gS(), kamount = '$c', amount = states.g(kamount), gChars = this._c.q('c')[0], gChar = gChars.q(position)[0];
             if (gChar) {
                 states.s(kamount, --amount);
-                return gChar.p(this._m = new G.FadeOut(500)).then(function () {
+                return gChar.p(new G.FadeOut(500)).then(function () {
                     gChars.e(gChar);
                     if (!amount)
                         gChars.o(0);
@@ -3075,7 +3075,7 @@ var Runtime;
                     x = 800;
                     break;
             }
-            return gChar.p(this._m = new G.Move(500, {
+            return gChar.p(new G.Move(500, {
                 x: x,
                 y: gChar.gB().y
             })).then(function () {
@@ -3420,7 +3420,8 @@ var Runtime;
                 .addEventListener('start.new', function (event) {
                 _this.playSE(_this._i['c']);
                 _this.lightOff().then(function () {
-                    _this._x['t'].v(true);
+                    if (!_this._a)
+                        _this._x['t'].v(true);
                     event.target.h(true);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
@@ -3480,8 +3481,9 @@ var Runtime;
          * 设置自动播放。
          */
         CanvasDirector.prototype.a = function (auto) {
-            if (this._m && this._m.gW())
-                return this._a;
+            var tray = this._x['t'];
+            if (tray)
+                tray[auto ? 'h' : 'v']();
             if (this._t) {
                 this._t.h();
                 this._t = undefined;
@@ -3529,8 +3531,6 @@ var Runtime;
          * 取消阻塞。
          */
         CanvasDirector.prototype.h = function () {
-            if (this._m)
-                this._m.h();
             if (this._h) {
                 this._h.h();
                 this._h = undefined;

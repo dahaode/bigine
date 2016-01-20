@@ -65,11 +65,6 @@ namespace Runtime {
         private _h: G.Animation;
 
         /**
-         * 菜单暂停相关动画。
-         */
-        private _m: G.Animation;
-
-        /**
          * 阻塞类 Promise 。
          */
         private _q: () => void;
@@ -250,7 +245,7 @@ namespace Runtime {
                 return this._p;
             }
             gChars.o(1);
-            return gChar.p(this._m = new G.FadeIn(500))
+            return gChar.p(new G.FadeIn(500))
                 .then(() => this._r);
         }
 
@@ -265,7 +260,7 @@ namespace Runtime {
                 gChar: G.Element = gChars.q(<any> position)[0];
             if (gChar) {
                 states.s(kamount, --amount);
-                return gChar.p(this._m = new G.FadeOut(500)).then(() => {
+                return gChar.p(new G.FadeOut(500)).then(() => {
                     gChars.e(gChar);
                     if (!amount)
                         gChars.o(0);
@@ -322,7 +317,7 @@ namespace Runtime {
                     x = 800;
                     break;
             }
-            return gChar.p(this._m = new G.Move(500, {
+            return gChar.p(new G.Move(500, {
                 x: x,
                 y: gChar.gB().y
             })).then(() => {
@@ -694,7 +689,8 @@ namespace Runtime {
                 .addEventListener('start.new', (event: Ev.StartNew) => {
                     this.playSE(this._i['c']);
                     this.lightOff().then(() => {
-                        this._x['t'].v(true);
+                        if (!this._a)
+                            this._x['t'].v(true);
                         event.target.h(true);
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
@@ -756,8 +752,9 @@ namespace Runtime {
          * 设置自动播放。
          */
         public a(auto: boolean): boolean {
-            if (this._m && this._m.gW())
-                return this._a;
+            let tray: Sprite.Sprite = this._x['t'];
+            if (tray)
+                tray[auto ? 'h' : 'v']();
             if (this._t) {
                 this._t.h();
                 this._t = undefined;
@@ -815,8 +812,6 @@ namespace Runtime {
          * 取消阻塞。
          */
         public h(): void {
-            if (this._m)
-                this._m.h();
             if (this._h) {
                 this._h.h();
                 this._h = undefined;

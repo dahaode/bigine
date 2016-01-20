@@ -682,7 +682,6 @@ declare namespace __Bigine {
             private _f;
             private _t;
             private _h;
-            private _m;
             private _q;
             private _e;
             private _l;
