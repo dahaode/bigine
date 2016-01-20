@@ -3060,10 +3060,8 @@ var Runtime;
                 .then(function () { return _this.reset(); })
                 .then(function () {
                 var gLogo = new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS);
-                // gEntry: G.Element = this._c.q('$.')[0];
                 _this._c.z()
                     .a(gLogo, _this._x['c']);
-                // gEntry.o(0);
                 return _this.lightOn()
                     .then(function () { return gLogo.p(new G.Delay(1000)); })
                     .then(function () { return _this.lightOff(); })
@@ -3078,7 +3076,6 @@ var Runtime;
                         .then(function () { return gAuthor.o(0); });
                 }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
                     .then(function (runtime) {
-                    // gEntry.o(1);
                     if (!start)
                         return runtime;
                     _this._x['s'].o(1);
@@ -3542,11 +3539,6 @@ var Runtime;
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
                 _this._x['sl'].vl(_this._r.gS());
-                _this._x['s'].h();
-                /* this.lightOff().then(() => {
-                    event.target.h(true);
-                    this._r.dispatchEvent(new Ev.Resume({ target: this._r.gE() }));
-                }); */
             });
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);

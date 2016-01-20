@@ -175,11 +175,9 @@ namespace Runtime {
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
-                    var gLogo: G.Image = new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS);
-                        // gEntry: G.Element = this._c.q('$.')[0];
+                    let gLogo: G.Image = new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS);
                     this._c.z()
                         .a(gLogo, this._x['c']);
-                    // gEntry.o(0);
                     return this.lightOn()
                         .then(() => gLogo.p(new G.Delay(1000)))
                         .then(() => this.lightOff())
@@ -193,7 +191,6 @@ namespace Runtime {
                                 .then(() => gAuthor.o(0));
                         }).then(() => super.OP(start, title, author))
                         .then((runtime: Core.IRuntime) => {
-                            // gEntry.o(1);
                             if (!start)
                                 return runtime;
                             this._x['s'].o(1);
@@ -693,11 +690,6 @@ namespace Runtime {
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
                     (<Sprite.Slots> this._x['sl']).vl(this._r.gS());
-                    this._x['s'].h();
-                    /* this.lightOff().then(() => {
-                        event.target.h(true);
-                        this._r.dispatchEvent(new Ev.Resume({ target: this._r.gE() }));
-                    }); */
                 });
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
