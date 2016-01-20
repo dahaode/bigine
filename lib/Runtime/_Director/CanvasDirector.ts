@@ -355,13 +355,16 @@ namespace Runtime {
          * 某白。
          */
         public words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
+            let sprite: Sprite.Words = <Sprite.Words> this._x['W'];
             return this.lightOn().then(() => {
-                let sprite: Sprite.Words = <Sprite.Words> this._x['W'],
-                    type: string = theme[0];
+                let type: string = theme[0];
                 if ('v' == type)
                     return sprite.vv(words, this._a);
                 return sprite['v' + type](avatar, who, words, this._a);
-            }).then(() => this._r);
+            }).then(() => {
+                sprite.h(true);
+                return this._r;
+            });
         }
 
         /**
@@ -478,8 +481,7 @@ namespace Runtime {
                         return Promise.all([
                             gChars.p(new G.FadeOut(500)),
                             gCG.u(resource).v()
-                        ]).then(() => gCG.p(this._h = new G.WaitForClick()))
-                        .then(() => console.warn('clicked!'));
+                        ]).then(() => gCG.p(this._h = new G.WaitForClick()));
                     }).then(() => runtime);
             });
         }

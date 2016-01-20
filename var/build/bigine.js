@@ -3213,12 +3213,16 @@ var Runtime;
          */
         CanvasDirector.prototype.words = function (words, theme, who, avatar) {
             var _this = this;
+            var sprite = this._x['W'];
             return this.lightOn().then(function () {
-                var sprite = _this._x['W'], type = theme[0];
+                var type = theme[0];
                 if ('v' == type)
                     return sprite.vv(words, _this._a);
                 return sprite['v' + type](avatar, who, words, _this._a);
-            }).then(function () { return _this._r; });
+            }).then(function () {
+                sprite.h(true);
+                return _this._r;
+            });
         };
         /**
          * 提示。
@@ -3326,8 +3330,7 @@ var Runtime;
                     return Promise.all([
                         gChars.p(new G.FadeOut(500)),
                         gCG.u(resource).v()
-                    ]).then(function () { return gCG.p(_this._h = new G.WaitForClick()); })
-                        .then(function () { return console.warn('clicked!'); });
+                    ]).then(function () { return gCG.p(_this._h = new G.WaitForClick()); });
                 }).then(function () { return runtime; });
             });
         };
