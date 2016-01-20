@@ -75,7 +75,11 @@ namespace Sprite {
             });
             runtime.addEventListener('state', (ev: Ev.State) => {
                 Util.each(this._y, (conf: [string, string], name: string) => {
-                    let value: string = ev.data[name].toString();
+                    let value: string = ev.data[name];
+                    if (undefined === value) {
+                        value = '';
+                    } else
+                        value = value.toString();
                     if (value == conf[1]) return;
                     this._y[name][1] = value;
                     this._x[conf[0]].c().a(new G.TextPhrase(value));

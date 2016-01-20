@@ -2595,7 +2595,12 @@ var Sprite;
             });
             runtime.addEventListener('state', function (ev) {
                 Util.each(_this._y, function (conf, name) {
-                    var value = ev.data[name].toString();
+                    var value = ev.data[name];
+                    if (undefined === value) {
+                        value = '';
+                    }
+                    else
+                        value = value.toString();
                     if (value == conf[1])
                         return;
                     _this._y[name][1] = value;
@@ -2722,7 +2727,12 @@ var Sprite;
             });
             runtime.addEventListener('state', function (ev) {
                 Util.each(_this._y, function (conf, name) {
-                    var value = ev.data[name].toString();
+                    var value = ev.data[name];
+                    if (undefined === value) {
+                        value = '';
+                    }
+                    else
+                        value = value.toString();
                     if (value == conf[1])
                         return;
                     _this._y[name][1] = value;
