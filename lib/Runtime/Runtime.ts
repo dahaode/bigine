@@ -323,8 +323,9 @@ namespace Runtime {
          * 读档继续。
          */
         public l(id: string): void {
-            var load: (data: Util.IHashTable<any>) => void = (data: Util.IHashTable<any>) => {
-                var fresh: boolean = !data || {} == data,
+            this._fh = true; // 中止现有时序流
+            let load: (data: Util.IHashTable<any>) => void = (data: Util.IHashTable<any>) => {
+                let fresh: boolean = !data || {} == data,
                     episode: Episode = this._e,
                     states: States = this._s,
                     ks: string = '_s',
@@ -337,39 +338,40 @@ namespace Runtime {
                     tn: string,
                     cn: string,
                     enter: Tag.Enter;
-                if (!fresh)
-                    states.i(data);
-                if (fresh || !states.g(ks)) // 无存档或存档无事件特征
-                    return this.dispatchEvent(new Ev.Begin({
-                        target: episode
-                    }));
-                states.m('_a', '.a') // 识别重建用状态数据
-                    .m(ks, '.s')
-                    .m(kdc, krc)
-                    .m(kdc + pos.Left, krc + pos.Left)
-                    .m(kdc + pos.Center, krc + pos.Center)
-                    .m(kdc + pos.Right, krc + pos.Right);
-                this._fh = true; // 中止现有时序流
-                this._d.h();
-                this.t(() => {
-                    this._fh = false;
-                    tn = states.g(ktn);
-                    cn = states.g(kcn);
-                    if (tn || cn) {
-                        if (cn) {
-                            if (tn) {
-                                states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
-                            } else {
-                                tn = cn;
-                                states.d(kcn);
+                this._d.reset().then(() => {
+                    if (!fresh)
+                        states.i(data);
+                    if (fresh || !states.g(ks)) // 无存档或存档无事件特征
+                        return this.dispatchEvent(new Ev.Begin({
+                            target: episode
+                        }));
+                    states.m('_a', '.a') // 识别重建用状态数据
+                        .m(ks, '.s')
+                        .m(kdc, krc)
+                        .m(kdc + pos.Left, krc + pos.Left)
+                        .m(kdc + pos.Center, krc + pos.Center)
+                        .m(kdc + pos.Right, krc + pos.Right);
+                    this._d.h();
+                    this.t(() => {
+                        this._fh = false;
+                        tn = states.g(ktn);
+                        cn = states.g(kcn);
+                        if (tn || cn) {
+                            if (cn) {
+                                if (tn) {
+                                    states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                                } else {
+                                    tn = cn;
+                                    states.d(kcn);
+                                }
                             }
+                            enter = new Tag.Enter([tn || cn], '', [], -1);
+                            enter.b(episode);
+                            return <Runtime | Thenable<Runtime>> enter.p(this)
+                                ['catch'](E.ignoreHalt);
                         }
-                        enter = new Tag.Enter([tn || cn], '', [], -1);
-                        enter.b(episode);
-                        return <Runtime | Thenable<Runtime>> enter.p(this)
-                            ['catch'](E.ignoreHalt);
-                    }
-                    return episode.p(states.g('_p'), this);
+                        return episode.p(states.g('_p'), this);
+                    });
                 });
             };
             this.dispatchEvent(new Ev.Load({

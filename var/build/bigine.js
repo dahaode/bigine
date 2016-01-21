@@ -3559,9 +3559,7 @@ var Runtime;
                     _this._x['s'].h(true);
                     if (!_this._a)
                         _this._x['t'].v(true);
-                    _this.reset().then(function (runtime) {
-                        runtime.l(ev.id);
-                    });
+                    _this._r.l(ev.id);
                 });
             });
             resources.push(this._x['sl'].l());
@@ -9120,41 +9118,43 @@ var Runtime;
          */
         Runtime.prototype.l = function (id) {
             var _this = this;
+            this._fh = true; // 中止现有时序流
             var load = function (data) {
                 var fresh = !data || {} == data, episode = _this._e, states = _this._s, ks = '_s', ktn = '_rt', kcn = '_rc', kco = '$rc', kdc = '_c', krc = '.c', pos = Core.IDirector.Position, tn, cn, enter;
-                if (!fresh)
-                    states.i(data);
-                if (fresh || !states.g(ks))
-                    return _this.dispatchEvent(new Ev.Begin({
-                        target: episode
-                    }));
-                states.m('_a', '.a') // 识别重建用状态数据
-                    .m(ks, '.s')
-                    .m(kdc, krc)
-                    .m(kdc + pos.Left, krc + pos.Left)
-                    .m(kdc + pos.Center, krc + pos.Center)
-                    .m(kdc + pos.Right, krc + pos.Right);
-                _this._fh = true; // 中止现有时序流
-                _this._d.h();
-                _this.t(function () {
-                    _this._fh = false;
-                    tn = states.g(ktn);
-                    cn = states.g(kcn);
-                    if (tn || cn) {
-                        if (cn) {
-                            if (tn) {
-                                states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                _this._d.reset().then(function () {
+                    if (!fresh)
+                        states.i(data);
+                    if (fresh || !states.g(ks))
+                        return _this.dispatchEvent(new Ev.Begin({
+                            target: episode
+                        }));
+                    states.m('_a', '.a') // 识别重建用状态数据
+                        .m(ks, '.s')
+                        .m(kdc, krc)
+                        .m(kdc + pos.Left, krc + pos.Left)
+                        .m(kdc + pos.Center, krc + pos.Center)
+                        .m(kdc + pos.Right, krc + pos.Right);
+                    _this._d.h();
+                    _this.t(function () {
+                        _this._fh = false;
+                        tn = states.g(ktn);
+                        cn = states.g(kcn);
+                        if (tn || cn) {
+                            if (cn) {
+                                if (tn) {
+                                    states.s(kco, episode.q(cn, Core.IEpisode.Entity.Room));
+                                }
+                                else {
+                                    tn = cn;
+                                    states.d(kcn);
+                                }
                             }
-                            else {
-                                tn = cn;
-                                states.d(kcn);
-                            }
+                            enter = new Tag.Enter([tn || cn], '', [], -1);
+                            enter.b(episode);
+                            return enter.p(_this)['catch'](E.ignoreHalt);
                         }
-                        enter = new Tag.Enter([tn || cn], '', [], -1);
-                        enter.b(episode);
-                        return enter.p(_this)['catch'](E.ignoreHalt);
-                    }
-                    return episode.p(states.g('_p'), _this);
+                        return episode.p(states.g('_p'), _this);
+                    });
                 });
             };
             this.dispatchEvent(new Ev.Load({
