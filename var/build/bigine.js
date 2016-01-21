@@ -3556,6 +3556,7 @@ var Runtime;
             }).addEventListener('slots.load', function (ev) {
                 _this.lightOff().then(function () {
                     _this._x['sl'].h(true);
+                    _this._x['s'].h(true);
                     _this._r.l(ev.id);
                 });
             });

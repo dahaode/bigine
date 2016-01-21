@@ -706,6 +706,7 @@ namespace Runtime {
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
                     this.lightOff().then(() => {
                         this._x['sl'].h(true);
+                        this._x['s'].h(true);
                         this._r.l(ev.id);
                     });
                 });
