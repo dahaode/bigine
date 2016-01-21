@@ -3559,7 +3559,9 @@ var Runtime;
                     _this._x['s'].h(true);
                     if (!_this._a)
                         _this._x['t'].v(true);
-                    _this._r.l(ev.id);
+                    _this.reset().then(function (runtime) {
+                        runtime.l(ev.id);
+                    });
                 });
             });
             resources.push(this._x['sl'].l());

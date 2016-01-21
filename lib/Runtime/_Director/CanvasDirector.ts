@@ -709,7 +709,9 @@ namespace Runtime {
                         this._x['s'].h(true);
                         if (!this._a)
                             this._x['t'].v(true);
-                        this._r.l(ev.id);
+                        this.reset().then((runtime: Core.IRuntime) => {
+                            runtime.l(ev.id);
+                        });
                     });
                 });
             resources.push(this._x['sl'].l());
