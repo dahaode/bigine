@@ -707,7 +707,8 @@ namespace Runtime {
                     this.lightOff().then(() => {
                         this._x['sl'].h(true);
                         this._x['s'].h(true);
-                        this._x['t'].v(true);
+                        if (!this._a)
+                            this._x['t'].v(true);
                         this._r.l(ev.id);
                     });
                 });

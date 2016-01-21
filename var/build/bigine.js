@@ -3557,7 +3557,8 @@ var Runtime;
                 _this.lightOff().then(function () {
                     _this._x['sl'].h(true);
                     _this._x['s'].h(true);
-                    _this._x['t'].v(true);
+                    if (!_this._a)
+                        _this._x['t'].v(true);
                     _this._r.l(ev.id);
                 });
             });
