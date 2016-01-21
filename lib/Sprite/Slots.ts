@@ -129,7 +129,7 @@ namespace Sprite {
             (<G.Sprite> this._x['1'])
                 .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
                     .tc(_1t['c'])
-                    .a(new G.TextPhrase($a ? this.$d($1[1]) : '（无）'))
+                    .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
                 );
             return this.v();
         }
