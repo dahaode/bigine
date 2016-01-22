@@ -192,6 +192,8 @@ namespace Runtime {
                                 .then(() => gAuthor.o(0));
                         }).then(() => super.OP(start, title, author))
                         .then((runtime: Core.IRuntime) => {
+                            if (!this._a)
+                                this._x['t'].v(true);
                             if (!start)
                                 return runtime;
                             this._x['s'].v(true);
@@ -212,8 +214,7 @@ namespace Runtime {
                     return this.lightOff()
                         .then(() => {
                             this._c.a(gED, this._x['c']);
-                            // this._c.q('$.')[0].o(0);
-                            // this._c.q('$')[0].o(0);
+                            this._x['t'].h(true);
                             return this.lightOn();
                         }).then(() => gED.p(new G.Delay(2000)))
                         .then(() => this.lightOff())
@@ -399,6 +400,7 @@ namespace Runtime {
                     var gStars: G.Image = new G.Image(this._i[key].o(), CanvasDirector.BOUNDS);
                     return this.lightOff()
                         .then(() => {
+                            this._x['t'].h(true);
                             this._c.a(gStars, this._x['c']);
                             return this.lightOn();
                         }).then(() => gStars.p(new G.Delay(2000)))
@@ -682,8 +684,6 @@ namespace Runtime {
                 .addEventListener('start.new', (event: Ev.StartNew) => {
                     this.playSE(this._i['c']);
                     this.lightOff().then(() => {
-                        if (!this._a)
-                            this._x['t'].v(true);
                         event.target.h(true);
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });

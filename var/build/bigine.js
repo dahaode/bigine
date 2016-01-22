@@ -3078,6 +3078,8 @@ var Runtime;
                         .then(function () { return gAuthor.o(0); });
                 }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
                     .then(function (runtime) {
+                    if (!_this._a)
+                        _this._x['t'].v(true);
                     if (!start)
                         return runtime;
                     _this._x['s'].v(true);
@@ -3098,8 +3100,7 @@ var Runtime;
                 return _this.lightOff()
                     .then(function () {
                     _this._c.a(gED, _this._x['c']);
-                    // this._c.q('$.')[0].o(0);
-                    // this._c.q('$')[0].o(0);
+                    _this._x['t'].h(true);
                     return _this.lightOn();
                 }).then(function () { return gED.p(new G.Delay(2000)); })
                     .then(function () { return _this.lightOff(); })
@@ -3532,8 +3533,6 @@ var Runtime;
                 .addEventListener('start.new', function (event) {
                 _this.playSE(_this._i['c']);
                 _this.lightOff().then(function () {
-                    if (!_this._a)
-                        _this._x['t'].v(true);
                     event.target.h(true);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
