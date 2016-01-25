@@ -72,7 +72,7 @@ namespace Sprite {
         /**
          * 显示存档位。
          */
-        public vs(states: Core.IStates): Promise<Slots> {
+        public vs(states: Core.IStates, duration?: number): Promise<Slots> {
             let $1: [string, number] = states.q('1'),
                 _1: Util.IHashTable<any> = this._c[1],
                 _1t: Util.IHashTable<any> = _1['text'],
@@ -86,13 +86,13 @@ namespace Sprite {
                     .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
                 )
             );
-            return this.v();
+            return this.v(duration);
         }
 
         /**
          * 显示读档位。
          */
-        public vl(states: Core.IStates): Promise<Slots> {
+        public vl(states: Core.IStates, duration?: number): Promise<Slots> {
             let $a: [string, number] = states.q('auto'),
                 _a: Util.IHashTable<any> = this._c[0],
                 _at: Util.IHashTable<any> = _a['text'],
@@ -131,14 +131,14 @@ namespace Sprite {
                     .tc(_1t['c'])
                     .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
                 );
-            return this.v();
+            return this.v(duration);
         }
 
         /**
          * 隐藏。
          */
-        public h(immediately?: boolean): Promise<Slots> {
-            return super.h(immediately).then(() => {
+        public h(duration?: number): Promise<Slots> {
+            return super.h(duration).then(() => {
                 Util.each(this._x, (item: G.Element) => {
                     this.e(item);
                 });

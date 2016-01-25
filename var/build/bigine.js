@@ -1453,24 +1453,22 @@ var Sprite;
         /**
          * 显示。
          */
-        Sprite.prototype.v = function (immediately) {
-            if (immediately === void 0) { immediately = false; }
-            if (immediately)
+        Sprite.prototype.v = function (duration) {
+            if (0 === duration)
                 this.o(1);
             if (this._o)
                 return Promise.resolve(this);
-            return this.p(new G.FadeIn(500));
+            return this.p(new G.FadeIn(duration || 250));
         };
         /**
          * 隐藏。
          */
-        Sprite.prototype.h = function (immediately) {
-            if (immediately === void 0) { immediately = false; }
-            if (immediately)
+        Sprite.prototype.h = function (duration) {
+            if (0 === duration)
                 this.o(0);
             if (!this._o)
                 return Promise.resolve(this);
-            return this.p(new G.FadeOut(500));
+            return this.p(new G.FadeOut(duration || 250));
         };
         /**
          * 获取远端资源列表。
@@ -1843,9 +1841,8 @@ var Sprite;
         /**
          * 隐藏。
          */
-        Words.prototype.h = function (immediately) {
+        Words.prototype.h = function (duration) {
             var _this = this;
-            if (immediately === void 0) { immediately = false; }
             if (this._h) {
                 this._h.h();
                 this._h = undefined;
@@ -1854,7 +1851,7 @@ var Sprite;
                     animation: undefined
                 }));
             }
-            return _super.prototype.h.call(this, immediately).then(function () {
+            return _super.prototype.h.call(this, duration).then(function () {
                 _this._x['v'].o(0);
                 _this._x['m'].o(0);
                 _this._x['s'].o(0);
@@ -2466,7 +2463,7 @@ var Sprite;
         /**
          * 显示存档位。
          */
-        Slots.prototype.vs = function (states) {
+        Slots.prototype.vs = function (states, duration) {
             var _this = this;
             var $1 = states.q('1'), _1 = this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
             this.a(this._x['1'] = new G.Button(_1)
@@ -2476,12 +2473,12 @@ var Sprite;
                 .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
                 .tc(_1t['c'])
                 .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))));
-            return this.v();
+            return this.v(duration);
         };
         /**
          * 显示读档位。
          */
-        Slots.prototype.vl = function (states) {
+        Slots.prototype.vl = function (states, duration) {
             var _this = this;
             var $a = states.q('auto'), _a = this._c[0], _at = _a['text'], $1 = states.q('1'), _1 = this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
             this.a(this._x['a'] = $a ?
@@ -2511,14 +2508,14 @@ var Sprite;
                 .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
                 .tc(_1t['c'])
                 .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）')));
-            return this.v();
+            return this.v(duration);
         };
         /**
          * 隐藏。
          */
-        Slots.prototype.h = function (immediately) {
+        Slots.prototype.h = function (duration) {
             var _this = this;
-            return _super.prototype.h.call(this, immediately).then(function () {
+            return _super.prototype.h.call(this, duration).then(function () {
                 Util.each(_this._x, function (item) {
                     _this.e(item);
                 });
@@ -2607,7 +2604,7 @@ var Sprite;
                     _this._x[conf[0]].c().a(new G.TextPhrase(value));
                 });
             });
-            this.v(true);
+            this.o(1);
             return this;
         };
         return Status;
@@ -3071,7 +3068,7 @@ var Runtime;
                     if (!author)
                         return;
                     var gAuthor = _this._x['a'].u(author);
-                    gAuthor.v(true);
+                    gAuthor.v(0);
                     return _this.lightOn()
                         .then(function () { return gAuthor.p(new G.Delay(1000)); })
                         .then(function () { return _this.lightOff(); })
@@ -3079,10 +3076,10 @@ var Runtime;
                 }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
                     .then(function (runtime) {
                     if (!_this._a)
-                        _this._x['t'].v(true);
+                        _this._x['t'].v(0);
                     if (!start)
                         return runtime;
-                    _this._x['s'].v(true);
+                    _this._x['s'].v(0);
                     return _this.lightOn();
                 });
             });
@@ -3100,7 +3097,7 @@ var Runtime;
                 return _this.lightOff()
                     .then(function () {
                     _this._c.a(gED, _this._x['c']);
-                    _this._x['t'].h(true);
+                    _this._x['t'].h(0);
                     return _this.lightOn();
                 }).then(function () { return gED.p(new G.Delay(2000)); })
                     .then(function () { return _this.lightOff(); })
@@ -3230,7 +3227,7 @@ var Runtime;
                     return sprite.vv(words, _this._a);
                 return sprite['v' + type](avatar, who, words, _this._a);
             }).then(function () {
-                sprite.h(true);
+                sprite.h(0);
                 return _this._r;
             });
         };
@@ -3269,6 +3266,7 @@ var Runtime;
                 var gStars = new G.Image(_this._i[key].o(), CanvasDirector.BOUNDS);
                 return _this.lightOff()
                     .then(function () {
+                    _this._x['t'].h(0);
                     _this._c.a(gStars, _this._x['c']);
                     return _this.lightOn();
                 }).then(function () { return gStars.p(new G.Delay(2000)); })
@@ -3446,10 +3444,10 @@ var Runtime;
                 _this._c.q('M')[0].c();
                 _this._c.q('c')[0].c()
                     .o(0);
-                _this._x['G'].h(true);
-                _this._x['W'].h(true);
-                _this._x['T'].h(true);
-                _this._x['C'].h(true);
+                _this._x['G'].h(0);
+                _this._x['W'].h(0);
+                _this._x['T'].h(0);
+                _this._x['C'].h(0);
                 return runtime;
             });
         };
@@ -3459,7 +3457,7 @@ var Runtime;
         CanvasDirector.prototype.setCG = function (resource) {
             var _this = this;
             return _super.prototype.setCG.call(this, resource).then(function (runtime) {
-                _this._x['G'].u(resource).v(true);
+                _this._x['G'].u(resource).v(0);
                 return runtime;
             });
         };
@@ -3533,13 +3531,13 @@ var Runtime;
                 .addEventListener('start.new', function (event) {
                 _this.playSE(_this._i['c']);
                 _this.lightOff().then(function () {
-                    event.target.h(true);
+                    event.target.h(0);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
             }).addEventListener('start.load', function (event) {
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
-                _this._x['sl'].vl(_this._r.gS());
+                _this._x['sl'].vl(_this._r.gS(), 250);
             });
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
@@ -3547,17 +3545,17 @@ var Runtime;
             this._x['sl'] = new Sprite.Slots(id, theme['slots'])
                 .addEventListener('slots.close', function () {
                 _this._x[slotsFromStart ? 's' : 'm'].v();
-                _this._x['sl'].h();
+                _this._x['sl'].h(250);
             }).addEventListener('slots.save', function () {
                 _this._x[slotsFromStart ? 's' : 'm'].v();
                 _this._x['sl'].h();
                 _this._r.gS().e(true);
             }).addEventListener('slots.load', function (ev) {
                 _this.lightOff().then(function () {
-                    _this._x['sl'].h(true);
-                    _this._x['s'].h(true);
+                    _this._x['sl'].h(0);
+                    _this._x['s'].h(0);
                     if (!_this._a)
-                        _this._x['t'].v(true);
+                        _this._x['t'].v(0);
                     _this._r.l(ev.id);
                 });
             });
@@ -9373,7 +9371,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.18.0';
+    Bigine.version = '0.18.1';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

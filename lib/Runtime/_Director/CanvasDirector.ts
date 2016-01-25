@@ -185,7 +185,7 @@ namespace Runtime {
                             this._c.e(gLogo);
                             if (!author) return;
                             let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author);
-                            gAuthor.v(true);
+                            gAuthor.v(0);
                             return this.lightOn()
                                 .then(() => gAuthor.p(new G.Delay(1000)))
                                 .then(() => this.lightOff())
@@ -193,10 +193,10 @@ namespace Runtime {
                         }).then(() => super.OP(start, title, author))
                         .then((runtime: Core.IRuntime) => {
                             if (!this._a)
-                                this._x['t'].v(true);
+                                this._x['t'].v(0);
                             if (!start)
                                 return runtime;
-                            this._x['s'].v(true);
+                            this._x['s'].v(0);
                             return this.lightOn();
                         });
                 });
@@ -214,7 +214,7 @@ namespace Runtime {
                     return this.lightOff()
                         .then(() => {
                             this._c.a(gED, this._x['c']);
-                            this._x['t'].h(true);
+                            this._x['t'].h(0);
                             return this.lightOn();
                         }).then(() => gED.p(new G.Delay(2000)))
                         .then(() => this.lightOff())
@@ -361,7 +361,7 @@ namespace Runtime {
                     return sprite.vv(words, this._a);
                 return sprite['v' + type](avatar, who, words, this._a);
             }).then(() => {
-                sprite.h(true);
+                sprite.h(0);
                 return this._r;
             });
         }
@@ -400,7 +400,7 @@ namespace Runtime {
                     var gStars: G.Image = new G.Image(this._i[key].o(), CanvasDirector.BOUNDS);
                     return this.lightOff()
                         .then(() => {
-                            this._x['t'].h(true);
+                            this._x['t'].h(0);
                             this._c.a(gStars, this._x['c']);
                             return this.lightOn();
                         }).then(() => gStars.p(new G.Delay(2000)))
@@ -595,10 +595,10 @@ namespace Runtime {
                 (<G.Sprite> this._c.q('M')[0]).c();
                 (<G.Sprite> this._c.q('c')[0]).c()
                     .o(0);
-                this._x['G'].h(true);
-                this._x['W'].h(true);
-                this._x['T'].h(true);
-                this._x['C'].h(true);
+                this._x['G'].h(0);
+                this._x['W'].h(0);
+                this._x['T'].h(0);
+                this._x['C'].h(0);
                 return runtime;
             });
         }
@@ -608,7 +608,7 @@ namespace Runtime {
          */
         public setCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             return super.setCG(resource).then((runtime: Core.IRuntime) => {
-                (<Sprite.CG> this._x['G']).u(resource).v(true);
+                (<Sprite.CG> this._x['G']).u(resource).v(0);
                 return runtime;
             });
         }
@@ -684,13 +684,13 @@ namespace Runtime {
                 .addEventListener('start.new', (event: Ev.StartNew) => {
                     this.playSE(this._i['c']);
                     this.lightOff().then(() => {
-                        event.target.h(true);
+                        event.target.h(0);
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
                 }).addEventListener('start.load', (event: Ev.StartLoad) => {
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
-                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS());
+                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS(), 250);
                 });
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
@@ -698,17 +698,17 @@ namespace Runtime {
             this._x['sl'] = <Sprite.Slots> new Sprite.Slots(id, theme['slots'])
                 .addEventListener('slots.close', () => {
                     this._x[slotsFromStart ? 's' : 'm'].v();
-                    this._x['sl'].h();
+                    this._x['sl'].h(250);
                 }).addEventListener('slots.save', () => {
                     this._x[slotsFromStart ? 's' : 'm'].v();
                     this._x['sl'].h();
                     this._r.gS().e(true);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
                     this.lightOff().then(() => {
-                        this._x['sl'].h(true);
-                        this._x['s'].h(true);
+                        this._x['sl'].h(0);
+                        this._x['s'].h(0);
                         if (!this._a)
-                            this._x['t'].v(true);
+                            this._x['t'].v(0);
                         this._r.l(ev.id);
                     });
                 });

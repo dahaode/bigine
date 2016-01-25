@@ -20,25 +20,35 @@ namespace Sprite {
         protected _rr: Resource.Resource<string | HTMLImageElement>[];
 
         /**
+         * 显示动画时长。
+         */
+        protected _dv: number;
+
+        /**
+         * 隐藏动画时长。
+         */
+        protected _dh: number;
+
+        /**
          * 显示。
          */
-        public v(immediately: boolean = false): Promise<Sprite> {
-            if (immediately)
+        public v(duration?: number): Promise<Sprite> {
+            if (0 === duration)
                 this.o(1);
             if (this._o)
                 return Promise.resolve(this);
-            return <Promise<Sprite>> this.p(new G.FadeIn(500));
+            return <Promise<Sprite>> this.p(new G.FadeIn(duration || 250));
         }
 
         /**
          * 隐藏。
          */
-        public h(immediately: boolean = false): Promise<Sprite> {
-            if (immediately)
+        public h(duration?: number): Promise<Sprite> {
+            if (0 === duration)
                 this.o(0);
             if (!this._o)
                 return Promise.resolve(this);
-            return <Promise<Sprite>> this.p(new G.FadeOut(500));
+            return <Promise<Sprite>> this.p(new G.FadeOut(duration || 250));
         }
 
         /**

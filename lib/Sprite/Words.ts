@@ -107,7 +107,7 @@ namespace Sprite {
         /**
          * 隐藏。
          */
-        public h(immediately: boolean = false): Promise<Words> {
+        public h(duration?: number): Promise<Words> {
             if (this._h) {
                 this._h.h();
                 this._h = undefined;
@@ -116,7 +116,7 @@ namespace Sprite {
                     animation: undefined
                 }));
             }
-            return super.h(immediately).then(() => {
+            return super.h(duration).then(() => {
                 (<G.Sprite> this._x['v']).o(0);
                 (<G.Sprite> this._x['m']).o(0);
                 (<G.Sprite> this._x['s']).o(0);

@@ -417,16 +417,18 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface ISprite extends G.Sprite {
-            v(immediately?: boolean): Promise<ISprite>;
-            h(immediately?: boolean): Promise<ISprite>;
+            v(duration?: number): Promise<ISprite>;
+            h(duration?: number): Promise<ISprite>;
             l(): Core.IResource<string | HTMLImageElement>[];
         }
     }
     namespace Sprite {
         abstract class Sprite extends G.Sprite implements Core.ISprite {
             protected _rr: Resource.Resource<string | HTMLImageElement>[];
-            v(immediately?: boolean): Promise<Sprite>;
-            h(immediately?: boolean): Promise<Sprite>;
+            protected _dv: number;
+            protected _dh: number;
+            v(duration?: number): Promise<Sprite>;
+            h(duration?: number): Promise<Sprite>;
             l(): Resource.Resource<string | HTMLImageElement>[];
             protected $a(desc: string): G.Text.Align;
             protected $w(element: G.Text, words: string, hiColor: string): Sprite;
@@ -502,7 +504,7 @@ declare namespace __Bigine {
             private _h;
             private _bs;
             constructor(id: string, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>);
-            h(immediately?: boolean): Promise<Words>;
+            h(duration?: number): Promise<Words>;
             vv(clob: string, auto?: boolean): Promise<Words>;
             vm(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
             vs(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
@@ -623,9 +625,9 @@ declare namespace __Bigine {
             private _c;
             private _x;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
-            vs(states: Core.IStates): Promise<Slots>;
-            vl(states: Core.IStates): Promise<Slots>;
-            h(immediately?: boolean): Promise<Slots>;
+            vs(states: Core.IStates, duration?: number): Promise<Slots>;
+            vl(states: Core.IStates, duration?: number): Promise<Slots>;
+            h(duration?: number): Promise<Slots>;
             private $d(stamp);
         }
     }

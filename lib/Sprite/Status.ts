@@ -85,7 +85,7 @@ namespace Sprite {
                     this._x[conf[0]].c().a(new G.TextPhrase(value));
                 });
             });
-            this.v(true);
+            this.o(1);
             return this;
         }
     }

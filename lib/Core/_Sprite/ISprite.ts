@@ -17,12 +17,12 @@ namespace Core {
         /**
          * 显示。
          */
-        v(immediately?: boolean): Promise<ISprite>;
+        v(duration?: number): Promise<ISprite>;
 
         /**
          * 隐藏。
          */
-        h(immediately?: boolean): Promise<ISprite>;
+        h(duration?: number): Promise<ISprite>;
 
         /**
          * 获取远端资源列表。
