@@ -1057,11 +1057,12 @@ var Runtime;
                 if (_this._l)
                     return resolve(_this);
                 _this._l = true;
-                _this._s = {};
                 var query = function (slots) {
-                    _this._s = slots;
-                    if ({} == slots)
+                    if (!slots) {
                         _this._l = false;
+                    }
+                    else
+                        _this._s = slots;
                     resolve(_this);
                 };
                 _this._r.dispatchEvent(new Ev.Query({

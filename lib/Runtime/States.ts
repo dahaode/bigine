@@ -182,11 +182,11 @@ namespace Runtime {
                 if (this._l)
                     return resolve(this);
                 this._l = true;
-                this._s = {};
                 let query: (slots: Util.IHashTable<[string, number]>) => void = (slots: Util.IHashTable<[string, number]>) => {
-                    this._s = slots;
-                    if ({} == slots)
+                    if (!slots) {
                         this._l = false;
+                    } else
+                        this._s = slots;
                     resolve(this);
                 };
                 this._r.dispatchEvent(new Ev.Query({
