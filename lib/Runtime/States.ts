@@ -177,17 +177,23 @@ namespace Runtime {
         /**
          * 加载存档信息。
          */
-        public l(): void {
-            if (this._l) return;
-            this._l = true;
-            this._s = {};
-            let query: (slots: Util.IHashTable<[string, number]>) => void = (slots: Util.IHashTable<[string, number]>) => {
-                this._s = slots;
-            };
-            this._r.dispatchEvent(new Ev.Query({
-                target: this,
-                callback: query
-            }));
+        public l(): Promise<States> {
+            return new Promise((resolve: (states: States) => void) => {
+                if (this._l)
+                    return resolve(this);
+                this._l = true;
+                this._s = {};
+                let query: (slots: Util.IHashTable<[string, number]>) => void = (slots: Util.IHashTable<[string, number]>) => {
+                    this._s = slots;
+                    if ({} == slots)
+                        this._l = false;
+                    resolve(this);
+                };
+                this._r.dispatchEvent(new Ev.Query({
+                    target: this,
+                    callback: query
+                }));
+            });
         }
     }
 }

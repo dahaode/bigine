@@ -1053,17 +1053,22 @@ var Runtime;
          */
         States.prototype.l = function () {
             var _this = this;
-            if (this._l)
-                return;
-            this._l = true;
-            this._s = {};
-            var query = function (slots) {
-                _this._s = slots;
-            };
-            this._r.dispatchEvent(new Ev.Query({
-                target: this,
-                callback: query
-            }));
+            return new Promise(function (resolve) {
+                if (_this._l)
+                    return resolve(_this);
+                _this._l = true;
+                _this._s = {};
+                var query = function (slots) {
+                    _this._s = slots;
+                    if ({} == slots)
+                        _this._l = false;
+                    resolve(_this);
+                };
+                _this._r.dispatchEvent(new Ev.Query({
+                    target: _this,
+                    callback: query
+                }));
+            });
         };
         return States;
     })();
@@ -2465,50 +2470,54 @@ var Sprite;
          */
         Slots.prototype.vs = function (states, duration) {
             var _this = this;
-            var $1 = states.q('1'), _1 = this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
-            this.a(this._x['1'] = new G.Button(_1)
-                .b(function () {
-                _this.dispatchEvent(new Ev.SlotsSave({ target: _this }));
-            }, new G.Image(this._rr[5].o(), _1, true), new G.Image(this._rr[4].o(), _1, true))
-                .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
-                .tc(_1t['c'])
-                .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))));
-            return this.v(duration);
+            return states.l().then(function () {
+                var $1 = states.q('1'), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+                _this.a(_this._x['1'] = new G.Button(_1)
+                    .b(function () {
+                    _this.dispatchEvent(new Ev.SlotsSave({ target: _this }));
+                }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true))
+                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
+                    .tc(_1t['c'])
+                    .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）'))));
+                return _this.v(duration);
+            });
         };
         /**
          * 显示读档位。
          */
         Slots.prototype.vl = function (states, duration) {
             var _this = this;
-            var $a = states.q('auto'), _a = this._c[0], _at = _a['text'], $1 = states.q('1'), _1 = this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
-            this.a(this._x['a'] = $a ?
-                new G.Button(_a)
-                    .b(function () {
-                    _this.dispatchEvent(new Ev.SlotsLoad({
-                        target: _this,
-                        id: $a[0]
-                    }));
-                }, new G.Image(this._rr[3].o(), _a, true), new G.Image(this._rr[2].o(), _a, true)) :
-                new G.Sprite(_a)
-                    .a(new G.Image(this._rr[2].o(), _a, true))).a(this._x['1'] = $1 ?
-                new G.Button(_1)
-                    .b(function () {
-                    _this.dispatchEvent(new Ev.SlotsLoad({
-                        target: _this,
-                        id: $1[0]
-                    }));
-                }, new G.Image(this._rr[5].o(), _1, true), new G.Image(this._rr[4].o(), _1, true)) :
-                new G.Sprite(_1)
-                    .a(new G.Image(this._rr[4].o(), _1, true)));
-            this._x['a']
-                .a(new G.Text(_at, _at['s'], _at['lh'], right, true)
-                .tc(_at['c'])
-                .a(new G.TextPhrase($a ? this.$d($a[1]) : '（无）')));
-            this._x['1']
-                .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
-                .tc(_1t['c'])
-                .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）')));
-            return this.v(duration);
+            return states.l().then(function () {
+                var $a = states.q('auto'), _a = _this._c[0], _at = _a['text'], $1 = states.q('1'), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+                _this.a(_this._x['a'] = $a ?
+                    new G.Button(_a)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsLoad({
+                            target: _this,
+                            id: $a[0]
+                        }));
+                    }, new G.Image(_this._rr[3].o(), _a, true), new G.Image(_this._rr[2].o(), _a, true)) :
+                    new G.Sprite(_a)
+                        .a(new G.Image(_this._rr[2].o(), _a, true))).a(_this._x['1'] = $1 ?
+                    new G.Button(_1)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsLoad({
+                            target: _this,
+                            id: $1[0]
+                        }));
+                    }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true)) :
+                    new G.Sprite(_1)
+                        .a(new G.Image(_this._rr[4].o(), _1, true)));
+                _this._x['a']
+                    .a(new G.Text(_at, _at['s'], _at['lh'], right, true)
+                    .tc(_at['c'])
+                    .a(new G.TextPhrase($a ? _this.$d($a[1]) : '（无）')));
+                _this._x['1']
+                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
+                    .tc(_1t['c'])
+                    .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）')));
+                return _this.v(duration);
+            });
         };
         /**
          * 隐藏。

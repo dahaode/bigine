@@ -73,65 +73,69 @@ namespace Sprite {
          * 显示存档位。
          */
         public vs(states: Core.IStates, duration?: number): Promise<Slots> {
-            let $1: [string, number] = states.q('1'),
-                _1: Util.IHashTable<any> = this._c[1],
-                _1t: Util.IHashTable<any> = _1['text'],
-                right: G.Text.Align = G.Text.Align.Right;
-            this.a(this._x['1'] = new G.Button(<G.IBounds> _1)
-                .b(() => {
-                    this.dispatchEvent(new Ev.SlotsSave({ target: this }));
-                }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
-                .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
-                    .tc(_1t['c'])
-                    .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
-                )
-            );
-            return this.v(duration);
+            return states.l().then(() => {
+                let $1: [string, number] = states.q('1'),
+                    _1: Util.IHashTable<any> = this._c[1],
+                    _1t: Util.IHashTable<any> = _1['text'],
+                    right: G.Text.Align = G.Text.Align.Right;
+                this.a(this._x['1'] = new G.Button(<G.IBounds> _1)
+                    .b(() => {
+                        this.dispatchEvent(new Ev.SlotsSave({ target: this }));
+                    }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
+                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
+                        .tc(_1t['c'])
+                        .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
+                    )
+                );
+                return this.v(duration);
+            });
         }
 
         /**
          * 显示读档位。
          */
         public vl(states: Core.IStates, duration?: number): Promise<Slots> {
-            let $a: [string, number] = states.q('auto'),
-                _a: Util.IHashTable<any> = this._c[0],
-                _at: Util.IHashTable<any> = _a['text'],
-                $1: [string, number] = states.q('1'),
-                _1: Util.IHashTable<any> = this._c[1],
-                _1t: Util.IHashTable<any> = _1['text'],
-                right: G.Text.Align = G.Text.Align.Right;
-            this.a(this._x['a'] = $a ?
-                new G.Button(<G.IBounds> _a)
-                    .b(() => {
-                        this.dispatchEvent(new Ev.SlotsLoad({
-                            target: this,
-                            id: $a[0]
-                        }));
-                    }, new G.Image(this._rr[3].o(), <G.IBounds> _a, true), new G.Image(this._rr[2].o(), <G.IBounds> _a, true)) :
-                new G.Sprite(<G.IBounds> _a)
-                    .a(new G.Image(this._rr[2].o(), <G.IBounds> _a, true))
-            ).a(this._x['1'] = $1 ?
-                new G.Button(<G.IBounds> _1)
-                    .b(() => {
-                        this.dispatchEvent(new Ev.SlotsLoad({
-                            target: this,
-                            id: $1[0]
-                        }));
-                    }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true)) :
-                new G.Sprite(<G.IBounds> _1)
-                    .a(new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
-            );
-            (<G.Sprite> this._x['a'])
-                .a(new G.Text(<G.IBounds> _at, _at['s'], _at['lh'], right, true)
-                    .tc(_at['c'])
-                    .a(new G.TextPhrase($a ? this.$d($a[1]) : '（无）'))
-                );
-            (<G.Sprite> this._x['1'])
-                .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
-                    .tc(_1t['c'])
-                    .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
-                );
-            return this.v(duration);
+            return states.l().then(() => {
+                let $a: [string, number] = states.q('auto'),
+                    _a: Util.IHashTable<any> = this._c[0],
+                    _at: Util.IHashTable<any> = _a['text'],
+                    $1: [string, number] = states.q('1'),
+                    _1: Util.IHashTable<any> = this._c[1],
+                    _1t: Util.IHashTable<any> = _1['text'],
+                    right: G.Text.Align = G.Text.Align.Right;
+                this.a(this._x['a'] = $a ?
+                    new G.Button(<G.IBounds> _a)
+                        .b(() => {
+                            this.dispatchEvent(new Ev.SlotsLoad({
+                                target: this,
+                                id: $a[0]
+                            }));
+                        }, new G.Image(this._rr[3].o(), <G.IBounds> _a, true), new G.Image(this._rr[2].o(), <G.IBounds> _a, true)) :
+                    new G.Sprite(<G.IBounds> _a)
+                        .a(new G.Image(this._rr[2].o(), <G.IBounds> _a, true))
+                ).a(this._x['1'] = $1 ?
+                    new G.Button(<G.IBounds> _1)
+                        .b(() => {
+                            this.dispatchEvent(new Ev.SlotsLoad({
+                                target: this,
+                                id: $1[0]
+                            }));
+                        }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true)) :
+                    new G.Sprite(<G.IBounds> _1)
+                        .a(new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
+                    );
+                (<G.Sprite> this._x['a'])
+                    .a(new G.Text(<G.IBounds> _at, _at['s'], _at['lh'], right, true)
+                        .tc(_at['c'])
+                        .a(new G.TextPhrase($a ? this.$d($a[1]) : '（无）'))
+                    );
+                (<G.Sprite> this._x['1'])
+                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
+                        .tc(_1t['c'])
+                        .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
+                    );
+                return this.v(duration);
+            });
         }
 
         /**

@@ -104,6 +104,6 @@ namespace Core {
         /**
          * 加载存档信息。
          */
-        l(): void;
+        l(): Promise<IStates>;
     }
 }

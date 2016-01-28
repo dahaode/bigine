@@ -55,7 +55,7 @@ declare namespace __Bigine {
             e(manual: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): IStates;
             q(index: string): [string, number];
-            l(): void;
+            l(): Promise<IStates>;
         }
     }
     namespace Core {
@@ -347,7 +347,7 @@ declare namespace __Bigine {
             e(manual: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): States;
             q(index: string): [string, number];
-            l(): void;
+            l(): Promise<States>;
         }
     }
     namespace Resource {
