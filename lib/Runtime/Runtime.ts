@@ -73,6 +73,11 @@ namespace Runtime {
         private _fh: boolean;
 
         /**
+         * 是否允许变更自动播放状态。
+         */
+        private _fb: boolean;
+
+        /**
          * 当前时序流。
          */
         private _t: Promise<Runtime>;
@@ -102,8 +107,9 @@ namespace Runtime {
             this._fv = 1;
             this._fa = this._e.gA();
             this._d.a(this._fa);
+            this._fb = true;
             this._t = Promise.resolve(this);
-            this.addEventListener<Episode>('ready', () => {
+            this.addEventListener('ready', () => {
                 this._s.l();
                 this._d.t(this._e.gT(), this._e.gC())
                     .s(ep.s())
@@ -114,10 +120,15 @@ namespace Runtime {
                     this.play();
                 }
             });
-            this.addEventListener<Episode>('begin', () => {
+            this.addEventListener('begin', () => {
+                this._fb = true;
                 this.t(() => this._e.p(Core.ISceneTag.Type.Begin, this));
             });
-            this.addEventListener<Episode>('end', () => {
+            this.addEventListener('resume', () => {
+                this._fb = true;
+            });
+            this.addEventListener('end', () => {
+                this._fb =
                 this._fp = false;
             });
         }
@@ -196,6 +207,7 @@ namespace Runtime {
             if (this._fp)
                 return this;
             this._fp = true;
+            this._fb = false;
             if (!this._fr)
                 return this;
             this._s.i({});
@@ -237,7 +249,7 @@ namespace Runtime {
          * 设置或获取自动播放设置。
          */
         public auto(auto?: boolean): boolean {
-            if (undefined !== auto)
+            if (this._fb && undefined !== auto)
                 this._fa = this._d.a(!!auto);
             return this._fa;
         }

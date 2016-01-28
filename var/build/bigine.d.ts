@@ -1563,6 +1563,7 @@ declare namespace __Bigine {
             private _fv;
             private _fa;
             private _fh;
+            private _fb;
             private _t;
             private _n;
             private _c;

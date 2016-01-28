@@ -8953,6 +8953,7 @@ var Runtime;
             this._fv = 1;
             this._fa = this._e.gA();
             this._d.a(this._fa);
+            this._fb = true;
             this._t = Promise.resolve(this);
             this.addEventListener('ready', function () {
                 _this._s.l();
@@ -8966,10 +8967,15 @@ var Runtime;
                 }
             });
             this.addEventListener('begin', function () {
+                _this._fb = true;
                 _this.t(function () { return _this._e.p(Core.ISceneTag.Type.Begin, _this); });
             });
+            this.addEventListener('resume', function () {
+                _this._fb = true;
+            });
             this.addEventListener('end', function () {
-                _this._fp = false;
+                _this._fb =
+                    _this._fp = false;
             });
         }
         /**
@@ -9040,6 +9046,7 @@ var Runtime;
             if (this._fp)
                 return this;
             this._fp = true;
+            this._fb = false;
             if (!this._fr)
                 return this;
             this._s.i({});
@@ -9078,7 +9085,7 @@ var Runtime;
          * 设置或获取自动播放设置。
          */
         Runtime.prototype.auto = function (auto) {
-            if (undefined !== auto)
+            if (this._fb && undefined !== auto)
                 this._fa = this._d.a(!!auto);
             return this._fa;
         };
