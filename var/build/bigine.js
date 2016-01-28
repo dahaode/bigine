@@ -2946,6 +2946,46 @@ var Sprite;
 /// <reference path="Choose.ts" />
 /// <reference path="CG.ts" />
 /**
+ * 声明剧情结束事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IFinMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
+/**
+ * 定义剧情结束事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Fin.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IFinMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Fin = (function (_super) {
+        __extends(Fin, _super);
+        /**
+         * 构造函数。
+         */
+        function Fin(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        Fin.prototype.gT = function () {
+            return 'fin';
+        };
+        return Fin;
+    })(Ev.Event);
+    Ev.Fin = Fin;
+})(Ev || (Ev = {}));
+/**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2955,6 +2995,7 @@ var Sprite;
  */
 /// <reference path="Director.ts" />
 /// <reference path="../../Sprite/_pack.ts" />
+/// <reference path="../../Ev/_Runtime/Fin.ts" />
 /**
  * * b - 背景
  * * M - 地图
@@ -3096,6 +3137,9 @@ var Runtime;
                 _this.playSE();
                 return _this.lightOff()
                     .then(function () {
+                    _this._r.dispatchEvent(new Ev.Fin({
+                        target: _this._r.gE()
+                    }));
                     _this._c.a(gED, _this._x['c']);
                     _this._x['t'].h(0);
                     return _this.lightOn();
@@ -3266,6 +3310,9 @@ var Runtime;
                 var gStars = new G.Image(_this._i[key].o(), CanvasDirector.BOUNDS);
                 return _this.lightOff()
                     .then(function () {
+                    _this._r.dispatchEvent(new Ev.Fin({
+                        target: _this._r.gE()
+                    }));
                     _this._x['t'].h(0);
                     _this._c.a(gStars, _this._x['c']);
                     return _this.lightOn();

@@ -701,6 +701,16 @@ declare namespace __Bigine {
             u(image: Resource.Resource<HTMLImageElement>): CG;
         }
     }
+    namespace Ev {
+        interface IFinMetas extends Util.IEventMetas<Core.IEpisode> {
+        }
+    }
+    namespace Ev {
+        class Fin extends Event<Core.IEpisode> {
+            constructor(metas: IFinMetas);
+            gT(): string;
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;

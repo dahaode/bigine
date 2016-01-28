@@ -9,6 +9,7 @@
 
 /// <reference path="Director.ts" />
 /// <reference path="../../Sprite/_pack.ts" />
+/// <reference path="../../Ev/_Runtime/Fin.ts" />
 
 /**
  * * b - 背景
@@ -213,6 +214,9 @@ namespace Runtime {
                     this.playSE();
                     return this.lightOff()
                         .then(() => {
+                            this._r.dispatchEvent(new Ev.Fin({
+                                target: this._r.gE()
+                            }));
                             this._c.a(gED, this._x['c']);
                             this._x['t'].h(0);
                             return this.lightOn();
@@ -400,6 +404,9 @@ namespace Runtime {
                     var gStars: G.Image = new G.Image(this._i[key].o(), CanvasDirector.BOUNDS);
                     return this.lightOff()
                         .then(() => {
+                            this._r.dispatchEvent(new Ev.Fin({
+                                target: this._r.gE()
+                            }));
                             this._x['t'].h(0);
                             this._c.a(gStars, this._x['c']);
                             return this.lightOn();
