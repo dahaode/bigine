@@ -754,6 +754,16 @@ declare namespace __Bigine {
         }
     }
     namespace Ev {
+        interface IResumeMetas extends Util.IEventMetas<Core.IEpisode> {
+        }
+    }
+    namespace Ev {
+        class Resume extends Event<Core.IEpisode> {
+            constructor(metas: IResumeMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
         interface ILoadMetas extends Util.IEventMetas<Core.IStates> {
             callback: (data: Util.IHashTable<any>) => void;
             id: string;

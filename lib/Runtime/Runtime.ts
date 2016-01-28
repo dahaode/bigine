@@ -11,6 +11,7 @@
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
 /// <reference path="../Ev/_Runtime/Begin.ts" />
+/// <reference path="../Ev/_Runtime/Resume.ts" />
 /// <reference path="../Ev/_Runtime/Load.ts" />
 /// <reference path="../Ev/_Runtime/Query.ts" />
 /// <reference path="../Ev/_Runtime/Scene.ts" />
@@ -356,6 +357,9 @@ namespace Runtime {
                         this._fh = false;
                         tn = states.g(ktn);
                         cn = states.g(kcn);
+                        this.dispatchEvent(new Ev.Resume({
+                            target: episode
+                        }));
                         if (tn || cn) {
                             if (cn) {
                                 if (tn) {

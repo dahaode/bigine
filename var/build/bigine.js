@@ -3703,6 +3703,46 @@ var Runtime;
     })(DirectorFactory = Runtime.DirectorFactory || (Runtime.DirectorFactory = {}));
 })(Runtime || (Runtime = {}));
 /**
+ * 声明（运行时）继续游戏事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IResumeMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
+/**
+ * 定义（运行时）继续游戏事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Resume.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IResumeMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Resume = (function (_super) {
+        __extends(Resume, _super);
+        /**
+         * 构造函数。
+         */
+        function Resume(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        Resume.prototype.gT = function () {
+            return 'resume';
+        };
+        return Resume;
+    })(Ev.Event);
+    Ev.Resume = Resume;
+})(Ev || (Ev = {}));
+/**
  * 声明（运行时）读档事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -8887,6 +8927,7 @@ var Tag;
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
 /// <reference path="../Ev/_Runtime/Begin.ts" />
+/// <reference path="../Ev/_Runtime/Resume.ts" />
 /// <reference path="../Ev/_Runtime/Load.ts" />
 /// <reference path="../Ev/_Runtime/Query.ts" />
 /// <reference path="../Ev/_Runtime/Scene.ts" />
@@ -9136,6 +9177,9 @@ var Runtime;
                         _this._fh = false;
                         tn = states.g(ktn);
                         cn = states.g(kcn);
+                        _this.dispatchEvent(new Ev.Resume({
+                            target: episode
+                        }));
                         if (tn || cn) {
                             if (cn) {
                                 if (tn) {
