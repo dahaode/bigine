@@ -1053,16 +1053,16 @@ var Runtime;
          */
         States.prototype.l = function () {
             var _this = this;
-            return new Promise(function (resolve) {
+            return new Promise(function (resolve, reject) {
                 if (_this._l)
                     return resolve(_this);
                 _this._l = true;
                 var query = function (slots) {
                     if (!slots) {
                         _this._l = false;
+                        return reject();
                     }
-                    else
-                        _this._s = slots;
+                    _this._s = slots;
                     resolve(_this);
                 };
                 _this._r.dispatchEvent(new Ev.Query({
@@ -3574,12 +3574,20 @@ var Runtime;
                 _this._x['m'].h();
             }).addEventListener('menu.save', function () {
                 slotsFromStart = false;
-                _this._x['sl'].vs(_this._r.gS());
-                _this._x['m'].h();
+                _this._x['sl'].vs(_this._r.gS())
+                    .then(function () {
+                    _this._x['m'].h();
+                })['catch'](function () {
+                    return;
+                });
             }).addEventListener('menu.load', function () {
                 slotsFromStart = false;
-                _this._x['sl'].vl(_this._r.gS());
-                _this._x['m'].h();
+                _this._x['sl'].vl(_this._r.gS())
+                    .then(function () {
+                    _this._x['m'].h();
+                })['catch'](function () {
+                    return;
+                });
             });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
@@ -3594,7 +3602,9 @@ var Runtime;
             }).addEventListener('start.load', function (event) {
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
-                _this._x['sl'].vl(_this._r.gS(), 250);
+                _this._x['sl'].vl(_this._r.gS(), 250)['catch'](function () {
+                    return;
+                });
             });
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);

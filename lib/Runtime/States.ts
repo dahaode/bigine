@@ -178,15 +178,16 @@ namespace Runtime {
          * 加载存档信息。
          */
         public l(): Promise<States> {
-            return new Promise((resolve: (states: States) => void) => {
+            return new Promise((resolve: (states: States) => void, reject: (reason?: any) => void) => {
                 if (this._l)
                     return resolve(this);
                 this._l = true;
                 let query: (slots: Util.IHashTable<[string, number]>) => void = (slots: Util.IHashTable<[string, number]>) => {
                     if (!slots) {
                         this._l = false;
-                    } else
-                        this._s = slots;
+                        return reject();
+                    }
+                    this._s = slots;
                     resolve(this);
                 };
                 this._r.dispatchEvent(new Ev.Query({

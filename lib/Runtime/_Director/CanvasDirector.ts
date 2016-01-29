@@ -677,12 +677,20 @@ namespace Runtime {
                     this._x['m'].h();
                 }).addEventListener('menu.save', () => {
                     slotsFromStart = false;
-                    (<Sprite.Slots> this._x['sl']).vs(this._r.gS());
-                    this._x['m'].h();
+                    (<Sprite.Slots> this._x['sl']).vs(this._r.gS())
+                        .then(() => {
+                            this._x['m'].h();
+                        })['catch'](() => {
+                            return;
+                        });
                 }).addEventListener('menu.load', () => {
                     slotsFromStart = false;
-                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS());
-                    this._x['m'].h();
+                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS())
+                        .then(() => {
+                            this._x['m'].h();
+                        })['catch'](() => {
+                            return;
+                        });
                 });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
@@ -697,7 +705,10 @@ namespace Runtime {
                 }).addEventListener('start.load', (event: Ev.StartLoad) => {
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
-                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS(), 250);
+                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS(), 250)
+                        ['catch'](() => {
+                            return;
+                        });
                 });
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
