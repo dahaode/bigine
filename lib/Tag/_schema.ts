@@ -86,6 +86,7 @@ namespace Tag {
         Copy: '复制数据',
         Add: '数据合值',
         Subtract: '数据差值',
+        Product: '数据倍值',
 
         DefOptions: '定义选择',
         AddOption: '添加选项',
@@ -114,7 +115,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 75
+    export var S: { [index: number]: any[] } = { // next 76
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -253,6 +254,9 @@ namespace Tag {
             53: [1]
         }],
         72: ['Subtract', 2, -1, { // [变量名, 基数变量名]
+            53: [1]
+        }],
+        75: ['Product', 1, -1, { // [变量名]
             53: [1]
         }],
 

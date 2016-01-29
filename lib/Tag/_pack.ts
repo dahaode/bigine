@@ -65,3 +65,4 @@
 /// <reference path="_Action/_Logic/Add.ts" />
 /// <reference path="_Action/_Logic/Subtract.ts" />
 /// <reference path="_Structure/Status.ts" />
+/// <reference path="_Action/_Logic/Product.ts" />

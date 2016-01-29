@@ -4015,6 +4015,7 @@ var Tag;
         Copy: '复制数据',
         Add: '数据合值',
         Subtract: '数据差值',
+        Product: '数据倍值',
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
@@ -4165,6 +4166,9 @@ var Tag;
                 53: [1]
             }],
         72: ['Subtract', 2, -1, {
+                53: [1]
+            }],
+        75: ['Product', 1, -1, {
                 53: [1]
             }],
         22: ['Assert', [2, 3], -1],
@@ -8917,6 +8921,53 @@ var Tag;
     Tag.Subtract = Subtract;
 })(Tag || (Tag = {}));
 /**
+ * 定义数据倍值动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/Product.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Product = (function (_super) {
+        __extends(Product, _super);
+        function Product() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Product.prototype.gN = function () {
+            return 'Product';
+        };
+        /**
+         * （执行）检查。
+         */
+        Product.prototype.t = function (states) {
+            var value = 1, depth = states.g('$d');
+            Util.each(this._s, function (tag) {
+                value *= states.g(tag.$p(0)) - 0 || 0;
+            });
+            states.s(this._p[0], value)
+                .c(this._p[0], '$v' + depth)
+                .s('$t' + depth, false);
+            return true;
+        };
+        /**
+         * 执行。
+         */
+        Product.prototype.p = function (runtime) {
+            this.t(runtime.gS());
+            return runtime;
+        };
+        return Product;
+    })(Tag.Action);
+    Tag.Product = Product;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -8982,6 +9033,7 @@ var Tag;
 /// <reference path="_Action/_Logic/Add.ts" />
 /// <reference path="_Action/_Logic/Subtract.ts" />
 /// <reference path="_Structure/Status.ts" />
+/// <reference path="_Action/_Logic/Product.ts" />
 /**
  * 定义（作品）运行时组件。
  *

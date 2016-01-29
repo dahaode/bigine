@@ -1561,6 +1561,13 @@ declare namespace __Bigine {
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
     }
+    namespace Tag {
+        class Product extends Action {
+            gN(): string;
+            t(states: Core.IStates): boolean;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
     namespace Runtime {
         class Runtime implements Core.IRuntime {
             private _a;
