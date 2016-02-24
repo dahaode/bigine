@@ -34,6 +34,11 @@ namespace Tag {
         DefSE: '音效',
         DefWeather: '天气',
 
+        Struct: '结构',
+        Field: '字段',
+        FieldType: '类别',
+        FieldLimit: '上限',
+
         Auto: '自动播放',
         Player: '主角',
         Resources: '素材包',
@@ -87,6 +92,7 @@ namespace Tag {
         Add: '数据合值',
         Subtract: '数据差值',
         Product: '数据倍值',
+        Define: '定义数据',
 
         DefOptions: '定义选择',
         AddOption: '添加选项',
@@ -115,7 +121,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 76
+    export var S: { [index: number]: any[] } = { // next 81
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -123,6 +129,7 @@ namespace Tag {
             57: 1,
             73: [0, 1],
             74: [0, 1],
+            76: [0],
             49: [1],
             33: [0],
             34: [0],
@@ -286,6 +293,19 @@ namespace Tag {
         }],
         27: ['Otherwise', 0, -1, {
             '-1': [1]
+        }],
+
+        76: ['Struct', 0, 1, { // 命名
+            77: [1]
+        }],
+        77: ['Field', 0, 1, { // 命名
+            78: [0, 1],
+            79: [0, 1]
+        }],
+        78: ['FieldType', 0, 1], // 类别值
+        79: ['FieldLimit', 0, 1], // 上限值
+        80: ['Define', 1, 1, { // [结构名] 数据名
+            53: [0]
         }]
     };
     var ii: any,

@@ -56,7 +56,7 @@ namespace Runtime {
          * 设置值。
          */
         public s(key: string, value: any): States {
-            this._r.gL().d('[state]', key, '=', '$' == key[0] ? value : JSON.stringify(value));
+            this._r.gL().d('[state]', key, '=', value);
             this._d[key] = value;
             return this;
         }

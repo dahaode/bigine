@@ -80,7 +80,11 @@ namespace Core {
             /**
              * 主角（特殊类型）。
              */
-            Player
+            Player,
+            /**
+             * 结构。
+             */
+            Struct
         }
     }
 }
