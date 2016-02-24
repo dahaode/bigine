@@ -57,19 +57,6 @@ namespace Tag {
                 });
                 this._ms[child.$c()] = child.g(field ? data[field.$c()] : null);
             });
-
-            // Util.each(data, (val: string, key: string) => {
-            //     var field: Field = null;
-            //     Util.every(this._s, (child: Field) => {
-            //         if (child.$c() == key) {
-            //             field = child;
-            //             return false;
-            //         }
-            //         return true;
-            //     });
-            //     this._ms[key] = field.g(data[key]);
-            // });
-            console.log("this._ms", this._ms);
             return this._ms;
         }
     }
