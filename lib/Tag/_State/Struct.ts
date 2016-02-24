@@ -14,18 +14,10 @@ namespace Tag {
 
     export class Struct extends Entity {
         /**
-         * 定义结构体对象。
-         */
-        private _ms: Util.IHashTable<any>;
-        /**
          * 构造函数。
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
-            this._ms = {};
-            Util.each(children, (field: Unknown) => {
-                this._ms[field.$c()] = '';
-            });
         }
 
         /**
@@ -46,18 +38,12 @@ namespace Tag {
          * 获取结构体对象。
          */
         public g(data: Util.IHashTable<any>): Util.IHashTable<any> {
+            var result: Util.IHashTable<any> = {'：': this._c};
             Util.each(this._s, (child: Field) => {
-                var field: Field = null;
-                Util.every(data, (val: string, key: string) => {
-                    if (child.$c() == key) {
-                        field = child;
-                        return false;
-                    }
-                    return true;
-                });
-                this._ms[child.$c()] = child.g(field ? data[field.$c()] : null);
+                var fieldVal: string = data[child.$c()];
+                result[child.$c()] = child.g(fieldVal ? fieldVal : null);
             });
-            return this._ms;
+            return result;
         }
     }
 }

@@ -92,6 +92,10 @@ class E extends Error {
 
     public static OPT_OPTIONS_CONFLICT: string = '选项声明冲突';
 
+    public static COLL_STRUCT_DISMATCHED: string = '数据非指定结构类型';
+
+    public static STRUCT_FIELD_MISSING: string = '实体字段内容缺失';
+
     /**
      * 信号。
      */

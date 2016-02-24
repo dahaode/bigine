@@ -93,6 +93,9 @@ namespace Tag {
         Subtract: '数据差值',
         Product: '数据倍值',
         Define: '定义数据',
+        Collection: '定义集合',
+        CollPop: '删除元素',
+        CollPush: '增加元素',
 
         DefOptions: '定义选择',
         AddOption: '添加选项',
@@ -121,7 +124,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 81
+    export var S: { [index: number]: any[] } = { // next 84
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -306,7 +309,12 @@ namespace Tag {
         79: ['FieldLimit', 0, 1], // 上限值
         80: ['Define', 1, 1, { // [结构名] 数据名
             53: [0]
-        }]
+        }],
+        81: ['Collection', 1, 1, { // [结构名] 数据名
+            53: [0]
+        }],
+        82: ['CollPush', 1, 1], // [集合名] 数据名
+        83: ['CollPop', 1, 1] // [集合名] 数据名
     };
     var ii: any,
         jj: any;
