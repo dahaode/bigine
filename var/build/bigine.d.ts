@@ -220,6 +220,7 @@ declare namespace __Bigine {
                 Map = 5,
                 Weather = 6,
                 Player = 7,
+                Struct = 8,
             }
         }
     }
@@ -870,6 +871,8 @@ declare namespace __Bigine {
         static UTIL_REMOTE_TIMEOUT: string;
         static OPT_OPTIONS_MISSING: string;
         static OPT_OPTIONS_CONFLICT: string;
+        static COLL_STRUCT_DISMATCHED: string;
+        static STRUCT_FIELD_MISSING: string;
         signal: E.Signal;
         constructor(message: string, lineNo?: number);
         static doHalt<T>(): Promise<T>;
@@ -1566,6 +1569,63 @@ declare namespace __Bigine {
             gN(): string;
             t(states: Core.IStates): boolean;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class Define extends Action {
+            private _ms;
+            private _md;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            $b(ep: Core.IEpisode): void;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class Collection extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class CollPush extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class CollPop extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class Struct extends Entity {
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            gT(): Core.IEpisode.Entity;
+            g(data: Util.IHashTable<any>): Util.IHashTable<any>;
+        }
+    }
+    namespace Tag {
+        class Field extends Unknown {
+            private _ep;
+            private numberTypes;
+            private entityTypes;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            $b(ep: Core.IEpisode): void;
+            gN(): string;
+            g(val: string): number | string | Entity;
+        }
+    }
+    namespace Tag {
+        class FieldType extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class FieldLimit extends Unknown {
+            gN(): string;
         }
     }
     namespace Runtime {

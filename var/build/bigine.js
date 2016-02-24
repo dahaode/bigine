@@ -372,6 +372,10 @@ var Core;
              * 主角（特殊类型）。
              */
             Entity[Entity["Player"] = 7] = "Player";
+            /**
+             * 结构。
+             */
+            Entity[Entity["Struct"] = 8] = "Struct";
         })(IEpisode.Entity || (IEpisode.Entity = {}));
         var Entity = IEpisode.Entity;
     })(IEpisode = Core.IEpisode || (Core.IEpisode = {}));
@@ -690,6 +694,9 @@ var Runtime;
                     target: _this
                 }));
             })['catch'](function (error) {
+                console.log("--------错误日志---------");
+                console.error(error);
+                console.log("--------错误日志---------");
                 runtime.dispatchEvent(new Ev.Error({
                     target: _this,
                     error: error
@@ -937,7 +944,7 @@ var Runtime;
          * 设置值。
          */
         States.prototype.s = function (key, value) {
-            this._r.gL().d('[state]', key, '=', '$' == key[0] ? value : JSON.stringify(value));
+            this._r.gL().d('[state]', key, '=', value);
             this._d[key] = value;
             return this;
         };
@@ -3969,6 +3976,10 @@ var Tag;
         Times: '时刻',
         DefSE: '音效',
         DefWeather: '天气',
+        Struct: '结构',
+        Field: '字段',
+        FieldType: '类别',
+        FieldLimit: '上限',
         Auto: '自动播放',
         Player: '主角',
         Resources: '素材包',
@@ -4016,6 +4027,10 @@ var Tag;
         Add: '数据合值',
         Subtract: '数据差值',
         Product: '数据倍值',
+        Define: '定义数据',
+        Collection: '定义集合',
+        CollPop: '删除元素',
+        CollPush: '增加元素',
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
@@ -4049,6 +4064,7 @@ var Tag;
                 57: 1,
                 73: [0, 1],
                 74: [0, 1],
+                76: [0],
                 49: [1],
                 33: [0],
                 34: [0],
@@ -4196,7 +4212,24 @@ var Tag;
             }],
         27: ['Otherwise', 0, -1, {
                 '-1': [1]
-            }]
+            }],
+        76: ['Struct', 0, 1, {
+                77: [1]
+            }],
+        77: ['Field', 0, 1, {
+                78: [0, 1],
+                79: [0, 1]
+            }],
+        78: ['FieldType', 0, 1],
+        79: ['FieldLimit', 0, 1],
+        80: ['Define', 1, 1, {
+                53: [0]
+            }],
+        81: ['Collection', 1, 1, {
+                53: [0]
+            }],
+        82: ['CollPush', 1, 1],
+        83: ['CollPop', 1, 1] // [集合名] 数据名
     };
     var ii, jj;
     for (ii in Tag.S)
@@ -4323,6 +4356,8 @@ var E = (function (_super) {
     E.UTIL_REMOTE_TIMEOUT = '远端请求超时';
     E.OPT_OPTIONS_MISSING = '选项声明缺失';
     E.OPT_OPTIONS_CONFLICT = '选项声明冲突';
+    E.COLL_STRUCT_DISMATCHED = '数据非指定结构类型';
+    E.STRUCT_FIELD_MISSING = '实体字段内容缺失';
     return E;
 })(Error);
 var E;
@@ -8968,6 +9003,351 @@ var Tag;
     Tag.Product = Product;
 })(Tag || (Tag = {}));
 /**
+ * 定义定义数据动作标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/Define.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Define = (function (_super) {
+        __extends(Define, _super);
+        /**
+         * 构造函数。
+         */
+        function Define(params, content, children, lineNo) {
+            var _this = this;
+            _super.call(this, params, content, children, lineNo);
+            this._md = {};
+            Util.each(children, function (child) {
+                var fieldName = child.$p(0);
+                var fieldVal = child.$c();
+                _this._md[fieldName] = fieldVal;
+            });
+        }
+        /**
+         * 获取标签名称。
+         */
+        Define.prototype.gN = function () {
+            return 'Define';
+        };
+        /**
+         * 绑定（运行时）作品（实体）。
+         */
+        Define.prototype.$b = function (ep) {
+            this._ms = ep.q(this._p[0], Core.IEpisode.Entity.Struct, this._l);
+        };
+        /**
+         * 执行。
+         */
+        Define.prototype.p = function (runtime) {
+            runtime.gS().s(this._c, this._ms.g(this._md));
+            return runtime;
+        };
+        return Define;
+    })(Tag.Action);
+    Tag.Define = Define;
+})(Tag || (Tag = {}));
+/**
+ * 定义[定义集合]动作标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/Collection.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Collection = (function (_super) {
+        __extends(Collection, _super);
+        function Collection() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Collection.prototype.gN = function () {
+            return 'Collection';
+        };
+        /**
+         * 执行。
+         */
+        Collection.prototype.p = function (runtime) {
+            var _this = this;
+            var states = runtime.gS(), type = '：', coll = {
+                '：': this._p[0],
+                '': []
+            }, obj;
+            Util.each(this._s, function (child) {
+                obj = states.g(child.$p(0));
+                if ('object' != typeof obj || !(type in obj) || obj[type] != _this._p[0]) {
+                    throw new E(E.COLL_STRUCT_DISMATCHED, _this._l);
+                }
+                coll[''].push(obj);
+            });
+            states.s(this._c, coll);
+            return runtime;
+        };
+        return Collection;
+    })(Tag.Action);
+    Tag.Collection = Collection;
+})(Tag || (Tag = {}));
+/**
+ * 定义[增加元素]动作标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/CollPush.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var CollPush = (function (_super) {
+        __extends(CollPush, _super);
+        function CollPush() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CollPush.prototype.gN = function () {
+            return 'CollPush';
+        };
+        /**
+         * 执行。
+         */
+        CollPush.prototype.p = function (runtime) {
+            var states = runtime.gS(), collection = states.g(this._p[0]), addItem = states.g(this._c), type = "：";
+            // 要证元素的数据类型是否匹配集合的数据类型
+            if ('object' != typeof addItem || !(type in addItem) || addItem[type] != collection[type]) {
+                throw new E(E.COLL_STRUCT_DISMATCHED, this._l);
+            }
+            collection[''].push(addItem);
+            return runtime;
+        };
+        return CollPush;
+    })(Tag.Action);
+    Tag.CollPush = CollPush;
+})(Tag || (Tag = {}));
+/**
+ * 定义[删除元素]动作标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/CollPop.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var CollPop = (function (_super) {
+        __extends(CollPop, _super);
+        function CollPop() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CollPop.prototype.gN = function () {
+            return 'CollPop';
+        };
+        /**
+         * 执行。
+         */
+        CollPop.prototype.p = function (runtime) {
+            var states = runtime.gS(), coll = states.g(this._p[0])[''], delItem = states.g(this._c);
+            Util.every(coll, function (item, index) {
+                if (delItem == item) {
+                    coll.splice(index, 1);
+                    return false;
+                }
+                return true;
+            });
+            return runtime;
+        };
+        return CollPop;
+    })(Tag.Action);
+    Tag.CollPop = CollPop;
+})(Tag || (Tag = {}));
+/**
+ * 定义结构标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_State/Struct.ts
+ */
+/// <reference path="../Entity.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Struct = (function (_super) {
+        __extends(Struct, _super);
+        /**
+         * 构造函数。
+         */
+        function Struct(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Struct.prototype.gN = function () {
+            return 'Struct';
+        };
+        /**
+         * 获取类型。
+         */
+        Struct.prototype.gT = function () {
+            return Core.IEpisode.Entity.Struct;
+        };
+        /**
+         * 获取结构体对象。
+         */
+        Struct.prototype.g = function (data) {
+            var result = { '：': this._c };
+            Util.each(this._s, function (child) {
+                var fieldVal = data[child.$c()];
+                result[child.$c()] = child.g(fieldVal ? fieldVal : null);
+            });
+            return result;
+        };
+        return Struct;
+    })(Tag.Entity);
+    Tag.Struct = Struct;
+})(Tag || (Tag = {}));
+/**
+ * 定义字段标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_State/Field.ts
+ */
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Field = (function (_super) {
+        __extends(Field, _super);
+        /**
+         * 构造函数。
+         */
+        function Field(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            this.numberTypes = ['心', '星'];
+            this.entityTypes = {
+                '人物': Core.IEpisode.Entity.Chr,
+                '房间': Core.IEpisode.Entity.Room,
+                '特写': Core.IEpisode.Entity.CG
+            };
+        }
+        /**
+         * 绑定（运行时）作品（实体）。
+         */
+        Field.prototype.$b = function (ep) {
+            this._ep = ep;
+        };
+        /**
+         * 获取标签名称。
+         */
+        Field.prototype.gN = function () {
+            return 'Field';
+        };
+        /**
+         * 获取字段的值。
+         */
+        Field.prototype.g = function (val) {
+            if (this._s.length == 0)
+                return val ? val : '';
+            var fieldType = null;
+            var fieldLimit = null;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+                if (child.gN() == 'FieldLimit') {
+                    fieldLimit = child.$c();
+                }
+            });
+            if (Util.indexOf(this.numberTypes, fieldType) > -1) {
+                var limit = parseInt(fieldLimit, 10);
+                var value = (val != null && val != undefined) ? parseInt(val, 10) : 0;
+                return value > limit ? limit : value;
+            }
+            else if (this.entityTypes[fieldType]) {
+                if (!val)
+                    throw new E(E.STRUCT_FIELD_MISSING, this._l);
+                var obj = this._ep.q(val, this.entityTypes[fieldType], this._l);
+                return obj;
+            }
+            return val ? val : '';
+        };
+        return Field;
+    })(Tag.Unknown);
+    Tag.Field = Field;
+})(Tag || (Tag = {}));
+/**
+ * 定义类别标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_State/FieldType.ts
+ */
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var FieldType = (function (_super) {
+        __extends(FieldType, _super);
+        function FieldType() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        FieldType.prototype.gN = function () {
+            return 'FieldType';
+        };
+        return FieldType;
+    })(Tag.Unknown);
+    Tag.FieldType = FieldType;
+})(Tag || (Tag = {}));
+/**
+ * 定义上限标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_State/FieldLimit.ts
+ */
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var FieldLimit = (function (_super) {
+        __extends(FieldLimit, _super);
+        function FieldLimit() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        FieldLimit.prototype.gN = function () {
+            return 'FieldLimit';
+        };
+        return FieldLimit;
+    })(Tag.Unknown);
+    Tag.FieldLimit = FieldLimit;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9034,6 +9414,14 @@ var Tag;
 /// <reference path="_Action/_Logic/Subtract.ts" />
 /// <reference path="_Structure/Status.ts" />
 /// <reference path="_Action/_Logic/Product.ts" />
+/// <reference path="_Action/_Logic/Define.ts" />
+/// <reference path="_Action/_Logic/Collection.ts" />
+/// <reference path="_Action/_Logic/CollPush.ts" />
+/// <reference path="_Action/_Logic/CollPop.ts" />
+/// <reference path="_State/Struct.ts" />
+/// <reference path="_State/Field.ts" />
+/// <reference path="_State/FieldType.ts" />
+/// <reference path="_State/FieldLimit.ts" />
 /**
  * 定义（作品）运行时组件。
  *
