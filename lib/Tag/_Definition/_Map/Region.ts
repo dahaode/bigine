@@ -22,8 +22,8 @@ namespace Tag {
          * 构造函数。
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
-            this._a = {};
             super(params, content, children, lineNo);
+            this._a = {};
             var p: string[] = content.split('，');
             if (4 > p.length || 5 < p.length)
                 throw new E(E.DEF_MAP_REGION_BROKEN, lineNo);

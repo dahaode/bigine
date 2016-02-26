@@ -22,8 +22,8 @@ namespace Tag {
          * 构造函数。
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
-            this._o = {};
             super(params, content, children, lineNo);
+            this._o = {};
         }
 
         /**

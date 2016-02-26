@@ -105,6 +105,7 @@ class E extends Error {
      * 构造函数。
      */
     constructor(message: string, lineNo?: number) {
+        super();
         if ('captureStackTrace' in Error)
             Error['captureStackTrace'](this, E);
         this.signal = (lineNo in E.Signal) ?
@@ -112,7 +113,6 @@ class E extends Error {
             E.Signal.OK;
         if (0 < lineNo)
             message = '第 ' + lineNo + ' 行' + message;
-        super();
         this.name = 'BigineError';
         this.message = message;
     }

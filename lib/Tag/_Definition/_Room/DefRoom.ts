@@ -25,8 +25,8 @@ namespace Tag {
          * 构造函数。
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
-            this._a = {};
             super(params, content, children, lineNo);
+            this._a = {};
             if (!this.$q('Link').length && !this.$q('Times').length)
                 throw new E(E.DEF_ROOM_EMPTY, lineNo);
         }
