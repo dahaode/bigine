@@ -1,5 +1,10 @@
 var __Bigine_Util = require("bigine.util");
 var __Bigine_C2D = require("bigine.c2d");
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 /**
  * 定义（运行时）抽象事件组件。
  *
@@ -25,7 +30,7 @@ var Ev;
             return '';
         };
         return Event;
-    })();
+    }());
     Ev.Event = Event;
 })(Ev || (Ev = {}));
 /**
@@ -397,11 +402,6 @@ var Core;
  * @license   GPL-3.0
  * @file      Ev/_Runtime/Ready.ts
  */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 /// <reference path="../Event.ts" />
 /// <reference path="IReadyMetas.ts" />
 var Ev;
@@ -421,7 +421,7 @@ var Ev;
             return 'ready';
         };
         return Ready;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Ready = Ready;
 })(Ev || (Ev = {}));
 /**
@@ -461,7 +461,7 @@ var Ev;
             return 'error';
         };
         return Error;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Error = Error;
 })(Ev || (Ev = {}));
 /**
@@ -501,7 +501,7 @@ var Ev;
             return 'end';
         };
         return End;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.End = End;
 })(Ev || (Ev = {}));
 /**
@@ -638,7 +638,7 @@ var Resource;
             return this;
         };
         return Resource;
-    })();
+    }());
     Resource_1.Resource = Resource;
 })(Resource || (Resource = {}));
 /**
@@ -694,9 +694,6 @@ var Runtime;
                     target: _this
                 }));
             })['catch'](function (error) {
-                console.log("--------错误日志---------");
-                console.error(error);
-                console.log("--------错误日志---------");
                 runtime.dispatchEvent(new Ev.Error({
                     target: _this,
                     error: error
@@ -789,7 +786,7 @@ var Runtime;
             return this._c;
         };
         return Episode;
-    })();
+    }());
     Runtime.Episode = Episode;
 })(Runtime || (Runtime = {}));
 /**
@@ -829,7 +826,7 @@ var Ev;
             return 'query';
         };
         return Query;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Query = Query;
 })(Ev || (Ev = {}));
 /**
@@ -871,7 +868,7 @@ var Ev;
             return 'save';
         };
         return Save;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Save = Save;
 })(Ev || (Ev = {}));
 /**
@@ -911,7 +908,7 @@ var Ev;
             return 'state';
         };
         return State;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.State = State;
 })(Ev || (Ev = {}));
 /**
@@ -1079,7 +1076,7 @@ var Runtime;
             });
         };
         return States;
-    })();
+    }());
     Runtime.States = States;
 })(Runtime || (Runtime = {}));
 /**
@@ -1141,7 +1138,7 @@ var Resource;
             });
         };
         return Prefecher;
-    })();
+    }());
     Resource.Prefecher = Prefecher;
 })(Resource || (Resource = {}));
 /**
@@ -1181,7 +1178,7 @@ var Ev;
             return 'begin';
         };
         return Begin;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Begin = Begin;
 })(Ev || (Ev = {}));
 /**
@@ -1412,7 +1409,7 @@ var Runtime;
             return this;
         };
         return Director;
-    })();
+    }());
     Runtime.Director = Director;
 })(Runtime || (Runtime = {}));
 /**
@@ -1432,7 +1429,7 @@ var Runtime;
             _super.apply(this, arguments);
         }
         return NodeDirector;
-    })(Runtime.Director);
+    }(Runtime.Director));
     Runtime.NodeDirector = NodeDirector;
 })(Runtime || (Runtime = {}));
 /**
@@ -1528,7 +1525,7 @@ var Sprite;
             return this;
         };
         return Sprite;
-    })(G.Sprite);
+    }(G.Sprite));
     Sprite_1.Sprite = Sprite;
 })(Sprite || (Sprite = {}));
 /**
@@ -1555,7 +1552,7 @@ var Sprite;
             this.a(new G.Color(0, 0, w, h, color));
         }
         return Curtain;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Curtain = Curtain;
 })(Sprite || (Sprite = {}));
 /**
@@ -1594,7 +1591,7 @@ var Sprite;
             return this;
         };
         return Author;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Author = Author;
 })(Sprite || (Sprite = {}));
 /**
@@ -1643,7 +1640,7 @@ var Ev;
             return 'start.new';
         };
         return StartNew;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.StartNew = StartNew;
 })(Ev || (Ev = {}));
 /**
@@ -1683,7 +1680,7 @@ var Ev;
             return 'start.load';
         };
         return StartLoad;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.StartLoad = StartLoad;
 })(Ev || (Ev = {}));
 /**
@@ -1737,7 +1734,7 @@ var Sprite;
             return this;
         };
         return Start;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Start = Start;
 })(Sprite || (Sprite = {}));
 /**
@@ -1788,7 +1785,7 @@ var Ev;
             return 'words.animation';
         };
         return WordsAnimation;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.WordsAnimation = WordsAnimation;
 })(Ev || (Ev = {}));
 /**
@@ -1973,7 +1970,7 @@ var Sprite;
             });
         };
         return Words;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Words = Words;
 })(Sprite || (Sprite = {}));
 /**
@@ -2022,7 +2019,7 @@ var Ev;
             return 'tray.menu';
         };
         return TrayMenu;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.TrayMenu = TrayMenu;
 })(Ev || (Ev = {}));
 /**
@@ -2062,7 +2059,7 @@ var Ev;
             return 'tray.panel';
         };
         return TrayPanel;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.TrayPanel = TrayPanel;
 })(Ev || (Ev = {}));
 /**
@@ -2112,7 +2109,7 @@ var Sprite;
             return this;
         };
         return Tray;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Tray = Tray;
 })(Sprite || (Sprite = {}));
 /**
@@ -2161,7 +2158,7 @@ var Ev;
             return 'menu.close';
         };
         return MenuClose;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.MenuClose = MenuClose;
 })(Ev || (Ev = {}));
 /**
@@ -2201,7 +2198,7 @@ var Ev;
             return 'menu.save';
         };
         return MenuSave;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.MenuSave = MenuSave;
 })(Ev || (Ev = {}));
 /**
@@ -2241,7 +2238,7 @@ var Ev;
             return 'menu.load';
         };
         return MenuLoad;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.MenuLoad = MenuLoad;
 })(Ev || (Ev = {}));
 /**
@@ -2291,7 +2288,7 @@ var Sprite;
             }, new G.Image(this._rr[5].o(), _load, true), new G.Image(this._rr[4].o(), _load, true)));
         }
         return Menu;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Menu = Menu;
 })(Sprite || (Sprite = {}));
 /**
@@ -2341,7 +2338,7 @@ var Ev;
             return 'slots.close';
         };
         return SlotsClose;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.SlotsClose = SlotsClose;
 })(Ev || (Ev = {}));
 /**
@@ -2382,7 +2379,7 @@ var Ev;
             return 'slots.load';
         };
         return SlotsLoad;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.SlotsLoad = SlotsLoad;
 })(Ev || (Ev = {}));
 /**
@@ -2422,7 +2419,7 @@ var Ev;
             return 'slots.save';
         };
         return SlotsSave;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.SlotsSave = SlotsSave;
 })(Ev || (Ev = {}));
 /**
@@ -2550,7 +2547,7 @@ var Sprite;
             return date.getFullYear() + '-' + (1 + date.getMonth()) + '-' + date.getDate() + clob;
         };
         return Slots;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Slots = Slots;
 })(Sprite || (Sprite = {}));
 /**
@@ -2625,7 +2622,7 @@ var Sprite;
             return this;
         };
         return Status;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Status = Status;
 })(Sprite || (Sprite = {}));
 /**
@@ -2675,7 +2672,7 @@ var Ev;
             return 'panel.close';
         };
         return PanelClose;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.PanelClose = PanelClose;
 })(Ev || (Ev = {}));
 /**
@@ -2757,7 +2754,7 @@ var Sprite;
             return this;
         };
         return Panel;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Panel = Panel;
 })(Sprite || (Sprite = {}));
 /**
@@ -2798,7 +2795,7 @@ var Sprite;
             return this.$w(this._x, clob, this._c);
         };
         return Tip;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Tip = Tip;
 })(Sprite || (Sprite = {}));
 /**
@@ -2849,7 +2846,7 @@ var Ev;
             return 'choose';
         };
         return Choose;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Choose = Choose;
 })(Ev || (Ev = {}));
 /**
@@ -2906,7 +2903,7 @@ var Sprite;
             return this;
         };
         return Choose;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.Choose = Choose;
 })(Sprite || (Sprite = {}));
 /**
@@ -2939,7 +2936,7 @@ var Sprite;
                 .a(new G.Image(image.o(), this._c));
         };
         return CG;
-    })(Sprite.Sprite);
+    }(Sprite.Sprite));
     Sprite.CG = CG;
 })(Sprite || (Sprite = {}));
 /**
@@ -2999,7 +2996,7 @@ var Ev;
             return 'fin';
         };
         return Fin;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Fin = Fin;
 })(Ev || (Ev = {}));
 /**
@@ -3746,7 +3743,7 @@ var Runtime;
             h: 720
         };
         return CanvasDirector;
-    })(Runtime.Director);
+    }(Runtime.Director));
     Runtime.CanvasDirector = CanvasDirector;
 })(Runtime || (Runtime = {}));
 /**
@@ -3813,7 +3810,7 @@ var Ev;
             return 'resume';
         };
         return Resume;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Resume = Resume;
 })(Ev || (Ev = {}));
 /**
@@ -3854,7 +3851,7 @@ var Ev;
             return 'load';
         };
         return Load;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Load = Load;
 })(Ev || (Ev = {}));
 /**
@@ -3897,7 +3894,7 @@ var Ev;
             return 'scene';
         };
         return Scene;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Scene = Scene;
 })(Ev || (Ev = {}));
 /**
@@ -3939,7 +3936,7 @@ var Ev;
             return 'action';
         };
         return Action;
-    })(Ev.Event);
+    }(Ev.Event));
     Ev.Action = Action;
 })(Ev || (Ev = {}));
 /**
@@ -4276,6 +4273,7 @@ var E = (function (_super) {
      * 构造函数。
      */
     function E(message, lineNo) {
+        _super.call(this);
         if ('captureStackTrace' in Error)
             Error['captureStackTrace'](this, E);
         this.signal = (lineNo in E.Signal) ?
@@ -4283,7 +4281,6 @@ var E = (function (_super) {
             E.Signal.OK;
         if (0 < lineNo)
             message = '第 ' + lineNo + ' 行' + message;
-        _super.call(this);
         this.name = 'BigineError';
         this.message = message;
     }
@@ -4359,7 +4356,7 @@ var E = (function (_super) {
     E.COLL_STRUCT_DISMATCHED = '数据非指定结构类型';
     E.STRUCT_FIELD_MISSING = '实体字段内容缺失';
     return E;
-})(Error);
+}(Error));
 var E;
 (function (E) {
     (function (Signal) {
@@ -4598,7 +4595,7 @@ var Tag;
             return this._q[name];
         };
         return Unknown;
-    })();
+    }());
     Tag.Unknown = Unknown;
 })(Tag || (Tag = {}));
 /**
@@ -4637,7 +4634,7 @@ var Tag;
             return Core.IEpisode.Entity.CG;
         };
         return Entity;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Entity = Entity;
 })(Tag || (Tag = {}));
 /**
@@ -4677,7 +4674,7 @@ var Tag;
             return this._o;
         };
         return Image;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Image = Image;
 })(Tag || (Tag = {}));
 /**
@@ -4709,7 +4706,7 @@ var Tag;
             this._o = ep.r(this._c, Core.IResource.Type.Avatar);
         };
         return Avatar;
-    })(Tag.Image);
+    }(Tag.Image));
     Tag.Avatar = Avatar;
 })(Tag || (Tag = {}));
 /**
@@ -4729,8 +4726,8 @@ var Tag;
          * 构造函数。
          */
         function ResTable(params, content, children, lineNo) {
-            this._o = {};
             _super.call(this, params, content, children, lineNo);
+            this._o = {};
         }
         /**
          * 获取资源。
@@ -4741,7 +4738,7 @@ var Tag;
             return this._o[id] || this._o['默认'];
         };
         return ResTable;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.ResTable = ResTable;
 })(Tag || (Tag = {}));
 /**
@@ -4791,7 +4788,7 @@ var Tag;
             return ret;
         };
         return Poses;
-    })(Tag.ResTable);
+    }(Tag.ResTable));
     Tag.Poses = Poses;
 })(Tag || (Tag = {}));
 /**
@@ -4864,7 +4861,7 @@ var Tag;
             return ret;
         };
         return DefChar;
-    })(Tag.Entity);
+    }(Tag.Entity));
     Tag.DefChar = DefChar;
 })(Tag || (Tag = {}));
 /**
@@ -4904,7 +4901,7 @@ var Tag;
             return this._o;
         };
         return Audio;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Audio = Audio;
 })(Tag || (Tag = {}));
 /**
@@ -4943,7 +4940,7 @@ var Tag;
             return this.$q('Audio')[0].o();
         };
         return DefBGM;
-    })(Tag.Entity);
+    }(Tag.Entity));
     Tag.DefBGM = DefBGM;
 })(Tag || (Tag = {}));
 /**
@@ -4976,7 +4973,7 @@ var Tag;
             return this.$q('Image')[0].o();
         };
         return DefCG;
-    })(Tag.Entity);
+    }(Tag.Entity));
     Tag.DefCG = DefCG;
 })(Tag || (Tag = {}));
 /**
@@ -5015,7 +5012,7 @@ var Tag;
             return this.$q('Audio')[0].o();
         };
         return DefSE;
-    })(Tag.Entity);
+    }(Tag.Entity));
     Tag.DefSE = DefSE;
 })(Tag || (Tag = {}));
 /**
@@ -5047,7 +5044,7 @@ var Tag;
             this._o = ep.r(this._c, Core.IResource.Type.Room);
         };
         return BGImage;
-    })(Tag.Image);
+    }(Tag.Image));
     Tag.BGImage = BGImage;
 })(Tag || (Tag = {}));
 /**
@@ -5079,7 +5076,7 @@ var Tag;
             this._o = ep.r(this._c, Core.IResource.Type.Map);
         };
         return HLImage;
-    })(Tag.Image);
+    }(Tag.Image));
     Tag.HLImage = HLImage;
 })(Tag || (Tag = {}));
 /**
@@ -5099,8 +5096,8 @@ var Tag;
          * 构造函数。
          */
         function Region(params, content, children, lineNo) {
-            this._a = {};
             _super.call(this, params, content, children, lineNo);
+            this._a = {};
             var p = content.split('，');
             if (4 > p.length || 5 < p.length)
                 throw new E(E.DEF_MAP_REGION_BROKEN, lineNo);
@@ -5147,7 +5144,7 @@ var Tag;
             return this._a['h'];
         };
         return Region;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Region = Region;
 })(Tag || (Tag = {}));
 /**
@@ -5188,7 +5185,7 @@ var Tag;
             return this._o;
         };
         return Target;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Target = Target;
 })(Tag || (Tag = {}));
 /**
@@ -5233,7 +5230,7 @@ var Tag;
             return [];
         };
         return Action;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Action = Action;
 })(Tag || (Tag = {}));
 /**
@@ -5322,7 +5319,7 @@ var Tag;
             return E.doHalt(); // 中断原有时序流。
         };
         return Enter;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Enter = Enter;
 })(Tag || (Tag = {}));
 /**
@@ -5436,7 +5433,7 @@ var Tag;
             throw new E(E.DEF_MAP_TARGET_NOT_FOUND, this._l);
         };
         return Point;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Point = Point;
 })(Tag || (Tag = {}));
 /**
@@ -5461,8 +5458,8 @@ var Tag;
          */
         function DefMap(params, content, children, lineNo) {
             var _this = this;
-            this._a = {};
             _super.call(this, params, content, children, lineNo);
+            this._a = {};
             if (!this.$q('BGImage').length && !params.length)
                 throw new E(E.DEF_MAP_BGIMAGE_NOT_FOUND, lineNo);
             Util.each(this.$q('Point'), function (point) {
@@ -5514,7 +5511,7 @@ var Tag;
             return ret;
         };
         return DefMap;
-    })(Tag.Entity);
+    }(Tag.Entity));
     Tag.DefMap = DefMap;
 })(Tag || (Tag = {}));
 /**
@@ -5555,7 +5552,7 @@ var Tag;
             return this._o;
         };
         return Link;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Link = Link;
 })(Tag || (Tag = {}));
 /**
@@ -5605,7 +5602,7 @@ var Tag;
             return ret;
         };
         return Times;
-    })(Tag.ResTable);
+    }(Tag.ResTable));
     Tag.Times = Times;
 })(Tag || (Tag = {}));
 /**
@@ -5629,8 +5626,8 @@ var Tag;
          * 构造函数。
          */
         function DefRoom(params, content, children, lineNo) {
-            this._a = {};
             _super.call(this, params, content, children, lineNo);
+            this._a = {};
             if (!this.$q('Link').length && !this.$q('Times').length)
                 throw new E(E.DEF_ROOM_EMPTY, lineNo);
         }
@@ -5697,7 +5694,7 @@ var Tag;
             return this.$q('Times')[0].d();
         };
         return DefRoom;
-    })(Tag.Entity);
+    }(Tag.Entity));
     Tag.DefRoom = DefRoom;
 })(Tag || (Tag = {}));
 /**
@@ -5723,7 +5720,7 @@ var Tag;
             return 'Auto';
         };
         return Auto;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Auto = Auto;
 })(Tag || (Tag = {}));
 /**
@@ -5777,7 +5774,7 @@ var Tag;
             return this._o;
         };
         return Player;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Player = Player;
 })(Tag || (Tag = {}));
 /**
@@ -5813,7 +5810,7 @@ var Tag;
             });
         };
         return Theme;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Theme = Theme;
 })(Tag || (Tag = {}));
 /**
@@ -5912,7 +5909,7 @@ var Tag;
             });
         };
         return Resources;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Resources = Resources;
 })(Tag || (Tag = {}));
 /**
@@ -6008,7 +6005,7 @@ var Tag;
             return this._o;
         };
         return Type;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Type = Type;
 })(Tag || (Tag = {}));
 /**
@@ -6041,7 +6038,7 @@ var Tag;
             return Util.every(this._s, function (condition) { return condition.t(states); });
         };
         return Conditions;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Conditions = Conditions;
 })(Tag || (Tag = {}));
 /**
@@ -6102,7 +6099,7 @@ var Tag;
             return this._mo;
         };
         return AsRoom;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.AsRoom = AsRoom;
 })(Tag || (Tag = {}));
 /**
@@ -6179,7 +6176,7 @@ var Tag;
             return this._mo;
         };
         return CharOn;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.CharOn = CharOn;
 })(Tag || (Tag = {}));
 /**
@@ -6234,7 +6231,7 @@ var Tag;
             return this._mo;
         };
         return PlayBGM;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.PlayBGM = PlayBGM;
 })(Tag || (Tag = {}));
 /**
@@ -6285,7 +6282,7 @@ var Tag;
             return this._mo;
         };
         return PlaySE;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.PlaySE = PlaySE;
 })(Tag || (Tag = {}));
 /**
@@ -6340,7 +6337,7 @@ var Tag;
             return this._mo;
         };
         return ShowCG;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.ShowCG = ShowCG;
 })(Tag || (Tag = {}));
 /**
@@ -6439,7 +6436,7 @@ var Tag;
             return this;
         };
         return Idable;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Idable = Idable;
 })(Tag || (Tag = {}));
 /**
@@ -6493,7 +6490,7 @@ var Tag;
             return this._mc;
         };
         return Speak;
-    })(Tag.Idable);
+    }(Tag.Idable));
     Tag.Speak = Speak;
 })(Tag || (Tag = {}));
 /**
@@ -6645,7 +6642,7 @@ var Tag;
             return resources;
         };
         return Loop;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Loop = Loop;
 })(Tag || (Tag = {}));
 /**
@@ -6715,7 +6712,7 @@ var Tag;
             return Tag.Loop.prototype.gA.call(this);
         };
         return Content;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Content = Content;
 })(Tag || (Tag = {}));
 /**
@@ -6804,7 +6801,7 @@ var Tag;
             return this.$q('Type')[0].gT();
         };
         return Scene;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Scene = Scene;
 })(Tag || (Tag = {}));
 /**
@@ -6851,7 +6848,7 @@ var Tag;
             return sheet;
         };
         return Status;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Status = Status;
 })(Tag || (Tag = {}));
 /**
@@ -6898,7 +6895,7 @@ var Tag;
             return sheet;
         };
         return Panel;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Panel = Panel;
 })(Tag || (Tag = {}));
 /**
@@ -7079,7 +7076,7 @@ var Tag;
          */
         Root.SERIALS = 'qwertyuiopasdfghjklzxcvbnm$_QWERTYUIOPASDFGHJKLZXCVBNM';
         return Root;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Root = Root;
 })(Tag || (Tag = {}));
 /**
@@ -7130,7 +7127,7 @@ var Tag;
             });
         };
         return CharOff;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.CharOff = CharOff;
 })(Tag || (Tag = {}));
 /**
@@ -7207,7 +7204,7 @@ var Tag;
             return this._mo;
         };
         return CharSet;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.CharSet = CharSet;
 })(Tag || (Tag = {}));
 /**
@@ -7261,7 +7258,7 @@ var Tag;
             return [this._mo];
         };
         return CharPose;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.CharPose = CharPose;
 })(Tag || (Tag = {}));
 /**
@@ -7315,7 +7312,7 @@ var Tag;
             return this._mc;
         };
         return Monolog;
-    })(Tag.Idable);
+    }(Tag.Idable));
     Tag.Monolog = Monolog;
 })(Tag || (Tag = {}));
 /**
@@ -7350,7 +7347,7 @@ var Tag;
                 .words(runtime.gS().t(_this._c), 'voiceover'); });
         };
         return VoiceOver;
-    })(Tag.Idable);
+    }(Tag.Idable));
     Tag.VoiceOver = VoiceOver;
 })(Tag || (Tag = {}));
 /**
@@ -7389,7 +7386,7 @@ var Tag;
             return runtime;
         };
         return Save;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Save = Save;
 })(Tag || (Tag = {}));
 /**
@@ -7427,7 +7424,7 @@ var Tag;
             return E.doHalt();
         };
         return End;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.End = End;
 })(Tag || (Tag = {}));
 /**
@@ -7465,7 +7462,7 @@ var Tag;
             return E.doHalt();
         };
         return Fail;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Fail = Fail;
 })(Tag || (Tag = {}));
 /**
@@ -7515,7 +7512,7 @@ var Tag;
             return runtime.gD().stars(this._ms);
         };
         return Stars;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Stars = Stars;
 })(Tag || (Tag = {}));
 /**
@@ -7551,7 +7548,7 @@ var Tag;
             return runtime.gD().hideCG();
         };
         return HideCG;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.HideCG = HideCG;
 })(Tag || (Tag = {}));
 /**
@@ -7594,7 +7591,7 @@ var Tag;
             return this._p[0];
         };
         return AsTime;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.AsTime = AsTime;
 })(Tag || (Tag = {}));
 /**
@@ -7626,7 +7623,7 @@ var Tag;
             return E.doHalt();
         };
         return Freeze;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Freeze = Freeze;
 })(Tag || (Tag = {}));
 /**
@@ -7659,7 +7656,7 @@ var Tag;
             return runtime;
         };
         return Weather;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Weather = Weather;
 })(Tag || (Tag = {}));
 /**
@@ -7727,7 +7724,7 @@ var Tag;
             return runtime;
         };
         return Assert;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Assert = Assert;
 })(Tag || (Tag = {}));
 /**
@@ -7770,7 +7767,7 @@ var Tag;
             return runtime;
         };
         return Assign;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Assign = Assign;
 })(Tag || (Tag = {}));
 /**
@@ -7812,7 +7809,7 @@ var Tag;
             return runtime;
         };
         return Compare;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Compare = Compare;
 })(Tag || (Tag = {}));
 /**
@@ -7855,7 +7852,7 @@ var Tag;
             return runtime;
         };
         return Increase;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Increase = Increase;
 })(Tag || (Tag = {}));
 /**
@@ -7887,7 +7884,7 @@ var Tag;
             return E.doBreak();
         };
         return LoopBreak;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.LoopBreak = LoopBreak;
 })(Tag || (Tag = {}));
 /**
@@ -7930,7 +7927,7 @@ var Tag;
             return runtime;
         };
         return And;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.And = And;
 })(Tag || (Tag = {}));
 /**
@@ -7973,7 +7970,7 @@ var Tag;
             return runtime;
         };
         return Or;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Or = Or;
 })(Tag || (Tag = {}));
 /**
@@ -8059,7 +8056,7 @@ var Tag;
             return Tag.Loop.prototype.c.call(this);
         };
         return Otherwise;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Otherwise = Otherwise;
 })(Tag || (Tag = {}));
 /**
@@ -8145,7 +8142,7 @@ var Tag;
             return Tag.Loop.prototype.c.call(this);
         };
         return Then;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Then = Then;
 })(Tag || (Tag = {}));
 /**
@@ -8231,7 +8228,7 @@ var Tag;
             return Tag.Loop.prototype.c.call(this);
         };
         return When;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.When = When;
 })(Tag || (Tag = {}));
 /**
@@ -8284,7 +8281,7 @@ var Tag;
             return this;
         };
         return Option;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Option = Option;
 })(Tag || (Tag = {}));
 /**
@@ -8342,7 +8339,7 @@ var Tag;
             return runtime;
         };
         return Choose;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Choose = Choose;
 })(Tag || (Tag = {}));
 /**
@@ -8374,7 +8371,7 @@ var Tag;
             return runtime.gD().tip(runtime.gS().t(this._c));
         };
         return Tip;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Tip = Tip;
 })(Tag || (Tag = {}));
 /**
@@ -8424,7 +8421,7 @@ var Tag;
             return runtime;
         };
         return Maximum;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Maximum = Maximum;
 })(Tag || (Tag = {}));
 /**
@@ -8493,7 +8490,7 @@ var Tag;
             });
         };
         return CharMove;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.CharMove = CharMove;
 })(Tag || (Tag = {}));
 /**
@@ -8579,7 +8576,7 @@ var Tag;
             return Tag.Loop.prototype.c.call(this);
         };
         return WhenVar;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.WhenVar = WhenVar;
 })(Tag || (Tag = {}));
 /**
@@ -8612,7 +8609,7 @@ var Tag;
             return runtime.gD().playBGM();
         };
         return StopBGM;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.StopBGM = StopBGM;
 })(Tag || (Tag = {}));
 /**
@@ -8651,7 +8648,7 @@ var Tag;
             return runtime;
         };
         return DefOptions;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.DefOptions = DefOptions;
 })(Tag || (Tag = {}));
 /**
@@ -8687,7 +8684,7 @@ var Tag;
             return runtime;
         };
         return AddOption;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.AddOption = AddOption;
 })(Tag || (Tag = {}));
 /**
@@ -8730,7 +8727,7 @@ var Tag;
             return runtime;
         };
         return DropOption;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.DropOption = DropOption;
 })(Tag || (Tag = {}));
 /**
@@ -8773,7 +8770,7 @@ var Tag;
             return runtime;
         };
         return Random;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Random = Random;
 })(Tag || (Tag = {}));
 /**
@@ -8815,7 +8812,7 @@ var Tag;
             return runtime;
         };
         return IfTime;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.IfTime = IfTime;
 })(Tag || (Tag = {}));
 /**
@@ -8858,7 +8855,7 @@ var Tag;
             return runtime;
         };
         return Copy;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Copy = Copy;
 })(Tag || (Tag = {}));
 /**
@@ -8905,7 +8902,7 @@ var Tag;
             return runtime;
         };
         return Add;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Add = Add;
 })(Tag || (Tag = {}));
 /**
@@ -8952,7 +8949,7 @@ var Tag;
             return runtime;
         };
         return Subtract;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Subtract = Subtract;
 })(Tag || (Tag = {}));
 /**
@@ -8999,7 +8996,7 @@ var Tag;
             return runtime;
         };
         return Product;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Product = Product;
 })(Tag || (Tag = {}));
 /**
@@ -9049,7 +9046,7 @@ var Tag;
             return runtime;
         };
         return Define;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Define = Define;
 })(Tag || (Tag = {}));
 /**
@@ -9095,7 +9092,7 @@ var Tag;
             return runtime;
         };
         return Collection;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.Collection = Collection;
 })(Tag || (Tag = {}));
 /**
@@ -9133,7 +9130,7 @@ var Tag;
             return runtime;
         };
         return CollPush;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.CollPush = CollPush;
 })(Tag || (Tag = {}));
 /**
@@ -9174,7 +9171,7 @@ var Tag;
             return runtime;
         };
         return CollPop;
-    })(Tag.Action);
+    }(Tag.Action));
     Tag.CollPop = CollPop;
 })(Tag || (Tag = {}));
 /**
@@ -9221,7 +9218,7 @@ var Tag;
             return result;
         };
         return Struct;
-    })(Tag.Entity);
+    }(Tag.Entity));
     Tag.Struct = Struct;
 })(Tag || (Tag = {}));
 /**
@@ -9292,7 +9289,7 @@ var Tag;
             return val ? val : '';
         };
         return Field;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.Field = Field;
 })(Tag || (Tag = {}));
 /**
@@ -9318,7 +9315,7 @@ var Tag;
             return 'FieldType';
         };
         return FieldType;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.FieldType = FieldType;
 })(Tag || (Tag = {}));
 /**
@@ -9344,7 +9341,7 @@ var Tag;
             return 'FieldLimit';
         };
         return FieldLimit;
-    })(Tag.Unknown);
+    }(Tag.Unknown));
     Tag.FieldLimit = FieldLimit;
 })(Tag || (Tag = {}));
 /**
@@ -9726,7 +9723,7 @@ var Runtime;
             return this;
         };
         return Runtime;
-    })();
+    }());
     Runtime_1.Runtime = Runtime;
 })(Runtime || (Runtime = {}));
 /**
@@ -9820,7 +9817,7 @@ var Lex;
          */
         TagLine.GRAMMAR = /^(\t*)([^\s（：]+)(?:|：(.*)|（(.*)）：(.*)|（(.*)）)$/;
         return TagLine;
-    })();
+    }());
     Lex.TagLine = TagLine;
     /**
      * 创建 UUID 。
