@@ -18,6 +18,17 @@ namespace Tag {
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
             super(params, content, children, lineNo);
+            let entCount: number = 0;
+            let nameCount: number = 0;
+            Util.each(children, (child: Field) => {
+                if (child.iE()) {
+                    entCount ++;
+                }
+                if (child.iN()) {
+                    nameCount ++;
+                }
+            });
+            if (entCount > 1 || nameCount > 1) throw new E(E.STRUCT_FIELD_TYPE_TOO_MANY, this._l);
         }
 
         /**
@@ -32,6 +43,13 @@ namespace Tag {
          */
         public gT(): Core.IEpisode.Entity {
             return Core.IEpisode.Entity.Struct;
+        }
+
+        /**
+         * 获取类型。
+         */
+        public gS(): Array<Unknown> {
+            return this._s;
         }
 
         /**

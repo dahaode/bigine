@@ -96,6 +96,10 @@ class E extends Error {
 
     public static STRUCT_FIELD_MISSING: string = '实体字段内容缺失';
 
+    public static STRUCT_FIELD_TYPE_TOO_MANY: string = '指定类型的字段定义过多';
+
+    public static STRUCT_FIELD_CANNOT_EMPTY: string = '非空字段未设置数据';
+
     /**
      * 信号。
      */

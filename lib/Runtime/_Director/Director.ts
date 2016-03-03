@@ -243,7 +243,7 @@ namespace Runtime {
         /**
          * 配置面板。
          */
-        public p(sheet: [string, string][]): Director {
+        public p(sheet: Array<Util.IHashTable<any>>): Director {
             return this;
         }
 

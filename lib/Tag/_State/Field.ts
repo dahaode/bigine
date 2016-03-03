@@ -16,6 +16,7 @@ namespace Tag {
         private _ep: Core.IEpisode;
 
         private numberTypes: string[] = ['心', '星'];
+        private nameTypes: string[] = ['名称'];
         private entityTypes: Util.IHashTable<any> = {
             '人物': Core.IEpisode.Entity.Chr,
             '房间': Core.IEpisode.Entity.Room,
@@ -40,6 +41,45 @@ namespace Tag {
          */
         public gN(): string {
             return 'Field';
+        }
+
+        /**
+         * 是否实体类型。
+         */
+        public iE(): boolean {
+            let fieldType: string;
+            Util.each(this._s, (child: Unknown) => {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            return this.entityTypes[fieldType] != null && this.entityTypes[fieldType] != undefined;
+        }
+
+        /**
+         * 是否名称类型。
+         */
+        public iN(): boolean {
+            let fieldType: string;
+            Util.each(this._s, (child: Unknown) => {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            return Util.indexOf(this.nameTypes, fieldType) > -1;
+        }
+
+        /**
+         * 获取字段类型。
+         */
+        public gT(): string {
+            let fieldType: string;
+            Util.each(this._s, (child: Unknown) => {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            return fieldType;
         }
 
         /**

@@ -45,6 +45,13 @@ namespace Tag {
         Theme: '主题',
         Status: '状态',
         Panel: '面板',
+        SimpPanel: '简单面板',
+        SimpEle: '条目',
+        EleName: '数据名',
+        EleType: '数据类别',
+        CollPanel: '集合面板',
+        CollSource: '使用集合',
+        CollStruct: '集合结构',
 
         Scene: '事件',
         Type: '类型',
@@ -124,7 +131,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 84
+    export var S: { [index: number]: any[] } = { // next 91
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -151,8 +158,24 @@ namespace Tag {
             53: [0, 6]
         }],
         74: ['Panel', 0, -1, {
-            53: [0, 12]
+            84: [0],
+            88: [0]
         }],
+        84: ['SimpPanel', 0, 1, { // 面板名
+            85: [1]
+        }],
+        85: ['SimpEle', 0, 1, { // 条目名
+            86: 1,
+            87: [0, 1]
+        }],
+        86: ['EleName', 0, 1], // 数据名
+        87: ['EleType', 0, 1], // 数据类别
+        88: ['CollPanel', 0, 1, { // 面板名
+            89: 1,
+            90: 1
+        }],
+        89: ['CollSource', 0, 1], // 集合名
+        90: ['CollStruct', 0, 1], // 结构名
 
         49: ['Scene', 0, 1, { // 名称
             50: 1,

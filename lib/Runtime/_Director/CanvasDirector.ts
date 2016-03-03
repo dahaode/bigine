@@ -749,8 +749,8 @@ namespace Runtime {
         /**
          * 配置面板。
          */
-        public p(sheet: [string, string][]): Director {
-            if (sheet.length) {
+        public p(sheet: Array<Util.IHashTable<any>>): Director {
+            if (sheet) {
                 (<Sprite.Panel> this._x['P']).u(sheet, this._r);
             } else
                 (<Sprite.Tray> this._x['t']).u(false);

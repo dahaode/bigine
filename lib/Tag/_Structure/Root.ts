@@ -12,7 +12,7 @@
 /// <reference path="Resources.ts" />
 /// <reference path="Theme.ts" />
 /// <reference path="Status.ts" />
-/// <reference path="Panel.ts" />
+/// <reference path="_Panel/Panel.ts" />
 
 namespace Tag {
     import Util = __Bigine_Util;
@@ -194,7 +194,7 @@ namespace Tag {
         /**
          * 获取面板配置。
          */
-        public p(): [string, string][] {
+        public p(): Array<Util.IHashTable<any>> {
             let panel: Panel = <Panel> this.$q('Panel')[0];
             if (!panel)
                 return [];

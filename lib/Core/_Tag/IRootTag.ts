@@ -54,6 +54,6 @@ namespace Core {
         /**
          * 获取面板配置。
          */
-        p(): [string, string][];
+        p(): Array<Util.IHashTable<any>>;
     }
 }

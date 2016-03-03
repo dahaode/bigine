@@ -11,10 +11,12 @@
 /// <reference path="../_Runtime/IRuntime.ts" />
 
 namespace Core {
+    import Util = __Bigine_Util;
+
     export interface IPanel extends ISprite {
         /**
          * 配置。
          */
-        u(sheet: [string, string][], runtime: IRuntime): IPanel;
+        u(sheet: Array<Util.IHashTable<any>>, runtime: IRuntime): IPanel;
     }
 }

@@ -39,7 +39,7 @@ declare namespace __Bigine {
             t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
             gT(): string;
             s(): [string, string][];
-            p(): [string, string][];
+            p(): Array<Util.IHashTable<any>>;
         }
     }
     namespace Core {
@@ -403,7 +403,7 @@ declare namespace __Bigine {
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
             s(sheet: [string, string][]): Director;
-            p(sheet: [string, string][]): Director;
+            p(sheet: Array<Util.IHashTable<any>>): Director;
             a(auto: boolean): boolean;
             v(volume: number): Director;
             f(): void;
@@ -642,7 +642,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface IPanel extends ISprite {
-            u(sheet: [string, string][], runtime: IRuntime): IPanel;
+            u(sheet: Array<Util.IHashTable<any>>, runtime: IRuntime): IPanel;
         }
     }
     namespace Ev {
@@ -657,10 +657,30 @@ declare namespace __Bigine {
     }
     namespace Sprite {
         class Panel extends Sprite {
-            private _x;
-            private _y;
+            private _st;
+            private _sv;
+            private _svt;
+            private _ct;
+            private _cv;
+            private _ca;
+            private _pt;
+            private _pb;
+            private _ti;
+            private _tai;
+            private _sTypes;
+            private _eTypes;
+            private _tResource;
+            private _cc;
+            private _cp;
+            private _ep;
+            private _dr;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
-            u(sheet: [string, string][], runtime: Core.IRuntime): Panel;
+            u(sheet: Array<Util.IHashTable<any>>, runtime: Core.IRuntime): Panel;
+            private uT(sheet);
+            private uContent(sheet, data);
+            private uS(sheet, data);
+            private uC(sheet, data);
+            private clean();
         }
     }
     namespace Sprite {
@@ -750,7 +770,7 @@ declare namespace __Bigine {
             setCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             s(sheet: [string, string][]): Director;
-            p(sheet: [string, string][]): Director;
+            p(sheet: Array<Util.IHashTable<any>>): Director;
             a(auto: boolean): boolean;
             v(volume: number): CanvasDirector;
             f(): void;
@@ -873,6 +893,8 @@ declare namespace __Bigine {
         static OPT_OPTIONS_CONFLICT: string;
         static COLL_STRUCT_DISMATCHED: string;
         static STRUCT_FIELD_MISSING: string;
+        static STRUCT_FIELD_TYPE_TOO_MANY: string;
+        static STRUCT_FIELD_CANNOT_EMPTY: string;
         signal: E.Signal;
         constructor(message: string, lineNo?: number);
         static doHalt<T>(): Promise<T>;
@@ -1258,8 +1280,9 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class Panel extends Unknown {
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
             gN(): string;
-            l(): [string, string][];
+            l(): Array<Util.IHashTable<any>>;
         }
     }
     namespace Tag {
@@ -1277,7 +1300,7 @@ declare namespace __Bigine {
             t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
             gT(): string;
             s(): [string, string][];
-            p(): [string, string][];
+            p(): Array<Util.IHashTable<any>>;
         }
     }
     namespace Tag {
@@ -1604,6 +1627,7 @@ declare namespace __Bigine {
             constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
             gN(): string;
             gT(): Core.IEpisode.Entity;
+            gS(): Array<Unknown>;
             g(data: Util.IHashTable<any>): Util.IHashTable<any>;
         }
     }
@@ -1611,10 +1635,14 @@ declare namespace __Bigine {
         class Field extends Unknown {
             private _ep;
             private numberTypes;
+            private nameTypes;
             private entityTypes;
             constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
             $b(ep: Core.IEpisode): void;
             gN(): string;
+            iE(): boolean;
+            iN(): boolean;
+            gT(): string;
             g(val: string): number | string | Entity;
         }
     }
@@ -1625,6 +1653,44 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class FieldLimit extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class CollPanel extends Unknown {
+            gN(): string;
+            g(): Util.IHashTable<any>;
+        }
+    }
+    namespace Tag {
+        class CollSource extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class CollStruct extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class SimpPanel extends Unknown {
+            gN(): string;
+            g(): Util.IHashTable<any>;
+        }
+    }
+    namespace Tag {
+        class SimpEle extends Unknown {
+            gN(): string;
+            g(): Util.IHashTable<any>;
+        }
+    }
+    namespace Tag {
+        class EleName extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class EleType extends Unknown {
             gN(): string;
         }
     }

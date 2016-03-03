@@ -694,6 +694,9 @@ var Runtime;
                     target: _this
                 }));
             })['catch'](function (error) {
+                console.log("--------错误日志---------");
+                console.error(error);
+                console.log("--------错误日志---------");
                 runtime.dispatchEvent(new Ev.Error({
                     target: _this,
                     error: error
@@ -2698,13 +2701,50 @@ var Sprite;
          */
         function Panel(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', left = G.Text.Align.Left, right = G.Text.Align.Right, _mask = theme['mask'], _back = theme['back'], _close = theme['close'], i = 1, j;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _mask = theme['mask'], _back = theme['back'], _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'], _type = theme['type'], i = 1, left = G.Text.Align.Left;
+            // j: Util.IHashTable<any>;
             _super.call(this, 0, 0, w, h);
+            this._pt = theme;
+            this._ti = 0;
+            this._tai = {};
             this._rr = [
+                // 0: 面板背景
                 rr.g(url + _back['i'], raw),
+                // 1: 关闭按钮
                 rr.g(url + _close['i'], raw),
-                rr.g(url + _close['ih'], raw)
+                // 2: 关闭按钮~hover
+                rr.g(url + _close['ih'], raw),
+                // 3: 标签按钮
+                rr.g(url + _tab['title']['i'], raw),
+                // 4: 标签按钮激活状态图片
+                rr.g(url + _tab['title']['ia'], raw),
+                // 5: 简单面板背景
+                rr.g(url + _simp['back']['i'], raw),
+                // 6: 集合面板背景
+                rr.g(url + _coll['back']['i'], raw),
+                // 7: 集合面板上一个按钮
+                rr.g(url + _coll['arrow']['p']['i'], raw),
+                // 8: 集合面板上一个按钮~hover
+                rr.g(url + _coll['arrow']['p']['ih'], raw),
+                // 9: 集合面板下一个按钮
+                rr.g(url + _coll['arrow']['n']['i'], raw),
+                // 10: 集合面板下一个按钮~hover
+                rr.g(url + _coll['arrow']['n']['ih'], raw)
             ];
+            this._st = {};
+            this._sv = {};
+            this._svt = {};
+            this._ct = {};
+            this._cv = {};
+            this._ca = {};
+            this._pb = {};
+            this._sTypes = ['心', '星'];
+            this._eTypes = ['人物', '房间', '特写'];
+            this._tResource = {};
+            this._cc = [];
+            this._cp = 0;
+            this._dr = {};
+            // 渲染面板初始样式
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
                 .a(new G.Image(this._rr[0].o(), _back))
@@ -2712,46 +2752,286 @@ var Sprite;
                 .b(function () {
                 _this.dispatchEvent(new Ev.PanelClose({ target: _this }));
             }, new G.Image(this._rr[2].o(), _close, true), new G.Image(this._rr[1].o(), _close, true)));
-            this._x = {};
-            this._y = {};
+            // 简单面板背景
+            this.a(this._pb['s'] = new G.Image(this._rr[5].o(), _simp['back'], true));
+            this._pb['s'].o(0);
+            // 集合面板背景
+            this.a(this._pb['c'] = new G.Image(this._rr[6].o(), _coll['back'], true));
+            this._pb['c'].o(0);
+            // 构造简单面板中渲染数据名的容器
             for (; i < 13; i++) {
-                j = theme[i];
-                this.a(this._x[i + 't'] = new G.Text(j['title'], j['title']['s'], j['title']['lh'], left)
-                    .tc(j['title']['c'])
-                    .o(0)).a(this._x[i + 'v'] = new G.Text(j['value'], j['value']['s'], j['value']['lh'], right)
-                    .tc(j['value']['c'])
-                    .o(0));
+                var titleTxt = new G.Text(_simp[i]['title'], _simp[i]['title']['s'], _simp[i]['title']['lh'], left);
+                this._st[i + 't'] = titleTxt;
+                this.a(this._st[i + 't']).o(0);
             }
+            Util.each(_type, function (typeTheme, typeName) {
+                _this._tResource[typeName] = rr.g(url + typeTheme['fi'], raw);
+            });
+            // 集合面板数据标题和数据值
+            Util.each(_coll, function (config, name) {
+                if (name == 'back' || name == 'arrow')
+                    return;
+                if (name == 'head') {
+                    // 初始化集合面板数据值显示元素
+                    _this._cv[name] = new G.Sprite(config, false, true);
+                    _this.a(_this._cv[name]);
+                    _this._cv[name].o(0);
+                }
+                else if (name == 'name') {
+                    // 初始化集合面板数据值显示元素
+                    _this._cv[name] = new G.Text(config, config['s'], config['lh']);
+                    _this.a(_this._cv[name]);
+                    _this._cv[name].o(0);
+                }
+                else {
+                    var tBounds = config['title'];
+                    var vBounds = config['value'];
+                    // 初始化集合面板数据标题元素
+                    _this._ct[name + 't'] = new G.Text(tBounds, tBounds['s'], tBounds['lh']);
+                    _this.a(_this._ct[name + 't']);
+                    _this._ct[name + 't'].o(0);
+                    // 初始化集合面板数据值显示元素
+                    _this._cv[name + 'v'] = new G.Text(vBounds, vBounds['s'], vBounds['lh']);
+                    _this.a(_this._cv[name + 'v']);
+                    _this._cv[name + 'v'].o(0);
+                }
+            });
         }
         /**
          * 配置。
          */
         Panel.prototype.u = function (sheet, runtime) {
             var _this = this;
-            Util.each(sheet, function (item, index) {
-                if (!item[0])
-                    return;
-                _this._x[++index + 't'].o(1)
-                    .c()
-                    .a(new G.TextPhrase(item[0]));
-                _this._x[index + 'v'].o(1);
-                _this._y[item[1]] = [index + 'v', ''];
-            });
+            this._ep = runtime.gE();
+            if (sheet.length == 0)
+                return this;
+            // 集合面板翻页上一页按钮
+            var pBounds = this._pt['coll']['arrow']['p'];
+            this.a(this._ca['p'] = new G.Button(pBounds)
+                .b(function () {
+                _this._cp = _this._cp == 0 ? (_this._cc.length - 1) : (_this._cp - 1);
+                _this.uC(sheet[_this._ti], _this._dr);
+            }, new G.Image(this._rr[8].o(), pBounds, true), new G.Image(this._rr[7].o(), pBounds, true)));
+            this._ca['p'].o(0);
+            // 集合面板翻页下一页按钮
+            var nBounds = this._pt['coll']['arrow']['n'];
+            this.a(this._ca['n'] = new G.Button(nBounds)
+                .b(function () {
+                _this._cp = (_this._cp == _this._cc.length - 1) ? 0 : (_this._cp + 1);
+                _this.uC(sheet[_this._ti], _this._dr);
+            }, new G.Image(this._rr[10].o(), nBounds, true), new G.Image(this._rr[9].o(), nBounds, true)));
+            this._ca['n'].o(0);
+            this.uT(sheet);
+            // 显示第一个标签页的数据
+            this.uContent(sheet[0], null);
+            // 监听数据变化
             runtime.addEventListener('state', function (ev) {
-                Util.each(_this._y, function (conf, name) {
-                    var value = ev.data[name];
-                    if (undefined === value) {
-                        value = '';
-                    }
-                    else
-                        value = value.toString();
-                    if (value == conf[1])
-                        return;
-                    _this._y[name][1] = value;
-                    _this._x[conf[0]].c().a(new G.TextPhrase(value));
-                });
+                _this._dr = ev.data;
+                _this.uContent(sheet[_this._ti], ev.data);
             });
             return this;
+        };
+        /**
+         * 绘制面板标签
+         */
+        Panel.prototype.uT = function (sheet) {
+            var _this = this;
+            var left = G.Text.Align.Left;
+            var activeImage;
+            // 渲染面板切换标签
+            Util.each(sheet, function (data, index) {
+                var tabBtn = _this._tai[data['n']];
+                if (!tabBtn) {
+                    var tabPosi = _this._pt['tab'][index + 1 + ''];
+                    var titleBounds = Util.clone(_this._pt['tab']['title']);
+                    var tabText = new G.Text(titleBounds, titleBounds['s'], titleBounds['lh'], left);
+                    _this._tai[index + 't'] = tabText;
+                    var tabBounds = Util.clone(titleBounds);
+                    tabBounds['x'] = tabPosi['x'];
+                    tabBounds['y'] = tabPosi['y'];
+                    var tabImage = new G.Image(_this._rr[3].o(), tabBounds, true);
+                    _this._tai[data['n']] = tabBtn = new G.Button(tabBounds)
+                        .b(function () {
+                        if (index == _this._ti)
+                            return;
+                        _this._ti = index;
+                        _this._cp = 0;
+                        _this.clean();
+                        _this.uT(sheet);
+                        _this.uContent(data, _this._dr);
+                    }, null, tabImage);
+                    tabBtn.a(tabText.a(new G.TextPhrase(data['n']))).o(1);
+                    _this.a(tabBtn);
+                }
+                if (index == _this._ti) {
+                    activeImage = new G.Image(_this._rr[4].o(), tabBtn.gB(), true);
+                    tabBtn.a(activeImage, _this._tai[_this._ti + 't']);
+                }
+                else {
+                    tabBtn.e(_this._tai['a']);
+                }
+                if (index >= 5)
+                    return false;
+            });
+            this._tai['a'] = activeImage;
+            return this;
+        };
+        /**
+         * 绘制面板内容
+         */
+        Panel.prototype.uContent = function (sheet, data) {
+            if (!sheet)
+                return this;
+            this.clean();
+            var type = sheet['：'];
+            switch (type) {
+                case 'simp':
+                    this.uS(sheet, data);
+                    break;
+                case 'coll':
+                    this.uC(sheet, data);
+                    break;
+            }
+            return this;
+        };
+        /**
+         * 绘制简单面板
+         */
+        Panel.prototype.uS = function (sheet, data) {
+            var _this = this;
+            this._pb['s'].o(1);
+            var simpData = sheet['c'];
+            if (!simpData || simpData.length == 0)
+                return this;
+            var simpTheme = this._pt['simp'], left = G.Text.Align.Left;
+            Util.each(simpData, function (simpField, index) {
+                // 画出简单面板中显示的数据名
+                _this._st[index + 1 + 't'].c().a(new G.TextPhrase(simpField['alias'])).o(1);
+                /* 画出简单面板中显示的数据值 */
+                // 获取数据类型
+                var type = _this._svt[simpField['name']] || simpField['type'];
+                // 保存数据类型到本地
+                if (type && !_this._svt[simpField['name']]) {
+                    _this._svt[simpField['name']] = type;
+                }
+                // 获取数据值
+                var value = data ? data[simpField['name']] : '';
+                // 构建数据值渲染容器
+                if (!_this._sv[simpField['name']]) {
+                    var i = index + 1 + '';
+                    if (type && Util.indexOf(_this._sTypes, type) > -1) {
+                        _this.a(_this._sv[simpField['name']] = new G.Sprite(simpTheme[i]['value'], false, true));
+                    }
+                    else {
+                        _this.a(_this._sv[simpField['name']] = new G.Text(simpTheme[i]['value'], simpTheme[i]['value']['s'], simpTheme[i]['value']['lh'], left));
+                    }
+                }
+                // 如果数据类型是图片类型
+                if (type && Util.indexOf(_this._sTypes, type) > -1) {
+                    _this._sv[simpField['name']].c();
+                    var rValue = value ? parseInt(value, 10) : 0;
+                    for (var j = 0; j < rValue; j++) {
+                        var typeBound = Util.clone(_this._pt['type'][type]);
+                        typeBound['x'] = j * (_this._pt['type'][type]['m'] + _this._pt['type'][type]['w']);
+                        typeBound['y'] = (simpTheme[index + 1 + '']['value']['lh'] - _this._pt['type'][type]['h']) / 2;
+                        var image = new G.Image(_this._tResource[type].o(), typeBound, false);
+                        _this._sv[simpField['name']].a(image);
+                    }
+                    _this._sv[simpField['name']].o(1);
+                }
+                else {
+                    _this._sv[simpField['name']].c().a(new G.TextPhrase(value + '')).o(1);
+                }
+            });
+            return this;
+        };
+        /**
+         * 绘制集合面板
+         */
+        Panel.prototype.uC = function (sheet, data) {
+            var _this = this;
+            if (!data)
+                return this;
+            // 渲染背景
+            this._pb['c'].o(1);
+            // 取出集合数据
+            var collName = sheet['cn'][0];
+            this._cc = data[collName][''];
+            var collData = this._cc[this._cp];
+            // 取出集合的结构
+            var cStruct = this._ep.q(sheet['s'], Core.IEpisode.Entity.Struct);
+            var i = 1;
+            Util.each(cStruct.gS(), function (field) {
+                var fieldName = field.$c(), fieldValue = collData[fieldName], fieldType = field.gT();
+                // 渲染头像
+                if (field.iE()) {
+                    var hBounds = _this._pt['coll']['head'];
+                    _this._cv['head'].c().a(new G.Image(fieldValue.o().o(), hBounds)).o(1);
+                }
+                else if (field.iN()) {
+                    _this._cv['name'].c().a(new G.TextPhrase(fieldValue)).o(1);
+                }
+                else {
+                    if (fieldValue == '空') {
+                        i++;
+                        return;
+                    }
+                    _this._ct[i + 't'].c().a(new G.TextPhrase(fieldName)).o(1);
+                    // 心或星类型的字段
+                    if (Util.indexOf(_this._sTypes, field.gT()) > -1) {
+                        _this.e(_this._cv[i + 'v']);
+                        var bounds = _this._pt['coll'][i + '']['value'];
+                        _this.a(_this._cv[i + 'v'] = new G.Sprite(bounds, false, true));
+                        var rValue = fieldValue;
+                        for (var j = 0; j < rValue; j++) {
+                            var tTheme = _this._pt['type'][field.gT()];
+                            var typeBound = Util.clone(tTheme);
+                            typeBound['x'] = j * (_this._pt['type'][fieldType]['m'] + _this._pt['type'][fieldType]['w']);
+                            typeBound['y'] = (_this._pt['coll'][i + '']['value']['lh'] - _this._pt['type'][fieldType]['h']) / 2;
+                            var image = new G.Image(_this._tResource[fieldType].o(), typeBound, false);
+                            _this._cv[i + 'v'].a(image);
+                        }
+                        _this._cv[i + 'v'].o(1);
+                    }
+                    else {
+                        // 普通字段
+                        _this._cv[i + 'v'].c().a(new G.TextPhrase(fieldValue + '')).o(1);
+                    }
+                    i++;
+                }
+            });
+            this._ca['p'].o(1);
+            this._ca['n'].o(1);
+            return this;
+        };
+        /**
+         * 清除面板
+         */
+        Panel.prototype.clean = function () {
+            // 清除简单面板标题元素集合
+            Util.each(this._st, function (text) {
+                text.c().o(0);
+            });
+            // 清除简单面板值元素集合
+            Util.each(this._sv, function (text) {
+                text.c().o(0);
+            });
+            // 清除集合面板标题元素集合
+            Util.each(this._ct, function (text) {
+                text.c().o(0);
+            });
+            // 清除集合面板值元素集合
+            Util.each(this._cv, function (text) {
+                text.c().o(0);
+            });
+            // 清除集合面板翻页元素集合
+            Util.each(this._ca, function (btn) {
+                btn.o(0);
+            });
+            // 清除简单面板背景
+            this._pb['s'].o(0);
+            // 清除集合面板背景
+            this._pb['c'].o(0);
         };
         return Panel;
     }(Sprite.Sprite));
@@ -3648,7 +3928,7 @@ var Runtime;
          * 配置面板。
          */
         CanvasDirector.prototype.p = function (sheet) {
-            if (sheet.length) {
+            if (sheet) {
                 this._x['P'].u(sheet, this._r);
             }
             else
@@ -3983,6 +4263,13 @@ var Tag;
         Theme: '主题',
         Status: '状态',
         Panel: '面板',
+        SimpPanel: '简单面板',
+        SimpEle: '条目',
+        EleName: '数据名',
+        EleType: '数据类别',
+        CollPanel: '集合面板',
+        CollSource: '使用集合',
+        CollStruct: '集合结构',
         Scene: '事件',
         Type: '类型',
         Conditions: '条件',
@@ -4079,8 +4366,24 @@ var Tag;
                 53: [0, 6]
             }],
         74: ['Panel', 0, -1, {
-                53: [0, 12]
+                84: [0],
+                88: [0]
             }],
+        84: ['SimpPanel', 0, 1, {
+                85: [1]
+            }],
+        85: ['SimpEle', 0, 1, {
+                86: 1,
+                87: [0, 1]
+            }],
+        86: ['EleName', 0, 1],
+        87: ['EleType', 0, 1],
+        88: ['CollPanel', 0, 1, {
+                89: 1,
+                90: 1
+            }],
+        89: ['CollSource', 0, 1],
+        90: ['CollStruct', 0, 1],
         49: ['Scene', 0, 1, {
                 50: 1,
                 51: [0, 1],
@@ -4355,6 +4658,8 @@ var E = (function (_super) {
     E.OPT_OPTIONS_CONFLICT = '选项声明冲突';
     E.COLL_STRUCT_DISMATCHED = '数据非指定结构类型';
     E.STRUCT_FIELD_MISSING = '实体字段内容缺失';
+    E.STRUCT_FIELD_TYPE_TOO_MANY = '指定类型的字段定义过多';
+    E.STRUCT_FIELD_CANNOT_EMPTY = '非空字段未设置数据';
     return E;
 }(Error));
 var E;
@@ -6857,17 +7162,22 @@ var Tag;
  * @author    郑煜宇 <yzheng@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Structure/Panel.ts
+ * @file      Tag/_Structure/_Panel/Panel.ts
  */
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../Unknown.ts" />
+/// <reference path="../../../../include/tsd.d.ts" />
+/// <reference path="../../Unknown.ts" />
 var Tag;
 (function (Tag) {
     var Util = __Bigine_Util;
     var Panel = (function (_super) {
         __extends(Panel, _super);
-        function Panel() {
-            _super.apply(this, arguments);
+        /**
+         * 构造函数。
+         */
+        function Panel(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            if (!children || children.length == 0)
+                throw new E(E.TAG_CHILDREN_TOO_FEW, this._l);
         }
         /**
          * 获取标签名称。
@@ -6880,17 +7190,17 @@ var Tag;
          */
         Panel.prototype.l = function () {
             var sheet = [];
+            // let sheet: Util.IHashTable<any> = {};
             Util.each(this._s, function (tag) {
-                var title = tag.$p(0), value = tag.$c();
-                if ('空' == title)
-                    title = value = '';
-                sheet.push([title, value || title]);
-            });
-            Util.some(Util.clone(sheet).reverse(), function (item) {
-                if (item[0])
-                    return true;
-                sheet.pop();
-                return false;
+                var tagName = tag.gN();
+                var tagValue;
+                if ('SimpPanel' == tagName) {
+                    tagValue = tag.g();
+                }
+                else if ('CollPanel' == tagName) {
+                    tagValue = tag.g();
+                }
+                sheet.push(tagValue);
             });
             return sheet;
         };
@@ -6911,7 +7221,7 @@ var Tag;
 /// <reference path="Resources.ts" />
 /// <reference path="Theme.ts" />
 /// <reference path="Status.ts" />
-/// <reference path="Panel.ts" />
+/// <reference path="_Panel/Panel.ts" />
 var Tag;
 (function (Tag) {
     var Util = __Bigine_Util;
@@ -9193,6 +9503,18 @@ var Tag;
          */
         function Struct(params, content, children, lineNo) {
             _super.call(this, params, content, children, lineNo);
+            var entCount = 0;
+            var nameCount = 0;
+            Util.each(children, function (child) {
+                if (child.iE()) {
+                    entCount++;
+                }
+                if (child.iN()) {
+                    nameCount++;
+                }
+            });
+            if (entCount > 1 || nameCount > 1)
+                throw new E(E.STRUCT_FIELD_TYPE_TOO_MANY, this._l);
         }
         /**
          * 获取标签名称。
@@ -9205,6 +9527,12 @@ var Tag;
          */
         Struct.prototype.gT = function () {
             return Core.IEpisode.Entity.Struct;
+        };
+        /**
+         * 获取类型。
+         */
+        Struct.prototype.gS = function () {
+            return this._s;
         };
         /**
          * 获取结构体对象。
@@ -9241,6 +9569,7 @@ var Tag;
         function Field(params, content, children, lineNo) {
             _super.call(this, params, content, children, lineNo);
             this.numberTypes = ['心', '星'];
+            this.nameTypes = ['名称'];
             this.entityTypes = {
                 '人物': Core.IEpisode.Entity.Chr,
                 '房间': Core.IEpisode.Entity.Room,
@@ -9258,6 +9587,42 @@ var Tag;
          */
         Field.prototype.gN = function () {
             return 'Field';
+        };
+        /**
+         * 是否实体类型。
+         */
+        Field.prototype.iE = function () {
+            var fieldType;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            return this.entityTypes[fieldType] != null && this.entityTypes[fieldType] != undefined;
+        };
+        /**
+         * 是否名称类型。
+         */
+        Field.prototype.iN = function () {
+            var fieldType;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            return Util.indexOf(this.nameTypes, fieldType) > -1;
+        };
+        /**
+         * 获取字段类型。
+         */
+        Field.prototype.gT = function () {
+            var fieldType;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            return fieldType;
         };
         /**
          * 获取字段的值。
@@ -9285,6 +9650,8 @@ var Tag;
                     throw new E(E.STRUCT_FIELD_MISSING, this._l);
                 var obj = this._ep.q(val, this.entityTypes[fieldType], this._l);
                 return obj;
+            }
+            else if (Util.indexOf(this.nameTypes, fieldType) > -1) {
             }
             return val ? val : '';
         };
@@ -9343,6 +9710,245 @@ var Tag;
         return FieldLimit;
     }(Tag.Unknown));
     Tag.FieldLimit = FieldLimit;
+})(Tag || (Tag = {}));
+/**
+ * 定义集合面板标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/CollPanel.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var CollPanel = (function (_super) {
+        __extends(CollPanel, _super);
+        function CollPanel() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CollPanel.prototype.gN = function () {
+            return 'CollPanel';
+        };
+        /**
+         * 根据标签结构生成数据结构。
+         */
+        CollPanel.prototype.g = function () {
+            var result = {};
+            var colls = [];
+            var strutc = '';
+            Util.each(this._s, function (child) {
+                if ('CollSource' == child.gN()) {
+                    colls.push(child.$c());
+                }
+                else if ('CollStruct' == child.gN()) {
+                    strutc = child.$c();
+                }
+            });
+            result["cn"] = colls;
+            result["s"] = strutc;
+            result["："] = "coll";
+            result["n"] = this._c;
+            return result;
+        };
+        return CollPanel;
+    }(Tag.Unknown));
+    Tag.CollPanel = CollPanel;
+})(Tag || (Tag = {}));
+/**
+ * 定义使用集合标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/CollSource.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    // import Util = __Bigine_Util;
+    var CollSource = (function (_super) {
+        __extends(CollSource, _super);
+        function CollSource() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CollSource.prototype.gN = function () {
+            return 'CollSource';
+        };
+        return CollSource;
+    }(Tag.Unknown));
+    Tag.CollSource = CollSource;
+})(Tag || (Tag = {}));
+/**
+ * 定义集合结构标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/CollStruct.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    // import Util = __Bigine_Util;
+    var CollStruct = (function (_super) {
+        __extends(CollStruct, _super);
+        function CollStruct() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CollStruct.prototype.gN = function () {
+            return 'CollStruct';
+        };
+        return CollStruct;
+    }(Tag.Unknown));
+    Tag.CollStruct = CollStruct;
+})(Tag || (Tag = {}));
+/**
+ * 定义简单面板标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/SimpPanel.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var SimpPanel = (function (_super) {
+        __extends(SimpPanel, _super);
+        function SimpPanel() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        SimpPanel.prototype.gN = function () {
+            return 'SimpPanel';
+        };
+        /**
+         * 根据标签结构生成数据结构。
+         */
+        SimpPanel.prototype.g = function () {
+            var result = {};
+            result['c'] = [];
+            Util.each(this._s, function (ele) {
+                result['c'].push(ele.g());
+            });
+            result['n'] = this._c;
+            result['：'] = 'simp';
+            return result;
+        };
+        return SimpPanel;
+    }(Tag.Unknown));
+    Tag.SimpPanel = SimpPanel;
+})(Tag || (Tag = {}));
+/**
+ * 定义条目标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/SimpEle.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var SimpEle = (function (_super) {
+        __extends(SimpEle, _super);
+        function SimpEle() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        SimpEle.prototype.gN = function () {
+            return 'SimpEle';
+        };
+        /**
+         * 根据标签结构生成数据结构。
+         */
+        SimpEle.prototype.g = function () {
+            var result = {};
+            result['alias'] = this._c;
+            Util.each(this._s, function (child) {
+                if ('EleName' == child.gN()) {
+                    result['name'] = child.$c();
+                }
+                else if ('EleType' == child.gN()) {
+                    result['type'] = child.$c();
+                }
+            });
+            return result;
+        };
+        return SimpEle;
+    }(Tag.Unknown));
+    Tag.SimpEle = SimpEle;
+})(Tag || (Tag = {}));
+/**
+ * 定义数据名标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/EleName.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    // import Util = __Bigine_Util;
+    var EleName = (function (_super) {
+        __extends(EleName, _super);
+        function EleName() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        EleName.prototype.gN = function () {
+            return 'EleName';
+        };
+        return EleName;
+    }(Tag.Unknown));
+    Tag.EleName = EleName;
+})(Tag || (Tag = {}));
+/**
+ * 定义数据类别标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/EleType.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    // import Util = __Bigine_Util;
+    var EleType = (function (_super) {
+        __extends(EleType, _super);
+        function EleType() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        EleType.prototype.gN = function () {
+            return 'EleType';
+        };
+        return EleType;
+    }(Tag.Unknown));
+    Tag.EleType = EleType;
 })(Tag || (Tag = {}));
 /**
  * 打包所有已定义地标签组件。
@@ -9419,6 +10025,14 @@ var Tag;
 /// <reference path="_State/Field.ts" />
 /// <reference path="_State/FieldType.ts" />
 /// <reference path="_State/FieldLimit.ts" />
+/// <reference path="_Structure/_Panel/Panel.ts" />
+/// <reference path="_Structure/_Panel/CollPanel.ts" />
+/// <reference path="_Structure/_Panel/CollSource.ts" />
+/// <reference path="_Structure/_Panel/CollStruct.ts" />
+/// <reference path="_Structure/_Panel/SimpPanel.ts" />
+/// <reference path="_Structure/_Panel/SimpEle.ts" />
+/// <reference path="_Structure/_Panel/EleName.ts" />
+/// <reference path="_Structure/_Panel/EleType.ts" />
 /**
  * 定义（作品）运行时组件。
  *
