@@ -53,6 +53,36 @@ namespace Tag {
         }
 
         /**
+         * 获取实体字段的实体类型。
+         */
+        public gET(fieldName: string): Core.IEpisode.Entity {
+            let entityType: Core.IEpisode.Entity;
+            Util.every(this._s, (field: Field) => {
+                if (field.$c() == fieldName && field.iE()) {
+                    entityType = field.gET();
+                    return false;
+                }
+                return true;
+            });
+            return entityType;
+        }
+
+        /**
+         * 根据字段名判断是否实体类型的字段。
+         */
+        public iE(fieldName: string): boolean {
+            let isEntity: boolean = false;
+            Util.every(this._s, (field: Field) => {
+                if (field.$c() == fieldName && field.iE()) {
+                    isEntity = true;
+                    return false;
+                }
+                return true;
+            });
+            return isEntity;
+        }
+
+        /**
          * 获取结构体对象。
          */
         public g(data: Util.IHashTable<any>): Util.IHashTable<any> {

@@ -1414,7 +1414,9 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class Assign extends Action {
+            private _ep;
             gN(): string;
+            $b(ep: Core.IEpisode): void;
             t(states: Core.IStates): boolean;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
@@ -1628,6 +1630,8 @@ declare namespace __Bigine {
             gN(): string;
             gT(): Core.IEpisode.Entity;
             gS(): Array<Unknown>;
+            gET(fieldName: string): Core.IEpisode.Entity;
+            iE(fieldName: string): boolean;
             g(data: Util.IHashTable<any>): Util.IHashTable<any>;
         }
     }
@@ -1643,6 +1647,7 @@ declare namespace __Bigine {
             iE(): boolean;
             iN(): boolean;
             gT(): string;
+            gET(): Core.IEpisode.Entity;
             g(val: string): number | string | Entity;
         }
     }

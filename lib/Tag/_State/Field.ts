@@ -83,6 +83,14 @@ namespace Tag {
         }
 
         /**
+         * 获取字段类型。
+         */
+        public gET(): Core.IEpisode.Entity {
+            let entity: Core.IEpisode.Entity = this.entityTypes[this.gT()];
+            return entity;
+        }
+
+        /**
          * 获取字段的值。
          */
         public g(val: string): number | string | Entity {

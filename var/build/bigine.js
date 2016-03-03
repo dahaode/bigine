@@ -8060,19 +8060,46 @@ var Tag;
             return 'Assign';
         };
         /**
+         * 绑定（运行时）作品（实体）。
+         */
+        Assign.prototype.$b = function (ep) {
+            this._ep = ep;
+        };
+        /**
          * （执行）检查。
          */
         Assign.prototype.t = function (states) {
             var depth = states.g('$d');
-            states.s(this._p[0], this.$v(this._c))
-                .c(this._p[0], '$v' + depth)
-                .s('$t' + depth, false);
+            var sign = '／';
+            // 如果是设置结构体类型数据中字段值
+            if (/^.+／.+$/ig.test(this._p[0])) {
+                var vari = this._p[0].split(sign)[0];
+                var fieldName = this._p[0].split(sign)[1];
+                var data = states.g(vari);
+                var cStruct = this._ep.q(data['：'], Core.IEpisode.Entity.Struct);
+                // 如果是实体类型字段
+                if ('object' == typeof data[fieldName]) {
+                    // 取出集合的结构
+                    data[fieldName] = this._ep.q(this._c, cStruct.gET(fieldName), this._l);
+                }
+                else {
+                    data[fieldName] = this._c;
+                }
+                states.s(vari, data);
+            }
+            else {
+                states.s(this._p[0], this.$v(this._c))
+                    .c(this._p[0], '$v' + depth)
+                    .s('$t' + depth, false);
+            }
             return true;
         };
         /**
          * 执行。
          */
         Assign.prototype.p = function (runtime) {
+            if (/.*／$/.test(this._p[0]))
+                throw new E(E.LEX_ILLEGAL_SOURCE, this._l);
             this.t(runtime.gS());
             return runtime;
         };
@@ -9535,6 +9562,34 @@ var Tag;
             return this._s;
         };
         /**
+         * 获取实体字段的实体类型。
+         */
+        Struct.prototype.gET = function (fieldName) {
+            var entityType;
+            Util.every(this._s, function (field) {
+                if (field.$c() == fieldName && field.iE()) {
+                    entityType = field.gET();
+                    return false;
+                }
+                return true;
+            });
+            return entityType;
+        };
+        /**
+         * 根据字段名判断是否实体类型的字段。
+         */
+        Struct.prototype.iE = function (fieldName) {
+            var isEntity = false;
+            Util.every(this._s, function (field) {
+                if (field.$c() == fieldName && field.iE()) {
+                    isEntity = true;
+                    return false;
+                }
+                return true;
+            });
+            return isEntity;
+        };
+        /**
          * 获取结构体对象。
          */
         Struct.prototype.g = function (data) {
@@ -9625,6 +9680,13 @@ var Tag;
             return fieldType;
         };
         /**
+         * 获取字段类型。
+         */
+        Field.prototype.gET = function () {
+            var entity = this.entityTypes[this.gT()];
+            return entity;
+        };
+        /**
          * 获取字段的值。
          */
         Field.prototype.g = function (val) {
@@ -9650,8 +9712,6 @@ var Tag;
                     throw new E(E.STRUCT_FIELD_MISSING, this._l);
                 var obj = this._ep.q(val, this.entityTypes[fieldType], this._l);
                 return obj;
-            }
-            else if (Util.indexOf(this.nameTypes, fieldType) > -1) {
             }
             return val ? val : '';
         };
