@@ -14,6 +14,6 @@ namespace Core {
         /**
          * 更新作品标题。
          */
-        u(title: string): IStart;
+        u(title: string, series: boolean): IStart;
     }
 }

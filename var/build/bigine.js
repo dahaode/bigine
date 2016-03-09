@@ -694,9 +694,6 @@ var Runtime;
                     target: _this
                 }));
             })['catch'](function (error) {
-                console.log("--------错误日志---------");
-                console.error(error);
-                console.log("--------错误日志---------");
                 runtime.dispatchEvent(new Ev.Error({
                     target: _this,
                     error: error
@@ -861,6 +858,7 @@ var Ev;
         function Save(metas) {
             _super.call(this, metas);
             this.data = metas.data;
+            this.series = metas.series || false;
             this.manual = metas.manual;
             this.callback = metas.callback;
         }
@@ -937,7 +935,10 @@ var Runtime;
         function States(runtime) {
             this._d = {};
             this._r = runtime;
-            this._s = {};
+            this._s = {
+                'series': {},
+                'work': {}
+            };
             this._l = false;
         }
         /**
@@ -1026,15 +1027,18 @@ var Runtime;
          *
          * 此方法应触发 Save 事件。
          */
-        States.prototype.e = function (manual) {
+        States.prototype.e = function (manual, series) {
             var _this = this;
             if (!this._p)
                 return {};
+            if (series)
+                this._p[' '] = true;
             var save = function (id) {
-                _this._s[manual ? '1' : 'auto'] = [id, +new Date()];
+                _this._s[series ? 'series' : 'work'][manual ? '1' : 'auto'] = [id, +new Date()];
             };
             this._r.dispatchEvent(new Ev.Save({
                 target: this,
+                series: series,
                 manual: manual,
                 data: this._p,
                 callback: save
@@ -1046,14 +1050,14 @@ var Runtime;
          */
         States.prototype.i = function (data) {
             this._d = data;
-            this._p = undefined;
+            this._p = Util.clone(data);
             return this;
         };
         /**
          * 查询档位存档编号。
          */
-        States.prototype.q = function (index) {
-            return this._s[index];
+        States.prototype.q = function (index, series) {
+            return this._s[series ? 'series' : 'work'][index];
         };
         /**
          * 加载存档信息。
@@ -1411,6 +1415,12 @@ var Runtime;
         Director.prototype.b = function (viewport) {
             return this;
         };
+        /**
+         * 连载模式。
+         */
+        Director.prototype.e = function () {
+            return this;
+        };
         return Director;
     }());
     Runtime.Director = Director;
@@ -1647,6 +1657,46 @@ var Ev;
     Ev.StartNew = StartNew;
 })(Ev || (Ev = {}));
 /**
+ * 声明（画面调度）开始菜单连载游戏事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IStartSeriesMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IStart.ts" />
+/**
+ * 定义（画面调度）开始菜单继续游戏事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/StartSeries.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IStartSeriesMetas.ts" />
+var Ev;
+(function (Ev) {
+    var StartSeries = (function (_super) {
+        __extends(StartSeries, _super);
+        /**
+         * 构造函数。
+         */
+        function StartSeries(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        StartSeries.prototype.gT = function () {
+            return 'start.series';
+        };
+        return StartSeries;
+    }(Ev.Event));
+    Ev.StartSeries = StartSeries;
+})(Ev || (Ev = {}));
+/**
  * 声明（画面调度）开始菜单继续游戏事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -1697,6 +1747,7 @@ var Ev;
 /// <reference path="Sprite.ts" />
 /// <reference path="../Resource/Resource.ts" />
 /// <reference path="../Ev/_Sprite/StartNew.ts" />
+/// <reference path="../Ev/_Sprite/StartSeries.ts" />
 /// <reference path="../Ev/_Sprite/StartLoad.ts" />
 var Sprite;
 (function (Sprite) {
@@ -1708,32 +1759,44 @@ var Sprite;
          */
         function Start(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _new = theme['new'], _load = theme['load'], _title = theme['title'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _new = theme['new'], _series = theme['series'], _load = theme['load'], _title = theme['title'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + theme['i'], raw),
                 rr.g(url + _new['i'], raw),
                 rr.g(url + _new['ih'], raw),
+                rr.g(url + _series['i'], raw),
+                rr.g(url + _series['ih'], raw),
                 rr.g(url + _load['i'], raw),
                 rr.g(url + _load['ih'], raw)
             ];
+            this._y = {};
             this.o(0)
                 .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
-                .a(new G.Button(_new)
+                .a(this._y['n'] = new G.Button(_new)
                 .b(function () {
                 _this.dispatchEvent(new Ev.StartNew({ target: _this }));
-            }, new G.Image(this._rr[2].o(), _new, true), new G.Image(this._rr[1].o(), _new, true))).a(new G.Button(_load)
+            }, new G.Image(this._rr[2].o(), _new, true), new G.Image(this._rr[1].o(), _new, true))).a(this._y['s'] = new G.Button(_series)
+                .b(function () {
+                _this.dispatchEvent(new Ev.StartSeries({ target: _this }));
+            }, new G.Image(this._rr[4].o(), _series, true), new G.Image(this._rr[3].o(), _series, true))
+                .o(0)).a(new G.Button(_load)
                 .b(function () {
                 _this.dispatchEvent(new Ev.StartLoad({ target: _this }));
-            }, new G.Image(this._rr[4].o(), _load, true), new G.Image(this._rr[3].o(), _load, true))).a(new G.Text(_title, _title['s'], _title['lh'], this.$a(_title['a']))
+            }, new G.Image(this._rr[6].o(), _load, true), new G.Image(this._rr[5].o(), _load, true))).a(new G.Text(_title, _title['s'], _title['lh'], this.$a(_title['a']))
                 .tc(_title['c'])
                 .a(this._x = new G.TextPhrase()));
         }
         /**
          * 设置名称。
          */
-        Start.prototype.u = function (title) {
-            this._x.t(title);
+        Start.prototype.u = function (title, series) {
+            if (title)
+                this._x.t(title);
+            if (series) {
+                this._y['n'].o(0);
+                this._y['s'].o(1);
+            }
             return this;
         };
         return Start;
@@ -3220,6 +3283,134 @@ var Sprite;
     Sprite.CG = CG;
 })(Sprite || (Sprite = {}));
 /**
+ * 定义画面调度连载档位菜单组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/SeriesSlots.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/SlotsClose.ts" />
+/// <reference path="../Ev/_Sprite/SlotsLoad.ts" />
+/// <reference path="../Ev/_Sprite/SlotsSave.ts" />
+var Sprite;
+(function (Sprite) {
+    var Util = __Bigine_Util;
+    var G = __Bigine_C2D;
+    var SeriesSlots = (function (_super) {
+        __extends(SeriesSlots, _super);
+        /**
+         * 构造函数。
+         */
+        function SeriesSlots(id, theme) {
+            var _this = this;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
+            _super.call(this, 0, 0, w, h);
+            this._c = [_auto, _1];
+            this._x = {};
+            this._rr = [
+                rr.g(url + _close['i'], raw),
+                rr.g(url + _close['ih'], raw),
+                rr.g(url + _auto['i'], raw),
+                rr.g(url + _auto['ih'], raw),
+                rr.g(url + _1['i'], raw),
+                rr.g(url + _1['ih'], raw),
+                rr.g(url + _2['i'], raw),
+                rr.g(url + _3['i'], raw),
+                rr.g(url + _4['i'], raw)
+            ];
+            this.o(0)
+                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Button(_close)
+                .b(function () {
+                _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
+            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true))).a(new G.Image(this._rr[6].o(), _2))
+                .a(new G.Image(this._rr[7].o(), _3))
+                .a(new G.Image(this._rr[8].o(), _4));
+        }
+        /**
+         * 显示存档位。
+         */
+        SeriesSlots.prototype.vs = function (states, duration) {
+            var _this = this;
+            return states.l().then(function () {
+                var $1 = states.q('1', true), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+                _this.a(_this._x['1'] = new G.Button(_1)
+                    .b(function () {
+                    _this.dispatchEvent(new Ev.SlotsSave({ target: _this }));
+                }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true))
+                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
+                    .tc(_1t['c'])
+                    .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）'))));
+                return _this.v(duration);
+            });
+        };
+        /**
+         * 显示读档位。
+         */
+        SeriesSlots.prototype.vl = function (states, duration) {
+            var _this = this;
+            return states.l().then(function () {
+                var $a = states.q('auto', true), _a = _this._c[0], _at = _a['text'], $1 = states.q('1', true), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+                _this.a(_this._x['a'] = $a ?
+                    new G.Button(_a)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsLoad({
+                            target: _this,
+                            id: $a[0]
+                        }));
+                    }, new G.Image(_this._rr[3].o(), _a, true), new G.Image(_this._rr[2].o(), _a, true)) :
+                    new G.Sprite(_a)
+                        .a(new G.Image(_this._rr[2].o(), _a, true))).a(_this._x['1'] = $1 ?
+                    new G.Button(_1)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsLoad({
+                            target: _this,
+                            id: $1[0]
+                        }));
+                    }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true)) :
+                    new G.Sprite(_1)
+                        .a(new G.Image(_this._rr[4].o(), _1, true)));
+                _this._x['a']
+                    .a(new G.Text(_at, _at['s'], _at['lh'], right, true)
+                    .tc(_at['c'])
+                    .a(new G.TextPhrase($a ? _this.$d($a[1]) : '（无）')));
+                _this._x['1']
+                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
+                    .tc(_1t['c'])
+                    .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）')));
+                return _this.v(duration);
+            });
+        };
+        /**
+         * 隐藏。
+         */
+        SeriesSlots.prototype.h = function (duration) {
+            var _this = this;
+            return _super.prototype.h.call(this, duration).then(function () {
+                Util.each(_this._x, function (item) {
+                    _this.e(item);
+                });
+                _this._x = {};
+                return _this;
+            });
+        };
+        /**
+         * 格式化时间。
+         */
+        SeriesSlots.prototype.$d = function (stamp) {
+            var date = new Date(stamp), field = date.getHours(), clob = ' ' + (10 > field ? '0' : '') + field;
+            field = date.getMinutes();
+            clob += ':' + (10 > field ? '0' : '') + field;
+            return date.getFullYear() + '-' + (1 + date.getMonth()) + '-' + date.getDate() + clob;
+        };
+        return SeriesSlots;
+    }(Sprite.Sprite));
+    Sprite.SeriesSlots = SeriesSlots;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -3239,6 +3430,7 @@ var Sprite;
 /// <reference path="Tip.ts" />
 /// <reference path="Choose.ts" />
 /// <reference path="CG.ts" />
+/// <reference path="SeriesSlots.ts" />
 /**
  * 声明剧情结束事件元信息接口规范。
  *
@@ -3352,6 +3544,7 @@ var Runtime;
                 if (13 == event.keyCode && !_this._a && _this._t)
                     _this._t.h();
             };
+            this._fs = false;
             window.addEventListener('keydown', this._l);
         }
         /**
@@ -3386,9 +3579,7 @@ var Runtime;
          */
         CanvasDirector.prototype.OP = function (start, title, author) {
             var _this = this;
-            if (title) {
-                this._x['s'].u(title);
-            }
+            this._x['s'].u(title, this._fs);
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
@@ -3443,7 +3634,29 @@ var Runtime;
                     _this._c.e(gED);
                     return _super.prototype.ED.call(_this);
                 });
-            });
+            }).then(function () { return _this.$s(); });
+        };
+        /**
+         * 连载存档。
+         */
+        CanvasDirector.prototype.$s = function () {
+            var _this = this;
+            if (!this._fs)
+                return Promise.resolve(this._r);
+            return new Promise(function (resolve) {
+                var $c = 'slots.close', close = function () {
+                    _this._x['ss'].removeEventListener($c, close);
+                    resolve(_this._r);
+                }, $s = 'slots.save', save = function () {
+                    _this._x['ss'].removeEventListener($s, save);
+                    resolve(_this._r);
+                };
+                _this.lightOn().then(function () {
+                    _this._x['ss']
+                        .addEventListener($c, close)
+                        .addEventListener($s, save).vs(_this._r.gS());
+                });
+            }).then(function () { return _this.lightOff(); });
         };
         /**
          * 人物出场。
@@ -3883,10 +4096,13 @@ var Runtime;
                     event.target.h(0);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
+            }).addEventListener('start.series', function (event) {
+                _this.playSE(_this._i['c']);
+                _this._x['ss'].vl(_this._r.gS());
             }).addEventListener('start.load', function (event) {
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
-                _this._x['sl'].vl(_this._r.gS(), 250)['catch'](function () {
+                _this._x['sl'].vl(_this._r.gS())['catch'](function () {
                     return;
                 });
             });
@@ -3896,7 +4112,7 @@ var Runtime;
             this._x['sl'] = new Sprite.Slots(id, theme['slots'])
                 .addEventListener('slots.close', function () {
                 _this._x[slotsFromStart ? 's' : 'm'].v();
-                _this._x['sl'].h(250);
+                _this._x['sl'].h();
             }).addEventListener('slots.save', function () {
                 _this._x[slotsFromStart ? 's' : 'm'].v();
                 _this._x['sl'].h();
@@ -3912,6 +4128,24 @@ var Runtime;
             });
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
+            // 连载档位菜单。
+            this._x['ss'] = new Sprite.SeriesSlots(id, theme['series'])
+                .addEventListener('slots.close', function () {
+                _this._x['ss'].h();
+            }).addEventListener('slots.save', function () {
+                _this._x['ss'].h();
+                _this._r.gS().e(true, true);
+            }).addEventListener('slots.load', function (ev) {
+                _this.lightOff().then(function () {
+                    _this._x['ss'].h(0);
+                    _this._x['s'].h(0);
+                    if (!_this._a)
+                        _this._x['t'].v(0);
+                    _this._r.l(ev.id);
+                });
+            });
+            resources.push(this._x['ss'].l());
+            this._c.a(this._x['ss'], gCurtain);
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
             this.c(resources);
             return this;
@@ -4011,6 +4245,13 @@ var Runtime;
          */
         CanvasDirector.prototype.b = function (viewport) {
             this._c.b(viewport);
+            return this;
+        };
+        /**
+         * 连载模式。
+         */
+        CanvasDirector.prototype.e = function () {
+            this._fs = true;
             return this;
         };
         /**
@@ -10130,6 +10371,7 @@ var Runtime;
             this._fp = this._d.gD();
             this._fv = 1;
             this._fa = this._e.gA();
+            this._fs = false;
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
@@ -10146,6 +10388,7 @@ var Runtime;
             });
             this.addEventListener('begin', function () {
                 _this._fb = true;
+                _this._s.d(' ');
                 _this.t(function () { return _this._e.p(Core.ISceneTag.Type.Begin, _this); });
             });
             this.addEventListener('resume', function () {
@@ -10228,6 +10471,8 @@ var Runtime;
             if (!this._fr)
                 return this;
             this._s.i({});
+            if (this._fs)
+                this._d.e();
             this._d.playBGM();
             this._d.playSE();
             this._d.OP(!this._e.gA(), this._n, this._c);
@@ -10347,7 +10592,7 @@ var Runtime;
                 _this._d.reset().then(function () {
                     if (!fresh)
                         states.i(data);
-                    if (fresh || !states.g(ks))
+                    if (fresh || !states.g(ks) || states.g(' '))
                         return _this.dispatchEvent(new Ev.Begin({
                             target: episode
                         }));
@@ -10394,6 +10639,13 @@ var Runtime;
          */
         Runtime.prototype.bind = function (viewport) {
             this._d.b(viewport);
+            return this;
+        };
+        /**
+         * 连载模式。
+         */
+        Runtime.prototype.series = function () {
+            this._fs = true;
             return this;
         };
         return Runtime;
@@ -10600,7 +10852,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.18.1';
+    Bigine.version = '0.18.2';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

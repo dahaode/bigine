@@ -78,6 +78,11 @@ namespace Runtime {
         private _fb: boolean;
 
         /**
+         * 是否连载。
+         */
+        private _fs: boolean;
+
+        /**
          * 当前时序流。
          */
         private _t: Promise<Runtime>;
@@ -106,6 +111,7 @@ namespace Runtime {
             this._fp = this._d.gD();
             this._fv = 1;
             this._fa = this._e.gA();
+            this._fs = false;
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
@@ -122,6 +128,7 @@ namespace Runtime {
             });
             this.addEventListener('begin', () => {
                 this._fb = true;
+                this._s.d(' ');
                 this.t(() => this._e.p(Core.ISceneTag.Type.Begin, this));
             });
             this.addEventListener('resume', () => {
@@ -211,6 +218,8 @@ namespace Runtime {
             if (!this._fr)
                 return this;
             this._s.i({});
+            if (this._fs)
+                this._d.e();
             this._d.playBGM();
             this._d.playSE();
             this._d.OP(!this._e.gA(), this._n, this._c);
@@ -354,7 +363,7 @@ namespace Runtime {
                 this._d.reset().then(() => {
                     if (!fresh)
                         states.i(data);
-                    if (fresh || !states.g(ks)) // 无存档或存档无事件特征
+                    if (fresh || !states.g(ks) || states.g(' ')) // 无存档或存档无事件特征或连载存档
                         return this.dispatchEvent(new Ev.Begin({
                             target: episode
                         }));
@@ -402,6 +411,14 @@ namespace Runtime {
          */
         public bind(viewport: HTMLElement): Runtime {
             this._d.b(viewport);
+            return this;
+        }
+
+        /**
+         * 连载模式。
+         */
+        public series(): Runtime {
+            this._fs = true;
             return this;
         }
     }

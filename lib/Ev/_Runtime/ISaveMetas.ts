@@ -19,6 +19,11 @@ namespace Ev {
         data: Util.IHashTable<any>;
 
         /**
+         * 是否连载存档。
+         */
+        series?: boolean;
+
+        /**
          * 是否手动存档。
          */
         manual: boolean;

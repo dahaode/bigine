@@ -114,5 +114,10 @@ namespace Core {
          * 绑定视图。
          */
         bind(viewport: HTMLElement): IRuntime;
+
+        /**
+         * 连载模式。
+         */
+        series(): IRuntime;
     }
 }

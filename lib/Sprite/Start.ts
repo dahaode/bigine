@@ -10,6 +10,7 @@
 /// <reference path="Sprite.ts" />
 /// <reference path="../Resource/Resource.ts" />
 /// <reference path="../Ev/_Sprite/StartNew.ts" />
+/// <reference path="../Ev/_Sprite/StartSeries.ts" />
 /// <reference path="../Ev/_Sprite/StartLoad.ts" />
 
 namespace Sprite {
@@ -23,6 +24,11 @@ namespace Sprite {
         private _x: G.TextPhrase;
 
         /**
+         * 按钮集合。
+         */
+        private _y: Util.IHashTable<G.Button>;
+
+        /**
          * 构造函数。
          */
         constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
@@ -32,6 +38,7 @@ namespace Sprite {
                 rr: typeof Resource.Resource = Resource.Resource,
                 url: string = '//s.dahao.de/theme/' + id + '/',
                 _new: Util.IHashTable<any> = theme['new'],
+                _series: Util.IHashTable<any> = theme['series'],
                 _load: Util.IHashTable<any> = theme['load'],
                 _title: Util.IHashTable<any> = theme['title'];
             super(0, 0, w, h);
@@ -39,19 +46,27 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(url + theme['i'], raw),
                 rr.g<HTMLImageElement>(url + _new['i'], raw),
                 rr.g<HTMLImageElement>(url + _new['ih'], raw),
+                rr.g<HTMLImageElement>(url + _series['i'], raw),
+                rr.g<HTMLImageElement>(url + _series['ih'], raw),
                 rr.g<HTMLImageElement>(url + _load['i'], raw),
                 rr.g<HTMLImageElement>(url + _load['ih'], raw)
             ];
+            this._y = {};
             (<Start> this.o(0))
                 .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
-                .a(new G.Button(<G.IBounds> _new)
+                .a(this._y['n'] = new G.Button(<G.IBounds> _new)
                     .b(() => {
                         this.dispatchEvent(new Ev.StartNew({ target: this }));
                     }, new G.Image(this._rr[2].o(), <G.IBounds> _new, true), new G.Image(this._rr[1].o(), <G.IBounds> _new, true))
+                ).a(this._y['s'] = <G.Button> new G.Button(<G.IBounds> _series)
+                    .b(() => {
+                        this.dispatchEvent(new Ev.StartSeries({ target: this }));
+                    }, new G.Image(this._rr[4].o(), <G.IBounds> _series, true), new G.Image(this._rr[3].o(), <G.IBounds> _series, true))
+                    .o(0)
                 ).a(new G.Button(<G.IBounds> _load)
                     .b(() => {
                         this.dispatchEvent(new Ev.StartLoad({ target: this }));
-                    }, new G.Image(this._rr[4].o(), <G.IBounds> _load, true), new G.Image(this._rr[3].o(), <G.IBounds> _load, true))
+                    }, new G.Image(this._rr[6].o(), <G.IBounds> _load, true), new G.Image(this._rr[5].o(), <G.IBounds> _load, true))
                 ).a(new G.Text(<G.IBounds> _title, _title['s'], _title['lh'], this.$a(_title['a']))
                     .tc(_title['c'])
                     .a(this._x = new G.TextPhrase())
@@ -61,8 +76,13 @@ namespace Sprite {
         /**
          * 设置名称。
          */
-        public u(title: string): Start {
-            this._x.t(title);
+        public u(title: string, series: boolean): Start {
+            if (title)
+                this._x.t(title);
+            if (series) {
+                this._y['n'].o(0);
+                this._y['s'].o(1);
+            }
             return this;
         }
     }

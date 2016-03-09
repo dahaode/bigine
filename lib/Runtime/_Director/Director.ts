@@ -289,5 +289,12 @@ namespace Runtime {
         public b(viewport: HTMLElement): Director {
             return this;
         }
+
+        /**
+         * 连载模式。
+         */
+        public e(): Director {
+            return this;
+        }
     }
 }

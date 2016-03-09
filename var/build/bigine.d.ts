@@ -52,9 +52,9 @@ declare namespace __Bigine {
             m(src: string, dest: string): IStates;
             t(text: string): string;
             p(): IStates;
-            e(manual: boolean): Util.IHashTable<any>;
+            e(manual: boolean, series?: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): IStates;
-            q(index: string): [string, number];
+            q(index: string, series?: boolean): [string, number];
             l(): Promise<IStates>;
         }
     }
@@ -173,6 +173,7 @@ declare namespace __Bigine {
             author(title: string): IRuntime;
             l(id?: string): void;
             bind(viewport: HTMLElement): IRuntime;
+            series(): IRuntime;
         }
     }
     namespace Core {
@@ -291,12 +292,12 @@ declare namespace __Bigine {
     }
     namespace Ev {
         interface IQueryMetas extends Util.IEventMetas<Core.IStates> {
-            callback: (slots: Util.IHashTable<[string, number]>) => void;
+            callback: (slots: Util.IHashTable<Util.IHashTable<[string, number]>>) => void;
         }
     }
     namespace Ev {
         class Query extends Event<Core.IStates> {
-            callback: (slots: Util.IHashTable<[string, number]>) => void;
+            callback: (slots: Util.IHashTable<Util.IHashTable<[string, number]>>) => void;
             constructor(metas: IQueryMetas);
             gT(): string;
         }
@@ -304,6 +305,7 @@ declare namespace __Bigine {
     namespace Ev {
         interface ISaveMetas extends Util.IEventMetas<Core.IStates> {
             data: Util.IHashTable<any>;
+            series?: boolean;
             manual: boolean;
             callback: (id: string) => void;
         }
@@ -311,6 +313,7 @@ declare namespace __Bigine {
     namespace Ev {
         class Save extends Event<Core.IStates> {
             data: Util.IHashTable<any>;
+            series: boolean;
             manual: boolean;
             callback: (id: string) => void;
             constructor(metas: ISaveMetas);
@@ -345,9 +348,9 @@ declare namespace __Bigine {
             m(src: string, dest: string): States;
             t(text: string): string;
             p(): States;
-            e(manual: boolean): Util.IHashTable<any>;
+            e(manual: boolean, series?: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): States;
-            q(index: string): [string, number];
+            q(index: string, series?: boolean): [string, number];
             l(): Promise<States>;
         }
     }
@@ -410,6 +413,7 @@ declare namespace __Bigine {
             d(): void;
             h(): void;
             b(viewport: HTMLElement): Director;
+            e(): Director;
         }
     }
     namespace Runtime {
@@ -449,7 +453,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface IStart extends ISprite {
-            u(title: string): IStart;
+            u(title: string, series: boolean): IStart;
         }
     }
     namespace Ev {
@@ -459,6 +463,16 @@ declare namespace __Bigine {
     namespace Ev {
         class StartNew extends Event<Core.IStart> {
             constructor(metas: IStartNewMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IStartSeriesMetas extends Util.IEventMetas<Core.IStart> {
+        }
+    }
+    namespace Ev {
+        class StartSeries extends Event<Core.IStart> {
+            constructor(metas: IStartSeriesMetas);
             gT(): string;
         }
     }
@@ -475,8 +489,9 @@ declare namespace __Bigine {
     namespace Sprite {
         class Start extends Sprite implements Core.IStart {
             private _x;
+            private _y;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
-            u(title: string): Start;
+            u(title: string, series: boolean): Start;
         }
     }
     namespace Core {
@@ -722,6 +737,17 @@ declare namespace __Bigine {
             u(image: Resource.Resource<HTMLImageElement>): CG;
         }
     }
+    namespace Sprite {
+        class SeriesSlots extends Sprite implements Core.ISlots {
+            private _c;
+            private _x;
+            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            vs(states: Core.IStates, duration?: number): Promise<SeriesSlots>;
+            vl(states: Core.IStates, duration?: number): Promise<SeriesSlots>;
+            h(duration?: number): Promise<SeriesSlots>;
+            private $d(stamp);
+        }
+    }
     namespace Ev {
         interface IFinMetas extends Util.IEventMetas<Core.IEpisode> {
         }
@@ -745,10 +771,12 @@ declare namespace __Bigine {
             private _e;
             private _l;
             private _x;
+            private _fs;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
+            protected $s(): Promise<Core.IRuntime>;
             charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
             charOff(position: Core.IDirector.Position): Promise<Core.IRuntime>;
             charSet(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
@@ -769,14 +797,15 @@ declare namespace __Bigine {
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
-            s(sheet: [string, string][]): Director;
-            p(sheet: Array<Util.IHashTable<any>>): Director;
+            s(sheet: [string, string][]): CanvasDirector;
+            p(sheet: Array<Util.IHashTable<any>>): CanvasDirector;
             a(auto: boolean): boolean;
             v(volume: number): CanvasDirector;
             f(): void;
             d(): void;
             h(): void;
-            b(viewport: HTMLElement): Director;
+            b(viewport: HTMLElement): CanvasDirector;
+            e(): CanvasDirector;
         }
     }
     namespace Runtime {
@@ -1712,6 +1741,7 @@ declare namespace __Bigine {
             private _fa;
             private _fh;
             private _fb;
+            private _fs;
             private _t;
             private _n;
             private _c;
@@ -1738,6 +1768,7 @@ declare namespace __Bigine {
             t(flow: () => Runtime | Thenable<Runtime>): Runtime;
             l(id: string): void;
             bind(viewport: HTMLElement): Runtime;
+            series(): Runtime;
         }
     }
     namespace Lex {

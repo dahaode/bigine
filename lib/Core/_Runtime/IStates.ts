@@ -89,7 +89,7 @@ namespace Core {
          *
          * 此方法应触发 Save 事件。
          */
-        e(manual: boolean): Util.IHashTable<any>;
+        e(manual: boolean, series?: boolean): Util.IHashTable<any>;
 
         /**
          * 导入数据。
@@ -99,7 +99,7 @@ namespace Core {
         /**
          * 查询档位信息。
          */
-        q(index: string): [string, number];
+        q(index: string, series?: boolean): [string, number];
 
         /**
          * 加载存档信息。

@@ -16,6 +16,6 @@ namespace Ev {
         /**
          * 数据导入回调函数。
          */
-        callback: (slots: Util.IHashTable<[string, number]>) => void;
+        callback: (slots: Util.IHashTable<Util.IHashTable<[string, number]>>) => void;
     }
 }

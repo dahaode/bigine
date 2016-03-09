@@ -19,3 +19,4 @@
 /// <reference path="Tip.ts" />
 /// <reference path="Choose.ts" />
 /// <reference path="CG.ts" />
+/// <reference path="SeriesSlots.ts" />

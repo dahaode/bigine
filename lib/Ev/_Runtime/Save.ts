@@ -20,6 +20,11 @@ namespace Ev {
         public data: Util.IHashTable<any>;
 
         /**
+         * 是否连载存档。
+         */
+        public series: boolean;
+
+        /**
          * 是否手动存档。
          */
         public manual: boolean;
@@ -35,6 +40,7 @@ namespace Ev {
         constructor(metas: ISaveMetas) {
             super(metas);
             this.data = metas.data;
+            this.series = metas.series || false;
             this.manual = metas.manual;
             this.callback = metas.callback;
         }

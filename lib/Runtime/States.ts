@@ -30,7 +30,7 @@ namespace Runtime {
         /**
          * 存档信息。
          */
-        private _s: Util.IHashTable<[string, number]>;
+        private _s: Util.IHashTable<Util.IHashTable<[string, number]>>;
 
         /**
          * 是否已加载存档信息。
@@ -48,7 +48,10 @@ namespace Runtime {
         constructor(runtime: Core.IRuntime) {
             this._d = {};
             this._r = runtime;
-            this._s = {};
+            this._s = {
+                'series': {},
+                'work': {}
+            };
             this._l = false;
         }
 
@@ -143,14 +146,17 @@ namespace Runtime {
          *
          * 此方法应触发 Save 事件。
          */
-        public e(manual: boolean): Util.IHashTable<any> {
+        public e(manual: boolean, series?: boolean): Util.IHashTable<any> {
             if (!this._p)
                 return {};
+            if (series)
+                this._p[' '] = true;
             var save: (id: string) => void = (id: string) => {
-                    this._s[manual ? '1' : 'auto'] = [id, + new Date()];
+                    this._s[series ? 'series' : 'work'][manual ? '1' : 'auto'] = [id, + new Date()];
                 };
             this._r.dispatchEvent(new Ev.Save({
                 target: this,
+                series: series,
                 manual: manual,
                 data: this._p,
                 callback: save
@@ -163,15 +169,15 @@ namespace Runtime {
          */
         public i(data: Util.IHashTable<any>): States {
             this._d = data;
-            this._p = undefined;
+            this._p = Util.clone(data);
             return this;
         }
 
         /**
          * 查询档位存档编号。
          */
-        public q(index: string): [string, number] {
-            return this._s[index];
+        public q(index: string, series?: boolean): [string, number] {
+            return this._s[series ? 'series' : 'work'][index];
         }
 
         /**
@@ -182,7 +188,7 @@ namespace Runtime {
                 if (this._l)
                     return resolve(this);
                 this._l = true;
-                let query: (slots: Util.IHashTable<[string, number]>) => void = (slots: Util.IHashTable<[string, number]>) => {
+                let query: (slots: Util.IHashTable<Util.IHashTable<[string, number]>>) => void = (slots: Util.IHashTable<Util.IHashTable<[string, number]>>) => {
                     if (!slots) {
                         this._l = false;
                         return reject();

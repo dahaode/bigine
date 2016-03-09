@@ -78,7 +78,15 @@ namespace Runtime {
          */
         private _l: (event: KeyboardEvent) => void;
 
+        /**
+         * 画面组件集合。
+         */
         private _x: Util.IHashTable<Sprite.Sprite>;
+
+        /**
+         * 连载模式。
+         */
+        private _fs: boolean;
 
         /**
          * 构造函数。
@@ -133,6 +141,7 @@ namespace Runtime {
                 if (13 == event.keyCode && !this._a && this._t)
                     this._t.h();
             };
+            this._fs = false;
             window.addEventListener('keydown', this._l);
         }
 
@@ -170,9 +179,7 @@ namespace Runtime {
          * 开始动画。
          */
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
-            if (title) {
-                (<Sprite.Start> this._x['s']).u(title);
-            }
+            (<Sprite.Start> this._x['s']).u(title, this._fs);
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
@@ -226,7 +233,33 @@ namespace Runtime {
                             this._c.e(gED);
                             return super.ED();
                         });
+                }).then(() => this.$s());
+        }
+
+        /**
+         * 连载存档。
+         */
+        protected $s(): Promise<Core.IRuntime> {
+            if (!this._fs)
+                return Promise.resolve(this._r);
+            return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
+                let $c: string = 'slots.close',
+                    close: () => void = () => {
+                        this._x['ss'].removeEventListener($c, close);
+                        resolve(this._r);
+                    },
+                    $s: string = 'slots.save',
+                    save: () => void = () => {
+                        this._x['ss'].removeEventListener($s, save);
+                        resolve(this._r);
+                    };
+                this.lightOn().then(() => {
+                    (<Sprite.SeriesSlots> this._x['ss']
+                        .addEventListener($c, close)
+                        .addEventListener($s, save)
+                    ).vs(this._r.gS());
                 });
+            }).then(() => this.lightOff());
         }
 
         /**
@@ -702,10 +735,13 @@ namespace Runtime {
                         event.target.h(0);
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
+                }).addEventListener('start.series', (event: Ev.StartSeries) => {
+                    this.playSE(this._i['c']);
+                    (<Sprite.SeriesSlots> this._x['ss']).vl(this._r.gS());
                 }).addEventListener('start.load', (event: Ev.StartLoad) => {
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
-                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS(), 250)
+                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS())
                         ['catch'](() => {
                             return;
                         });
@@ -716,7 +752,7 @@ namespace Runtime {
             this._x['sl'] = <Sprite.Slots> new Sprite.Slots(id, theme['slots'])
                 .addEventListener('slots.close', () => {
                     this._x[slotsFromStart ? 's' : 'm'].v();
-                    this._x['sl'].h(250);
+                    this._x['sl'].h();
                 }).addEventListener('slots.save', () => {
                     this._x[slotsFromStart ? 's' : 'm'].v();
                     this._x['sl'].h();
@@ -732,6 +768,24 @@ namespace Runtime {
                 });
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
+            // 连载档位菜单。
+            this._x['ss'] = <Sprite.SeriesSlots> new Sprite.SeriesSlots(id, theme['series'])
+                .addEventListener('slots.close', () => {
+                    this._x['ss'].h();
+                }).addEventListener('slots.save', () => {
+                    this._x['ss'].h();
+                    this._r.gS().e(true, true);
+                }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
+                    this.lightOff().then(() => {
+                        this._x['ss'].h(0);
+                        this._x['s'].h(0);
+                        if (!this._a)
+                            this._x['t'].v(0);
+                        this._r.l(ev.id);
+                    });
+                });
+            resources.push(this._x['ss'].l());
+            this._c.a(this._x['ss'], gCurtain);
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
             this.c(resources);
             return this;
@@ -740,7 +794,7 @@ namespace Runtime {
         /**
          * 配置状态。
          */
-        public s(sheet: [string, string][]): Director {
+        public s(sheet: [string, string][]): CanvasDirector {
             if (sheet.length)
                 (<Sprite.Status> this._x['S']).u(sheet, this._r);
             return this;
@@ -749,7 +803,7 @@ namespace Runtime {
         /**
          * 配置面板。
          */
-        public p(sheet: Array<Util.IHashTable<any>>): Director {
+        public p(sheet: Array<Util.IHashTable<any>>): CanvasDirector {
             if (sheet) {
                 (<Sprite.Panel> this._x['P']).u(sheet, this._r);
             } else
@@ -842,8 +896,16 @@ namespace Runtime {
         /**
          * 绑定视图。
          */
-        public b(viewport: HTMLElement): Director {
+        public b(viewport: HTMLElement): CanvasDirector {
             this._c.b(viewport);
+            return this;
+        }
+
+        /**
+         * 连载模式。
+         */
+        public e(): CanvasDirector {
+            this._fs = true;
             return this;
         }
     }
