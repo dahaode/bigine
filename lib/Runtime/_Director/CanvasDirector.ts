@@ -86,7 +86,7 @@ namespace Runtime {
         /**
          * 连载模式。
          */
-        private _fs: boolean;
+        private _fs: Core.IRuntime.Series;
 
         /**
          * 构造函数。
@@ -141,7 +141,7 @@ namespace Runtime {
                 if (13 == event.keyCode && !this._a && this._t)
                     this._t.h();
             };
-            this._fs = false;
+            this._fs = Core.IRuntime.Series.Alone;
             window.addEventListener('keydown', this._l);
         }
 
@@ -179,7 +179,7 @@ namespace Runtime {
          * 开始动画。
          */
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
-            (<Sprite.Start> this._x['s']).u(title, this._fs);
+            (<Sprite.Start> this._x['s']).u(title, Core.IRuntime.Series.Rest == this._fs);
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
@@ -240,7 +240,7 @@ namespace Runtime {
          * 连载存档。
          */
         protected $s(): Promise<Core.IRuntime> {
-            if (!this._fs)
+            if (Core.IRuntime.Series.Alone == this._fs)
                 return Promise.resolve(this._r);
             return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                 let $c: string = 'slots.close',
@@ -904,8 +904,8 @@ namespace Runtime {
         /**
          * 连载模式。
          */
-        public e(): CanvasDirector {
-            this._fs = true;
+        public e(type: Core.IRuntime.Series): CanvasDirector {
+            this._fs = type;
             return this;
         }
     }

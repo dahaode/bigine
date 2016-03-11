@@ -293,7 +293,7 @@ namespace Runtime {
         /**
          * 连载模式。
          */
-        public e(): Director {
+        public e(type: Core.IRuntime.Series): Director {
             return this;
         }
     }

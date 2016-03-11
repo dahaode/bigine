@@ -80,7 +80,7 @@ namespace Runtime {
         /**
          * 是否连载。
          */
-        private _fs: boolean;
+        private _fs: Core.IRuntime.Series;
 
         /**
          * 当前时序流。
@@ -111,7 +111,7 @@ namespace Runtime {
             this._fp = this._d.gD();
             this._fv = 1;
             this._fa = this._e.gA();
-            this._fs = false;
+            this._fs = Core.IRuntime.Series.Alone;
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
@@ -218,8 +218,8 @@ namespace Runtime {
             if (!this._fr)
                 return this;
             this._s.i({});
-            if (this._fs)
-                this._d.e();
+            if (Core.IRuntime.Series.Alone != this._fs)
+                this._d.e(this._fs);
             this._d.playBGM();
             this._d.playSE();
             this._d.OP(!this._e.gA(), this._n, this._c);
@@ -417,8 +417,9 @@ namespace Runtime {
         /**
          * 连载模式。
          */
-        public series(): Runtime {
-            this._fs = true;
+        public series(first?: boolean): Runtime {
+            let series: typeof Core.IRuntime.Series = Core.IRuntime.Series;
+            this._fs = first ? series.First : series.Rest;
             return this;
         }
     }

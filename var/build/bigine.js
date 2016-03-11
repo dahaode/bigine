@@ -255,6 +255,30 @@ var Core;
 /// <reference path="../_Tag/IRootTag.ts" />
 /// <reference path="IStates.ts" />
 /// <reference path="IDirector.ts" />
+var Core;
+(function (Core) {
+    var IRuntime;
+    (function (IRuntime) {
+        /**
+         * 连载类型。
+         */
+        (function (Series) {
+            /**
+             * 非连载。
+             */
+            Series[Series["Alone"] = 0] = "Alone";
+            /**
+             * 第一集。
+             */
+            Series[Series["First"] = 1] = "First";
+            /**
+             * 后续集。
+             */
+            Series[Series["Rest"] = 2] = "Rest";
+        })(IRuntime.Series || (IRuntime.Series = {}));
+        var Series = IRuntime.Series;
+    })(IRuntime = Core.IRuntime || (Core.IRuntime = {}));
+})(Core || (Core = {}));
 /**
  * 声明可执行标签接口规范。
  *
@@ -1418,7 +1442,7 @@ var Runtime;
         /**
          * 连载模式。
          */
-        Director.prototype.e = function () {
+        Director.prototype.e = function (type) {
             return this;
         };
         return Director;
@@ -3544,7 +3568,7 @@ var Runtime;
                 if (13 == event.keyCode && !_this._a && _this._t)
                     _this._t.h();
             };
-            this._fs = false;
+            this._fs = Core.IRuntime.Series.Alone;
             window.addEventListener('keydown', this._l);
         }
         /**
@@ -3579,7 +3603,7 @@ var Runtime;
          */
         CanvasDirector.prototype.OP = function (start, title, author) {
             var _this = this;
-            this._x['s'].u(title, this._fs);
+            this._x['s'].u(title, Core.IRuntime.Series.Rest == this._fs);
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
@@ -3641,7 +3665,7 @@ var Runtime;
          */
         CanvasDirector.prototype.$s = function () {
             var _this = this;
-            if (!this._fs)
+            if (Core.IRuntime.Series.Alone == this._fs)
                 return Promise.resolve(this._r);
             return new Promise(function (resolve) {
                 var $c = 'slots.close', close = function () {
@@ -4250,8 +4274,8 @@ var Runtime;
         /**
          * 连载模式。
          */
-        CanvasDirector.prototype.e = function () {
-            this._fs = true;
+        CanvasDirector.prototype.e = function (type) {
+            this._fs = type;
             return this;
         };
         /**
@@ -10371,7 +10395,7 @@ var Runtime;
             this._fp = this._d.gD();
             this._fv = 1;
             this._fa = this._e.gA();
-            this._fs = false;
+            this._fs = Core.IRuntime.Series.Alone;
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
@@ -10471,8 +10495,8 @@ var Runtime;
             if (!this._fr)
                 return this;
             this._s.i({});
-            if (this._fs)
-                this._d.e();
+            if (Core.IRuntime.Series.Alone != this._fs)
+                this._d.e(this._fs);
             this._d.playBGM();
             this._d.playSE();
             this._d.OP(!this._e.gA(), this._n, this._c);
@@ -10644,8 +10668,9 @@ var Runtime;
         /**
          * 连载模式。
          */
-        Runtime.prototype.series = function () {
-            this._fs = true;
+        Runtime.prototype.series = function (first) {
+            var series = Core.IRuntime.Series;
+            this._fs = first ? series.First : series.Rest;
             return this;
         };
         return Runtime;

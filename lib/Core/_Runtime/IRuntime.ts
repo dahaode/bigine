@@ -118,6 +118,26 @@ namespace Core {
         /**
          * 连载模式。
          */
-        series(): IRuntime;
+        series(first?: boolean): IRuntime;
+    }
+
+    export namespace IRuntime {
+        /**
+         * 连载类型。
+         */
+        export enum Series {
+            /**
+             * 非连载。
+             */
+            Alone,
+            /**
+             * 第一集。
+             */
+            First,
+            /**
+             * 后续集。
+             */
+            Rest
+        }
     }
 }
