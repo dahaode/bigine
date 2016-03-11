@@ -80,6 +80,61 @@ var Ev;
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /**
+ * 1. `_` 表明为场效相关信息，需要被存档记录；
+ *     * `_a` - 动作编号 - Runtime
+ *     * `_b` - 背景音乐名 - Tag
+ *     * `_c` - 特写名 - Tag
+ *     * `_c<站位>` - 人物名 - Tag
+ *     * `_s<站位>` - 人物神态名 - Tag
+ *     * `_rc` - （所在）房间名 - Tag
+ *     * `_rd` - （显示）房间名 - Tag
+ *     * `_rt` - （移动目标）房间名 - Tag
+ *     * `_p` - 时序类型 - Runtime
+ *     * `_s` - 事件编号 - Runtime
+ *     * `_t` - 时刻名 - Tag
+ *     * `_w` - 天气名 - Tag
+ * 2. `.` 表明为会话持久信息，不能被存档记录；
+ *     * `.p<人物名>` - 人物站位 - Runtime/Tag
+ *     * `.a` - 动作编号 - Runtime/Tag
+ *     * `.s` - 事件编号 - Runtime
+ *     * `.c` - 特写名 - Tag
+ *     * `.c<站位>` - 人物名 - Tag
+ * 3. `$` 表明为注册对象，不能被存档记录；
+ *     * `$c` - 人物数量 - Runtime
+ *     * `$d` - 事件逻辑层深度 - Tag
+ *     * `$rc` - （所在）房间对象 - Tag
+ *     * `$rd` - （显示）房间对象 - Tag
+ *     * `$rt` - （移动目标）房间对象 - Tag
+ *     * `$t<深度>` - 比较是否完成 - Tag
+ *     * `$v<深度>` - 当前比较值 - Tag
+ *     * `$_<选项名>` - 选项定义 - Tag
+ * 4. 其它为作品运行信息，需要被存档记录。
+ */
+var Core;
+(function (Core) {
+    var IStates;
+    (function (IStates) {
+        /**
+         * 存档类型。
+         */
+        (function (Save) {
+            /**
+             * 作品内部存档。
+             */
+            Save[Save["Work"] = 0] = "Work";
+            /**
+             * 前一集连载存档。
+             */
+            Save[Save["Series"] = 1] = "Series";
+            /**
+             * 本集连载存档。
+             */
+            Save[Save["End"] = 2] = "End";
+        })(IStates.Save || (IStates.Save = {}));
+        var Save = IStates.Save;
+    })(IStates = Core.IStates || (Core.IStates = {}));
+})(Core || (Core = {}));
+/**
  * 声明（运行时）资源（如：图片、音频等）组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -961,7 +1016,8 @@ var Runtime;
             this._r = runtime;
             this._s = {
                 'series': {},
-                'work': {}
+                'work': {},
+                'end': {}
             };
             this._l = false;
         }
@@ -1058,7 +1114,7 @@ var Runtime;
             if (series)
                 this._p[' '] = true;
             var save = function (id) {
-                _this._s[series ? 'series' : 'work'][manual ? '1' : 'auto'] = [id, +new Date()];
+                _this._s[series ? 'end' : 'work'][manual ? '1' : 'auto'] = [id, +new Date()];
             };
             this._r.dispatchEvent(new Ev.Save({
                 target: this,
@@ -1081,7 +1137,16 @@ var Runtime;
          * 查询档位存档编号。
          */
         States.prototype.q = function (index, series) {
-            return this._s[series ? 'series' : 'work'][index];
+            var save = Core.IStates.Save, type = 'work';
+            switch (series) {
+                case save.Series:
+                    type = 'series';
+                    break;
+                case save.End:
+                    type = 'end';
+                    break;
+            }
+            return this._s[type][index];
         };
         /**
          * 加载存档信息。
@@ -3360,7 +3425,7 @@ var Sprite;
         SeriesSlots.prototype.vs = function (states, duration) {
             var _this = this;
             return states.l().then(function () {
-                var $1 = states.q('1', true), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+                var type = Core.IStates.Save.End, $1 = states.q('1', type), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
                 _this.a(_this._x['1'] = new G.Button(_1)
                     .b(function () {
                     _this.dispatchEvent(new Ev.SlotsSave({ target: _this }));
@@ -3377,7 +3442,7 @@ var Sprite;
         SeriesSlots.prototype.vl = function (states, duration) {
             var _this = this;
             return states.l().then(function () {
-                var $a = states.q('auto', true), _a = _this._c[0], _at = _a['text'], $1 = states.q('1', true), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+                var type = Core.IStates.Save.Series, $a = states.q('auto', type), _a = _this._c[0], _at = _a['text'], $1 = states.q('1', type), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
                 _this.a(_this._x['a'] = $a ?
                     new G.Button(_a)
                         .b(function () {

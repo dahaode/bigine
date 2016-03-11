@@ -54,8 +54,15 @@ declare namespace __Bigine {
             p(): IStates;
             e(manual: boolean, series?: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): IStates;
-            q(index: string, series?: boolean): [string, number];
+            q(index: string, type?: IStates.Save): [string, number];
             l(): Promise<IStates>;
+        }
+        namespace IStates {
+            enum Save {
+                Work = 0,
+                Series = 1,
+                End = 2,
+            }
         }
     }
     namespace Core {
@@ -357,7 +364,7 @@ declare namespace __Bigine {
             p(): States;
             e(manual: boolean, series?: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): States;
-            q(index: string, series?: boolean): [string, number];
+            q(index: string, series?: Core.IStates.Save): [string, number];
             l(): Promise<States>;
         }
     }

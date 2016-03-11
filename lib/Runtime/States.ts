@@ -50,7 +50,8 @@ namespace Runtime {
             this._r = runtime;
             this._s = {
                 'series': {},
-                'work': {}
+                'work': {},
+                'end': {}
             };
             this._l = false;
         }
@@ -152,7 +153,7 @@ namespace Runtime {
             if (series)
                 this._p[' '] = true;
             var save: (id: string) => void = (id: string) => {
-                    this._s[series ? 'series' : 'work'][manual ? '1' : 'auto'] = [id, + new Date()];
+                    this._s[series ? 'end' : 'work'][manual ? '1' : 'auto'] = [id, + new Date()];
                 };
             this._r.dispatchEvent(new Ev.Save({
                 target: this,
@@ -176,8 +177,18 @@ namespace Runtime {
         /**
          * 查询档位存档编号。
          */
-        public q(index: string, series?: boolean): [string, number] {
-            return this._s[series ? 'series' : 'work'][index];
+        public q(index: string, series?: Core.IStates.Save): [string, number] {
+            let save: typeof Core.IStates.Save = Core.IStates.Save,
+                type: string = 'work';
+            switch (series) {
+                case save.Series:
+                    type = 'series';
+                    break;
+                case save.End:
+                    type = 'end';
+                    break;
+            }
+            return this._s[type][index];
         }
 
         /**

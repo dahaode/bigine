@@ -74,7 +74,8 @@ namespace Sprite {
          */
         public vs(states: Core.IStates, duration?: number): Promise<SeriesSlots> {
             return states.l().then(() => {
-                let $1: [string, number] = states.q('1', true),
+                let type: Core.IStates.Save = Core.IStates.Save.End,
+                    $1: [string, number] = states.q('1', type),
                     _1: Util.IHashTable<any> = this._c[1],
                     _1t: Util.IHashTable<any> = _1['text'],
                     right: G.Text.Align = G.Text.Align.Right;
@@ -96,10 +97,11 @@ namespace Sprite {
          */
         public vl(states: Core.IStates, duration?: number): Promise<SeriesSlots> {
             return states.l().then(() => {
-                let $a: [string, number] = states.q('auto', true),
+                let type: Core.IStates.Save = Core.IStates.Save.Series,
+                    $a: [string, number] = states.q('auto', type),
                     _a: Util.IHashTable<any> = this._c[0],
                     _at: Util.IHashTable<any> = _a['text'],
-                    $1: [string, number] = states.q('1', true),
+                    $1: [string, number] = states.q('1', type),
                     _1: Util.IHashTable<any> = this._c[1],
                     _1t: Util.IHashTable<any> = _1['text'],
                     right: G.Text.Align = G.Text.Align.Right;

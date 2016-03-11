@@ -99,11 +99,31 @@ namespace Core {
         /**
          * 查询档位信息。
          */
-        q(index: string, series?: boolean): [string, number];
+        q(index: string, type?: IStates.Save): [string, number];
 
         /**
          * 加载存档信息。
          */
         l(): Promise<IStates>;
+    }
+
+    export namespace IStates {
+        /**
+         * 存档类型。
+         */
+        export enum Save {
+            /**
+             * 作品内部存档。
+             */
+            Work,
+            /**
+             * 前一集连载存档。
+             */
+            Series,
+            /**
+             * 本集连载存档。
+             */
+            End
+        }
     }
 }
