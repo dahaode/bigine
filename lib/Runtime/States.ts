@@ -150,16 +150,24 @@ namespace Runtime {
         public e(manual: boolean, series?: boolean): Util.IHashTable<any> {
             if (!this._p)
                 return {};
-            if (series)
-                this._p[' '] = true;
-            var save: (id: string) => void = (id: string) => {
+            let save: (id: string) => void = (id: string) => {
                     this._s[series ? 'end' : 'work'][manual ? '1' : 'auto'] = [id, + new Date()];
+                },
+                data: Util.IHashTable<any> = this._p;
+            if (series) {
+                data = {
+                    ' ': true
                 };
+                Util.each(this._p, (value: any, key: string) => {
+                    if ('_' != key[0])
+                        data[key] = value;
+                });
+            }
             this._r.dispatchEvent(new Ev.Save({
                 target: this,
                 series: series,
                 manual: manual,
-                data: this._p,
+                data: data,
                 callback: save
             }));
             return this._p;

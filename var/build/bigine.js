@@ -1111,16 +1111,23 @@ var Runtime;
             var _this = this;
             if (!this._p)
                 return {};
-            if (series)
-                this._p[' '] = true;
             var save = function (id) {
                 _this._s[series ? 'end' : 'work'][manual ? '1' : 'auto'] = [id, +new Date()];
-            };
+            }, data = this._p;
+            if (series) {
+                data = {
+                    ' ': true
+                };
+                Util.each(this._p, function (value, key) {
+                    if ('_' != key[0])
+                        data[key] = value;
+                });
+            }
             this._r.dispatchEvent(new Ev.Save({
                 target: this,
                 series: series,
                 manual: manual,
-                data: this._p,
+                data: data,
                 callback: save
             }));
             return this._p;
