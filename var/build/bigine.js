@@ -10693,10 +10693,12 @@ var Runtime;
                 _this._d.reset().then(function () {
                     if (!fresh)
                         states.i(data);
-                    if (fresh || !states.g(ks) || states.g(' '))
+                    if (fresh || !states.g(ks) || states.g(' ')) {
+                        _this._fh = false;
                         return _this.dispatchEvent(new Ev.Begin({
                             target: episode
                         }));
+                    }
                     states.m('_a', '.a') // 识别重建用状态数据
                         .m(ks, '.s')
                         .m(kdc, krc)

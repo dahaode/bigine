@@ -363,10 +363,12 @@ namespace Runtime {
                 this._d.reset().then(() => {
                     if (!fresh)
                         states.i(data);
-                    if (fresh || !states.g(ks) || states.g(' ')) // 无存档或存档无事件特征或连载存档
+                    if (fresh || !states.g(ks) || states.g(' ')) { // 无存档或存档无事件特征或连载存档
+                        this._fh = false;
                         return this.dispatchEvent(new Ev.Begin({
                             target: episode
                         }));
+                    }
                     states.m('_a', '.a') // 识别重建用状态数据
                         .m(ks, '.s')
                         .m(kdc, krc)
