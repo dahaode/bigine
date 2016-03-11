@@ -4186,6 +4186,7 @@ var Runtime;
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
             }).addEventListener('start.series', function (event) {
+                slotsFromStart = true;
                 _this.playSE(_this._i['c']);
                 _this._x['ss'].vl(_this._r.gS());
             }).addEventListener('start.load', function (event) {
@@ -4220,11 +4221,15 @@ var Runtime;
             // 连载档位菜单。
             this._x['ss'] = new Sprite.SeriesSlots(id, theme['series'])
                 .addEventListener('slots.close', function () {
+                if (!slotsFromStart)
+                    _this._r.gS().e(false, true);
+                slotsFromStart = false;
                 _this._x['ss'].h();
             }).addEventListener('slots.save', function () {
                 _this._x['ss'].h();
                 _this._r.gS().e(true, true);
             }).addEventListener('slots.load', function (ev) {
+                slotsFromStart = false;
                 _this.lightOff().then(function () {
                     _this._x['ss'].h(0);
                     _this._x['s'].h(0);

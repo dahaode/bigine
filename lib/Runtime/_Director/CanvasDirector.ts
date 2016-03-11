@@ -736,6 +736,7 @@ namespace Runtime {
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
                 }).addEventListener('start.series', (event: Ev.StartSeries) => {
+                    slotsFromStart = true;
                     this.playSE(this._i['c']);
                     (<Sprite.SeriesSlots> this._x['ss']).vl(this._r.gS());
                 }).addEventListener('start.load', (event: Ev.StartLoad) => {
@@ -771,11 +772,15 @@ namespace Runtime {
             // 连载档位菜单。
             this._x['ss'] = <Sprite.SeriesSlots> new Sprite.SeriesSlots(id, theme['series'])
                 .addEventListener('slots.close', () => {
+                    if (!slotsFromStart)
+                        this._r.gS().e(false, true);
+                    slotsFromStart = false;
                     this._x['ss'].h();
                 }).addEventListener('slots.save', () => {
                     this._x['ss'].h();
                     this._r.gS().e(true, true);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
+                    slotsFromStart = false;
                     this.lightOff().then(() => {
                         this._x['ss'].h(0);
                         this._x['s'].h(0);
