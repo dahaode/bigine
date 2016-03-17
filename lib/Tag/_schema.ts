@@ -84,6 +84,7 @@ namespace Tag {
         PlaySE: '播放音效',
         Weather: '设置天气',
         StopBGM: '停止音乐',
+        Pause: '停顿',
 
         Assert: '当数据',
         Assign: '设置数据',
@@ -131,7 +132,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 91
+    export var S: { [index: number]: any[] } = { // next 92
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -263,6 +264,7 @@ namespace Tag {
         18: ['Enter', 1, -1], // [房间名]
         19: ['PlaySE', 1, -1], // [音效名]
         20: ['Weather', 1, -1], // [天气名]
+        91: ['Pause', [0, 1], -1], // [停顿时间：长、中、短]
 
         58: ['Loop', 0, -1, {
             '-1': [1]

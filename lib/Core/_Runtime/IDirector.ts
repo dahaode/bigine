@@ -127,6 +127,11 @@ namespace Core {
          * （读档继续时）设置特写。
          */
         setCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
+
+        /**
+         * 停顿。
+         */
+        pause(milsec: number): Promise<IRuntime>;
     }
 
     export namespace IDirector {

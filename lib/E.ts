@@ -22,6 +22,8 @@ class E extends Error {
 
     public static TAG_PARAMS_TOO_MANY: string = '标签参数个数超过最大限制';
 
+    public static TAG_PARAMS_NOT_TRUE: string = '标签参数不正确';
+
     public static TAG_CONTENT_FORBIDEN: string = '标签不接受内容';
 
     public static TAG_CONTENT_REQUIRED: string = '标签内容缺失';

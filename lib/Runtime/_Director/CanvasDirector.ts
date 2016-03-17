@@ -654,6 +654,25 @@ namespace Runtime {
         }
 
         /**
+         * 停顿。
+         */
+        public pause(milsec: number): Promise<Core.IRuntime> {
+            if (milsec) {
+                return this._c.p(new G.Delay(milsec)).then(() => {
+                    return super.pause(milsec);
+                });
+            } else {
+                // 建立临时透明层，使得可以响应WaitForClick事件。
+                let sPause: G.Sprite = new G.Sprite(CanvasDirector.BOUNDS, false);
+                this._c.a(sPause.i('P').o(1));
+                return sPause.p(new G.WaitForClick()).then(() => {
+                    this._c.e(sPause);
+                    return super.pause(milsec);
+                });
+            }
+        }
+
+        /**
          * 使用主题。
          */
         public t(id: string, theme: Util.IHashTable<Util.IHashTable<any> >): CanvasDirector {

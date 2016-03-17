@@ -220,6 +220,13 @@ namespace Runtime {
         }
 
         /**
+         * 停顿。
+         */
+        public pause(milsec: number): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
          * 获取动态创建标识。
          */
         public gD(): boolean {

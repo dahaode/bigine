@@ -1451,6 +1451,12 @@ var Runtime;
             return this._p;
         };
         /**
+         * 停顿。
+         */
+        Director.prototype.pause = function (milsec) {
+            return this._p;
+        };
+        /**
          * 获取动态创建标识。
          */
         Director.prototype.gD = function () {
@@ -4112,6 +4118,26 @@ var Runtime;
             });
         };
         /**
+         * 停顿。
+         */
+        CanvasDirector.prototype.pause = function (milsec) {
+            var _this = this;
+            if (milsec) {
+                return this._c.p(new G.Delay(milsec)).then(function () {
+                    return _super.prototype.pause.call(_this, milsec);
+                });
+            }
+            else {
+                // 建立临时透明层，使得可以响应WaitForClick事件。
+                var sPause_1 = new G.Sprite(CanvasDirector.BOUNDS, false);
+                this._c.a(sPause_1.i('P').o(1));
+                return sPause_1.p(new G.WaitForClick()).then(function () {
+                    _this._c.e(sPause_1);
+                    return _super.prototype.pause.call(_this, milsec);
+                });
+            }
+        };
+        /**
          * 使用主题。
          */
         CanvasDirector.prototype.t = function (id, theme) {
@@ -4639,6 +4665,7 @@ var Tag;
         PlaySE: '播放音效',
         Weather: '设置天气',
         StopBGM: '停止音乐',
+        Pause: '停顿',
         Assert: '当数据',
         Assign: '设置数据',
         Compare: '对比数据',
@@ -4803,6 +4830,7 @@ var Tag;
         18: ['Enter', 1, -1],
         19: ['PlaySE', 1, -1],
         20: ['Weather', 1, -1],
+        91: ['Pause', [0, 1], -1],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
@@ -4963,6 +4991,7 @@ var E = (function (_super) {
     E.LEX_UNEXPECTED_INDENTATION = '缩进深度错误';
     E.TAG_PARAMS_TOO_FEW = '标签参数个数不满足最低要求';
     E.TAG_PARAMS_TOO_MANY = '标签参数个数超过最大限制';
+    E.TAG_PARAMS_NOT_TRUE = '标签参数不正确';
     E.TAG_CONTENT_FORBIDEN = '标签不接受内容';
     E.TAG_CONTENT_REQUIRED = '标签内容缺失';
     E.TAG_CHILDREN_TOO_FEW = '子标签数量不满足最低要求';
@@ -10353,6 +10382,57 @@ var Tag;
     Tag.EleType = EleType;
 })(Tag || (Tag = {}));
 /**
+ * 定义停顿动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/Pause.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Pause = (function (_super) {
+        __extends(Pause, _super);
+        /**
+         * 构造函数。
+         */
+        function Pause(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            switch (params[0]) {
+                case '短':
+                    this._ms = 500;
+                    break;
+                case '中':
+                    this._ms = 1000;
+                    break;
+                case '长':
+                    this._ms = 5000;
+                    break;
+                case undefined:
+                    this._ms = 0;
+                    break;
+                default:
+                    throw new E(E.TAG_PARAMS_NOT_TRUE, lineNo);
+            }
+        }
+        /**
+         * 获取标签名称。
+         */
+        Pause.prototype.gN = function () {
+            return 'Pause';
+        };
+        /**
+         * 执行。
+         */
+        Pause.prototype.p = function (runtime) {
+            return runtime.gD().pause(this._ms);
+        };
+        return Pause;
+    }(Tag.Action));
+    Tag.Pause = Pause;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -10435,6 +10515,7 @@ var Tag;
 /// <reference path="_Structure/_Panel/SimpEle.ts" />
 /// <reference path="_Structure/_Panel/EleName.ts" />
 /// <reference path="_Structure/_Panel/EleType.ts" />
+/// <reference path="_Action/_Director/Pause.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -10956,7 +11037,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.18.2';
+    Bigine.version = '0.19.0';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

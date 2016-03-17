@@ -82,3 +82,4 @@
 /// <reference path="_Structure/_Panel/SimpEle.ts" />
 /// <reference path="_Structure/_Panel/EleName.ts" />
 /// <reference path="_Structure/_Panel/EleType.ts" />
+/// <reference path="_Action/_Director/Pause.ts" />

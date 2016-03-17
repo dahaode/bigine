@@ -143,6 +143,7 @@ declare namespace __Bigine {
             choose(options: IOptionTag[]): Promise<IRuntime>;
             reset(): Promise<IRuntime>;
             setCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
+            pause(milsec: number): Promise<IRuntime>;
         }
         namespace IDirector {
             enum Position {
@@ -417,6 +418,7 @@ declare namespace __Bigine {
             choose(options: Core.IOptionTag[]): Promise<Core.IRuntime>;
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
+            pause(milsec: number): Promise<Core.IRuntime>;
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
             s(sheet: [string, string][]): Director;
@@ -810,6 +812,7 @@ declare namespace __Bigine {
             choose(options: Core.IOptionTag[]): Promise<Core.IRuntime>;
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
+            pause(milsec: number): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             s(sheet: [string, string][]): CanvasDirector;
             p(sheet: Array<Util.IHashTable<any>>): CanvasDirector;
@@ -899,6 +902,7 @@ declare namespace __Bigine {
         static LEX_UNEXPECTED_INDENTATION: string;
         static TAG_PARAMS_TOO_FEW: string;
         static TAG_PARAMS_TOO_MANY: string;
+        static TAG_PARAMS_NOT_TRUE: string;
         static TAG_CONTENT_FORBIDEN: string;
         static TAG_CONTENT_REQUIRED: string;
         static TAG_CHILDREN_TOO_FEW: string;
@@ -1740,6 +1744,14 @@ declare namespace __Bigine {
     namespace Tag {
         class EleType extends Unknown {
             gN(): string;
+        }
+    }
+    namespace Tag {
+        class Pause extends Action {
+            private _ms;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
     }
     namespace Runtime {
