@@ -41,14 +41,14 @@ namespace Tag {
             if (cg)
                 throw new E(E.ACT_CG_ALREADY_SHOWN, this._l);
             states.s(key, this._p[0]);
-            return runtime.gD().showCG(this._mo.o());
+            return runtime.gD().showCG(this._mo ? this._mo.o() : undefined);
         }
 
         /**
          * 获取依赖素材资源列表。
          */
         public $d(): Core.IResource<HTMLImageElement>[] {
-            return [this._mo.o()];
+            return this._mo ? [this._mo.o()] : [];
         }
 
         /**

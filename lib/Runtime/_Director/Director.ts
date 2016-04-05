@@ -227,6 +227,27 @@ namespace Runtime {
         }
 
         /**
+         * 切幕动画。
+         */
+        public curtain(name: string): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 移动镜头。
+         */
+        public cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 放大/缩小镜头。
+         */
+        public cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
          * 获取动态创建标识。
          */
         public gD(): boolean {

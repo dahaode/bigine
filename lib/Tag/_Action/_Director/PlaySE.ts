@@ -35,14 +35,14 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            return runtime.gD().playSE(this._mo.o());
+            return runtime.gD().playSE(this._mo ? this._mo.o() : undefined);
         }
 
         /**
          * 获取依赖素材资源列表。
          */
         public $d(): Core.IResource<string>[] {
-            return [this._mo.o()];
+            return this._mo ? [this._mo.o()] : [];
         }
 
         /**

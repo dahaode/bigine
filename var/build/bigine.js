@@ -93,12 +93,14 @@ var Ev;
  *     * `_s` - 事件编号 - Runtime
  *     * `_t` - 时刻名 - Tag
  *     * `_w` - 天气名 - Tag
+ *     * `_z` -  房间状态 - String    // 添加镜头控制命令时所需记录的存档信息
  * 2. `.` 表明为会话持久信息，不能被存档记录；
  *     * `.p<人物名>` - 人物站位 - Runtime/Tag
  *     * `.a` - 动作编号 - Runtime/Tag
  *     * `.s` - 事件编号 - Runtime
  *     * `.c` - 特写名 - Tag
  *     * `.c<站位>` - 人物名 - Tag
+ *     * `.z` -  房间状态 - String
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -666,7 +668,7 @@ var Resource;
             var _this = this;
             if (!this._q) {
                 this._q = new Promise(function (resolve, reject) {
-                    var url = _this._l + '?bigine', xhr, img;
+                    var url = _this._l + '?bigine-0.20.0', xhr, img;
                     if ('.mp3' == _this._l.substr(-4)) {
                         _this._l = url;
                         return resolve(url);
@@ -828,8 +830,9 @@ var Runtime;
          */
         Episode.prototype.q = function (id, type, lineNo) {
             this._e[type] = this._e[type] || {};
-            if (!(id in this._e[type]))
-                throw new E(E.EP_ENTITY_NOT_FOUND, lineNo || 0);
+            if (!(id in this._e[type])) {
+                return this._e[type][' '];
+            }
             return this._e[type][id];
         };
         /**
@@ -1454,6 +1457,24 @@ var Runtime;
          * 停顿。
          */
         Director.prototype.pause = function (milsec) {
+            return this._p;
+        };
+        /**
+         * 切幕动画。
+         */
+        Director.prototype.curtain = function (name) {
+            return this._p;
+        };
+        /**
+         * 移动镜头。
+         */
+        Director.prototype.cameraMove = function (mx, my, ms) {
+            return this._p;
+        };
+        /**
+         * 放大/缩小镜头。
+         */
+        Director.prototype.cameraZoom = function (mx, my, ms, scale) {
             return this._p;
         };
         /**
@@ -3377,8 +3398,10 @@ var Sprite;
          * 更新图片。
          */
         CG.prototype.u = function (image) {
-            return this.c()
-                .a(new G.Image(image.o(), this._c));
+            return image ? this.c()
+                .a(new G.Image(image.o(), this._c)) :
+                this.c()
+                    .a(new G.Color({ x: 400, y: 120, w: 480, h: 480 }, '#000'));
         };
         return CG;
     }(Sprite.Sprite));
@@ -3819,19 +3842,19 @@ var Runtime;
                 return this._p;
             switch (to) {
                 case pos.Left:
-                    x = 0;
+                    x = -400;
                     break;
                 case pos.CLeft:
-                    x = 200;
+                    x = -200;
                     break;
                 case pos.Center:
-                    x = 400;
+                    x = 0;
                     break;
                 case pos.CRight:
-                    x = 600;
+                    x = 200;
                     break;
                 case pos.Right:
-                    x = 800;
+                    x = 400;
                     break;
             }
             return gChar.p(new G.Move(500, {
@@ -3846,25 +3869,28 @@ var Runtime;
          * 创建立绘。
          */
         CanvasDirector.prototype.$c = function (resource, position) {
-            var bounds = CanvasDirector.BOUNDS, pos = Core.IDirector.Position, w = 0 | bounds.h / 3 * 2, x;
+            // 为防止立绘随着镜头的缩放而缩放，这里的立绘显示暂设定为固定IBounds{ x: 0, y: 0, w: 1280, h: 720 }
+            //var bounds: G.IBounds = CanvasDirector.BOUNDS,
+            var bounds = { x: 0, y: 0, w: 1280, h: 720 }, pos = Core.IDirector.Position, x;
             switch (position) {
                 case pos.Left:
-                    x = 0;
+                    x = -400;
                     break;
                 case pos.CLeft:
-                    x = 200;
+                    x = -200;
                     break;
                 case pos.Center:
-                    x = 400;
+                    x = 0;
                     break;
                 case pos.CRight:
-                    x = 600;
+                    x = 200;
                     break;
                 case pos.Right:
-                    x = 800;
+                    x = 400;
                     break;
             }
-            return new G.Image(resource.o(), x, 0, w, bounds.h)
+            // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
+            return new G.Image(resource.o(), x, 0, bounds.w, bounds.h, true)
                 .i(position)
                 .o(0);
         };
@@ -4010,8 +4036,31 @@ var Runtime;
                 _this._c.a(gNew, 'M');
                 if (!time || _this._x['c'].gO()) {
                     gNew.o(1);
-                    _this._c.e(gOld);
-                    return runtime;
+                    if (gOld.gN() == 'Image' && _this._ca) {
+                        var curtain = void 0;
+                        switch (_this._ca) {
+                            case 'FadeIn':
+                                curtain = new G.FadeIn(500);
+                                break;
+                            case 'ShutterH':
+                                curtain = new G.Shutter(300, { direction: 'H', leave: gOld.$d() });
+                                break;
+                            case 'ShutterV':
+                                curtain = new G.Shutter(300, { direction: 'V', leave: gOld.$d() });
+                                break;
+                            default:
+                                curtain = new G.FadeIn(500);
+                                break;
+                        }
+                        return gNew.p(curtain).then(function () {
+                            _this._c.e(gOld);
+                            return runtime;
+                        });
+                    }
+                    else {
+                        _this._c.e(gOld);
+                        return runtime;
+                    }
                 }
                 return gNew.p(new G.FadeIn(500)).then(function () {
                     _this._c.e(gOld);
@@ -4136,6 +4185,73 @@ var Runtime;
                     return _super.prototype.pause.call(_this, milsec);
                 });
             }
+        };
+        /**
+         * 切幕动画。
+         */
+        CanvasDirector.prototype.curtain = function (name) {
+            this._ca = name;
+            return _super.prototype.curtain.call(this, name);
+        };
+        /**
+         * 移动镜头。
+         */
+        CanvasDirector.prototype.cameraMove = function (mx, my, ms) {
+            var _this = this;
+            var gRoom = this._c.q('b')[0], x = Math.round(mx * (1 - 5 / 3) * 1280), y = Math.round(my * (1 - 5 / 3) * 720);
+            if (!gRoom)
+                return this._p;
+            var sClick = new G.Sprite(CanvasDirector.BOUNDS, false); // 建立临时透明层，使得可以响应WaitForClick事件。
+            this._c.a(sClick.i('P').o(1));
+            return new Promise(function (resolve) {
+                var aMove = new G.Move(ms, { x: x, y: y }), aWFC = new G.WaitForClick(function () {
+                    aMove.h();
+                });
+                _this._t = _this._h = aWFC;
+                Promise.race([
+                    gRoom.p(aMove).then(function () {
+                        aWFC.h();
+                    }),
+                    sClick.p(aWFC)
+                ]).then(function () {
+                    _this._c.e(sClick);
+                    _this._t = _this._h = undefined;
+                    gRoom.x(x).y(y);
+                    resolve(_this._r);
+                });
+            });
+        };
+        /**
+         * 放大/缩小镜头。
+         */
+        CanvasDirector.prototype.cameraZoom = function (mx, my, ms, scale) {
+            var _this = this;
+            var gRoom = this._c.q('b')[0], bound = gRoom.gB();
+            if (!gRoom)
+                return this._p;
+            var sClick = new G.Sprite(CanvasDirector.BOUNDS, false); // 建立临时透明层，使得可以响应WaitForClick事件。
+            this._c.a(sClick.i('P').o(1));
+            return new Promise(function (resolve) {
+                var aZoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale }), aWFC = new G.WaitForClick(function () {
+                    aZoom.h();
+                });
+                _this._t = _this._h = aWFC;
+                Promise.race([
+                    gRoom.p(aZoom).then(function () {
+                        aWFC.h();
+                    }),
+                    sClick.p(aWFC)
+                ]).then(function () {
+                    _this._c.e(sClick);
+                    _this._t = _this._h = undefined;
+                    var px = scale * (5 / 3 - 1) * 1280, py = scale * (5 / 3 - 1) * 720;
+                    gRoom.x(Math.round(bound.x - mx * px))
+                        .y(Math.round(bound.y - my * py))
+                        .sW(Math.round(bound.w + px))
+                        .sH(Math.round(bound.h + py));
+                    resolve(_this._r);
+                });
+            });
         };
         /**
          * 使用主题。
@@ -4647,6 +4763,10 @@ var Tag;
         CharSet: '设置人物',
         CharPose: '改变神态',
         CharMove: '人物移动',
+        CameraSet: '设置镜头',
+        CameraZoom: '放大镜头',
+        CameraReset: '复位镜头',
+        CameraMove: '移动镜头',
         Monolog: '独白',
         Speak: '对白',
         Tip: '提示',
@@ -4666,6 +4786,7 @@ var Tag;
         Weather: '设置天气',
         StopBGM: '停止音乐',
         Pause: '停顿',
+        Curtains: '切幕动画',
         Assert: '当数据',
         Assign: '设置数据',
         Compare: '对比数据',
@@ -4831,6 +4952,11 @@ var Tag;
         19: ['PlaySE', 1, -1],
         20: ['Weather', 1, -1],
         91: ['Pause', [0, 1], -1],
+        92: ['CameraSet', 0, 1],
+        93: ['CameraReset', [0, 1], -1],
+        94: ['CameraZoom', [0, 1], 1],
+        95: ['CameraMove', [0, 1], 1],
+        96: ['Curtains', 1, -1],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
@@ -5010,6 +5136,7 @@ var E = (function (_super) {
     E.SCENE_TYPE_UNKNOWN = '无效的事件类型';
     E.ROOT_NOT_PARENT = '根标签没有父标签';
     E.ACT_ILLEGAL_POSITION = '无效地人物站位';
+    E.ACT_ILLEGAL_CAMERA_MOVE = '无效地镜头移动位置';
     E.ACT_CHAR_NOT_ON = '人物并不在场';
     E.ACT_CHAR_ONSTAGE = '人物已在场';
     E.ACT_ILLEGAL_STARS = '无效地评分星级';
@@ -5962,10 +6089,14 @@ var Tag;
                     .s(kto, _this._mo);
                 if (!cn)
                     return runtime;
-                return co.p(type.PreLeave, runtime);
+                return co.p(type.PreLeave, runtime, _this._p[0]);
             })
-                .then(function () { return _this._mo.p(type.PreEnter, runtime); }) // 播放关联（目标）房间进入前事件
-                .then(function () { return director.lightOff(); })
+                .then(function () {
+                return _this._mo.p(type.PreEnter, runtime, _this._p[0]);
+            }) // 播放关联（目标）房间进入前事件
+                .then(function () {
+                return director.lightOff();
+            })
                 .then(function () {
                 states.d(kcn)
                     .d(kco)
@@ -5973,7 +6104,7 @@ var Tag;
                     .d(kdo);
                 if (!cn)
                     return runtime;
-                return co.p(type.PostLeave, runtime);
+                return co.p(type.PostLeave, runtime, _this._p[0]);
             })
                 .then(function () {
                 if (runtime.gH())
@@ -5988,9 +6119,15 @@ var Tag;
                     .then(function () {
                     states.d(kcx);
                     return director.reset();
-                }).then(function () { return director.asRoom(_this._mo.o(states.g(kt))); })
-                    .then(function () { return director.asMap(map ? map.gP() : {}); })
-                    .then(function () { return _this._mo.p(type.PostEnter, runtime); });
+                }).then(function () {
+                    return director.asRoom(_this._mo.o(states.g(kt)));
+                })
+                    .then(function () {
+                    return director.asMap(map ? map.gP() : {});
+                })
+                    .then(function () {
+                    return _this._mo.p(type.PostEnter, runtime, _this._p[0]);
+                });
             }); });
             return E.doHalt(); // 中断原有时序流。
         };
@@ -6038,16 +6175,18 @@ var Tag;
          * 绑定（运行时）作品（实体）。
          */
         Point.prototype.$b = function (ep) {
-            if (this._m && this._p[0])
-                this._o = ep.q(this._m, Core.IEpisode.Entity.Map, this._l).gP(this._p[0]);
+            if (this._m && this._p[0]) {
+                var map = ep.q(this._m, Core.IEpisode.Entity.Map, this._l);
+                this._o = map ? map.gP(this._p[0]) : undefined;
+            }
         };
         /**
          * 交互逻辑。
          */
         Point.prototype.p = function (runtime) {
-            var room = this.gR();
+            var room = this.gR(), obj = this.$q('Target')[0] || this._o, rp = room.gI() == ' ' ? obj.$c() : room.gI();
             Tag.Enter.prototype.p.call({
-                _p: [room.gI()],
+                _p: [rp],
                 _mo: room
             }, runtime)['catch'](E.ignoreHalt);
         };
@@ -6280,313 +6419,6 @@ var Tag;
         return Times;
     }(Tag.ResTable));
     Tag.Times = Times;
-})(Tag || (Tag = {}));
-/**
- * 定义房间（定义）标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Definition/_Room/DefRoom.ts
- */
-/// <reference path="../../Entity.ts" />
-/// <reference path="../../../Core/_Tag/IRoomTag.ts" />
-/// <reference path="Link.ts" />
-/// <reference path="Times.ts" />
-var Tag;
-(function (Tag) {
-    var Util = __Bigine_Util;
-    var DefRoom = (function (_super) {
-        __extends(DefRoom, _super);
-        /**
-         * 构造函数。
-         */
-        function DefRoom(params, content, children, lineNo) {
-            _super.call(this, params, content, children, lineNo);
-            this._a = {};
-            if (!this.$q('Link').length && !this.$q('Times').length)
-                throw new E(E.DEF_ROOM_EMPTY, lineNo);
-        }
-        /**
-         * 获取标签名称。
-         */
-        DefRoom.prototype.gN = function () {
-            return 'DefRoom';
-        };
-        /**
-         * 获取类型。
-         */
-        DefRoom.prototype.gT = function () {
-            return Core.IEpisode.Entity.Room;
-        };
-        /**
-         * 添加事件。
-         */
-        DefRoom.prototype.a = function (scene) {
-            var type = scene.gT();
-            this._a[type] = this._a[type] || [];
-            this._a[type].push(scene);
-            return this;
-        };
-        /**
-         * 播放。
-         */
-        DefRoom.prototype.p = function (type, runtime) {
-            return (type in this._a ?
-                Util.Q.every(this._a[type], function (scene) {
-                    if (runtime.gH())
-                        return E.doHalt();
-                    return scene.p(runtime);
-                }) :
-                Promise.resolve(runtime)).then(function () { return Core.ISceneTag.Type.PostEnter == type ?
-                runtime.gD().lightOn() :
-                runtime; });
-        };
-        /**
-         * 获取资源。
-         */
-        DefRoom.prototype.o = function (id) {
-            var map = this.gM();
-            if (map)
-                return map.o();
-            return this.$q('Times')[0].o(id);
-        };
-        /**
-         * 获取关联地图。
-         */
-        DefRoom.prototype.gM = function () {
-            var l = this.$q('Link')[0];
-            if (!l)
-                return;
-            return l.gM();
-        };
-        /**
-         * 获取所有关联资源。
-         */
-        DefRoom.prototype.d = function () {
-            var map = this.gM();
-            if (map)
-                return map.d();
-            return this.$q('Times')[0].d();
-        };
-        return DefRoom;
-    }(Tag.Entity));
-    Tag.DefRoom = DefRoom;
-})(Tag || (Tag = {}));
-/**
- * 定义自动播放标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/Auto.ts
- */
-/// <reference path="../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var Auto = (function (_super) {
-        __extends(Auto, _super);
-        function Auto() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        Auto.prototype.gN = function () {
-            return 'Auto';
-        };
-        return Auto;
-    }(Tag.Unknown));
-    Tag.Auto = Auto;
-})(Tag || (Tag = {}));
-/**
- * 定义主角标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Definition/Player.ts
- */
-/// <reference path="../Unknown.ts" />
-/// <reference path="_Char/DefChar.ts" />
-var Tag;
-(function (Tag) {
-    var Player = (function (_super) {
-        __extends(Player, _super);
-        function Player() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        Player.prototype.gN = function () {
-            return 'Player';
-        };
-        /**
-         * 绑定（运行时）作品（实体）。
-         */
-        Player.prototype.$b = function (ep) {
-            this._o = ep.q(this._c, Core.IEpisode.Entity.Chr, this._l);
-            ep.f(this);
-        };
-        /**
-         * 获取唯一编号。
-         */
-        Player.prototype.gI = function () {
-            return '';
-        };
-        /**
-         * 获取类型。
-         */
-        Player.prototype.gT = function () {
-            return Core.IEpisode.Entity.Player;
-        };
-        /**
-         * 获取关联角色。
-         */
-        Player.prototype.gC = function () {
-            if (!this._b)
-                throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
-            return this._o;
-        };
-        return Player;
-    }(Tag.Unknown));
-    Tag.Player = Player;
-})(Tag || (Tag = {}));
-/**
- * 定义主题标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/Theme.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var Util = __Bigine_Util;
-    var Theme = (function (_super) {
-        __extends(Theme, _super);
-        function Theme() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        Theme.prototype.gN = function () {
-            return 'Theme';
-        };
-        /**
-         * 加载远端数据。
-         */
-        Theme.prototype.l = function (callback) {
-            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json', callback, function (error, status) {
-                throw error;
-            });
-        };
-        return Theme;
-    }(Tag.Unknown));
-    Tag.Theme = Theme;
-})(Tag || (Tag = {}));
-/**
- * 定义主题包标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/Resources.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../Unknown.ts" />
-/// <reference path="../_Definition/_Room/DefRoom.ts" />
-/// <reference path="../_Definition/_Char/DefChar.ts" />
-/// <reference path="../_Definition/DefBGM.ts" />
-/// <reference path="../_Definition/DefCG.ts" />
-/// <reference path="../_Definition/DefSE.ts" />
-var Tag;
-(function (Tag) {
-    var Util = __Bigine_Util;
-    var Resources = (function (_super) {
-        __extends(Resources, _super);
-        function Resources() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        Resources.prototype.gN = function () {
-            return 'Resources';
-        };
-        /**
-         * 加载远端数据。
-         */
-        Resources.prototype.l = function (callback) {
-            Util.Remote.post('//api.dahao.de/resource/' + this._c + '/', {}, function (data) {
-                var ret = {};
-                ret['rooms'] = {};
-                Util.each(data['rooms'] || {}, function (room, index) {
-                    var times = [];
-                    Util.each(room['snaps'] || {}, function (id, title) {
-                        times.push(new Tag.Unknown([title], id, [], -1));
-                    });
-                    ret['rooms'][index] = new Tag.DefRoom([], room['title'], [
-                        new Tag.Times([], '', times, -1)
-                    ], -1);
-                });
-                ret['chars'] = {};
-                Util.each(data['chars'] || {}, function (chr, index) {
-                    var poses = [];
-                    Util.each(chr['poses'] || {}, function (id, title) {
-                        poses.push(new Tag.Unknown([title], id, [], -1));
-                    });
-                    ret['chars'][index] = new Tag.DefChar([], chr['title'], [
-                        new Tag.Avatar([], chr['avatar'], [], -1),
-                        new Tag.Poses([], '', poses, -1)
-                    ], -1);
-                });
-                ret['maps'] = {};
-                Util.each(data['maps'] || {}, function (map, index) {
-                    var children = [
-                        new Tag.BGImage([], map['base'], [], -1)
-                    ];
-                    Util.each(map['points'] || {}, function (point) {
-                        var region = point['region'], regstr = region.top + '，' + region.right + '，' + region.bottom + '，' + region.left;
-                        if ('priority' in point)
-                            regstr += '，' + point['priority'];
-                        children.push(new Tag.Point([], point['title'], [
-                            new Tag.HLImage([], point['hilite'], [], -1),
-                            new Tag.Region([], regstr, [], -1)
-                        ], -1));
-                    });
-                    ret['maps'][index] = new Tag.DefMap([], map['title'], children, -1);
-                });
-                ret['bgms'] = {};
-                Util.each(data['bgms'] || {}, function (bgm, index) {
-                    ret['bgms'][index] = new Tag.DefBGM([], bgm['title'], [
-                        new Tag.Audio([], bgm['audio'], [], -1)
-                    ], -1);
-                });
-                ret['cgs'] = {};
-                Util.each(data['cgs'] || {}, function (cg, index) {
-                    ret['cgs'][index] = new Tag.DefCG([], cg['title'], [
-                        new Tag.Image([], cg['image'], [], -1)
-                    ], -1);
-                });
-                ret['ses'] = {};
-                Util.each(data['ses'] || {}, function (se, index) {
-                    ret['ses'][index] = new Tag.DefSE([], se['title'], [
-                        new Tag.Audio([], se['audio'], [], -1)
-                    ], -1);
-                });
-                callback(ret);
-            }, function (error, status) {
-                throw error;
-            });
-        };
-        return Resources;
-    }(Tag.Unknown));
-    Tag.Resources = Resources;
 })(Tag || (Tag = {}));
 /**
  * 定义（作品事件）类型标签组件。
@@ -6892,13 +6724,13 @@ var Tag;
             if (bgm == this._p[0])
                 return runtime;
             states.s(key, this._p[0]);
-            return runtime.gD().playBGM(this._mo.o());
+            return runtime.gD().playBGM(this._mo ? this._mo.o() : undefined);
         };
         /**
          * 获取依赖素材资源列表。
          */
         PlayBGM.prototype.$d = function () {
-            return [this._mo.o()];
+            return this._mo ? [this._mo.o()] : [];
         };
         /**
          * 获取关联音乐。
@@ -6943,13 +6775,13 @@ var Tag;
          * 执行。
          */
         PlaySE.prototype.p = function (runtime) {
-            return runtime.gD().playSE(this._mo.o());
+            return runtime.gD().playSE(this._mo ? this._mo.o() : undefined);
         };
         /**
          * 获取依赖素材资源列表。
          */
         PlaySE.prototype.$d = function () {
-            return [this._mo.o()];
+            return this._mo ? [this._mo.o()] : [];
         };
         /**
          * 获取关联音效。
@@ -6998,13 +6830,13 @@ var Tag;
             if (cg)
                 throw new E(E.ACT_CG_ALREADY_SHOWN, this._l);
             states.s(key, this._p[0]);
-            return runtime.gD().showCG(this._mo.o());
+            return runtime.gD().showCG(this._mo ? this._mo.o() : undefined);
         };
         /**
          * 获取依赖素材资源列表。
          */
         ShowCG.prototype.$d = function () {
-            return [this._mo.o()];
+            return this._mo ? [this._mo.o()] : [];
         };
         /**
          * 获取关联特写。
@@ -7046,19 +6878,32 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr, room;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr, room;
             if (bgm)
-                q = q.then(function () { return director.playBGM(episode.q(bgm, type.BGM).o()); });
+                q = q.then(function () {
+                    var defbgm = episode.q(bgm, type.BGM);
+                    return director.playBGM(defbgm ? defbgm.o() : undefined);
+                });
             if (kroom && !states.g(kdo))
                 q = q.then(function () {
                     states.s(kdo, room = episode.q(kroom, type.Room));
                     return director.asRoom(room.o(states.g('_t')))
+                        .then(function () {
+                        if (!camera)
+                            return runtime;
+                        var strArr = camera.split(','), mx = parseFloat(strArr[0]), my = parseFloat(strArr[1]);
+                        if (strArr.length !== 2 || !mx || !my)
+                            return runtime;
+                        states.s(kcmr, camera);
+                        return director.cameraZoom(mx, my, 20, 1);
+                    })
                         .then(function () { return room.gM() ? director.asMap(room.gM().gP()) : runtime; });
                 });
             if (cg)
                 q = q.then(function () {
                     states.m(kid, kdata);
-                    return director.setCG(episode.q(cg, type.CG).o());
+                    var defcg = episode.q(cg, type.CG), rescg = defcg ? defcg.o() : undefined;
+                    return director.setCG(rescg);
                 });
             if (lChar)
                 q = q.then(function () {
@@ -7479,6 +7324,339 @@ var Tag;
         return Scene;
     }(Tag.Unknown));
     Tag.Scene = Scene;
+})(Tag || (Tag = {}));
+/**
+ * 定义房间（定义）标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Definition/_Room/DefRoom.ts
+ */
+/// <reference path="../../Entity.ts" />
+/// <reference path="../../../Core/_Tag/IRoomTag.ts" />
+/// <reference path="Link.ts" />
+/// <reference path="Times.ts" />
+/// <reference path="../../_Structure/_Scene/Scene.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var DefRoom = (function (_super) {
+        __extends(DefRoom, _super);
+        /**
+         * 构造函数。
+         */
+        function DefRoom(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            this._a = {};
+            if (!this.$q('Link').length && !this.$q('Times').length)
+                throw new E(E.DEF_ROOM_EMPTY, lineNo);
+        }
+        /**
+         * 获取标签名称。
+         */
+        DefRoom.prototype.gN = function () {
+            return 'DefRoom';
+        };
+        /**
+         * 获取类型。
+         */
+        DefRoom.prototype.gT = function () {
+            return Core.IEpisode.Entity.Room;
+        };
+        /**
+         * 添加事件。
+         */
+        DefRoom.prototype.a = function (scene) {
+            var type = scene.gT();
+            this._a[type] = this._a[type] || [];
+            this._a[type].push(scene);
+            return this;
+        };
+        /**
+         * 播放。
+         */
+        DefRoom.prototype.p = function (type, runtime, name) {
+            return (type in this._a ?
+                Util.Q.every(this._a[type], function (scene) {
+                    if (runtime.gH())
+                        return E.doHalt();
+                    if (name) {
+                        if (scene.$q('Type')[0].$c() == type.toString() + name)
+                            return scene.p(runtime);
+                    }
+                    else {
+                        return scene.p(runtime);
+                    }
+                }) :
+                Promise.resolve(runtime)).then(function () { return Core.ISceneTag.Type.PostEnter == type ?
+                runtime.gD().lightOn() :
+                runtime; });
+        };
+        /**
+         * 获取资源。
+         */
+        DefRoom.prototype.o = function (id) {
+            var map = this.gM();
+            if (map)
+                return map.o();
+            return this.$q('Times')[0].o(id);
+        };
+        /**
+         * 获取关联地图。
+         */
+        DefRoom.prototype.gM = function () {
+            var l = this.$q('Link')[0];
+            if (!l)
+                return;
+            return l.gM();
+        };
+        /**
+         * 获取所有关联资源。
+         */
+        DefRoom.prototype.d = function () {
+            var map = this.gM();
+            if (map)
+                return map.d();
+            return this.$q('Times')[0].d();
+        };
+        return DefRoom;
+    }(Tag.Entity));
+    Tag.DefRoom = DefRoom;
+})(Tag || (Tag = {}));
+/**
+ * 定义自动播放标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/Auto.ts
+ */
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Auto = (function (_super) {
+        __extends(Auto, _super);
+        function Auto() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Auto.prototype.gN = function () {
+            return 'Auto';
+        };
+        return Auto;
+    }(Tag.Unknown));
+    Tag.Auto = Auto;
+})(Tag || (Tag = {}));
+/**
+ * 定义主角标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Definition/Player.ts
+ */
+/// <reference path="../Unknown.ts" />
+/// <reference path="_Char/DefChar.ts" />
+var Tag;
+(function (Tag) {
+    var Player = (function (_super) {
+        __extends(Player, _super);
+        function Player() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Player.prototype.gN = function () {
+            return 'Player';
+        };
+        /**
+         * 绑定（运行时）作品（实体）。
+         */
+        Player.prototype.$b = function (ep) {
+            this._o = ep.q(this._c, Core.IEpisode.Entity.Chr, this._l);
+            ep.f(this);
+        };
+        /**
+         * 获取唯一编号。
+         */
+        Player.prototype.gI = function () {
+            return '';
+        };
+        /**
+         * 获取类型。
+         */
+        Player.prototype.gT = function () {
+            return Core.IEpisode.Entity.Player;
+        };
+        /**
+         * 获取关联角色。
+         */
+        Player.prototype.gC = function () {
+            if (!this._b)
+                throw new E(E.DEF_EPISODE_NOT_BINDED, this._l);
+            return this._o;
+        };
+        return Player;
+    }(Tag.Unknown));
+    Tag.Player = Player;
+})(Tag || (Tag = {}));
+/**
+ * 定义主题标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/Theme.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Theme = (function (_super) {
+        __extends(Theme, _super);
+        function Theme() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Theme.prototype.gN = function () {
+            return 'Theme';
+        };
+        /**
+         * 加载远端数据。
+         */
+        Theme.prototype.l = function (callback) {
+            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json', callback, function (error, status) {
+                throw error;
+            });
+        };
+        return Theme;
+    }(Tag.Unknown));
+    Tag.Theme = Theme;
+})(Tag || (Tag = {}));
+/**
+ * 定义主题包标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/Resources.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../Unknown.ts" />
+/// <reference path="../_Definition/_Room/DefRoom.ts" />
+/// <reference path="../_Definition/_Char/DefChar.ts" />
+/// <reference path="../_Definition/DefBGM.ts" />
+/// <reference path="../_Definition/DefCG.ts" />
+/// <reference path="../_Definition/DefSE.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Resources = (function (_super) {
+        __extends(Resources, _super);
+        function Resources() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Resources.prototype.gN = function () {
+            return 'Resources';
+        };
+        /**
+         * 加载远端数据。
+         */
+        Resources.prototype.l = function (callback) {
+            var _this = this;
+            Util.Remote.post('//api.dahao.de/resource/' + this._c + '/', {}, function (data) {
+                var ret = {};
+                ret['rooms'] = {};
+                Util.each(data['rooms'] || {}, function (room, index) {
+                    var times = [];
+                    Util.each(room['snaps'] || {}, function (id, title) {
+                        times.push(new Tag.Unknown([title], id, [], -1));
+                    });
+                    ret['rooms'][index] = new Tag.DefRoom([], room['title'], [
+                        new Tag.Times([], '', times, -1)
+                    ], -1);
+                });
+                ret['chars'] = {};
+                Util.each(data['chars'] || {}, function (chr, index) {
+                    var poses = [];
+                    Util.each(chr['poses'] || {}, function (id, title) {
+                        poses.push(new Tag.Unknown([title], id, [], -1));
+                    });
+                    ret['chars'][index] = new Tag.DefChar([], chr['title'], [
+                        new Tag.Avatar([], chr['avatar'], [], -1),
+                        new Tag.Poses([], '', poses, -1)
+                    ], -1);
+                });
+                ret['maps'] = {};
+                Util.each(data['maps'] || {}, function (map, index) {
+                    var children = [
+                        new Tag.BGImage([], map['base'], [], -1)
+                    ];
+                    Util.each(map['points'] || {}, function (point) {
+                        var region = point['region'], regstr = region.top + '，' + region.right + '，' + region.bottom + '，' + region.left;
+                        if ('priority' in point)
+                            regstr += '，' + point['priority'];
+                        children.push(new Tag.Point([], point['title'], [
+                            new Tag.HLImage([], point['hilite'], [], -1),
+                            new Tag.Region([], regstr, [], -1)
+                        ], -1));
+                    });
+                    ret['maps'][index] = new Tag.DefMap([], map['title'], children, -1);
+                });
+                ret['bgms'] = {};
+                Util.each(data['bgms'] || {}, function (bgm, index) {
+                    ret['bgms'][index] = new Tag.DefBGM([], bgm['title'], [
+                        new Tag.Audio([], bgm['audio'], [], -1)
+                    ], -1);
+                });
+                ret['cgs'] = {};
+                Util.each(data['cgs'] || {}, function (cg, index) {
+                    ret['cgs'][index] = new Tag.DefCG([], cg['title'], [
+                        new Tag.Image([], cg['image'], [], -1)
+                    ], -1);
+                });
+                ret['ses'] = {};
+                Util.each(data['ses'] || {}, function (se, index) {
+                    ret['ses'][index] = new Tag.DefSE([], se['title'], [
+                        new Tag.Audio([], se['audio'], [], -1)
+                    ], -1);
+                });
+                ret = _this.ll(ret);
+                callback(ret);
+            }, function (error, status) {
+                throw error;
+            });
+        };
+        /**
+         * 加载默认数据。
+         */
+        Resources.prototype.ll = function (ret) {
+            ret['rooms']['00000000-0000-0000-0000-000000000000'] = new Tag.DefRoom([], ' ', [
+                new Tag.Times([], '', [
+                    new Tag.Unknown(['晨'], '00000000-0000-0000-0000-000000000000', [], -1),
+                    new Tag.Unknown(['午'], '00000000-0000-0000-0000-000000000000', [], -1),
+                    new Tag.Unknown(['晚'], '00000000-0000-0000-0000-000000000000', [], -1),
+                    new Tag.Unknown(['夜'], '00000000-0000-0000-0000-000000000000', [], -1)
+                ], -1)], -1);
+            ret['chars']['00000000-0000-0000-0000-000000000001'] = new Tag.DefChar([], ' ', [
+                new Tag.Avatar([], '00000000-0000-0000-0000-000000000001', [], -1),
+                new Tag.Poses([], '', [new Tag.Unknown(['默认'], '00000000-0000-0000-0000-000000000002', [], -1)], -1)
+            ], -1);
+            return ret;
+        };
+        return Resources;
+    }(Tag.Unknown));
+    Tag.Resources = Resources;
 })(Tag || (Tag = {}));
 /**
  * 定义状态标签组件。
@@ -10433,6 +10611,252 @@ var Tag;
     Tag.Pause = Pause;
 })(Tag || (Tag = {}));
 /**
+ * 定义镜头动画动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/Camera.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Camera = (function (_super) {
+        __extends(Camera, _super);
+        /**
+         * 构造函数。
+         */
+        function Camera(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            switch (params[0]) {
+                case '快':
+                    this._ms = 500;
+                    break;
+                case '中':
+                    this._ms = 4000;
+                    break;
+                case '慢':
+                    this._ms = 8000;
+                    break;
+                case undefined:
+                    this._ms = 20; // 虽说设置镜头不需要动画效果，为算法统一，将时间设为1帧，即20ms。
+                    break;
+                default:
+                    throw new E(E.TAG_PARAMS_NOT_TRUE, lineNo);
+            }
+            switch (content) {
+                case '左上':
+                    this._mx = 0;
+                    this._my = 0;
+                    break;
+                case '上':
+                    this._mx = 0.5;
+                    this._my = 0;
+                    break;
+                case '右上':
+                    this._mx = 1;
+                    this._my = 0;
+                    break;
+                case '左':
+                    this._mx = 0;
+                    this._my = 0.5;
+                    break;
+                case '中':
+                    this._mx = 0.5;
+                    this._my = 0.5;
+                    break;
+                case '右':
+                    this._mx = 1;
+                    this._my = 0.5;
+                    break;
+                case '左下':
+                    this._mx = 0;
+                    this._my = 1;
+                    break;
+                case '下':
+                    this._mx = 0.5;
+                    this._my = 1;
+                    break;
+                case '右下':
+                    this._mx = 1;
+                    this._my = 1;
+                    break;
+                case '':
+                    break;
+                default:
+                    throw new E(E.ACT_ILLEGAL_CAMERA_MOVE, lineNo);
+            }
+        }
+        return Camera;
+    }(Tag.Action));
+    Tag.Camera = Camera;
+})(Tag || (Tag = {}));
+/**
+ * 定义移动镜头动画动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/CameraMove.ts
+ */
+/// <reference path="Camera.ts" />
+var Tag;
+(function (Tag) {
+    var CameraMove = (function (_super) {
+        __extends(CameraMove, _super);
+        function CameraMove() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CameraMove.prototype.gN = function () {
+            return 'CameraMove';
+        };
+        /**
+         * 执行。
+         */
+        CameraMove.prototype.p = function (runtime) {
+            var states = runtime.gS(), camera = states.g('.z'), now = this._mx.toString() + ',' + this._my.toString();
+            if (!camera || camera == now)
+                return runtime;
+            return runtime.gD().cameraMove(this._mx, this._my, this._ms)
+                .then(function () {
+                states.s('.z', now);
+                states.s('_z', now);
+                return runtime;
+            });
+        };
+        return CameraMove;
+    }(Tag.Camera));
+    Tag.CameraMove = CameraMove;
+})(Tag || (Tag = {}));
+/**
+ * 定义放大镜头动画动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/CameraZoom.ts
+ */
+/// <reference path="Camera.ts" />
+var Tag;
+(function (Tag) {
+    var CameraZoom = (function (_super) {
+        __extends(CameraZoom, _super);
+        function CameraZoom() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CameraZoom.prototype.gN = function () {
+            return 'CameraZoom';
+        };
+        /**
+         * 执行。
+         */
+        CameraZoom.prototype.p = function (runtime) {
+            var states = runtime.gS(), camera = states.g('.z'), now = this._mx.toString() + ',' + this._my.toString();
+            if (camera)
+                return runtime;
+            return runtime.gD().cameraZoom(this._mx, this._my, this._ms, 1)
+                .then(function () {
+                states.s('.z', now);
+                states.s('_z', now);
+                return runtime;
+            });
+        };
+        return CameraZoom;
+    }(Tag.Camera));
+    Tag.CameraZoom = CameraZoom;
+})(Tag || (Tag = {}));
+/**
+ * 定义复位镜头动画动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/CameraReset.ts
+ */
+/// <reference path="Camera.ts" />
+var Tag;
+(function (Tag) {
+    var CameraReset = (function (_super) {
+        __extends(CameraReset, _super);
+        function CameraReset() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CameraReset.prototype.gN = function () {
+            return 'CameraReset';
+        };
+        /**
+         * 执行。
+         */
+        CameraReset.prototype.p = function (runtime) {
+            var states = runtime.gS(), camera = states.g('.z'), strArr, mx, my;
+            if (!camera)
+                return runtime;
+            strArr = camera.split(',');
+            mx = parseFloat(strArr[0]);
+            my = parseFloat(strArr[1]);
+            if (strArr.length !== 2 || !mx || !my)
+                return runtime;
+            return runtime.gD().cameraZoom(mx, my, this._ms, -1)
+                .then(function () {
+                states.d('.z');
+                states.d('_z');
+                return runtime;
+            });
+        };
+        return CameraReset;
+    }(Tag.Camera));
+    Tag.CameraReset = CameraReset;
+})(Tag || (Tag = {}));
+/**
+ * 定义设置镜头动画动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/CameraSet.ts
+ */
+/// <reference path="Camera.ts" />
+var Tag;
+(function (Tag) {
+    var CameraSet = (function (_super) {
+        __extends(CameraSet, _super);
+        function CameraSet() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CameraSet.prototype.gN = function () {
+            return 'CameraSet';
+        };
+        /**
+         * 执行。
+         */
+        CameraSet.prototype.p = function (runtime) {
+            var states = runtime.gS(), camera = states.g('.z'), now = this._mx.toString() + ',' + this._my.toString();
+            if (camera)
+                return runtime;
+            return runtime.gD().cameraZoom(this._mx, this._my, this._ms, 1)
+                .then(function () {
+                states.s('.z', now);
+                states.s('_z', now);
+                return runtime;
+            });
+        };
+        return CameraSet;
+    }(Tag.Camera));
+    Tag.CameraSet = CameraSet;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -10516,6 +10940,10 @@ var Tag;
 /// <reference path="_Structure/_Panel/EleName.ts" />
 /// <reference path="_Structure/_Panel/EleType.ts" />
 /// <reference path="_Action/_Director/Pause.ts" />
+/// <reference path="_Action/_Director/CameraMove.ts" />
+/// <reference path="_Action/_Director/CameraZoom.ts" />
+/// <reference path="_Action/_Director/CameraReset.ts" />
+/// <reference path="_Action/_Director/CameraSet.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -11037,7 +11465,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.19.0';
+    Bigine.version = '0.20.0';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

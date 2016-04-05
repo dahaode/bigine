@@ -45,9 +45,12 @@ namespace Tag {
                 kdata: string = '_c',
                 kpose: string = '_s',
                 kpos: string = '.p',
+                kcmr: string = '.z',
                 q: Promise<Core.IRuntime> = Promise.resolve(runtime),
                 kroom: string = states.g('_rd'),
                 kdo: string = '$rd',
+                kcamera: string = '_z',
+                camera: string = states.g(kcamera),
                 bgm: string = states.g('_b'),
                 cg: string = states.g(kid),
                 l: Core.IDirector.Position = pos.Left,
@@ -63,17 +66,33 @@ namespace Tag {
                 ctype: Core.IEpisode.Entity = type.Chr,
                 room: DefRoom;
             if (bgm)
-                q = q.then(() => director.playBGM((<DefBGM> episode.q(bgm, type.BGM)).o()));
+                q = q.then(() => {
+                    var defbgm: DefBGM = <DefBGM> episode.q(bgm, type.BGM);
+                    return director.playBGM(defbgm ? defbgm.o() : undefined);
+                });
             if (kroom && !states.g(kdo))
                 q = q.then(() => {
                     states.s(kdo, room = <DefRoom> episode.q(kroom, type.Room));
                     return director.asRoom(room.o(states.g('_t')))
+                        .then(() => {  // 设置镜头状态
+                            if (!camera)
+                                return runtime;
+                            var strArr: Array<string> = camera.split(','),
+                                mx: number = parseFloat(strArr[0]),
+                                my: number = parseFloat(strArr[1]);
+                            if (strArr.length !== 2 || !mx || !my)
+                                return runtime;
+                            states.s(kcmr, camera);
+                            return director.cameraZoom(mx, my, 20, 1);
+                        })
                         .then(() => room.gM() ? director.asMap(room.gM().gP()) : runtime);
                 });
             if (cg)
                 q = q.then(() => {
                     states.m(kid, kdata);
-                    return director.setCG((<DefCG> episode.q(cg, type.CG)).o());
+                    var defcg: Core.IEntityTag = episode.q(cg, type.CG),
+                        rescg: Core.IResource<HTMLImageElement> = defcg ? (<DefCG> defcg).o() : undefined;
+                    return director.setCG(rescg);
                 });
             if (lChar)
                 q = q.then(() => {

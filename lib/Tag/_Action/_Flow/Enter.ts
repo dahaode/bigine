@@ -66,10 +66,12 @@ namespace Tag {
                         .s(kto, this._mo);
                     if (!cn)
                         return runtime;
-                    return co.p(type.PreLeave, runtime);
+                    return co.p(type.PreLeave, runtime, this._p[0]);
                 })
-                .then(() => this._mo.p(type.PreEnter, runtime)) // 播放关联（目标）房间进入前事件
-                .then(() => director.lightOff())
+                .then(() =>
+                    this._mo.p(type.PreEnter, runtime, this._p[0])) // 播放关联（目标）房间进入前事件
+                .then(() =>
+                    director.lightOff())
                 .then(() => { // 播放当前房间离开后事件
                     states.d(kcn)
                         .d(kco)
@@ -77,7 +79,7 @@ namespace Tag {
                         .d(kdo);
                     if (!cn)
                         return runtime;
-                    return co.p(type.PostLeave, runtime);
+                    return co.p(type.PostLeave, runtime, this._p[0]);
                 })
                 .then(() => { // 播放关联房间（目标）房间进入后事件
                     if (runtime.gH())
@@ -92,9 +94,12 @@ namespace Tag {
                         .then(() => {
                             states.d(kcx);
                             return director.reset();
-                        }).then(() => director.asRoom(this._mo.o(states.g(kt))))
-                        .then(() => director.asMap(map ? map.gP() : {}))
-                        .then(() => this._mo.p(type.PostEnter, runtime));
+                        }).then(() =>
+                            director.asRoom(this._mo.o(states.g(kt))))
+                        .then(() =>
+                            director.asMap(map ? map.gP() : {}))
+                        .then(() =>
+                            this._mo.p(type.PostEnter, runtime, this._p[0]));
                 })
             );
             return E.doHalt<Core.IRuntime>(); // 中断原有时序流。

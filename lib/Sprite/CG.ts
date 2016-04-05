@@ -32,8 +32,10 @@ namespace Sprite {
          * 更新图片。
          */
         public u(image: Resource.Resource<HTMLImageElement>): CG {
-            return <CG> this.c()
-                .a(new G.Image(image.o(), this._c));
+            return image ? (<CG> this.c()
+                    .a(new G.Image(image.o(), this._c))) :
+                (<CG> this.c()
+                    .a(new G.Color(<G.IBounds> {x: 400, y: 120, w: 480, h: 480}, '#000')));
         }
     }
 }

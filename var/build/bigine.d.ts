@@ -144,6 +144,9 @@ declare namespace __Bigine {
             reset(): Promise<IRuntime>;
             setCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
             pause(milsec: number): Promise<IRuntime>;
+            curtain(name: string): Promise<IRuntime>;
+            cameraMove(mx: number, my: number, ms: number): Promise<IRuntime>;
+            cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<IRuntime>;
         }
         namespace IDirector {
             enum Position {
@@ -215,7 +218,7 @@ declare namespace __Bigine {
     namespace Core {
         interface ISceneHost {
             a(scene: ISceneTag): ISceneHost;
-            p(type: ISceneTag.Type, runtime: IRuntime): Promise<IRuntime>;
+            p(type: ISceneTag.Type, runtime: IRuntime, name?: string): Promise<IRuntime>;
         }
     }
     namespace Core {
@@ -419,6 +422,9 @@ declare namespace __Bigine {
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
             pause(milsec: number): Promise<Core.IRuntime>;
+            curtain(name: string): Promise<Core.IRuntime>;
+            cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
+            cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
             s(sheet: [string, string][]): Director;
@@ -788,6 +794,7 @@ declare namespace __Bigine {
             private _l;
             private _x;
             private _fs;
+            private _ca;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
@@ -813,6 +820,9 @@ declare namespace __Bigine {
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             pause(milsec: number): Promise<Core.IRuntime>;
+            curtain(name: string): Promise<Core.IRuntime>;
+            cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
+            cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             s(sheet: [string, string][]): CanvasDirector;
             p(sheet: Array<Util.IHashTable<any>>): CanvasDirector;
@@ -921,6 +931,7 @@ declare namespace __Bigine {
         static SCENE_TYPE_UNKNOWN: string;
         static ROOT_NOT_PARENT: string;
         static ACT_ILLEGAL_POSITION: string;
+        static ACT_ILLEGAL_CAMERA_MOVE: string;
         static ACT_CHAR_NOT_ON: string;
         static ACT_CHAR_ONSTAGE: string;
         static ACT_ILLEGAL_STARS: string;
@@ -981,7 +992,7 @@ declare namespace __Bigine {
             protected $i(abstract?: boolean): number;
             $p(index: number): string;
             $c(): string;
-            protected $q(name: string): Unknown[];
+            $q(name: string): Unknown[];
         }
     }
     namespace Tag {
@@ -1155,46 +1166,6 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
-        class DefRoom extends Entity implements Core.IRoomTag {
-            private _a;
-            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
-            gN(): string;
-            gT(): Core.IEpisode.Entity;
-            a(scene: Core.ISceneTag): DefRoom;
-            p(type: Core.ISceneTag.Type, runtime: Core.IRuntime): Promise<Core.IRuntime>;
-            o(id?: string): Core.IResource<HTMLImageElement>;
-            gM(): DefMap;
-            d(): Core.IResource<HTMLImageElement>[];
-        }
-    }
-    namespace Tag {
-        class Auto extends Unknown {
-            gN(): string;
-        }
-    }
-    namespace Tag {
-        class Player extends Unknown {
-            private _o;
-            gN(): string;
-            $b(ep: Core.IEpisode): void;
-            gI(): string;
-            gT(): Core.IEpisode.Entity;
-            gC(): DefChar;
-        }
-    }
-    namespace Tag {
-        class Theme extends Unknown {
-            gN(): string;
-            l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
-        }
-    }
-    namespace Tag {
-        class Resources extends Unknown {
-            gN(): string;
-            l(callback: Util.ISuccessCallback<Util.IHashTable<Core.IEntityTag>>): void;
-        }
-    }
-    namespace Tag {
         class Type extends Unknown {
             private _t;
             private _o;
@@ -1317,6 +1288,47 @@ declare namespace __Bigine {
             i(id: string): void;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
             gT(): Core.ISceneTag.Type;
+        }
+    }
+    namespace Tag {
+        class DefRoom extends Entity implements Core.IRoomTag {
+            private _a;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            gT(): Core.IEpisode.Entity;
+            a(scene: Core.ISceneTag): DefRoom;
+            p(type: Core.ISceneTag.Type, runtime: Core.IRuntime, name?: string): Promise<Core.IRuntime>;
+            o(id?: string): Core.IResource<HTMLImageElement>;
+            gM(): DefMap;
+            d(): Core.IResource<HTMLImageElement>[];
+        }
+    }
+    namespace Tag {
+        class Auto extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class Player extends Unknown {
+            private _o;
+            gN(): string;
+            $b(ep: Core.IEpisode): void;
+            gI(): string;
+            gT(): Core.IEpisode.Entity;
+            gC(): DefChar;
+        }
+    }
+    namespace Tag {
+        class Theme extends Unknown {
+            gN(): string;
+            l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
+        }
+    }
+    namespace Tag {
+        class Resources extends Unknown {
+            gN(): string;
+            l(callback: Util.ISuccessCallback<Util.IHashTable<Core.IEntityTag>>): void;
+            private ll(ret);
         }
     }
     namespace Tag {
@@ -1750,6 +1762,38 @@ declare namespace __Bigine {
         class Pause extends Action {
             private _ms;
             constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class Camera extends Action {
+            protected _mx: number;
+            protected _my: number;
+            protected _ms: number;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+        }
+    }
+    namespace Tag {
+        class CameraMove extends Camera {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class CameraZoom extends Camera {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class CameraReset extends Camera {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class CameraSet extends Camera {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }

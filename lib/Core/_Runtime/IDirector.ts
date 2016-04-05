@@ -132,6 +132,21 @@ namespace Core {
          * 停顿。
          */
         pause(milsec: number): Promise<IRuntime>;
+
+        /**
+         * 切幕动画。
+         */
+        curtain(name: string): Promise<IRuntime>;
+
+        /**
+         * 移动镜头。
+         */
+        cameraMove(mx: number, my: number, ms: number): Promise<IRuntime>;
+
+        /**
+         * 放大/缩小镜头。
+         */
+        cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<IRuntime>;
     }
 
     export namespace IDirector {

@@ -41,14 +41,14 @@ namespace Tag {
             if (bgm == this._p[0])
                 return runtime;
             states.s(key, this._p[0]);
-            return runtime.gD().playBGM(this._mo.o());
+            return runtime.gD().playBGM(this._mo ? this._mo.o() : undefined);
         }
 
         /**
          * 获取依赖素材资源列表。
          */
         public $d(): Core.IResource<string>[] {
-            return [this._mo.o()];
+            return this._mo ? [this._mo.o()] : [];
         }
 
         /**

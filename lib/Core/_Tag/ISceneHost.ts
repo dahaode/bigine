@@ -19,6 +19,6 @@ namespace Core {
         /**
          * 播放。
          */
-        p(type: ISceneTag.Type, runtime: IRuntime): Promise<IRuntime>;
+        p(type: ISceneTag.Type, runtime: IRuntime, name?: string): Promise<IRuntime>;
     }
 }

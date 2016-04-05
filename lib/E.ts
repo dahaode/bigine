@@ -60,6 +60,8 @@ class E extends Error {
 
     public static ACT_ILLEGAL_POSITION: string = '无效地人物站位';
 
+    public static ACT_ILLEGAL_CAMERA_MOVE: string = '无效地镜头移动位置';
+
     public static ACT_CHAR_NOT_ON: string = '人物并不在场';
 
     public static ACT_CHAR_ONSTAGE: string = '人物已在场';

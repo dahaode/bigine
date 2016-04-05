@@ -64,6 +64,11 @@ namespace Tag {
         CharPose: '改变神态',
         CharMove: '人物移动',
 
+        CameraSet: '设置镜头',
+        CameraZoom: '放大镜头',
+        CameraReset: '复位镜头',
+        CameraMove: '移动镜头',
+
         Monolog: '独白',
         Speak: '对白',
         Tip: '提示',
@@ -85,6 +90,7 @@ namespace Tag {
         Weather: '设置天气',
         StopBGM: '停止音乐',
         Pause: '停顿',
+        Curtains: '切幕动画',
 
         Assert: '当数据',
         Assign: '设置数据',
@@ -132,7 +138,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 92
+    export var S: { [index: number]: any[] } = { // next 97
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -265,6 +271,11 @@ namespace Tag {
         19: ['PlaySE', 1, -1], // [音效名]
         20: ['Weather', 1, -1], // [天气名]
         91: ['Pause', [0, 1], -1], // [停顿时间：长、中、短]
+        92: ['CameraSet', 0, 1],  // 镜头设置的位置
+        93: ['CameraReset', [0, 1], -1], // [速度：快、中、慢]
+        94: ['CameraZoom', [0, 1], 1],   // [速度：快、中、慢] 镜头放大到的位置
+        95: ['CameraMove', [0, 1], 1],   // [速度：快、中、慢] 镜头移动到的位置
+        96: ['Curtains', 1, -1], // [切幕动画名称]
 
         58: ['Loop', 0, -1, {
             '-1': [1]

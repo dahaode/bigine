@@ -11,6 +11,7 @@
 /// <reference path="../../../Core/_Tag/IRoomTag.ts" />
 /// <reference path="Link.ts" />
 /// <reference path="Times.ts" />
+/// <reference path="../../_Structure/_Scene/Scene.ts" />
 
 namespace Tag {
     import Util = __Bigine_Util;
@@ -58,12 +59,17 @@ namespace Tag {
         /**
          * 播放。
          */
-        public p(type: Core.ISceneTag.Type, runtime: Core.IRuntime): Promise<Core.IRuntime> {
+        public p(type: Core.ISceneTag.Type, runtime: Core.IRuntime, name?: string): Promise<Core.IRuntime> {
             return (type in this._a ?
                 Util.Q.every(this._a[type], (scene: Core.ISceneTag) => {
                     if (runtime.gH())
                         return E.doHalt<Core.IRuntime>();
-                    return scene.p(runtime);
+                    if (name) {
+                        if ((<Scene> scene).$q('Type')[0].$c() == (<number> type).toString() + name)
+                            return scene.p(runtime);
+                    } else {
+                        return scene.p(runtime);
+                    }
                 }) :
                 Promise.resolve(runtime)
             ).then(() => Core.ISceneTag.Type.PostEnter == type ?

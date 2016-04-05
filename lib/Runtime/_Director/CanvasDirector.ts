@@ -89,6 +89,11 @@ namespace Runtime {
         private _fs: Core.IRuntime.Series;
 
         /**
+         * 切幕动画。
+         */
+        private _ca: string;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -333,19 +338,19 @@ namespace Runtime {
                 return this._p;
             switch (to) {
                 case pos.Left:
-                    x = 0;
+                    x = -400;
                     break;
                 case pos.CLeft:
-                    x = 200;
+                    x = -200;
                     break;
                 case pos.Center:
-                    x = 400;
+                    x = 0;
                     break;
                 case pos.CRight:
-                    x = 600;
+                    x = 200;
                     break;
                 case pos.Right:
-                    x = 800;
+                    x = 400;
                     break;
             }
             return gChar.p(new G.Move(500, {
@@ -361,30 +366,32 @@ namespace Runtime {
          * 创建立绘。
          */
         protected $c(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image {
-            var bounds: G.IBounds = CanvasDirector.BOUNDS,
+            // 为防止立绘随着镜头的缩放而缩放，这里的立绘显示暂设定为固定IBounds{ x: 0, y: 0, w: 1280, h: 720 }
+            //var bounds: G.IBounds = CanvasDirector.BOUNDS,
+            var bounds: G.IBounds = <G.IBounds> { x: 0, y: 0, w: 1280, h: 720 },
                 pos: typeof Core.IDirector.Position = Core.IDirector.Position,
-                w: number = 0 | bounds.h / 3 * 2,
                 x: number;
             switch (position) {
                 case pos.Left:
-                    x = 0;
+                    x = -400;
                     break;
                 case pos.CLeft:
-                    x = 200;
+                    x = -200;
                     break;
                 case pos.Center:
-                    x = 400;
+                    x = 0;
                     break;
                 case pos.CRight:
-                    x = 600;
+                    x = 200;
                     break;
                 case pos.Right:
-                    x = 800;
+                    x = 400;
                     break;
             }
-            return <G.Image> new G.Image(resource.o(), x, 0, w, bounds.h)
-                .i(<any> position)
-                .o(0);
+            // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
+            return <G.Image> new G.Image(resource.o(), x, 0, bounds.w, bounds.h, true)
+	    	    .i(<any> position)
+		        .o(0);
         }
 
         /**
@@ -537,8 +544,30 @@ namespace Runtime {
                 this._c.a(gNew, 'M');
                 if (!time || this._x['c'].gO()) {
                     gNew.o(1);
-                    this._c.e(gOld);
-                    return runtime;
+                    if (gOld.gN() == 'Image' && this._ca) {
+                        let curtain: G.Animation;
+                        switch (this._ca) {
+                            case 'FadeIn':
+                                curtain = new G.FadeIn(500);
+                                break;
+                            case 'ShutterH':
+                                curtain = new G.Shutter(300, { direction: 'H', leave: (<G.Image> gOld).$d() });
+                                break;
+                            case 'ShutterV':
+                                curtain = new G.Shutter(300, { direction: 'V', leave: (<G.Image> gOld).$d() });
+                                break;
+                            default:
+                                curtain = new G.FadeIn(500);
+                                break;
+                        }
+                        return gNew.p(curtain).then(() => {
+                            this._c.e(gOld);
+                            return runtime;
+                        });
+                    } else {
+                        this._c.e(gOld);
+                        return runtime;
+                    }
                 }
                 return gNew.p(new G.FadeIn(500)).then(() => {
                     this._c.e(gOld);
@@ -670,6 +699,78 @@ namespace Runtime {
                     return super.pause(milsec);
                 });
             }
+        }
+
+        /**
+         * 切幕动画。
+         */
+        public curtain(name: string): Promise<Core.IRuntime> {
+            this._ca = name;
+            return super.curtain(name);
+        }
+
+        /**
+         * 移动镜头。
+         */
+        public cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime> {
+            var gRoom: G.Image = <G.Image> this._c.q('b')[0],
+                x: number = Math.round(mx * (1 - 5 / 3) * 1280),
+                y: number = Math.round(my * (1 - 5 / 3) * 720);
+            if (!gRoom) return this._p;
+            let sClick: G.Sprite = new G.Sprite(CanvasDirector.BOUNDS, false);  // 建立临时透明层，使得可以响应WaitForClick事件。
+            this._c.a(sClick.i('P').o(1));
+            return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
+                let aMove: G.Move = new G.Move(ms, { x: x, y: y }),
+                    aWFC: G.WaitForClick = new G.WaitForClick(() => {
+                        aMove.h();
+                    });
+                this._t = this._h = aWFC;
+                Promise.race<any>([
+                    gRoom.p(aMove).then(() => {
+                        aWFC.h();
+                    }),
+                    sClick.p(aWFC)
+                ]).then(() => {
+                    this._c.e(sClick);
+                    this._t = this._h = undefined;
+                    gRoom.x(x).y(y);
+                    resolve(this._r);
+                });
+            });
+        }
+
+        /**
+         * 放大/缩小镜头。
+         */
+        public cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime> {
+            var gRoom: G.Image = <G.Image> this._c.q('b')[0],
+                bound: G.IBounds = gRoom.gB();
+            if (!gRoom) return this._p;
+            let sClick: G.Sprite = new G.Sprite(CanvasDirector.BOUNDS, false);  // 建立临时透明层，使得可以响应WaitForClick事件。
+            this._c.a(sClick.i('P').o(1));
+            return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
+                let aZoom: G.Zoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale }),
+                    aWFC: G.WaitForClick = new G.WaitForClick(() => {
+                        aZoom.h();
+                    });
+                this._t = this._h = aWFC;
+                Promise.race<any>([
+                    gRoom.p(aZoom).then(() => {
+                        aWFC.h();
+                    }),
+                    sClick.p(aWFC)
+                ]).then(() => {
+                    this._c.e(sClick);
+                    this._t = this._h = undefined;
+                    let px: number = scale * (5 / 3 - 1) * 1280,
+                        py: number = scale * (5 / 3 - 1) * 720;
+                    gRoom.x(Math.round(bound.x - mx * px))
+                        .y(Math.round(bound.y - my * py))
+                        .sW(Math.round(bound.w + px))
+                        .sH(Math.round(bound.h + py));
+                    resolve(this._r);
+                });
+            });
         }
 
         /**

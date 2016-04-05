@@ -83,3 +83,7 @@
 /// <reference path="_Structure/_Panel/EleName.ts" />
 /// <reference path="_Structure/_Panel/EleType.ts" />
 /// <reference path="_Action/_Director/Pause.ts" />
+/// <reference path="_Action/_Director/CameraMove.ts" />
+/// <reference path="_Action/_Director/CameraZoom.ts" />
+/// <reference path="_Action/_Director/CameraReset.ts" />
+/// <reference path="_Action/_Director/CameraSet.ts" />

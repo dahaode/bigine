@@ -258,7 +258,7 @@ namespace Tag {
         /**
          * 过滤名称符合要求地子标签。
          */
-        protected $q(name: string): Unknown[] {
+        public $q(name: string): Unknown[] {
             if (!(name in I))
                 throw new E(E.SCHEMA_TAG_NOT_DECLARED);
             if (!(name in this._q)) {

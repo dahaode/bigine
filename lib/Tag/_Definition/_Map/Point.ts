@@ -49,17 +49,21 @@ namespace Tag {
          * 绑定（运行时）作品（实体）。
          */
         public $b(ep: Core.IEpisode): void {
-            if (this._m && this._p[0])
-                this._o = (<DefMap> ep.q(this._m, Core.IEpisode.Entity.Map, this._l)).gP(this._p[0]);
+            if (this._m && this._p[0]) {
+                var map: DefMap = <DefMap> ep.q(this._m, Core.IEpisode.Entity.Map, this._l);
+                this._o = map ? map.gP(this._p[0]) : undefined;
+            }
         }
 
         /**
          * 交互逻辑。
          */
         public p(runtime: Core.IRuntime): void {
-            var room: DefRoom = this.gR();
+            var room: DefRoom = this.gR(),
+                obj: Target | Point = <Target> this.$q('Target')[0] || this._o,
+                rp: string = room.gI() == ' ' ? obj.$c() : room.gI();
             (<Promise<Core.IRuntime>> Enter.prototype.p.call({
-                _p: [room.gI()],
+                _p: [rp],
                 _mo: room
             }, runtime))['catch'](E.ignoreHalt);
         }
