@@ -68,6 +68,7 @@ namespace Tag {
         CameraZoom: '放大镜头',
         CameraReset: '复位镜头',
         CameraMove: '移动镜头',
+        CameraShake: '抖动镜头',
 
         Monolog: '独白',
         Speak: '对白',
@@ -138,7 +139,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 97
+    export var S: { [index: number]: any[] } = { // next 98
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -275,7 +276,8 @@ namespace Tag {
         93: ['CameraReset', [0, 1], -1], // [速度：快、中、慢]
         94: ['CameraZoom', [0, 1], 1],   // [速度：快、中、慢] 镜头放大到的位置
         95: ['CameraMove', [0, 1], 1],   // [速度：快、中、慢] 镜头移动到的位置
-        96: ['Curtains', 1, -1], // [切幕动画名称]
+        96: ['Curtains', [0, 1], -1], // [切幕动画名称]
+        97: ['CameraShake', 0, -1],
 
         58: ['Loop', 0, -1, {
             '-1': [1]

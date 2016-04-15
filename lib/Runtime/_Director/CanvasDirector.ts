@@ -390,8 +390,8 @@ namespace Runtime {
             }
             // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
             return <G.Image> new G.Image(resource.o(), x, 0, bounds.w, bounds.h, true)
-	    	    .i(<any> position)
-		        .o(0);
+                .i(<any> position)
+                .o(0);
         }
 
         /**
@@ -399,7 +399,7 @@ namespace Runtime {
          */
         public words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
             let sprite: Sprite.Words = <Sprite.Words> this._x['W'];
-            return this.lightOn().then(() => {
+            return this._x['c'].h(20).then(() => {
                 let type: string = theme[0];
                 if ('v' == type)
                     return sprite.vv(words, this._a);
@@ -536,44 +536,81 @@ namespace Runtime {
         /**
          * 设置房间。
          */
-        public asRoom(resource: Resource.Resource<HTMLImageElement>, time: boolean = false): Promise<Core.IRuntime> {
-            return super.asRoom(resource).then((runtime: Core.IRuntime) => {
-                var gOld: G.Element = this._c.q('b')[0],
-                    gNew: G.Element = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
-                        .o(0);
-                this._c.a(gNew, 'M');
-                if (!time || this._x['c'].gO()) {
-                    gNew.o(1);
-                    if (gOld.gN() == 'Image' && this._ca) {
-                        let curtain: G.Animation;
-                        switch (this._ca) {
-                            case 'FadeIn':
-                                curtain = new G.FadeIn(500);
-                                break;
-                            case 'ShutterH':
-                                curtain = new G.Shutter(300, { direction: 'H', leave: (<G.Image> gOld).$d() });
-                                break;
-                            case 'ShutterV':
-                                curtain = new G.Shutter(300, { direction: 'V', leave: (<G.Image> gOld).$d() });
-                                break;
-                            default:
-                                curtain = new G.FadeIn(500);
-                                break;
-                        }
-                        return gNew.p(curtain).then(() => {
+        public asRoom(resource: Resource.Resource<HTMLImageElement>, time: boolean = false, map: boolean = false): Promise<Core.IRuntime> {
+            return super.asRoom(resource)
+                .then((runtime: Core.IRuntime) => {   // 强制复位
+                    var camera: string = <string> runtime.gS().g('.z'),
+                        strArr: Array <string>,
+                        mx: number,
+                        my: number;
+                    if (!camera)
+                        return runtime;
+                    strArr = camera.split(',');
+                    mx = parseFloat(strArr[0]);
+                    my = parseFloat(strArr[1]);
+                    return this.cameraZoom(mx, my, 20, -1);
+                })
+                .then((runtime: Core.IRuntime) => {    // 进入房间特效
+                    runtime.gS().d('.z');
+                    runtime.gS().d('_z');
+                    var gOld: G.Element = this._c.q('b')[0],
+                        gNew: G.Element = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
+                            .o(0);
+                    this._c.a(gNew, 'M');
+                    if (time) {
+                        return gNew.p(new G.FadeIn(1000)).then(() => {
                             this._c.e(gOld);
                             return runtime;
                         });
-                    } else {
-                        this._c.e(gOld);
-                        return runtime;
                     }
-                }
-                return gNew.p(new G.FadeIn(500)).then(() => {
-                    this._c.e(gOld);
-                    return runtime;
+                    if (!this._ca || map) {
+                        return this.lightOn().then(() => {
+                            this._c.e(gOld);
+                            gNew.o(1);
+                            return runtime;
+                        });
+                    }
+
+                    return this.$ca(gOld, gNew);
                 });
-            });
+        }
+
+        /**
+         * 进入房间特效。
+         */
+        protected $ca(gOld: G.Element, gNew: G.Element): Promise<Core.IRuntime> {
+            let gCurtain: Sprite.Curtain = this._x['c'],
+                curtain: G.Animation;
+            switch (this._ca) {
+                case 'Fade':
+                    return gCurtain.v(1500)
+                        .then(() => {
+                            gOld.o(0);
+                            gCurtain.h(20);
+                        }).then(() =>
+                            gNew.p(new G.FadeIn(1500))
+                        ).then(() => {
+                            this._c.e(gOld);
+                            return this._r;
+                        });
+                case 'ShutterH':
+                    curtain = new G.Shutter(1000, { direction: 'H' });
+                    break;
+                case 'ShutterV':
+                    curtain = new G.Shutter(1000, { direction: 'V' });
+                    break;
+                default:
+                    curtain = new G.FadeIn(20);
+                    break;
+            }
+            return this.lightOn()
+                .then(() =>
+                    gNew.p(curtain)
+                ).then(() => {
+                    this._c.e(gOld);
+                    gNew.o(1);
+                    return this._r;
+                });
         }
 
         /**
@@ -774,6 +811,15 @@ namespace Runtime {
         }
 
         /**
+         * 抖动镜头。
+         */
+        public cameraShake(): Promise<Core.IRuntime> {
+            var gRoom: G.Image = <G.Image> this._c.q('b')[0];
+            return gRoom.p(new G.Shake(500)).then(() =>
+                super.cameraShake());
+        }
+
+        /**
          * 使用主题。
          */
         public t(id: string, theme: Util.IHashTable<Util.IHashTable<any> >): CanvasDirector {
@@ -929,7 +975,7 @@ namespace Runtime {
          * 配置面板。
          */
         public p(sheet: Array<Util.IHashTable<any>>): CanvasDirector {
-            if (sheet) {
+            if (sheet && sheet.length > 0) {
                 (<Sprite.Panel> this._x['P']).u(sheet, this._r);
             } else
                 (<Sprite.Tray> this._x['t']).u(false);

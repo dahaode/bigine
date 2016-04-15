@@ -171,7 +171,7 @@ namespace Runtime {
         /**
          * 设置房间。
          */
-        public asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime> {
+        public asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean, map?: boolean): Promise<Core.IRuntime> {
             return this._p;
         }
 
@@ -244,6 +244,13 @@ namespace Runtime {
          * 放大/缩小镜头。
          */
         public cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 抖动镜头。
+         */
+        public cameraShake(): Promise<Core.IRuntime> {
             return this._p;
         }
 

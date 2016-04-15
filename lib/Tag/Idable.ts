@@ -53,6 +53,7 @@ namespace Tag {
                 camera: string = states.g(kcamera),
                 bgm: string = states.g('_b'),
                 cg: string = states.g(kid),
+                cur: string = states.g('_ra'),
                 l: Core.IDirector.Position = pos.Left,
                 lChar: string = states.g(kid + l),
                 cl: Core.IDirector.Position = pos.CLeft,
@@ -70,18 +71,20 @@ namespace Tag {
                     var defbgm: DefBGM = <DefBGM> episode.q(bgm, type.BGM);
                     return director.playBGM(defbgm ? defbgm.o() : undefined);
                 });
+            if (cur)
+                q = q.then(() =>
+                    director.curtain(cur)
+                );
             if (kroom && !states.g(kdo))
                 q = q.then(() => {
                     states.s(kdo, room = <DefRoom> episode.q(kroom, type.Room));
-                    return director.asRoom(room.o(states.g('_t')))
+                    return director.asRoom(room.o(states.g('_t')), false, room.gM() ? true : false)
                         .then(() => {  // 设置镜头状态
                             if (!camera)
                                 return runtime;
                             var strArr: Array<string> = camera.split(','),
                                 mx: number = parseFloat(strArr[0]),
                                 my: number = parseFloat(strArr[1]);
-                            if (strArr.length !== 2 || !mx || !my)
-                                return runtime;
                             states.s(kcmr, camera);
                             return director.cameraZoom(mx, my, 20, 1);
                         })

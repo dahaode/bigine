@@ -96,7 +96,7 @@ namespace Core {
         /**
          * 设置房间。
          */
-        asRoom(resource: IResource<HTMLImageElement>, time?: boolean): Promise<IRuntime>;
+        asRoom(resource: IResource<HTMLImageElement>, time?: boolean, map?: boolean): Promise<IRuntime>;
 
         /**
          * 设置地图。
@@ -147,6 +147,12 @@ namespace Core {
          * 放大/缩小镜头。
          */
         cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<IRuntime>;
+
+        /**
+         * 抖动镜头。
+         */
+        cameraShake(): Promise<IRuntime>;
+
     }
 
     export namespace IDirector {

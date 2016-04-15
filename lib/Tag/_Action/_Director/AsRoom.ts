@@ -50,7 +50,7 @@ namespace Tag {
                 return runtime;
             states.s(kroom, this._p[0]);
             states.s('$rd', this._mo);
-            return director.asRoom(this._mo.o(time))
+            return director.asRoom(this._mo.o(time), false, map ? true : false)
                 .then(() => director.asMap(map ? map.gP() : {}));
         }
 

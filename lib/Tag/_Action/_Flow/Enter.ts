@@ -95,7 +95,7 @@ namespace Tag {
                             states.d(kcx);
                             return director.reset();
                         }).then(() =>
-                            director.asRoom(this._mo.o(states.g(kt))))
+                            director.asRoom(this._mo.o(states.g(kt)), false, map ? true : false))
                         .then(() =>
                             director.asMap(map ? map.gP() : {}))
                         .then(() =>

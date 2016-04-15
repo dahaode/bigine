@@ -87,3 +87,5 @@
 /// <reference path="_Action/_Director/CameraZoom.ts" />
 /// <reference path="_Action/_Director/CameraReset.ts" />
 /// <reference path="_Action/_Director/CameraSet.ts" />
+/// <reference path="_Action/_Director/Curtains.ts" />
+/// <reference path="_Action/_Director/CameraShake.ts" />

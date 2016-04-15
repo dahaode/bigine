@@ -136,7 +136,7 @@ declare namespace __Bigine {
             playSE(resource?: IResource<string>): Promise<IRuntime>;
             hideCG(): Promise<IRuntime>;
             showCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
-            asRoom(resource: IResource<HTMLImageElement>, time?: boolean): Promise<IRuntime>;
+            asRoom(resource: IResource<HTMLImageElement>, time?: boolean, map?: boolean): Promise<IRuntime>;
             asMap(points: Util.IHashTable<IPointTag>): Promise<IRuntime>;
             lightOff(): Promise<IRuntime>;
             lightOn(): Promise<IRuntime>;
@@ -147,6 +147,7 @@ declare namespace __Bigine {
             curtain(name: string): Promise<IRuntime>;
             cameraMove(mx: number, my: number, ms: number): Promise<IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<IRuntime>;
+            cameraShake(): Promise<IRuntime>;
         }
         namespace IDirector {
             enum Position {
@@ -414,7 +415,7 @@ declare namespace __Bigine {
             playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
             hideCG(): Promise<Core.IRuntime>;
             showCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
-            asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime>;
+            asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean, map?: boolean): Promise<Core.IRuntime>;
             asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime>;
             lightOff(): Promise<Core.IRuntime>;
             lightOn(): Promise<Core.IRuntime>;
@@ -425,6 +426,7 @@ declare namespace __Bigine {
             curtain(name: string): Promise<Core.IRuntime>;
             cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
+            cameraShake(): Promise<Core.IRuntime>;
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
             s(sheet: [string, string][]): Director;
@@ -718,6 +720,7 @@ declare namespace __Bigine {
             private uS(sheet, data);
             private uC(sheet, data);
             private clean();
+            private align(ali);
         }
     }
     namespace Sprite {
@@ -812,7 +815,8 @@ declare namespace __Bigine {
             playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
             hideCG(): Promise<Core.IRuntime>;
             showCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
-            asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean): Promise<Core.IRuntime>;
+            asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean, map?: boolean): Promise<Core.IRuntime>;
+            protected $ca(gOld: G.Element, gNew: G.Element): Promise<Core.IRuntime>;
             asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime>;
             lightOff(): Promise<Core.IRuntime>;
             lightOn(): Promise<Core.IRuntime>;
@@ -823,6 +827,7 @@ declare namespace __Bigine {
             curtain(name: string): Promise<Core.IRuntime>;
             cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
+            cameraShake(): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             s(sheet: [string, string][]): CanvasDirector;
             p(sheet: Array<Util.IHashTable<any>>): CanvasDirector;
@@ -1794,6 +1799,20 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class CameraSet extends Camera {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class Curtains extends Action {
+            private _a;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class CameraShake extends Camera {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }

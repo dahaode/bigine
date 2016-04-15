@@ -183,7 +183,8 @@ namespace Sprite {
                     this._cv[name].o(0);
                 }  else if (name == 'name') {
                     // 初始化集合面板数据值显示元素
-                    this._cv[name] = new G.Text(<G.IBounds> config, config['s'], config['lh']);
+                    let align: G.Text.Align = this.align(config['a']);
+                    this._cv[name] = new G.Text(<G.IBounds> config, config['s'], config['lh'], align, true);
                     this.a(this._cv[name]);
                     this._cv[name].o(0);
                 } else {
@@ -194,7 +195,7 @@ namespace Sprite {
                     this.a(this._ct[name + 't']);
                     this._ct[name + 't'].o(0);
                     // 初始化集合面板数据值显示元素
-                    this._cv[name + 'v'] = new G.Text(vBounds, vBounds['s'], vBounds['lh']);
+                    this._cv[name + 'v'] = new G.Sprite(vBounds, false, true);
                     this.a(this._cv[name + 'v']);
                     this._cv[name + 'v'].o(0);
                 }
@@ -243,7 +244,7 @@ namespace Sprite {
          * 绘制面板标签
          */
         private uT(sheet: Array<Util.IHashTable<any>>): Panel {
-            let left: G.Text.Align = G.Text.Align.Left;
+            let align: G.Text.Align = this.align(this._pt['tab']['title']['a']);
             let activeImage: G.Image;
             // 渲染面板切换标签
             Util.each(sheet, (data: Util.IHashTable<string>, index: number) => {
@@ -251,7 +252,7 @@ namespace Sprite {
                 if (!tabBtn) {
                     let tabPosi: Util.IHashTable<any> = this._pt['tab'][index + 1 + ''];
                     let titleBounds: G.IBounds = Util.clone(this._pt['tab']['title']);
-                    let tabText: G.Text = new G.Text(titleBounds, titleBounds['s'], titleBounds['lh'], left);
+                    let tabText: G.Text = new G.Text(titleBounds, titleBounds['s'], titleBounds['lh'], align);
                     this._tai[index + 't'] = tabText;
                     let tabBounds: G.IBounds = Util.clone(titleBounds);
                     tabBounds['x'] = tabPosi['x'];
@@ -369,8 +370,9 @@ namespace Sprite {
                 // 渲染头像
                 if (field.iE()) {
                     let hBounds: G.IBounds = <G.IBounds> this._pt['coll']['head'];
+                    let iBounds: G.IBounds = <G.IBounds> {x: 0, y: 0, w: hBounds['w'], h: hBounds['h']};
                     (<G.Sprite> this._cv['head']).c().a(
-                        new G.Image((<any> fieldValue).o().o(), hBounds)
+                        new G.Image((<any> fieldValue).o().o(), iBounds)
                         ).o(1);
                 } else if (field.iN()) { // 渲染名称
                     (<G.Text> this._cv['name']).c().a(
@@ -386,9 +388,6 @@ namespace Sprite {
                         ).o(1);
                     // 心或星类型的字段
                     if (Util.indexOf(this._sTypes, field.gT()) > -1) {
-                        this.e(this._cv[i + 'v']);
-                        let bounds: G.IBounds = <G.IBounds> this._pt['coll'][i + '']['value'];
-                        this.a(this._cv[i + 'v'] = new G.Sprite(bounds, false, true));
                         let rValue: number = <number> fieldValue;
                         for (let j: number = 0; j < rValue; j++) {
                             let tTheme: Util.IHashTable<any> = this._pt['type'][field.gT()];
@@ -401,9 +400,17 @@ namespace Sprite {
                         this._cv[i + 'v'].o(1);
                     } else {
                         // 普通字段
-                        (<G.Text> this._cv[i + 'v']).c().a(
-                            new G.TextPhrase(fieldValue + '')
+                        let tValue: Util.IHashTable<any> = this._pt['coll'][i + '']['value'],
+                            iBound: G.IBounds = <G.IBounds> Util.clone(tValue),
+                            align: G.Text.Align = G.Text.Align.Left;
+                        iBound['x'] = 0;
+                        iBound['y'] = 0;
+                        (<G.Sprite> this._cv[i + 'v']).c().a(
+                            new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(
+                                new G.TextPhrase(fieldValue + '')
+                                )
                             ).o(1);
+
                     }
                     i ++;
                 }
@@ -443,5 +450,23 @@ namespace Sprite {
             this._pb['c'].o(0);
         }
 
+        /**
+         * 获取对齐方式
+         */
+        private align(ali: string): G.Text.Align {
+            let align: G.Text.Align = G.Text.Align.Center;
+            switch (ali) {
+                case 'l':
+                    align = G.Text.Align.Left;
+                    break;
+                case 'r':
+                    align = G.Text.Align.Right;
+                    break;
+                default:
+                    align = G.Text.Align.Center;
+                    break;
+            }
+            return align;
+        }
     }
 }

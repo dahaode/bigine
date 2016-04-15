@@ -30,10 +30,10 @@ namespace Tag {
             if (!camera)   // 当前为非镜头放大状态
                 return runtime;
             strArr = camera.split(',');
+            if (strArr.length !== 2)
+                return runtime;
             mx = parseFloat(strArr[0]);
             my = parseFloat(strArr[1]);
-            if (strArr.length !== 2 || !mx || !my)
-                return runtime;
             return runtime.gD().cameraZoom(mx, my, this._ms, -1)
                 .then(() => {
                     states.d('.z');

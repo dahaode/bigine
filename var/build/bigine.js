@@ -93,14 +93,15 @@ var Ev;
  *     * `_s` - 事件编号 - Runtime
  *     * `_t` - 时刻名 - Tag
  *     * `_w` - 天气名 - Tag
- *     * `_z` -  房间状态 - String    // 添加镜头控制命令时所需记录的存档信息
+ *     * `_z` -  房间状态 - Tag    // 添加镜头控制命令时所需记录的存档信息
+ *     * `_ra` -  切幕动画 - Tag    // 添加切幕动画命令时所需记录的存档信息
  * 2. `.` 表明为会话持久信息，不能被存档记录；
  *     * `.p<人物名>` - 人物站位 - Runtime/Tag
  *     * `.a` - 动作编号 - Runtime/Tag
  *     * `.s` - 事件编号 - Runtime
  *     * `.c` - 特写名 - Tag
  *     * `.c<站位>` - 人物名 - Tag
- *     * `.z` -  房间状态 - String
+ *     * `.z` -  房间状态 - Tag
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -1412,7 +1413,7 @@ var Runtime;
         /**
          * 设置房间。
          */
-        Director.prototype.asRoom = function (resource, time) {
+        Director.prototype.asRoom = function (resource, time, map) {
             return this._p;
         };
         /**
@@ -1475,6 +1476,12 @@ var Runtime;
          * 放大/缩小镜头。
          */
         Director.prototype.cameraZoom = function (mx, my, ms, scale) {
+            return this._p;
+        };
+        /**
+         * 抖动镜头。
+         */
+        Director.prototype.cameraShake = function () {
             return this._p;
         };
         /**
@@ -2965,7 +2972,8 @@ var Sprite;
                 }
                 else if (name == 'name') {
                     // 初始化集合面板数据值显示元素
-                    _this._cv[name] = new G.Text(config, config['s'], config['lh']);
+                    var align = _this.align(config['a']);
+                    _this._cv[name] = new G.Text(config, config['s'], config['lh'], align, true);
                     _this.a(_this._cv[name]);
                     _this._cv[name].o(0);
                 }
@@ -2977,7 +2985,7 @@ var Sprite;
                     _this.a(_this._ct[name + 't']);
                     _this._ct[name + 't'].o(0);
                     // 初始化集合面板数据值显示元素
-                    _this._cv[name + 'v'] = new G.Text(vBounds, vBounds['s'], vBounds['lh']);
+                    _this._cv[name + 'v'] = new G.Sprite(vBounds, false, true);
                     _this.a(_this._cv[name + 'v']);
                     _this._cv[name + 'v'].o(0);
                 }
@@ -3022,7 +3030,7 @@ var Sprite;
          */
         Panel.prototype.uT = function (sheet) {
             var _this = this;
-            var left = G.Text.Align.Left;
+            var align = this.align(this._pt['tab']['title']['a']);
             var activeImage;
             // 渲染面板切换标签
             Util.each(sheet, function (data, index) {
@@ -3030,7 +3038,7 @@ var Sprite;
                 if (!tabBtn) {
                     var tabPosi = _this._pt['tab'][index + 1 + ''];
                     var titleBounds = Util.clone(_this._pt['tab']['title']);
-                    var tabText = new G.Text(titleBounds, titleBounds['s'], titleBounds['lh'], left);
+                    var tabText = new G.Text(titleBounds, titleBounds['s'], titleBounds['lh'], align);
                     _this._tai[index + 't'] = tabText;
                     var tabBounds = Util.clone(titleBounds);
                     tabBounds['x'] = tabPosi['x'];
@@ -3152,7 +3160,8 @@ var Sprite;
                 // 渲染头像
                 if (field.iE()) {
                     var hBounds = _this._pt['coll']['head'];
-                    _this._cv['head'].c().a(new G.Image(fieldValue.o().o(), hBounds)).o(1);
+                    var iBounds = { x: 0, y: 0, w: hBounds['w'], h: hBounds['h'] };
+                    _this._cv['head'].c().a(new G.Image(fieldValue.o().o(), iBounds)).o(1);
                 }
                 else if (field.iN()) {
                     _this._cv['name'].c().a(new G.TextPhrase(fieldValue)).o(1);
@@ -3165,9 +3174,6 @@ var Sprite;
                     _this._ct[i + 't'].c().a(new G.TextPhrase(fieldName)).o(1);
                     // 心或星类型的字段
                     if (Util.indexOf(_this._sTypes, field.gT()) > -1) {
-                        _this.e(_this._cv[i + 'v']);
-                        var bounds = _this._pt['coll'][i + '']['value'];
-                        _this.a(_this._cv[i + 'v'] = new G.Sprite(bounds, false, true));
                         var rValue = fieldValue;
                         for (var j = 0; j < rValue; j++) {
                             var tTheme = _this._pt['type'][field.gT()];
@@ -3181,7 +3187,10 @@ var Sprite;
                     }
                     else {
                         // 普通字段
-                        _this._cv[i + 'v'].c().a(new G.TextPhrase(fieldValue + '')).o(1);
+                        var tValue = _this._pt['coll'][i + '']['value'], iBound = Util.clone(tValue), align = G.Text.Align.Left;
+                        iBound['x'] = 0;
+                        iBound['y'] = 0;
+                        _this._cv[i + 'v'].c().a(new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(new G.TextPhrase(fieldValue + ''))).o(1);
                     }
                     i++;
                 }
@@ -3218,6 +3227,24 @@ var Sprite;
             this._pb['s'].o(0);
             // 清除集合面板背景
             this._pb['c'].o(0);
+        };
+        /**
+         * 获取对齐方式
+         */
+        Panel.prototype.align = function (ali) {
+            var align = G.Text.Align.Center;
+            switch (ali) {
+                case 'l':
+                    align = G.Text.Align.Left;
+                    break;
+                case 'r':
+                    align = G.Text.Align.Right;
+                    break;
+                default:
+                    align = G.Text.Align.Center;
+                    break;
+            }
+            return align;
         };
         return Panel;
     }(Sprite.Sprite));
@@ -3900,7 +3927,7 @@ var Runtime;
         CanvasDirector.prototype.words = function (words, theme, who, avatar) {
             var _this = this;
             var sprite = this._x['W'];
-            return this.lightOn().then(function () {
+            return this._x['c'].h(20).then(function () {
                 var type = theme[0];
                 if ('v' == type)
                     return sprite.vv(words, _this._a);
@@ -4027,45 +4054,77 @@ var Runtime;
         /**
          * 设置房间。
          */
-        CanvasDirector.prototype.asRoom = function (resource, time) {
+        CanvasDirector.prototype.asRoom = function (resource, time, map) {
             var _this = this;
             if (time === void 0) { time = false; }
-            return _super.prototype.asRoom.call(this, resource).then(function (runtime) {
+            if (map === void 0) { map = false; }
+            return _super.prototype.asRoom.call(this, resource)
+                .then(function (runtime) {
+                var camera = runtime.gS().g('.z'), strArr, mx, my;
+                if (!camera)
+                    return runtime;
+                strArr = camera.split(',');
+                mx = parseFloat(strArr[0]);
+                my = parseFloat(strArr[1]);
+                return _this.cameraZoom(mx, my, 20, -1);
+            })
+                .then(function (runtime) {
+                runtime.gS().d('.z');
+                runtime.gS().d('_z');
                 var gOld = _this._c.q('b')[0], gNew = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
                     .o(0);
                 _this._c.a(gNew, 'M');
-                if (!time || _this._x['c'].gO()) {
-                    gNew.o(1);
-                    if (gOld.gN() == 'Image' && _this._ca) {
-                        var curtain = void 0;
-                        switch (_this._ca) {
-                            case 'FadeIn':
-                                curtain = new G.FadeIn(500);
-                                break;
-                            case 'ShutterH':
-                                curtain = new G.Shutter(300, { direction: 'H', leave: gOld.$d() });
-                                break;
-                            case 'ShutterV':
-                                curtain = new G.Shutter(300, { direction: 'V', leave: gOld.$d() });
-                                break;
-                            default:
-                                curtain = new G.FadeIn(500);
-                                break;
-                        }
-                        return gNew.p(curtain).then(function () {
-                            _this._c.e(gOld);
-                            return runtime;
-                        });
-                    }
-                    else {
+                if (time) {
+                    return gNew.p(new G.FadeIn(1000)).then(function () {
                         _this._c.e(gOld);
                         return runtime;
-                    }
+                    });
                 }
-                return gNew.p(new G.FadeIn(500)).then(function () {
-                    _this._c.e(gOld);
-                    return runtime;
-                });
+                if (!_this._ca || map) {
+                    return _this.lightOn().then(function () {
+                        _this._c.e(gOld);
+                        gNew.o(1);
+                        return runtime;
+                    });
+                }
+                return _this.$ca(gOld, gNew);
+            });
+        };
+        /**
+         * 进入房间特效。
+         */
+        CanvasDirector.prototype.$ca = function (gOld, gNew) {
+            var _this = this;
+            var gCurtain = this._x['c'], curtain;
+            switch (this._ca) {
+                case 'Fade':
+                    return gCurtain.v(1500)
+                        .then(function () {
+                        gOld.o(0);
+                        gCurtain.h(20);
+                    }).then(function () {
+                        return gNew.p(new G.FadeIn(1500));
+                    }).then(function () {
+                        _this._c.e(gOld);
+                        return _this._r;
+                    });
+                case 'ShutterH':
+                    curtain = new G.Shutter(1000, { direction: 'H' });
+                    break;
+                case 'ShutterV':
+                    curtain = new G.Shutter(1000, { direction: 'V' });
+                    break;
+                default:
+                    curtain = new G.FadeIn(20);
+                    break;
+            }
+            return this.lightOn()
+                .then(function () {
+                return gNew.p(curtain);
+            }).then(function () {
+                _this._c.e(gOld);
+                gNew.o(1);
+                return _this._r;
             });
         };
         /**
@@ -4254,6 +4313,16 @@ var Runtime;
             });
         };
         /**
+         * 抖动镜头。
+         */
+        CanvasDirector.prototype.cameraShake = function () {
+            var _this = this;
+            var gRoom = this._c.q('b')[0];
+            return gRoom.p(new G.Shake(500)).then(function () {
+                return _super.prototype.cameraShake.call(_this);
+            });
+        };
+        /**
          * 使用主题。
          */
         CanvasDirector.prototype.t = function (id, theme) {
@@ -4405,7 +4474,7 @@ var Runtime;
          * 配置面板。
          */
         CanvasDirector.prototype.p = function (sheet) {
-            if (sheet) {
+            if (sheet && sheet.length > 0) {
                 this._x['P'].u(sheet, this._r);
             }
             else
@@ -4767,6 +4836,7 @@ var Tag;
         CameraZoom: '放大镜头',
         CameraReset: '复位镜头',
         CameraMove: '移动镜头',
+        CameraShake: '抖动镜头',
         Monolog: '独白',
         Speak: '对白',
         Tip: '提示',
@@ -4956,7 +5026,8 @@ var Tag;
         93: ['CameraReset', [0, 1], -1],
         94: ['CameraZoom', [0, 1], 1],
         95: ['CameraMove', [0, 1], 1],
-        96: ['Curtains', 1, -1],
+        96: ['Curtains', [0, 1], -1],
+        97: ['CameraShake', 0, -1],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
@@ -6120,7 +6191,7 @@ var Tag;
                     states.d(kcx);
                     return director.reset();
                 }).then(function () {
-                    return director.asRoom(_this._mo.o(states.g(kt)));
+                    return director.asRoom(_this._mo.o(states.g(kt)), false, map ? true : false);
                 })
                     .then(function () {
                     return director.asMap(map ? map.gP() : {});
@@ -6591,7 +6662,7 @@ var Tag;
                 return runtime;
             states.s(kroom, this._p[0]);
             states.s('$rd', this._mo);
-            return director.asRoom(this._mo.o(time))
+            return director.asRoom(this._mo.o(time), false, map ? true : false)
                 .then(function () { return director.asMap(map ? map.gP() : {}); });
         };
         /**
@@ -6878,22 +6949,24 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), cg = states.g(kid), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr, room;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), cg = states.g(kid), cur = states.g('_ra'), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr, room;
             if (bgm)
                 q = q.then(function () {
                     var defbgm = episode.q(bgm, type.BGM);
                     return director.playBGM(defbgm ? defbgm.o() : undefined);
                 });
+            if (cur)
+                q = q.then(function () {
+                    return director.curtain(cur);
+                });
             if (kroom && !states.g(kdo))
                 q = q.then(function () {
                     states.s(kdo, room = episode.q(kroom, type.Room));
-                    return director.asRoom(room.o(states.g('_t')))
+                    return director.asRoom(room.o(states.g('_t')), false, room.gM() ? true : false)
                         .then(function () {
                         if (!camera)
                             return runtime;
                         var strArr = camera.split(','), mx = parseFloat(strArr[0]), my = parseFloat(strArr[1]);
-                        if (strArr.length !== 2 || !mx || !my)
-                            return runtime;
                         states.s(kcmr, camera);
                         return director.cameraZoom(mx, my, 20, 1);
                     })
@@ -10801,10 +10874,10 @@ var Tag;
             if (!camera)
                 return runtime;
             strArr = camera.split(',');
+            if (strArr.length !== 2)
+                return runtime;
             mx = parseFloat(strArr[0]);
             my = parseFloat(strArr[1]);
-            if (strArr.length !== 2 || !mx || !my)
-                return runtime;
             return runtime.gD().cameraZoom(mx, my, this._ms, -1)
                 .then(function () {
                 states.d('.z');
@@ -10855,6 +10928,93 @@ var Tag;
         return CameraSet;
     }(Tag.Camera));
     Tag.CameraSet = CameraSet;
+})(Tag || (Tag = {}));
+/**
+ * 定义切幕动画动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/Curtains.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Curtains = (function (_super) {
+        __extends(Curtains, _super);
+        /**
+         * 构造函数。
+         */
+        function Curtains(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            switch (params[0]) {
+                case '淡入淡出':
+                    this._a = 'Fade';
+                    break;
+                case '水平百叶窗':
+                    this._a = 'ShutterH';
+                    break;
+                case '垂直百叶窗':
+                    this._a = 'ShutterV';
+                    break;
+                case undefined:
+                    this._a = undefined;
+                    break;
+                default:
+                    throw new E(E.TAG_PARAMS_NOT_TRUE, lineNo);
+            }
+        }
+        /**
+         * 获取标签名称。
+         */
+        Curtains.prototype.gN = function () {
+            return 'Curtains';
+        };
+        /**
+         * 执行。
+         */
+        Curtains.prototype.p = function (runtime) {
+            var states = runtime.gS(), curtain = states.g('_ra');
+            if (curtain == this._a)
+                return runtime;
+            this._a ? states.s('_ra', this._a) : states.d('_ra');
+            return runtime.gD().curtain(this._a);
+        };
+        return Curtains;
+    }(Tag.Action));
+    Tag.Curtains = Curtains;
+})(Tag || (Tag = {}));
+/**
+ * 定义抖动镜头动画动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/CameraShake.ts
+ */
+/// <reference path="Camera.ts" />
+var Tag;
+(function (Tag) {
+    var CameraShake = (function (_super) {
+        __extends(CameraShake, _super);
+        function CameraShake() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CameraShake.prototype.gN = function () {
+            return 'CameraShake';
+        };
+        /**
+         * 执行。
+         */
+        CameraShake.prototype.p = function (runtime) {
+            return runtime.gD().cameraShake();
+        };
+        return CameraShake;
+    }(Tag.Camera));
+    Tag.CameraShake = CameraShake;
 })(Tag || (Tag = {}));
 /**
  * 打包所有已定义地标签组件。
@@ -10944,6 +11104,8 @@ var Tag;
 /// <reference path="_Action/_Director/CameraZoom.ts" />
 /// <reference path="_Action/_Director/CameraReset.ts" />
 /// <reference path="_Action/_Director/CameraSet.ts" />
+/// <reference path="_Action/_Director/Curtains.ts" />
+/// <reference path="_Action/_Director/CameraShake.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -11465,7 +11627,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.20.0';
+    Bigine.version = '0.21.0';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map
