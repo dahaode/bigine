@@ -1873,7 +1873,7 @@ declare namespace __Bigine {
             gC(): TagLine[];
             gL(): [number, number];
             a(child: TagLine): TagLine;
-            t(): Core.ITag;
+            t(parent?: string): Core.ITag;
         }
     }
     namespace Lex {

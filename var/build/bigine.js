@@ -11431,7 +11431,7 @@ var Runtime;
  * 定义词法标签行组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Lex/TagLine.ts
  */
@@ -11446,7 +11446,7 @@ var Lex;
         function TagLine(source, lineNo) {
             if (!lineNo) {
                 this._i = -1;
-                this._t = ['', ''];
+                this._t = ['ROOT', ''];
                 this._c = [];
                 this._l = [0, 0];
             }
@@ -11494,19 +11494,27 @@ var Lex;
         /**
          * 转化为标签。
          */
-        TagLine.prototype.t = function () {
+        TagLine.prototype.t = function (parent) {
+            if (parent === void 0) { parent = ''; }
             var name = this._t[0], params = this._t[1] ?
                 this._t[1].split('，') :
-                [], content = this._t[2], children = [], proto, tag;
-            Util.each(this._c, function (obj) {
-                children.push(obj.t());
-            });
-            if (-1 == this._i)
-                return new Tag.Root(children);
-            if (!(name in Tag.C)) {
+                [], content = this._t[2], children = [], constraints, proto, tag;
+            if (!(name in Tag.C) || 'UNKNOWN' == parent) {
                 params.unshift(name);
                 name = 'UNKNOWN';
             }
+            else if (parent) {
+                constraints = Tag.S[Tag.I[Tag.C[parent]]];
+                if (4 > constraints.length || 53 in constraints[3] || !('-1' in constraints[3] || Tag.I[Tag.C[name]] in constraints[3])) {
+                    params.unshift(name);
+                    name = 'UNKNOWN';
+                }
+            }
+            Util.each(this._c, function (obj) {
+                children.push(obj.t(name));
+            });
+            if (-1 == this._i)
+                return new Tag.Root(children);
             proto = eval('Tag.' + Tag.C[name]);
             tag = new proto(params, content, children, this._l[0]);
             if (tag instanceof Tag.Idable || 'Scene' == tag.gN())

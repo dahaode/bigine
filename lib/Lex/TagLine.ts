@@ -2,7 +2,7 @@
  * 定义词法标签行组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Lex/TagLine.ts
  */
@@ -44,11 +44,11 @@ namespace Lex {
         constructor(source?: string, lineNo?: number) {
             if (!lineNo) {
                 this._i = -1;
-                this._t = ['', ''];
+                this._t = ['ROOT', ''];
                 this._c = [];
                 this._l = [0, 0];
             } else {
-                var tokens: RegExpMatchArray = TagLine.GRAMMAR.exec(source);
+                let tokens: RegExpMatchArray = TagLine.GRAMMAR.exec(source);
                 if (!tokens)
                     throw new E(E.LEX_ILLEGAL_SOURCE, lineNo);
                 this._i = tokens[1].length;
@@ -97,24 +97,31 @@ namespace Lex {
         /**
          * 转化为标签。
          */
-        public t(): Core.ITag {
-            var name: string = this._t[0],
+        public t(parent: string = ''): Core.ITag {
+            let name: string = this._t[0],
                 params: string[] = this._t[1] ?
                     this._t[1].split('，') :
                     [],
                 content: string = this._t[2],
                 children: Tag.Unknown[] = [],
+                constraints: any[],
                 proto: typeof Tag.Unknown,
                 tag: Tag.Unknown;
+            if (!(name in Tag.C) || 'UNKNOWN' == parent) {
+                params.unshift(name);
+                name = 'UNKNOWN';
+            } else if (parent) {
+                constraints = Tag.S[Tag.I[Tag.C[parent]]];
+                if (4 > constraints.length || 53 in constraints[3] || !('-1' in constraints[3] || Tag.I[Tag.C[name]] in constraints[3])) {
+                    params.unshift(name);
+                    name = 'UNKNOWN';
+                }
+            }
             Util.each(this._c, (obj: TagLine) => {
-                children.push(<Tag.Unknown> obj.t());
+                children.push(<Tag.Unknown> obj.t(name));
             });
             if (-1 == this._i)
                 return new Tag.Root(children);
-            if (!(name in Tag.C)) {
-                params.unshift(name);
-                name = 'UNKNOWN';
-            }
             proto = eval('Tag.' + Tag.C[name]);
             tag = new proto(params, content, children, this._l[0]);
             if (tag instanceof Tag.Idable || 'Scene' == tag.gN())
@@ -134,7 +141,7 @@ namespace Lex {
      * UUID 单字符处理。
      */
     function u_(symbol: string): string {
-        var seed: number = 0 | 16 * Math.random();
+        let seed: number = 0 | 16 * Math.random();
         if ('y' == symbol)
             seed = 8 | 3 & seed;
         return seed.toString(16);
