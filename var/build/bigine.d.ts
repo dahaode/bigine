@@ -617,6 +617,16 @@ declare namespace __Bigine {
             gT(): string;
         }
     }
+    namespace Ev {
+        interface IMenuSetMetas extends Util.IEventMetas<Core.IMenu> {
+        }
+    }
+    namespace Ev {
+        class MenuSet extends Event<Core.IMenu> {
+            constructor(metas: IMenuSetMetas);
+            gT(): string;
+        }
+    }
     namespace Sprite {
         class Menu extends Sprite implements Core.IMenu {
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
@@ -771,6 +781,49 @@ declare namespace __Bigine {
             vl(states: Core.IStates, duration?: number): Promise<SeriesSlots>;
             h(duration?: number): Promise<SeriesSlots>;
             private $d(stamp);
+        }
+    }
+    namespace Core {
+        interface ISet extends ISprite {
+            vv(bVolume: number, eVolume: number, duration?: number): Promise<ISet>;
+        }
+    }
+    namespace Ev {
+        interface ISetCloseMetas extends Util.IEventMetas<Core.ISet> {
+        }
+    }
+    namespace Ev {
+        class SetClose extends Event<Core.ISet> {
+            constructor(metas: ISetCloseMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface ISetVolumeMetas extends Util.IEventMetas<Core.ISet> {
+            bVolume: number;
+            eVolume: number;
+        }
+    }
+    namespace Ev {
+        class SetVolume extends Event<Core.ISet> {
+            bVolume: number;
+            eVolume: number;
+            constructor(metas: ISetVolumeMetas);
+            gT(): string;
+        }
+    }
+    namespace Sprite {
+        class Set extends Sprite implements Core.ISet {
+            private _ve;
+            private _xe;
+            private _ie;
+            private _vb;
+            private _xb;
+            private _ib;
+            private _pt;
+            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected sv(x: number, voice: string): void;
+            vv(bVolume: number, eVolume: number, duration?: number): Promise<Set>;
         }
     }
     namespace Ev {
@@ -1327,6 +1380,8 @@ declare namespace __Bigine {
         class Theme extends Unknown {
             gN(): string;
             l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
+            private extend(des, src);
+            private path(src, theme);
         }
     }
     namespace Tag {
@@ -1712,6 +1767,7 @@ declare namespace __Bigine {
             iN(): boolean;
             gT(): string;
             gET(): Core.IEpisode.Entity;
+            gL(): number;
             g(val: string): number | string | Entity;
         }
     }

@@ -196,8 +196,8 @@ namespace Runtime {
                         .then(() => this.lightOff())
                         .then(() => {
                             this._c.e(gLogo);
-                            if (!author) return;
-                            let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author);
+                            if (!author && !title) return;
+                            let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
                             gAuthor.v(0);
                             return this.lightOn()
                                 .then(() => gAuthor.p(new G.Delay(1000)))
@@ -890,6 +890,14 @@ namespace Runtime {
                         })['catch'](() => {
                             return;
                         });
+                }).addEventListener('menu.set', () => {
+                    slotsFromStart = false;
+                    (<Sprite.Set> this._x['st']).vv(this._s['b'].volume, this._s['e'].volume)
+                        .then(() => {
+                            this._x['m'].h();
+                        })['catch'](() => {
+                            return;
+                        });
                 });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
@@ -957,6 +965,17 @@ namespace Runtime {
                 });
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
+            // 设置菜单。
+            this._x['st'] = <Sprite.Set> new Sprite.Set(id, theme['set'])
+                .addEventListener('set.close', () => {
+                    this._x[slotsFromStart ? 's' : 'm'].v();
+                    this._x['st'].h();
+                }).addEventListener('set.volume', (ev: Ev.SetVolume) => {
+                    this._s['b'].volume = ev.bVolume * 0.01;
+                    this._s['e'].volume = ev.eVolume * 0.01;
+                });
+            resources.push(this._x['st'].l());
+            this._c.a(this._x['st'], gCurtain);
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
             this.c(resources);
             return this;

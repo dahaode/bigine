@@ -1730,7 +1730,13 @@ var Sprite;
          * 设置名称。
          */
         Author.prototype.u = function (title) {
-            this._x.t(title);
+            if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(title)) {
+                this._x.t(title);
+            }
+            else {
+                var res = Resource.Resource.g(title, Core.IResource.Type.Room);
+                this.a(new G.Image(res.o(), { x: 0, y: 0, w: 1280, h: 720 }));
+            }
             return this;
         };
         return Author;
@@ -1889,7 +1895,7 @@ var Sprite;
          */
         function Start(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _new = theme['new'], _series = theme['series'], _load = theme['load'], _title = theme['title'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _new = theme['new'], _series = theme['series'], _load = theme['load'], _title = theme['title'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + theme['i'], raw),
@@ -2004,7 +2010,7 @@ var Sprite;
          * 构造函数。
          */
         function Words(id, voiceover, monolog, speak) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _vback = voiceover['back'], _vtext = voiceover['text'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mtext = monolog['text'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _stext = speak['text'], left = G.Text.Align.Left;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _vback = voiceover['back'], _vtext = voiceover['text'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mtext = monolog['text'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _stext = speak['text'], left = G.Text.Align.Left;
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + _vback['i'], raw),
@@ -2280,7 +2286,7 @@ var Sprite;
          */
         function Tray(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _menu = theme['menu'], _panel = theme['panel'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _menu = theme['menu'], _panel = theme['panel'];
             _super.call(this, 0, 0, w, h, true);
             this._rr = [
                 rr.g(url + _menu['i'], raw),
@@ -2438,6 +2444,46 @@ var Ev;
     Ev.MenuLoad = MenuLoad;
 })(Ev || (Ev = {}));
 /**
+ * 声明（画面调度）功能菜单设置事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IMenuSetMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IMenu.ts" />
+/**
+ * 定义（画面调度）功能菜单设置事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/MenuSet.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IMenuSetMetas.ts" />
+var Ev;
+(function (Ev) {
+    var MenuSet = (function (_super) {
+        __extends(MenuSet, _super);
+        /**
+         * 构造函数。
+         */
+        function MenuSet(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        MenuSet.prototype.gT = function () {
+            return 'menu.set';
+        };
+        return MenuSet;
+    }(Ev.Event));
+    Ev.MenuSet = MenuSet;
+})(Ev || (Ev = {}));
+/**
  * 定义画面调度功能菜单组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2450,6 +2496,7 @@ var Ev;
 /// <reference path="../Ev/_Sprite/MenuClose.ts" />
 /// <reference path="../Ev/_Sprite/MenuSave.ts" />
 /// <reference path="../Ev/_Sprite/MenuLoad.ts" />
+/// <reference path="../Ev/_Sprite/MenuSet.ts" />
 var Sprite;
 (function (Sprite) {
     var G = __Bigine_C2D;
@@ -2460,7 +2507,7 @@ var Sprite;
          */
         function Menu(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _close = theme['close'], _mask = theme['mask'], _save = theme['save'], _load = theme['load'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _save = theme['save'], _load = theme['load'], _set = theme['set'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + _close['i'], raw),
@@ -2468,7 +2515,9 @@ var Sprite;
                 rr.g(url + _save['i'], raw),
                 rr.g(url + _save['ih'], raw),
                 rr.g(url + _load['i'], raw),
-                rr.g(url + _load['ih'], raw)
+                rr.g(url + _load['ih'], raw),
+                rr.g(url + _set['i'], raw),
+                rr.g(url + _set['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -2481,7 +2530,10 @@ var Sprite;
             }, new G.Image(this._rr[3].o(), _save, true), new G.Image(this._rr[2].o(), _save, true))).a(new G.Button(_load)
                 .b(function () {
                 _this.dispatchEvent(new Ev.MenuLoad({ target: _this }));
-            }, new G.Image(this._rr[5].o(), _load, true), new G.Image(this._rr[4].o(), _load, true)));
+            }, new G.Image(this._rr[5].o(), _load, true), new G.Image(this._rr[4].o(), _load, true))).a(new G.Button(_set)
+                .b(function () {
+                _this.dispatchEvent(new Ev.MenuSet({ target: _this }));
+            }, new G.Image(this._rr[7].o(), _set, true), new G.Image(this._rr[6].o(), _set, true)));
         }
         return Menu;
     }(Sprite.Sprite));
@@ -2642,7 +2694,7 @@ var Sprite;
          */
         function Slots(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
             _super.call(this, 0, 0, w, h);
             this._c = [_auto, _1];
             this._x = {};
@@ -2768,7 +2820,7 @@ var Sprite;
          * 构造函数。
          */
         function Status(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', left = G.Text.Align.Left, right = G.Text.Align.Right, _back = theme['back'], i = 1, j;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', left = G.Text.Align.Left, right = G.Text.Align.Right, _back = theme['back'], i = 1, j;
             _super.call(this, 0, 0, w, h, true);
             this._rr = [
                 rr.g(url + _back['i'], raw)
@@ -2894,7 +2946,7 @@ var Sprite;
          */
         function Panel(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _mask = theme['mask'], _back = theme['back'], _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'], _type = theme['type'], i = 1, left = G.Text.Align.Left;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _mask = theme['mask'], _back = theme['back'], _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'], _type = theme['type'], i = 1, left = G.Text.Align.Left;
             // j: Util.IHashTable<any>;
             _super.call(this, 0, 0, w, h);
             this._pt = theme;
@@ -2958,7 +3010,9 @@ var Sprite;
                 this.a(this._st[i + 't']).o(0);
             }
             Util.each(_type, function (typeTheme, typeName) {
-                _this._tResource[typeName] = rr.g(url + typeTheme['fi'], raw);
+                _this._tResource[typeName] = {};
+                _this._tResource[typeName]['ei'] = rr.g(url + typeTheme['ei'], raw);
+                _this._tResource[typeName]['fi'] = rr.g(url + typeTheme['fi'], raw);
             });
             // 集合面板数据标题和数据值
             Util.each(_coll, function (config, name) {
@@ -3128,7 +3182,7 @@ var Sprite;
                         var typeBound = Util.clone(_this._pt['type'][type]);
                         typeBound['x'] = j * (_this._pt['type'][type]['m'] + _this._pt['type'][type]['w']);
                         typeBound['y'] = (simpTheme[index + 1 + '']['value']['lh'] - _this._pt['type'][type]['h']) / 2;
-                        var image = new G.Image(_this._tResource[type].o(), typeBound, false);
+                        var image = new G.Image(_this._tResource[type]['ei'].o(), typeBound, false);
                         _this._sv[simpField['name']].a(image);
                     }
                     _this._sv[simpField['name']].o(1);
@@ -3173,14 +3227,13 @@ var Sprite;
                     }
                     _this._ct[i + 't'].c().a(new G.TextPhrase(fieldName)).o(1);
                     // 心或星类型的字段
+                    _this._cv[i + 'v'].c(); // 先清空
                     if (Util.indexOf(_this._sTypes, field.gT()) > -1) {
-                        var rValue = fieldValue;
-                        for (var j = 0; j < rValue; j++) {
-                            var tTheme = _this._pt['type'][field.gT()];
-                            var typeBound = Util.clone(tTheme);
+                        var lValue = field.gL(), rValue = fieldValue;
+                        for (var j = 0; j < lValue; j++) {
+                            var tTheme = _this._pt['type'][field.gT()], typeBound = Util.clone(tTheme), res = j < rValue ? _this._tResource[fieldType]['ei'] : _this._tResource[fieldType]['fi'], image = new G.Image(res.o(), typeBound, false);
                             typeBound['x'] = j * (_this._pt['type'][fieldType]['m'] + _this._pt['type'][fieldType]['w']);
                             typeBound['y'] = (_this._pt['coll'][i + '']['value']['lh'] - _this._pt['type'][fieldType]['h']) / 2;
-                            var image = new G.Image(_this._tResource[fieldType].o(), typeBound, false);
                             _this._cv[i + 'v'].a(image);
                         }
                         _this._cv[i + 'v'].o(1);
@@ -3190,7 +3243,7 @@ var Sprite;
                         var tValue = _this._pt['coll'][i + '']['value'], iBound = Util.clone(tValue), align = G.Text.Align.Left;
                         iBound['x'] = 0;
                         iBound['y'] = 0;
-                        _this._cv[i + 'v'].c().a(new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(new G.TextPhrase(fieldValue + ''))).o(1);
+                        _this._cv[i + 'v'].a(new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(new G.TextPhrase(fieldValue + ''))).o(1);
                     }
                     i++;
                 }
@@ -3269,7 +3322,7 @@ var Sprite;
          * 构造函数。
          */
         function Tip(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _back = theme['back'], _text = theme['text'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _back = theme['back'], _text = theme['text'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + _back['i'], raw)
@@ -3363,7 +3416,7 @@ var Sprite;
          * 构造函数。
          */
         function Choose(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/';
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/';
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + theme['back']['i'], raw),
@@ -3458,7 +3511,7 @@ var Sprite;
          */
         function SeriesSlots(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/' + id + '/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
             _super.call(this, 0, 0, w, h);
             this._c = [_auto, _1];
             this._x = {};
@@ -3563,6 +3616,219 @@ var Sprite;
     Sprite.SeriesSlots = SeriesSlots;
 })(Sprite || (Sprite = {}));
 /**
+ * 声明画面调度设置菜单组件接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Sprite/ISet.ts
+ */
+/// <reference path="ISprite.ts" />
+/// <reference path="../_Runtime/IStates.ts" />
+/**
+ * 声明（画面调度）设置菜单关闭事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/ISetCloseMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/ISet.ts" />
+/**
+ * 定义（画面调度）设置菜单关闭事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/SetClose.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="ISetCloseMetas.ts" />
+var Ev;
+(function (Ev) {
+    var SetClose = (function (_super) {
+        __extends(SetClose, _super);
+        /**
+         * 构造函数。
+         */
+        function SetClose(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        SetClose.prototype.gT = function () {
+            return 'set.close';
+        };
+        return SetClose;
+    }(Ev.Event));
+    Ev.SetClose = SetClose;
+})(Ev || (Ev = {}));
+/**
+ * 声明（画面调度）设置菜单音量调节事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/ISetVolumeMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/ISet.ts" />
+/**
+ * 定义（画面调度）设置菜单音量调节事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/SetVolume.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="ISetVolumeMetas.ts" />
+var Ev;
+(function (Ev) {
+    var SetVolume = (function (_super) {
+        __extends(SetVolume, _super);
+        /**
+         * 构造函数。
+         */
+        function SetVolume(metas) {
+            _super.call(this, metas);
+            this.bVolume = metas.bVolume;
+            this.eVolume = metas.eVolume;
+        }
+        /**
+         * 获取类型。
+         */
+        SetVolume.prototype.gT = function () {
+            return 'set.volume';
+        };
+        return SetVolume;
+    }(Ev.Event));
+    Ev.SetVolume = SetVolume;
+})(Ev || (Ev = {}));
+/**
+ * 定义画面调度设置菜单组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Set.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/SetClose.ts" />
+/// <reference path="../Ev/_Sprite/SetVolume.ts" />
+var Sprite;
+(function (Sprite) {
+    var Util = __Bigine_Util;
+    var G = __Bigine_C2D;
+    var Set = (function (_super) {
+        __extends(Set, _super);
+        /**
+         * 构造函数。
+         */
+        function Set(id, theme) {
+            var _this = this;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _title = theme['title'], _bgm = theme['bgm'], _se = theme['se'];
+            _super.call(this, 0, 0, w, h);
+            this._pt = theme;
+            this._rr = [
+                rr.g(url + _close['i'], raw),
+                rr.g(url + _close['ih'], raw),
+                rr.g(url + _bgm['bar']['i'], raw),
+                rr.g(url + _bgm['bg']['i'], raw),
+                rr.g(url + _bgm['bar']['ih'], raw)
+            ];
+            this.o(0)
+                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Button(_close)
+                .b(function () {
+                _this.dispatchEvent(new Ev.SetClose({ target: _this }));
+            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true))).a(new G.Text(_title, _title['s'], _title['lh'], this.$a(_title['a']), true)
+                .tc(_title['c'])
+                .a(new G.TextPhrase('声音设定'))).a(new G.Text(_bgm['name'], _bgm['name']['s'], _bgm['name']['lh'], this.$a(_bgm['name']['a']), true)
+                .tc(_bgm['name']['c'])
+                .a(new G.TextPhrase('音乐'))).a(new G.Button(_bgm['bar'])
+                .b(function (event) {
+                _this.sv(event['x'], 'bgm');
+            }, new G.Image(this._rr[2].o(), _bgm['bar'], true), new G.Image(this._rr[2].o(), _bgm['bar'], true))).a(new G.Image(this._rr[3].o(), _bgm['bg'], true))
+                .a(this._xb = new G.Text(_bgm['volume'], _bgm['volume']['s'], _bgm['volume']['lh'], this.$a(_bgm['volume']['a']), true)).a(new G.Text(_se['name'], _se['name']['s'], _se['name']['lh'], this.$a(_se['name']['a']), true)
+                .tc(_se['name']['c'])
+                .a(new G.TextPhrase('音效'))).a(new G.Button(_se['bar'])
+                .b(function (event) {
+                _this.sv(event['x'], 'se');
+            }, new G.Image(this._rr[2].o(), _se['bar'], true), new G.Image(this._rr[2].o(), _se['bar'], true))).a(new G.Image(this._rr[3].o(), _se['bg'], true))
+                .a(this._xe = new G.Text(_se['volume'], _se['volume']['s'], _se['volume']['lh'], this.$a(_se['volume']['a']), true));
+        }
+        /**
+         * 调节音乐/音效。
+         */
+        Set.prototype.sv = function (x, voice) {
+            var gBound = Util.clone(this._pt[voice]['bar']), width = Math.max(gBound['x'], Math.min(x, gBound['w'] + gBound['x'])) - gBound['x'], count = Math.round(width / this._pt[voice]['bar']['w'] * 100);
+            if (count <= 2) {
+                count = gBound['w'] = 0;
+            }
+            else if (count >= 98) {
+                count = 100;
+            }
+            else {
+                gBound['w'] = width;
+            }
+            switch (voice) {
+                case 'bgm':
+                    this._vb = count;
+                    this._xb.c().a(new G.TextPhrase(this._vb.toString()));
+                    if (this._ib) {
+                        this.e(this._ib);
+                        this._ib = undefined;
+                    }
+                    if (count != 0)
+                        this.a(this._ib = new G.Image(this._rr[4].o(), gBound, true));
+                    break;
+                case 'se':
+                    this._ve = count;
+                    this._xe.c().a(new G.TextPhrase(this._ve.toString()));
+                    if (this._ie) {
+                        this.e(this._ie);
+                        this._ie = undefined;
+                    }
+                    if (count != 0)
+                        this.a(this._ie = new G.Image(this._rr[4].o(), gBound, true));
+                    break;
+            }
+            this.dispatchEvent(new Ev.SetVolume({ target: this, bVolume: this._vb, eVolume: this._ve }));
+        };
+        /**
+         * 显示音乐/音效调节。
+         */
+        Set.prototype.vv = function (bVolume, eVolume, duration) {
+            this._vb = Math.round(bVolume * 100);
+            this._ve = Math.round(eVolume * 100);
+            this._xb.c().a(new G.TextPhrase(this._vb.toString()));
+            this._xe.c().a(new G.TextPhrase(this._ve.toString()));
+            var bBound = Util.clone(this._pt['bgm']['bar']), eBound = Util.clone(this._pt['se']['bar']);
+            bBound['w'] = Math.round(bVolume * bBound['w']);
+            eBound['w'] = Math.round(eVolume * eBound['w']);
+            if (this._ib) {
+                this.e(this._ib);
+                this._ib = undefined;
+            }
+            if (this._ie) {
+                this.e(this._ie);
+                this._ie = undefined;
+            }
+            if (this._vb != 0)
+                this.a(this._ib = new G.Image(this._rr[4].o(), bBound, true));
+            if (this._ve != 0)
+                this.a(this._ie = new G.Image(this._rr[4].o(), eBound, true));
+            return this.v(duration);
+        };
+        return Set;
+    }(Sprite.Sprite));
+    Sprite.Set = Set;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -3583,6 +3849,7 @@ var Sprite;
 /// <reference path="Choose.ts" />
 /// <reference path="CG.ts" />
 /// <reference path="SeriesSlots.ts" />
+/// <reference path="Set.ts" />
 /**
  * 声明剧情结束事件元信息接口规范。
  *
@@ -3743,9 +4010,9 @@ var Runtime;
                     .then(function () { return _this.lightOff(); })
                     .then(function () {
                     _this._c.e(gLogo);
-                    if (!author)
+                    if (!author && !title)
                         return;
-                    var gAuthor = _this._x['a'].u(author);
+                    var gAuthor = _this._x['a'].u(author ? author : title);
                     gAuthor.v(0);
                     return _this.lightOn()
                         .then(function () { return gAuthor.p(new G.Delay(1000)); })
@@ -4392,6 +4659,14 @@ var Runtime;
                 })['catch'](function () {
                     return;
                 });
+            }).addEventListener('menu.set', function () {
+                slotsFromStart = false;
+                _this._x['st'].vv(_this._s['b'].volume, _this._s['e'].volume)
+                    .then(function () {
+                    _this._x['m'].h();
+                })['catch'](function () {
+                    return;
+                });
             });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
@@ -4458,6 +4733,17 @@ var Runtime;
             });
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
+            // 设置菜单。
+            this._x['st'] = new Sprite.Set(id, theme['set'])
+                .addEventListener('set.close', function () {
+                _this._x[slotsFromStart ? 's' : 'm'].v();
+                _this._x['st'].h();
+            }).addEventListener('set.volume', function (ev) {
+                _this._s['b'].volume = ev.bVolume * 0.01;
+                _this._s['e'].volume = ev.eVolume * 0.01;
+            });
+            resources.push(this._x['st'].l());
+            this._c.a(this._x['st'], gCurtain);
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
             this.c(resources);
             return this;
@@ -7590,6 +7876,7 @@ var Tag;
 var Tag;
 (function (Tag) {
     var Util = __Bigine_Util;
+    var _theme = 'dahao';
     var Theme = (function (_super) {
         __extends(Theme, _super);
         function Theme() {
@@ -7605,9 +7892,52 @@ var Tag;
          * 加载远端数据。
          */
         Theme.prototype.l = function (callback) {
-            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json', callback, function (error, status) {
+            var _this = this;
+            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json', function (des) {
+                des = _this.path(des, _this._c);
+                if (_this._c == 'dahao') {
+                    callback(des);
+                    return;
+                }
+                Util.Remote.get('//s.dahao.de/theme/' + _theme + '/theme.json', function (src) {
+                    src = _this.path(src, _theme);
+                    callback(_this.extend(des, src));
+                }, function (error, status) {
+                    throw error;
+                });
+            }, function (error, status) {
                 throw error;
             });
+        };
+        /**
+         * 主题中有缺省元素，使用默认主题替换。
+         */
+        Theme.prototype.extend = function (des, src) {
+            var _this = this;
+            Util.each(src, function (data, index) {
+                if (!(index in des)) {
+                    des[index] = data;
+                }
+                else {
+                    if (typeof data == 'object')
+                        _this.extend(des[index], data);
+                }
+            });
+            return des;
+        };
+        Theme.prototype.path = function (src, theme) {
+            var _this = this;
+            Util.each(src, function (data, index) {
+                if (typeof data == 'object') {
+                    _this.path(data, theme);
+                }
+                else if (typeof data == 'string') {
+                    if (/.png$/.test(data) || /.jpg$/.test(data)) {
+                        src[index] = theme + '/' + data;
+                    }
+                }
+            });
+            return src;
         };
         return Theme;
     }(Tag.Unknown));
@@ -10309,6 +10639,20 @@ var Tag;
             return entity;
         };
         /**
+         * 获取上限。
+         */
+        Field.prototype.gL = function () {
+            if (this._s.length == 0)
+                return 0;
+            var fieldLimit = 0;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldLimit') {
+                    fieldLimit = parseInt(child.$c(), 10) || 0;
+                }
+            });
+            return fieldLimit;
+        };
+        /**
          * 获取字段的值。
          */
         Field.prototype.g = function (val) {
@@ -11306,7 +11650,7 @@ var Runtime;
             return this;
         };
         /**
-         * 设置作者。
+         * 设置作者/logo。
          */
         Runtime.prototype.author = function (title) {
             this._c = title;
@@ -11635,7 +11979,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.21.0';
+    Bigine.version = '0.21.1';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

@@ -94,7 +94,7 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/' + id + '/',
+                url: string = '//s.dahao.de/theme/',
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _back: Util.IHashTable<any> = theme['back'],
                 _close: Util.IHashTable<any> = theme['close'],
@@ -170,7 +170,9 @@ namespace Sprite {
             }
 
             Util.each(_type, (typeTheme: Util.IHashTable<any>, typeName: string) => {
-                this._tResource[typeName] = rr.g<HTMLImageElement>(url + typeTheme['fi'], raw);
+                this._tResource[typeName] = {};
+                this._tResource[typeName]['ei'] = rr.g<HTMLImageElement>(url + typeTheme['ei'], raw);
+                this._tResource[typeName]['fi'] = rr.g<HTMLImageElement>(url + typeTheme['fi'], raw);
             });
 
             // 集合面板数据标题和数据值
@@ -338,7 +340,7 @@ namespace Sprite {
                         let typeBound: G.IBounds = <G.IBounds> Util.clone(this._pt['type'][type]);
                         typeBound['x'] = j * (this._pt['type'][type]['m'] + this._pt['type'][type]['w']);
                         typeBound['y'] = (simpTheme[index + 1 + '']['value']['lh'] - this._pt['type'][type]['h']) / 2;
-                        let image: G.Image = new G.Image(this._tResource[type].o(), <G.IBounds> typeBound, false);
+                        let image: G.Image = new G.Image(this._tResource[type]['ei'].o(), <G.IBounds> typeBound, false);
                         (<G.Sprite> this._sv[simpField['name']]).a(image);
                     }
                     (<G.Sprite> this._sv[simpField['name']]).o(1);
@@ -387,14 +389,17 @@ namespace Sprite {
                         new G.TextPhrase(fieldName)
                         ).o(1);
                     // 心或星类型的字段
+                    (<G.Sprite> this._cv[i + 'v']).c();   // 先清空
                     if (Util.indexOf(this._sTypes, field.gT()) > -1) {
-                        let rValue: number = <number> fieldValue;
-                        for (let j: number = 0; j < rValue; j++) {
-                            let tTheme: Util.IHashTable<any> = this._pt['type'][field.gT()];
-                            let typeBound: G.IBounds = <G.IBounds> Util.clone(tTheme);
+                        let lValue: number = <number> field.gL(),
+                            rValue: number = <number> fieldValue;
+                        for (let j: number = 0; j < lValue; j++) {
+                            let tTheme: Util.IHashTable<any> = this._pt['type'][field.gT()],
+                                typeBound: G.IBounds = <G.IBounds> Util.clone(tTheme),
+                                res: Resource.Resource<HTMLImageElement> = j < rValue ? this._tResource[fieldType]['ei'] : this._tResource[fieldType]['fi'],
+                                image: G.Image = new G.Image(res.o(), <G.IBounds> typeBound, false);
                             typeBound['x'] = j * (this._pt['type'][fieldType]['m'] + this._pt['type'][fieldType]['w']);
                             typeBound['y'] = (this._pt['coll'][i + '']['value']['lh'] - this._pt['type'][fieldType]['h']) / 2;
-                            let image: G.Image = new G.Image(this._tResource[fieldType].o(), <G.IBounds> typeBound, false);
                             (<G.Sprite> this._cv[i + 'v']).a(image);
                         }
                         this._cv[i + 'v'].o(1);
@@ -405,7 +410,7 @@ namespace Sprite {
                             align: G.Text.Align = G.Text.Align.Left;
                         iBound['x'] = 0;
                         iBound['y'] = 0;
-                        (<G.Sprite> this._cv[i + 'v']).c().a(
+                        (<G.Sprite> this._cv[i + 'v']).a(
                             new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(
                                 new G.TextPhrase(fieldValue + '')
                                 )

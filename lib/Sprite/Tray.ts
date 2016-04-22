@@ -30,7 +30,7 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/' + id + '/',
+                url: string = '//s.dahao.de/theme/',
                 _menu: Util.IHashTable<any> = theme['menu'],
                 _panel: Util.IHashTable<any> = theme['panel'];
             super(0, 0, w, h, true);

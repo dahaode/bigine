@@ -20,3 +20,4 @@
 /// <reference path="Choose.ts" />
 /// <reference path="CG.ts" />
 /// <reference path="SeriesSlots.ts" />
+/// <reference path="Set.ts" />

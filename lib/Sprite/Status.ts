@@ -35,7 +35,7 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/' + id + '/',
+                url: string = '//s.dahao.de/theme/',
                 left: G.Text.Align = G.Text.Align.Left,
                 right: G.Text.Align = G.Text.Align.Right,
                 _back: Util.IHashTable<any> = theme['back'],

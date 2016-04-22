@@ -91,6 +91,20 @@ namespace Tag {
         }
 
         /**
+         * 获取上限。
+         */
+        public gL(): number {
+            if (this._s.length == 0) return 0;
+            var fieldLimit: number = 0;
+            Util.each(this._s, (child: Unknown) => {
+                if (child.gN() == 'FieldLimit') {
+                    fieldLimit = parseInt(child.$c(), 10) || 0;
+                }
+            });
+            return fieldLimit;
+        }
+
+        /**
          * 获取字段的值。
          */
         public g(val: string): number | string | Entity {

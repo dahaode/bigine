@@ -29,7 +29,7 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/' + id + '/';
+                url: string = '//s.dahao.de/theme/';
             super(0, 0, w, h);
             this._rr = [
                 rr.g<HTMLImageElement>(url + theme['back']['i'], raw),

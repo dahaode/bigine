@@ -93,7 +93,7 @@ namespace Runtime {
         private _n: string;
 
         /**
-         * 作者名。
+         * 作者名/logo。
          */
         private _c: string;
 
@@ -288,7 +288,7 @@ namespace Runtime {
         }
 
         /**
-         * 设置作者。
+         * 设置作者/logo。
          */
         public author(title: string): Runtime {
             this._c = title;
