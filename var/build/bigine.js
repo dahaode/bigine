@@ -3481,7 +3481,7 @@ var Sprite;
             return image ? this.c()
                 .a(new G.Image(image.o(), this._c)) :
                 this.c()
-                    .a(new G.Color({ x: 400, y: 120, w: 480, h: 480 }, '#000'));
+                    .a(new G.Color(this._c, '#000'));
         };
         return CG;
     }(Sprite.Sprite));
@@ -4542,6 +4542,7 @@ var Runtime;
                 ]).then(function () {
                     _this._c.e(sClick);
                     _this._t = _this._h = undefined;
+                    aMove.h();
                     gRoom.x(x).y(y);
                     resolve(_this._r);
                 });
@@ -4570,6 +4571,7 @@ var Runtime;
                 ]).then(function () {
                     _this._c.e(sClick);
                     _this._t = _this._h = undefined;
+                    aZoom.h();
                     var px = scale * (5 / 3 - 1) * 1280, py = scale * (5 / 3 - 1) * 720;
                     gRoom.x(Math.round(bound.x - mx * px))
                         .y(Math.round(bound.y - my * py))
@@ -4797,7 +4799,6 @@ var Runtime;
          * 修正 DOM 定位。
          */
         CanvasDirector.prototype.f = function () {
-            this._c.z();
             var work = document.querySelectorAll('.bg-work')[0], canvas = work.firstChild, w0 = work.offsetWidth, h0 = work.offsetHeight, w = (h0 * 16 / 9) | 0, h = h0, l = 0, t = 0;
             if (w > w0) {
                 w = w0;
@@ -4810,6 +4811,7 @@ var Runtime;
             canvas.style.marginLeft = l + 'px';
             canvas.style.height = h + 'px';
             canvas.style.marginTop = t + 'px';
+            this._c.z();
         };
         /**
          * 自我销毁。
@@ -7893,13 +7895,14 @@ var Tag;
          */
         Theme.prototype.l = function (callback) {
             var _this = this;
-            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json', function (des) {
+            var version = Bigine.version;
+            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json?' + version, function (des) {
                 des = _this.path(des, _this._c);
                 if (_this._c == 'dahao') {
                     callback(des);
                     return;
                 }
-                Util.Remote.get('//s.dahao.de/theme/' + _theme + '/theme.json', function (src) {
+                Util.Remote.get('//s.dahao.de/theme/' + _theme + '/theme.json?' + version, function (src) {
                     src = _this.path(src, _theme);
                     callback(_this.extend(des, src));
                 }, function (error, status) {

@@ -35,7 +35,7 @@ namespace Sprite {
             return image ? (<CG> this.c()
                     .a(new G.Image(image.o(), this._c))) :
                 (<CG> this.c()
-                    .a(new G.Color(<G.IBounds> {x: 400, y: 120, w: 480, h: 480}, '#000')));
+                    .a(new G.Color(<G.IBounds> this._c, '#000')));
         }
     }
 }

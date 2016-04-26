@@ -770,6 +770,7 @@ namespace Runtime {
                 ]).then(() => {
                     this._c.e(sClick);
                     this._t = this._h = undefined;
+                    aMove.h();
                     gRoom.x(x).y(y);
                     resolve(this._r);
                 });
@@ -799,6 +800,7 @@ namespace Runtime {
                 ]).then(() => {
                     this._c.e(sClick);
                     this._t = this._h = undefined;
+                    aZoom.h();
                     let px: number = scale * (5 / 3 - 1) * 1280,
                         py: number = scale * (5 / 3 - 1) * 720;
                     gRoom.x(Math.round(bound.x - mx * px))
@@ -1033,7 +1035,6 @@ namespace Runtime {
          * 修正 DOM 定位。
          */
         public f(): void {
-            this._c.z();
             var work: HTMLElement = <HTMLElement> document.querySelectorAll('.bg-work')[0],
                 canvas: HTMLElement = <HTMLElement> work.firstChild,
                 w0: number = work.offsetWidth,
@@ -1052,7 +1053,8 @@ namespace Runtime {
             canvas.style.marginLeft = l + 'px';
             canvas.style.height = h + 'px';
             canvas.style.marginTop = t + 'px';
-        }
+            this._c.z();
+    }
 
         /**
          * 自我销毁。

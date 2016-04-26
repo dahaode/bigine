@@ -26,14 +26,15 @@ namespace Tag {
          * 加载远端数据。
          */
         public l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
-            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json',
+            let version: string = Bigine.version;
+            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json?' + version,
                 (des) => {
                     des = this.path(des, this._c);
                     if (this._c == 'dahao') {
                         callback(des);
                         return;
                     }
-                    Util.Remote.get('//s.dahao.de/theme/' + _theme + '/theme.json',
+                    Util.Remote.get('//s.dahao.de/theme/' + _theme + '/theme.json?' + version,
                         (src) => {
                             src = this.path(src, _theme);
                             callback(this.extend(des, src));
