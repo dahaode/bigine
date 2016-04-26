@@ -143,7 +143,7 @@ namespace Runtime {
             this._f = {};
             this._e = [0, 0];
             this._l = (event: KeyboardEvent) => {
-                if (13 == event.keyCode && !this._a && this._t)
+                if (event.keyCode in [13, 17] && !this._a && this._t)
                     this._t.h();
             };
             this._fs = Core.IRuntime.Series.Alone;

@@ -3960,7 +3960,7 @@ var Runtime;
             this._f = {};
             this._e = [0, 0];
             this._l = function (event) {
-                if (13 == event.keyCode && !_this._a && _this._t)
+                if (event.keyCode in [13, 17] && !_this._a && _this._t)
                     _this._t.h();
             };
             this._fs = Core.IRuntime.Series.Alone;
