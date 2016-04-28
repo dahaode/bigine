@@ -3960,7 +3960,7 @@ var Runtime;
             this._f = {};
             this._e = [0, 0];
             this._l = function (event) {
-                if (event.keyCode in [13, 17] && !_this._a && _this._t)
+                if ((event.keyCode == 13 || event.keyCode == 17) && !_this._a && _this._t)
                     _this._t.h();
             };
             this._fs = Core.IRuntime.Series.Alone;
@@ -4475,6 +4475,7 @@ var Runtime;
                 _this._c.q('M')[0].c();
                 _this._c.q('c')[0].c()
                     .o(0);
+                _this._ca = undefined;
                 _this._x['G'].h(0);
                 _this._x['W'].h(0);
                 _this._x['T'].h(0);
@@ -11982,7 +11983,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.21.1';
+    Bigine.version = '0.21.2';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

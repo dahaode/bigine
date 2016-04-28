@@ -143,7 +143,7 @@ namespace Runtime {
             this._f = {};
             this._e = [0, 0];
             this._l = (event: KeyboardEvent) => {
-                if (event.keyCode in [13, 17] && !this._a && this._t)
+                if ((event.keyCode == 13 || event.keyCode == 17) && !this._a && this._t)
                     this._t.h();
             };
             this._fs = Core.IRuntime.Series.Alone;
@@ -701,6 +701,7 @@ namespace Runtime {
                 (<G.Sprite> this._c.q('M')[0]).c();
                 (<G.Sprite> this._c.q('c')[0]).c()
                     .o(0);
+                this._ca = undefined;
                 this._x['G'].h(0);
                 this._x['W'].h(0);
                 this._x['T'].h(0);
