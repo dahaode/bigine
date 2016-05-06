@@ -111,6 +111,7 @@ namespace Tag {
         Collection: '定义集合',
         CollPop: '删除元素',
         CollPush: '增加元素',
+        Donate: '打赏',
 
         DefOptions: '定义选择',
         AddOption: '添加选项',
@@ -139,7 +140,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 98
+    export var S: { [index: number]: any[] } = { // next 99
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -260,7 +261,7 @@ namespace Tag {
         8: ['Save', [0, 1], -1], // [存档标题?]
         9: ['End', 0, -1],
         10: ['Fail', 0, -1],
-        11: ['Stars', 1, -1], // [星级]
+        11: ['Stars', [1, 2], -1], // [星级, 数据值?]
         12: ['PlayBGM', 1, -1], // [背景音乐名]
         64: ['StopBGM', 0, -1],
         13: ['HideCG', 0, -1],
@@ -309,6 +310,7 @@ namespace Tag {
         }],
 
         22: ['Assert', [2, 3], -1], // [变量名, 比较值, 操作符?]
+        98: ['Donate', 1, -1], // [萝卜币]
         24: ['Compare', 1, -1], // [变量名]
         21: ['And', 0, -1, {
             '-1': [1]

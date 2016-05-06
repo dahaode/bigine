@@ -89,3 +89,6 @@
 /// <reference path="_Action/_Director/CameraSet.ts" />
 /// <reference path="_Action/_Director/Curtains.ts" />
 /// <reference path="_Action/_Director/CameraShake.ts" />
+/// <reference path="_Action/_Logic/Donate.ts" />
+/// <reference path="../Ev/_Runtime/Fin.ts" />
+/// <reference path="../Ev/_Runtime/Rank.ts" />

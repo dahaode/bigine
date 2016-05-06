@@ -9,7 +9,6 @@
 
 /// <reference path="Director.ts" />
 /// <reference path="../../Sprite/_pack.ts" />
-/// <reference path="../../Ev/_Runtime/Fin.ts" />
 
 /**
  * * b - 背景
@@ -134,6 +133,8 @@ namespace Runtime {
                 o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
                 e: Resource.Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
                 s: Resource.Resource.g<string>(assets + 'oops.mp3', raw),
+                s5: Resource.Resource.g<HTMLImageElement>(assets + '5stars.png', raw),
+                s4: Resource.Resource.g<HTMLImageElement>(assets + '4stars.png', raw),
                 s3: Resource.Resource.g<HTMLImageElement>(assets + '3stars.png', raw),
                 s2: Resource.Resource.g<HTMLImageElement>(assets + '2stars.png', raw),
                 s1: Resource.Resource.g<HTMLImageElement>(assets + '1star.png', raw),
@@ -425,35 +426,26 @@ namespace Runtime {
         /**
          * 评分动画。
          */
-        public stars(rank: Core.IDirector.Stars): Promise<Core.IRuntime> {
-            var ranks: typeof Core.IDirector.Stars = Core.IDirector.Stars,
-                key: string = 's';
-            switch (rank) {
-                case ranks.Perfect:
-                    key += '3';
-                    break;
-                case ranks.Awesome:
-                    key += '2';
-                    break;
-                case ranks.OK:
-                    key += '1';
-                    break;
-            }
+        public stars(rank: Core.IDirector.Stars, grade: string, value?: string): Promise<Core.IRuntime> {
+            var stars: Sprite.Stars = <Sprite.Stars> this._x['sr'],
+                key: string = 's' + rank.toString(),
+                score: number = parseInt(value, 10) || 0;
             return this.c([[this._i[key]]])
                 .then(() => {
-                    var gStars: G.Image = new G.Image(this._i[key].o(), CanvasDirector.BOUNDS);
                     return this.lightOff()
                         .then(() => {
-                            this._r.dispatchEvent(new Ev.Fin({
-                                target: this._r.gE()
+                            this._r.dispatchEvent(new Ev.Rank({
+                                target: this._r.gE(),
+                                grade: grade,
+                                score: score
                             }));
                             this._x['t'].h(0);
-                            this._c.a(gStars, this._x['c']);
+                            stars.u(this._i[key], this._r.nickname(), value).v();
                             return this.lightOn();
-                        }).then(() => gStars.p(new G.Delay(2000)))
+                        }).then(() => stars.p(new G.Delay(2000)))
                         .then(() => this.lightOff())
                         .then(() => {
-                            this._c.e(gStars);
+                            stars.h(0);
                             return this._r;
                         });
                 });
@@ -979,7 +971,13 @@ namespace Runtime {
                 });
             resources.push(this._x['st'].l());
             this._c.a(this._x['st'], gCurtain);
+
+            // 保存评分配置
+            this._c.a(this._x['sr'] = <Sprite.Stars> new Sprite.Stars(theme['stars']), gCurtain);
+
+            // 作者
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
+
             this.c(resources);
             return this;
         }

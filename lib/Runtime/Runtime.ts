@@ -98,6 +98,11 @@ namespace Runtime {
         private _c: string;
 
         /**
+         * 用户名。
+         */
+        private _nn: string;
+
+        /**
          * 构造函数。
          */
         constructor(ep: Core.IRootTag) {
@@ -293,6 +298,21 @@ namespace Runtime {
         public author(title: string): Runtime {
             this._c = title;
             return this;
+        }
+
+        /**
+         * 设置作者、token。
+         */
+        public user(nickname: string): Runtime {
+            this._nn = nickname;
+            return this;
+        }
+
+        /**
+         * 获取nickname
+         */
+        public nickname(): string {
+            return this._nn || '您';
         }
 
         /**

@@ -289,15 +289,23 @@ var Core;
             /**
              * 及格。
              */
-            Stars[Stars["OK"] = 0] = "OK";
+            Stars[Stars["OK"] = 1] = "OK";
             /**
              * 优秀。
              */
-            Stars[Stars["Awesome"] = 1] = "Awesome";
+            Stars[Stars["Awesome"] = 2] = "Awesome";
             /**
              * 完美。
              */
-            Stars[Stars["Perfect"] = 2] = "Perfect";
+            Stars[Stars["Perfect"] = 3] = "Perfect";
+            /**
+             * 超绝。
+             */
+            Stars[Stars["Superb"] = 4] = "Superb";
+            /**
+             * 传奇。
+             */
+            Stars[Stars["Legend"] = 5] = "Legend";
         })(IDirector.Stars || (IDirector.Stars = {}));
         var Stars = IDirector.Stars;
     })(IDirector = Core.IDirector || (Core.IDirector = {}));
@@ -1383,7 +1391,7 @@ var Runtime;
         /**
          * 评分动画。
          */
-        Director.prototype.stars = function (rank) {
+        Director.prototype.stars = function (rank, grade, value) {
             return this._p;
         };
         /**
@@ -3829,6 +3837,45 @@ var Sprite;
     Sprite.Set = Set;
 })(Sprite || (Sprite = {}));
 /**
+ * 定义画面调度评分组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Stars.ts
+ */
+/// <reference path="Sprite.ts" />
+var Sprite;
+(function (Sprite) {
+    var G = __Bigine_C2D;
+    var Stars = (function (_super) {
+        __extends(Stars, _super);
+        /**
+         * 构造函数。
+         */
+        function Stars(theme) {
+            var w = 1280, h = 720, _name = theme['name'], _value = theme['value'], center = G.Text.Align.Center;
+            _super.call(this, 0, 0, w, h);
+            // 渲染评分初始样式
+            this.o(0)
+                .a(this._xs = new G.Sprite({ x: 0, y: 0, w: w, h: h }))
+                .a(this._nt = new G.Text(_name, _name['s'], _name['lh'], center))
+                .a(this._vt = new G.Text(_value, _value['s'], _value['lh'], center));
+        }
+        /**
+         * 设置名称、数据值。
+         */
+        Stars.prototype.u = function (res, name, value) {
+            this._xs.c().a(new G.Image(res.o(), { x: 0, y: 0, w: 1280, h: 720 }));
+            this._nt.c().a(new G.TextPhrase(name));
+            this._vt.c().a(new G.TextPhrase(value));
+            return this;
+        };
+        return Stars;
+    }(Sprite.Sprite));
+    Sprite.Stars = Stars;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -3850,46 +3897,7 @@ var Sprite;
 /// <reference path="CG.ts" />
 /// <reference path="SeriesSlots.ts" />
 /// <reference path="Set.ts" />
-/**
- * 声明剧情结束事件元信息接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/IFinMetas.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../../Core/_Runtime/IEpisode.ts" />
-/**
- * 定义剧情结束事件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/Fin.ts
- */
-/// <reference path="../Event.ts" />
-/// <reference path="IFinMetas.ts" />
-var Ev;
-(function (Ev) {
-    var Fin = (function (_super) {
-        __extends(Fin, _super);
-        /**
-         * 构造函数。
-         */
-        function Fin(metas) {
-            _super.call(this, metas);
-        }
-        /**
-         * 获取类型。
-         */
-        Fin.prototype.gT = function () {
-            return 'fin';
-        };
-        return Fin;
-    }(Ev.Event));
-    Ev.Fin = Fin;
-})(Ev || (Ev = {}));
+/// <reference path="Stars.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -3900,7 +3908,6 @@ var Ev;
  */
 /// <reference path="Director.ts" />
 /// <reference path="../../Sprite/_pack.ts" />
-/// <reference path="../../Ev/_Runtime/Fin.ts" />
 /**
  * * b - 背景
  * * M - 地图
@@ -3951,6 +3958,8 @@ var Runtime;
                 o: Resource.Resource.g(assets + 'logo.png', raw),
                 e: Resource.Resource.g(assets + 'thx.png', raw),
                 s: Resource.Resource.g(assets + 'oops.mp3', raw),
+                s5: Resource.Resource.g(assets + '5stars.png', raw),
+                s4: Resource.Resource.g(assets + '4stars.png', raw),
                 s3: Resource.Resource.g(assets + '3stars.png', raw),
                 s2: Resource.Resource.g(assets + '2stars.png', raw),
                 s1: Resource.Resource.g(assets + '1star.png', raw),
@@ -4220,35 +4229,25 @@ var Runtime;
         /**
          * 评分动画。
          */
-        CanvasDirector.prototype.stars = function (rank) {
+        CanvasDirector.prototype.stars = function (rank, grade, value) {
             var _this = this;
-            var ranks = Core.IDirector.Stars, key = 's';
-            switch (rank) {
-                case ranks.Perfect:
-                    key += '3';
-                    break;
-                case ranks.Awesome:
-                    key += '2';
-                    break;
-                case ranks.OK:
-                    key += '1';
-                    break;
-            }
+            var stars = this._x['sr'], key = 's' + rank.toString(), score = parseInt(value, 10) || 0;
             return this.c([[this._i[key]]])
                 .then(function () {
-                var gStars = new G.Image(_this._i[key].o(), CanvasDirector.BOUNDS);
                 return _this.lightOff()
                     .then(function () {
-                    _this._r.dispatchEvent(new Ev.Fin({
-                        target: _this._r.gE()
+                    _this._r.dispatchEvent(new Ev.Rank({
+                        target: _this._r.gE(),
+                        grade: grade,
+                        score: score
                     }));
                     _this._x['t'].h(0);
-                    _this._c.a(gStars, _this._x['c']);
+                    stars.u(_this._i[key], _this._r.nickname(), value).v();
                     return _this.lightOn();
-                }).then(function () { return gStars.p(new G.Delay(2000)); })
+                }).then(function () { return stars.p(new G.Delay(2000)); })
                     .then(function () { return _this.lightOff(); })
                     .then(function () {
-                    _this._c.e(gStars);
+                    stars.h(0);
                     return _this._r;
                 });
             });
@@ -4747,6 +4746,9 @@ var Runtime;
             });
             resources.push(this._x['st'].l());
             this._c.a(this._x['st'], gCurtain);
+            // 保存评分配置
+            this._c.a(this._x['sr'] = new Sprite.Stars(theme['stars']), gCurtain);
+            // 作者
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
             this.c(resources);
             return this;
@@ -5164,6 +5166,7 @@ var Tag;
         Collection: '定义集合',
         CollPop: '删除元素',
         CollPush: '增加元素',
+        Donate: '打赏',
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
@@ -5299,7 +5302,7 @@ var Tag;
         8: ['Save', [0, 1], -1],
         9: ['End', 0, -1],
         10: ['Fail', 0, -1],
-        11: ['Stars', 1, -1],
+        11: ['Stars', [1, 2], -1],
         12: ['PlayBGM', 1, -1],
         64: ['StopBGM', 0, -1],
         13: ['HideCG', 0, -1],
@@ -5344,6 +5347,7 @@ var Tag;
                 53: [1]
             }],
         22: ['Assert', [2, 3], -1],
+        98: ['Donate', 1, -1],
         24: ['Compare', 1, -1],
         21: ['And', 0, -1, {
                 '-1': [1]
@@ -8754,16 +8758,28 @@ var Tag;
             switch (params[0]) {
                 case '及格':
                     this._ms = stars.OK;
+                    this._mp = 'jige';
                     break;
                 case '优秀':
                     this._ms = stars.Awesome;
+                    this._mp = 'youxiu';
                     break;
                 case '完美':
                     this._ms = stars.Perfect;
+                    this._mp = 'wanmei';
+                    break;
+                case '超绝':
+                    this._ms = stars.Superb;
+                    this._mp = 'chaojue';
+                    break;
+                case '传奇':
+                    this._ms = stars.Legend;
+                    this._mp = 'chuanqi';
                     break;
                 default:
                     throw new E(E.ACT_ILLEGAL_STARS, lineNo);
             }
+            this._mv = params[1] || '';
         }
         /**
          * 获取标签名称。
@@ -8775,7 +8791,7 @@ var Tag;
          * 执行。
          */
         Stars.prototype.p = function (runtime) {
-            return runtime.gD().stars(this._ms);
+            return runtime.gD().stars(this._ms, this._mp, this._mv);
         };
         return Stars;
     }(Tag.Action));
@@ -11365,6 +11381,181 @@ var Tag;
     Tag.CameraShake = CameraShake;
 })(Tag || (Tag = {}));
 /**
+ * 声明（运行时）打赏成功元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IDonateMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）打赏事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Donate.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IDonateMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Donate = (function (_super) {
+        __extends(Donate, _super);
+        /**
+         * 构造函数。
+         */
+        function Donate(metas) {
+            _super.call(this, metas);
+            this.amount = metas.amount;
+            this.suc = metas.suc;
+            this.fail = metas.fail;
+        }
+        /**
+         * 获取类型。
+         */
+        Donate.prototype.gT = function () {
+            return 'donate';
+        };
+        return Donate;
+    }(Ev.Event));
+    Ev.Donate = Donate;
+})(Ev || (Ev = {}));
+/**
+ * 定义打赏数据动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/Donate.ts
+ */
+/// <reference path="../../Action.ts" />
+/// <reference path="../../../Ev/_Runtime/Donate.ts" />
+/// <reference path="../../../Ev/_Runtime/IDonateMetas.ts" />
+var Tag;
+(function (Tag) {
+    var Donate = (function (_super) {
+        __extends(Donate, _super);
+        function Donate() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Donate.prototype.gN = function () {
+            return 'Donate';
+        };
+        /**
+         * 执行。
+         */
+        Donate.prototype.p = function (runtime) {
+            var amount = parseInt(this._p[0], 10) || 0, states = runtime.gS(), depth = states.g('$d');
+            return new Promise(function (resolve) {
+                var suc = function () {
+                    states.s('$v' + depth, true)
+                        .s('$t' + depth, false);
+                    resolve(runtime);
+                }, fail = function () {
+                    states.s('$v' + depth, false)
+                        .s('$t' + depth, false);
+                    resolve(runtime);
+                };
+                runtime.dispatchEvent(new Ev.Donate({
+                    target: runtime.gS(),
+                    amount: amount,
+                    suc: suc,
+                    fail: fail
+                }));
+            });
+        };
+        return Donate;
+    }(Tag.Action));
+    Tag.Donate = Donate;
+})(Tag || (Tag = {}));
+/**
+ * 声明剧情结束事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IFinMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
+/**
+ * 定义剧情结束事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Fin.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IFinMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Fin = (function (_super) {
+        __extends(Fin, _super);
+        /**
+         * 构造函数。
+         */
+        function Fin(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        Fin.prototype.gT = function () {
+            return 'fin';
+        };
+        return Fin;
+    }(Ev.Event));
+    Ev.Fin = Fin;
+})(Ev || (Ev = {}));
+/**
+ * 声明评分事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IRankMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
+/**
+ * 定义评分事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Rank.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IRankMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Rank = (function (_super) {
+        __extends(Rank, _super);
+        /**
+         * 构造函数。
+         */
+        function Rank(metas) {
+            _super.call(this, metas);
+            this.grade = metas.grade;
+            this.score = metas.score;
+        }
+        /**
+         * 获取类型。
+         */
+        Rank.prototype.gT = function () {
+            return 'rank';
+        };
+        return Rank;
+    }(Ev.Event));
+    Ev.Rank = Rank;
+})(Ev || (Ev = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -11454,6 +11645,9 @@ var Tag;
 /// <reference path="_Action/_Director/CameraSet.ts" />
 /// <reference path="_Action/_Director/Curtains.ts" />
 /// <reference path="_Action/_Director/CameraShake.ts" />
+/// <reference path="_Action/_Logic/Donate.ts" />
+/// <reference path="../Ev/_Runtime/Fin.ts" />
+/// <reference path="../Ev/_Runtime/Rank.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -11659,6 +11853,19 @@ var Runtime;
         Runtime.prototype.author = function (title) {
             this._c = title;
             return this;
+        };
+        /**
+         * 设置作者、token。
+         */
+        Runtime.prototype.user = function (nickname) {
+            this._nn = nickname;
+            return this;
+        };
+        /**
+         * 获取nickname
+         */
+        Runtime.prototype.nickname = function () {
+            return this._nn || '您';
         };
         /**
          * 播报当前事件。
@@ -11983,7 +12190,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.21.2';
+    Bigine.version = '0.21.3';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

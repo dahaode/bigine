@@ -106,6 +106,16 @@ namespace Core {
         author(title: string): IRuntime;
 
         /**
+         * 设置作者、token。
+         */
+        user(nickname: string): IRuntime;
+
+        /**
+         * 获取nickname
+         */
+        nickname(): string;
+
+        /**
          * 读取存档。
          */
         l(id?: string): void;

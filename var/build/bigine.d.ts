@@ -131,7 +131,7 @@ declare namespace __Bigine {
             charMove(from: IDirector.Position, to: IDirector.Position): Promise<IRuntime>;
             words(words: string, theme: string, who?: string, avatar?: IResource<HTMLImageElement>): Promise<IRuntime>;
             tip(words: string): Promise<IRuntime>;
-            stars(rank: IDirector.Stars): Promise<IRuntime>;
+            stars(rank: IDirector.Stars, grade: string, value: string): Promise<IRuntime>;
             playBGM(resource?: IResource<string>): Promise<IRuntime>;
             playSE(resource?: IResource<string>): Promise<IRuntime>;
             hideCG(): Promise<IRuntime>;
@@ -158,9 +158,11 @@ declare namespace __Bigine {
                 Right = 5,
             }
             enum Stars {
-                OK = 0,
-                Awesome = 1,
-                Perfect = 2,
+                OK = 1,
+                Awesome = 2,
+                Perfect = 3,
+                Superb = 4,
+                Legend = 5,
             }
         }
     }
@@ -183,6 +185,8 @@ declare namespace __Bigine {
             t(flow: () => IRuntime | Thenable<IRuntime>): IRuntime;
             title(title: string): IRuntime;
             author(title: string): IRuntime;
+            user(nickname: string): IRuntime;
+            nickname(): string;
             l(id?: string): void;
             bind(viewport: HTMLElement): IRuntime;
             series(first?: boolean): IRuntime;
@@ -410,7 +414,7 @@ declare namespace __Bigine {
             charMove(from: Core.IDirector.Position, to: Core.IDirector.Position): Promise<Core.IRuntime>;
             words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             tip(words: string): Promise<Core.IRuntime>;
-            stars(rank: Core.IDirector.Stars): Promise<Core.IRuntime>;
+            stars(rank: Core.IDirector.Stars, grade: string, value: string): Promise<Core.IRuntime>;
             playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
             playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
             hideCG(): Promise<Core.IRuntime>;
@@ -826,14 +830,13 @@ declare namespace __Bigine {
             vv(bVolume: number, eVolume: number, duration?: number): Promise<Set>;
         }
     }
-    namespace Ev {
-        interface IFinMetas extends Util.IEventMetas<Core.IEpisode> {
-        }
-    }
-    namespace Ev {
-        class Fin extends Event<Core.IEpisode> {
-            constructor(metas: IFinMetas);
-            gT(): string;
+    namespace Sprite {
+        class Stars extends Sprite {
+            private _nt;
+            private _vt;
+            private _xs;
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            u(res: Resource.Resource<HTMLImageElement>, name: string, value: string): Stars;
         }
     }
     namespace Runtime {
@@ -863,7 +866,7 @@ declare namespace __Bigine {
             protected $c(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image;
             words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             tip(words: string): Promise<Core.IRuntime>;
-            stars(rank: Core.IDirector.Stars): Promise<Core.IRuntime>;
+            stars(rank: Core.IDirector.Stars, grade: string, value?: string): Promise<Core.IRuntime>;
             playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
             playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
             hideCG(): Promise<Core.IRuntime>;
@@ -1494,6 +1497,8 @@ declare namespace __Bigine {
     namespace Tag {
         class Stars extends Action {
             private _ms;
+            private _mp;
+            private _mv;
             constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
@@ -1873,6 +1878,52 @@ declare namespace __Bigine {
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
     }
+    namespace Ev {
+        interface IDonateMetas extends Util.IEventMetas<Core.IStates> {
+            amount: number;
+            suc: () => void;
+            fail: () => void;
+        }
+    }
+    namespace Ev {
+        class Donate extends Event<Core.IStates> {
+            private amount;
+            private suc;
+            private fail;
+            constructor(metas: IDonateMetas);
+            gT(): string;
+        }
+    }
+    namespace Tag {
+        class Donate extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Ev {
+        interface IFinMetas extends Util.IEventMetas<Core.IEpisode> {
+        }
+    }
+    namespace Ev {
+        class Fin extends Event<Core.IEpisode> {
+            constructor(metas: IFinMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IRankMetas extends Util.IEventMetas<Core.IEpisode> {
+            grade: string;
+            score: number;
+        }
+    }
+    namespace Ev {
+        class Rank extends Event<Core.IEpisode> {
+            private grade;
+            private score;
+            constructor(metas: IRankMetas);
+            gT(): string;
+        }
+    }
     namespace Runtime {
         class Runtime implements Core.IRuntime {
             private _a;
@@ -1890,6 +1941,7 @@ declare namespace __Bigine {
             private _t;
             private _n;
             private _c;
+            private _nn;
             constructor(ep: Core.IRootTag);
             addEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime;
             removeEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime;
@@ -1907,6 +1959,8 @@ declare namespace __Bigine {
             isPlaying(): boolean;
             title(title: string): Runtime;
             author(title: string): Runtime;
+            user(nickname: string): Runtime;
+            nickname(): string;
             s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime;
             a(action: Core.IIdableTag): Runtime;
             gH(): boolean;

@@ -136,7 +136,7 @@ namespace Runtime {
         /**
          * 评分动画。
          */
-        public stars(rank: Core.IDirector.Stars): Promise<Core.IRuntime> {
+        public stars(rank: Core.IDirector.Stars, grade: string, value: string): Promise<Core.IRuntime> {
             return this._p;
         }
 

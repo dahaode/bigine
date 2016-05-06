@@ -18,6 +18,16 @@ namespace Tag {
         private _ms: Core.IDirector.Stars;
 
         /**
+         * 星级拼音。
+         */
+        private _mp: string;
+
+        /**
+         * 数据值。
+         */
+        private _mv: string;
+
+        /**
          * 构造函数。
          */
         constructor(params: string[], content: string, children: Unknown[], lineNo?: number) {
@@ -26,16 +36,28 @@ namespace Tag {
             switch (params[0]) {
                 case '及格':
                     this._ms = stars.OK;
+                    this._mp = 'jige';
                     break;
                 case '优秀':
                     this._ms = stars.Awesome;
+                    this._mp = 'youxiu';
                     break;
                 case '完美':
                     this._ms = stars.Perfect;
+                    this._mp = 'wanmei';
+                    break;
+                case '超绝':
+                    this._ms = stars.Superb;
+                    this._mp = 'chaojue';
+                    break;
+                case '传奇':
+                    this._ms = stars.Legend;
+                    this._mp = 'chuanqi';
                     break;
                 default:
                     throw new E(E.ACT_ILLEGAL_STARS, lineNo);
             }
+            this._mv = params[1] || '';
         }
 
         /**
@@ -49,7 +71,7 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            return runtime.gD().stars(this._ms);
+            return runtime.gD().stars(this._ms, this._mp, this._mv);
         }
     }
 }

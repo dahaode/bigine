@@ -1,3 +1,4 @@
+
 /**
  * 声明（运行时）场效调度器接口规范。
  *
@@ -71,7 +72,7 @@ namespace Core {
         /**
          * 评分动画。
          */
-        stars(rank: IDirector.Stars): Promise<IRuntime>;
+        stars(rank: IDirector.Stars, grade: string, value: string): Promise<IRuntime>;
 
         /**
          * 播放背景音乐。
@@ -189,7 +190,7 @@ namespace Core {
             /**
              * 及格。
              */
-            OK,
+            OK = 1,
             /**
              * 优秀。
              */
@@ -197,7 +198,15 @@ namespace Core {
             /**
              * 完美。
              */
-            Perfect
+            Perfect,
+            /**
+             * 超绝。
+             */
+            Superb,
+            /**
+             * 传奇。
+             */
+            Legend
         }
     }
 }
