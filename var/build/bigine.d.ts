@@ -789,7 +789,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface ISet extends ISprite {
-            vv(bVolume: number, eVolume: number, duration?: number): Promise<ISet>;
+            vv(bVolume: number, eVolume: number, on: boolean, duration?: number): Promise<ISet>;
         }
     }
     namespace Ev {
@@ -825,9 +825,10 @@ declare namespace __Bigine {
             private _xb;
             private _ib;
             private _pt;
+            private _vo;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
             protected sv(x: number, voice: string): void;
-            vv(bVolume: number, eVolume: number, duration?: number): Promise<Set>;
+            vv(bVolume: number, eVolume: number, on: boolean, duration?: number): Promise<Set>;
         }
     }
     namespace Sprite {
@@ -854,6 +855,7 @@ declare namespace __Bigine {
             private _x;
             private _fs;
             private _ca;
+            private _vo;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;

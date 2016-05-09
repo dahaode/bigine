@@ -15,6 +15,6 @@ namespace Core {
         /**
          * 显示音乐/音效调节。
          */
-        vv(bVolume: number, eVolume: number, duration?: number): Promise<ISet>;
+        vv(bVolume: number, eVolume: number, on: boolean, duration?: number): Promise<ISet>;
     }
 }

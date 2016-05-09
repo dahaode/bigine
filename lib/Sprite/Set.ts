@@ -53,6 +53,11 @@ namespace Sprite {
         private _pt: Util.IHashTable<Util.IHashTable<any>>;
 
         /**
+         * 面板声音开关。
+         */
+        private _vo: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
@@ -68,6 +73,7 @@ namespace Sprite {
                 _se: Util.IHashTable<any> = theme['se'];
             super(0, 0, w, h);
             this._pt = theme;
+            this._vo = true;
             this._rr = [
                 rr.g<HTMLImageElement>(url + _close['i'], raw),
                 rr.g<HTMLImageElement>(url + _close['ih'], raw),
@@ -108,6 +114,7 @@ namespace Sprite {
          * 调节音乐/音效。
          */
         protected sv(x: number, voice: string): void {
+            if (!this._vo) return;
             let gBound: G.IBounds = <G.IBounds> Util.clone(this._pt[voice]['bar']),
                 width: number = Math.max(gBound['x'], Math.min(x, gBound['w'] + gBound['x'])) - gBound['x'],
                 count: number = Math.round(width / this._pt[voice]['bar']['w'] * 100);
@@ -143,7 +150,9 @@ namespace Sprite {
         /**
          * 显示音乐/音效调节。
          */
-        public vv(bVolume: number, eVolume: number, duration?: number): Promise<Set> {
+        public vv(bVolume: number, eVolume: number, on: boolean, duration?: number): Promise<Set> {
+            this._vo = on;
+            if (!this._vo) bVolume = eVolume = 0;
             this._vb = Math.round(bVolume * 100);
             this._ve = Math.round(eVolume * 100);
             (<G.Text> this._xb).c().a(new G.TextPhrase(this._vb.toString()));

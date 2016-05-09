@@ -93,6 +93,11 @@ namespace Runtime {
         private _ca: string;
 
         /**
+         * 声音开关。
+         */
+        private _vo: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -129,6 +134,7 @@ namespace Runtime {
             this._s['b'].loop = true;
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
+            this._vo = true;
             this._i = {
                 o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
                 e: Resource.Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
@@ -887,7 +893,7 @@ namespace Runtime {
                         });
                 }).addEventListener('menu.set', () => {
                     slotsFromStart = false;
-                    (<Sprite.Set> this._x['st']).vv(this._s['b'].volume, this._s['e'].volume)
+                    (<Sprite.Set> this._x['st']).vv(this._s['b'].volume, this._s['e'].volume, this._vo)
                         .then(() => {
                             this._x['m'].h();
                         })['catch'](() => {
@@ -1027,6 +1033,9 @@ namespace Runtime {
         public v(volume: number): CanvasDirector {
             this._s['b'].volume = volume;
             this._s['e'].volume = volume;
+            this._vo = volume == 1;
+            let set: Sprite.Set = <Sprite.Set> this._x['st'];
+            if (set.gO() > 0) set.vv(volume, volume, this._vo);
             return <CanvasDirector> super.v(volume);
         }
 

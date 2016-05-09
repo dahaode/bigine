@@ -3741,6 +3741,7 @@ var Sprite;
             var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _title = theme['title'], _bgm = theme['bgm'], _se = theme['se'];
             _super.call(this, 0, 0, w, h);
             this._pt = theme;
+            this._vo = true;
             this._rr = [
                 rr.g(url + _close['i'], raw),
                 rr.g(url + _close['ih'], raw),
@@ -3773,6 +3774,8 @@ var Sprite;
          * 调节音乐/音效。
          */
         Set.prototype.sv = function (x, voice) {
+            if (!this._vo)
+                return;
             var gBound = Util.clone(this._pt[voice]['bar']), width = Math.max(gBound['x'], Math.min(x, gBound['w'] + gBound['x'])) - gBound['x'], count = Math.round(width / this._pt[voice]['bar']['w'] * 100);
             if (count <= 2) {
                 count = gBound['w'] = 0;
@@ -3810,7 +3813,10 @@ var Sprite;
         /**
          * 显示音乐/音效调节。
          */
-        Set.prototype.vv = function (bVolume, eVolume, duration) {
+        Set.prototype.vv = function (bVolume, eVolume, on, duration) {
+            this._vo = on;
+            if (!this._vo)
+                bVolume = eVolume = 0;
             this._vb = Math.round(bVolume * 100);
             this._ve = Math.round(eVolume * 100);
             this._xb.c().a(new G.TextPhrase(this._vb.toString()));
@@ -3954,6 +3960,7 @@ var Runtime;
             this._s['b'].loop = true;
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
+            this._vo = true;
             this._i = {
                 o: Resource.Resource.g(assets + 'logo.png', raw),
                 e: Resource.Resource.g(assets + 'thx.png', raw),
@@ -4663,7 +4670,7 @@ var Runtime;
                 });
             }).addEventListener('menu.set', function () {
                 slotsFromStart = false;
-                _this._x['st'].vv(_this._s['b'].volume, _this._s['e'].volume)
+                _this._x['st'].vv(_this._s['b'].volume, _this._s['e'].volume, _this._vo)
                     .then(function () {
                     _this._x['m'].h();
                 })['catch'](function () {
@@ -4796,6 +4803,10 @@ var Runtime;
         CanvasDirector.prototype.v = function (volume) {
             this._s['b'].volume = volume;
             this._s['e'].volume = volume;
+            this._vo = volume == 1;
+            var set = this._x['st'];
+            if (set.gO() > 0)
+                set.vv(volume, volume, this._vo);
             return _super.prototype.v.call(this, volume);
         };
         /**
