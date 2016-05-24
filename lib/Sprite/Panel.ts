@@ -373,8 +373,9 @@ namespace Sprite {
                 if (field.iE()) {
                     let hBounds: G.IBounds = <G.IBounds> this._pt['coll']['head'];
                     let iBounds: G.IBounds = <G.IBounds> {x: 0, y: 0, w: hBounds['w'], h: hBounds['h']};
+                    let entity: Tag.Entity = field.gIE(<string> fieldValue);
                     (<G.Sprite> this._cv['head']).c().a(
-                        new G.Image((<any> fieldValue).o().o(), iBounds)
+                        new G.Image((<any> entity).o().o(), iBounds)
                         ).o(1);
                 } else if (field.iN()) { // 渲染名称
                     (<G.Text> this._cv['name']).c().a(

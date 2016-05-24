@@ -38,6 +38,16 @@ namespace Runtime {
         private _l: boolean;
 
         /**
+         * 付费信息。
+         */
+        private _sp: Util.IHashTable<string>;
+
+        /**
+         * 是否整章购买。
+         */
+        private _all: boolean;
+
+        /**
          * 快照。
          */
         private _p: Util.IHashTable<any>;
@@ -53,7 +63,9 @@ namespace Runtime {
                 'work': {},
                 'end': {}
             };
+            this._sp = {};
             this._l = false;
+            this._all = false;
         }
 
         /**
@@ -220,6 +232,39 @@ namespace Runtime {
                     callback: query
                 }));
             });
+        }
+
+        /**
+         * 查询是否付费。
+         */
+        public qp(id: string, count: number): boolean {
+            if (this._all)
+                return true;
+            if ((id in this._sp) && this._sp[id] == count.toString())
+                return true;
+            return false;
+        }
+
+        /**
+         * 加载付费信息。
+         */
+        public lp(data: Util.IHashTable<string> | string): States {
+            this._all = false;
+            if (typeof data == 'string' && data == 'all') {
+                this._all = true;
+            } else if (typeof data == 'object') {
+                this._sp = <Util.IHashTable<string>> data;
+            }
+            return this;
+        }
+
+        /**
+         * 增加付费信息。
+         */
+        public ep(id: string, count: number): States {
+            if (!this._all)
+                this._sp[id] = count.toString();
+            return this;
         }
     }
 }

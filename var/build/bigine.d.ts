@@ -56,6 +56,9 @@ declare namespace __Bigine {
             i(data: Util.IHashTable<any>): IStates;
             q(index: string, type?: IStates.Save): [string, number];
             l(): Promise<IStates>;
+            qp(id: string, count: number): boolean;
+            lp(data: Util.IHashTable<string> | string): IStates;
+            ep(id: string, count: number): IStates;
         }
         namespace IStates {
             enum Save {
@@ -115,8 +118,10 @@ declare namespace __Bigine {
         }
     }
     namespace Core {
-        interface IOptionTag extends ITag, IButtonable {
+        interface IOptionTag extends ITag, IButtonable, IIdableTag {
             gT(): string;
+            gM(): number;
+            gA(): boolean;
         }
     }
     namespace Core {
@@ -158,11 +163,11 @@ declare namespace __Bigine {
                 Right = 5,
             }
             enum Stars {
-                OK = 1,
-                Awesome = 2,
-                Perfect = 3,
-                Superb = 4,
-                Legend = 5,
+                OK = 0,
+                Awesome = 1,
+                Perfect = 2,
+                Superb = 3,
+                Legend = 4,
             }
         }
     }
@@ -187,6 +192,7 @@ declare namespace __Bigine {
             author(title: string): IRuntime;
             user(nickname: string): IRuntime;
             nickname(): string;
+            plots(data: Util.IHashTable<string> | string): IRuntime;
             l(id?: string): void;
             bind(viewport: HTMLElement): IRuntime;
             series(first?: boolean): IRuntime;
@@ -361,6 +367,8 @@ declare namespace __Bigine {
             private _r;
             private _s;
             private _l;
+            private _sp;
+            private _all;
             private _p;
             constructor(runtime: Core.IRuntime);
             s(key: string, value: any): States;
@@ -375,6 +383,9 @@ declare namespace __Bigine {
             i(data: Util.IHashTable<any>): States;
             q(index: string, series?: Core.IStates.Save): [string, number];
             l(): Promise<States>;
+            qp(id: string, count: number): boolean;
+            lp(data: Util.IHashTable<string> | string): States;
+            ep(id: string, count: number): States;
         }
     }
     namespace Resource {
@@ -837,7 +848,7 @@ declare namespace __Bigine {
             private _vt;
             private _xs;
             constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
-            u(res: Resource.Resource<HTMLImageElement>, name: string, value: string): Stars;
+            u(key: number, name: string, value: string): Stars;
         }
     }
     namespace Runtime {
@@ -856,6 +867,8 @@ declare namespace __Bigine {
             private _fs;
             private _ca;
             private _vo;
+            private _pt;
+            private _pc;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
@@ -1610,11 +1623,20 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class Option extends Unknown implements Core.IOptionTag {
-            _k: string;
+            protected _k: string;
+            protected _i: string;
+            protected _a: boolean;
             static f(tag: Unknown): Option;
             gT(): string;
+            gN(): string;
             p(runtime: Core.IRuntime): void;
             sK(key: string): Option;
+            gM(): number;
+            sA(is: boolean): Option;
+            gA(): boolean;
+            gI(): string;
+            i(id: string): void;
+            toJsrn(): string;
         }
     }
     namespace Tag {
@@ -1669,9 +1691,13 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
-        class AddOption extends Action {
+        class AddOption extends Action implements Core.IIdableTag {
+            protected _i: string;
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+            gI(): string;
+            i(id: string): void;
+            toJsrn(): string;
         }
     }
     namespace Tag {
@@ -1771,11 +1797,12 @@ declare namespace __Bigine {
             $b(ep: Core.IEpisode): void;
             gN(): string;
             iE(): boolean;
+            gIE(val: string): Entity;
             iN(): boolean;
             gT(): string;
             gET(): Core.IEpisode.Entity;
             gL(): number;
-            g(val: string): number | string | Entity;
+            g(val: string): number | string;
         }
     }
     namespace Tag {
@@ -1926,6 +1953,24 @@ declare namespace __Bigine {
             gT(): string;
         }
     }
+    namespace Ev {
+        interface IPayMetas extends Util.IEventMetas<Core.IStates> {
+            amount: number;
+            id: string;
+            suc: () => void;
+            fail: () => void;
+        }
+    }
+    namespace Ev {
+        class Pay extends Event<Core.IStates> {
+            private amount;
+            private id;
+            private suc;
+            private fail;
+            constructor(metas: IPayMetas);
+            gT(): string;
+        }
+    }
     namespace Runtime {
         class Runtime implements Core.IRuntime {
             private _a;
@@ -1963,6 +2008,7 @@ declare namespace __Bigine {
             author(title: string): Runtime;
             user(nickname: string): Runtime;
             nickname(): string;
+            plots(data: Util.IHashTable<string> | string): Runtime;
             s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime;
             a(action: Core.IIdableTag): Runtime;
             gH(): boolean;

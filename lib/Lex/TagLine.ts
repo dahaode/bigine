@@ -123,9 +123,15 @@ namespace Lex {
             if (-1 == this._i)
                 return new Tag.Root(children);
             proto = eval('Tag.' + Tag.C[name]);
+            if (params.length > 1 && parent.indexOf('选择') > -1)   // 选择 和 定义选择 两个命令下的内容，并且参数长度 > 1
+                proto = eval('Tag.Option');
             tag = new proto(params, content, children, this._l[0]);
             if (tag instanceof Tag.Idable || 'Scene' == tag.gN())
                 (<Tag.Idable> tag).i(u());
+            if (tag instanceof Tag.Option)
+                (<Tag.Option> tag).i(u());
+            if (tag instanceof Tag.AddOption && params.length > 2)  // 添加选项命令，并且参数长度 > 2
+                (<Tag.AddOption> tag).i(u());
             return tag;
         }
     }

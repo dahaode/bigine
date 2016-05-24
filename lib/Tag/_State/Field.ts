@@ -57,6 +57,25 @@ namespace Tag {
         }
 
         /**
+         * 获取实体类型值。
+         */
+        public gIE(val: string): Entity {
+            if (this._s.length == 0) return undefined;
+            var fieldType: string = null;
+            Util.each(this._s, (child: Unknown) => {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            if (this.entityTypes[fieldType]) {
+                if (!val) throw new E(E.STRUCT_FIELD_MISSING, this._l);
+                var obj: any = this._ep.q(val, this.entityTypes[fieldType], this._l);
+                return obj;
+            }
+            return undefined;
+        }
+
+        /**
          * 是否名称类型。
          */
         public iN(): boolean {
@@ -107,7 +126,7 @@ namespace Tag {
         /**
          * 获取字段的值。
          */
-        public g(val: string): number | string | Entity {
+        public g(val: string): number | string {
             if (this._s.length == 0) return val ? val : '';
             var fieldType: string = null;
             var fieldLimit: string = null;
@@ -125,8 +144,7 @@ namespace Tag {
                 return value > limit ? limit : value;
             } else if (this.entityTypes[fieldType]) {
                 if (!val) throw new E(E.STRUCT_FIELD_MISSING, this._l);
-                var obj: any = this._ep.q(val, this.entityTypes[fieldType], this._l);
-                return obj;
+                return val;
             }
             return val ? val : '';
         }

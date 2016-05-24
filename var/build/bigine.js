@@ -102,6 +102,7 @@ var Ev;
  *     * `.c` - 特写名 - Tag
  *     * `.c<站位>` - 人物名 - Tag
  *     * `.z` -  房间状态 - Tag
+ *     * `.l` -  资源加载状态 - Tag
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -240,6 +241,7 @@ var Core;
  */
 /// <reference path="ITag.ts" />
 /// <reference path="../_Runtime/IButtonable.ts" />
+/// <reference path="../_Tag/IIdableTag.ts" />
 /**
  * 声明（运行时）场效调度器接口规范。
  *
@@ -289,23 +291,23 @@ var Core;
             /**
              * 及格。
              */
-            Stars[Stars["OK"] = 1] = "OK";
+            Stars[Stars["OK"] = 0] = "OK";
             /**
              * 优秀。
              */
-            Stars[Stars["Awesome"] = 2] = "Awesome";
+            Stars[Stars["Awesome"] = 1] = "Awesome";
             /**
              * 完美。
              */
-            Stars[Stars["Perfect"] = 3] = "Perfect";
+            Stars[Stars["Perfect"] = 2] = "Perfect";
             /**
              * 超绝。
              */
-            Stars[Stars["Superb"] = 4] = "Superb";
+            Stars[Stars["Superb"] = 3] = "Superb";
             /**
              * 传奇。
              */
-            Stars[Stars["Legend"] = 5] = "Legend";
+            Stars[Stars["Legend"] = 4] = "Legend";
         })(IDirector.Stars || (IDirector.Stars = {}));
         var Stars = IDirector.Stars;
     })(IDirector = Core.IDirector || (Core.IDirector = {}));
@@ -1031,7 +1033,9 @@ var Runtime;
                 'work': {},
                 'end': {}
             };
+            this._sp = {};
             this._l = false;
+            this._all = false;
         }
         /**
          * 设置值。
@@ -1189,6 +1193,37 @@ var Runtime;
                     callback: query
                 }));
             });
+        };
+        /**
+         * 查询是否付费。
+         */
+        States.prototype.qp = function (id, count) {
+            if (this._all)
+                return true;
+            if ((id in this._sp) && this._sp[id] == count.toString())
+                return true;
+            return false;
+        };
+        /**
+         * 加载付费信息。
+         */
+        States.prototype.lp = function (data) {
+            this._all = false;
+            if (typeof data == 'string' && data == 'all') {
+                this._all = true;
+            }
+            else if (typeof data == 'object') {
+                this._sp = data;
+            }
+            return this;
+        };
+        /**
+         * 增加付费信息。
+         */
+        States.prototype.ep = function (id, count) {
+            if (!this._all)
+                this._sp[id] = count.toString();
+            return this;
         };
         return States;
     }());
@@ -3223,7 +3258,8 @@ var Sprite;
                 if (field.iE()) {
                     var hBounds = _this._pt['coll']['head'];
                     var iBounds = { x: 0, y: 0, w: hBounds['w'], h: hBounds['h'] };
-                    _this._cv['head'].c().a(new G.Image(fieldValue.o().o(), iBounds)).o(1);
+                    var entity = field.gIE(fieldValue);
+                    _this._cv['head'].c().a(new G.Image(entity.o().o(), iBounds)).o(1);
                 }
                 else if (field.iN()) {
                     _this._cv['name'].c().a(new G.TextPhrase(fieldValue)).o(1);
@@ -3428,7 +3464,8 @@ var Sprite;
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + theme['back']['i'], raw),
-                rr.g(url + theme['back']['ih'], raw)
+                rr.g(url + theme['back']['ih'], raw),
+                rr.g(url + theme['radish']['i'], raw)
             ];
             this._c = theme;
             this.o(0);
@@ -3438,12 +3475,13 @@ var Sprite;
          */
         Choose.prototype.u = function (options) {
             var _this = this;
-            var margin = this._c['m'], _back = this._c['back'], _text = this._c['text'], opts = options.slice(0, 6), x = 0 | (1280 - _back['w']) / 2, y = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
+            var margin = this._c['m'], _back = this._c['back'], _text = this._c['text'], _count = this._c['count'], _radish = this._c['radish'], opts = options.slice(0, 6), x = 0 | (1280 - _back['w']) / 2, y = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
             this.c();
             Util.each(options.slice(0, 6), function (option) {
                 var text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['s'], _text['lh'], G.Text.Align.Center)
                     .tc(_text['c'])
                     .ts(_text['ss']);
+                var money = option.gA() ? 0 : option.gM();
                 _this.$w(text, option.gT(), _text['ch']);
                 _this.a(new G.Button(x, y, _back['w'], _back['h'])
                     .b(function () {
@@ -3452,6 +3490,14 @@ var Sprite;
                         choice: option
                     }));
                 }, new G.Image(_this._rr[1].o(), x, y, _back['w'], _back['h'], true), new G.Image(_this._rr[0].o(), x, y, _back['w'], _back['h'], true))).a(text);
+                if (money) {
+                    var xC = x + _text['x'] + _text['w'] - _count['w'], yC = y + _text['y'] + 0.5 * _back['h'], xR = x + _text['x'] + _text['w'] - _count['w'] - _radish['w'] - 10, yR = y + _text['y'] + 0.5 * (_back['h'] - _radish['h']), count = new G.Text(xC, yC, _count['w'], _count['h'], _count['s'], _count['lh'], G.Text.Align.Left)
+                        .tc(_count['c'])
+                        .ts(_count['ss']);
+                    _this.$w(count, money.toString(), _count['ch']);
+                    _this.a(new G.Image(_this._rr[2].o(), xR, yR, _radish['w'], _radish['h'], true))
+                        .a(count);
+                }
                 y += _back['h'] + margin;
             });
             return this;
@@ -3860,8 +3906,15 @@ var Sprite;
          * 构造函数。
          */
         function Stars(theme) {
-            var w = 1280, h = 720, _name = theme['name'], _value = theme['value'], center = G.Text.Align.Center;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _name = theme['name'], _value = theme['value'], _pic = theme['pic'], center = G.Text.Align.Center;
             _super.call(this, 0, 0, w, h);
+            this._rr = [
+                rr.g(url + _pic['1'], raw),
+                rr.g(url + _pic['2'], raw),
+                rr.g(url + _pic['3'], raw),
+                rr.g(url + _pic['4'], raw),
+                rr.g(url + _pic['5'], raw)
+            ];
             // 渲染评分初始样式
             this.o(0)
                 .a(this._xs = new G.Sprite({ x: 0, y: 0, w: w, h: h }))
@@ -3871,8 +3924,8 @@ var Sprite;
         /**
          * 设置名称、数据值。
          */
-        Stars.prototype.u = function (res, name, value) {
-            this._xs.c().a(new G.Image(res.o(), { x: 0, y: 0, w: 1280, h: 720 }));
+        Stars.prototype.u = function (key, name, value) {
+            this._xs.c().a(new G.Image(this._rr[key].o(), { x: 0, y: 0, w: 1280, h: 720 }));
             this._nt.c().a(new G.TextPhrase(name));
             this._vt.c().a(new G.TextPhrase(value));
             return this;
@@ -3919,7 +3972,7 @@ var Sprite;
  * * M - 地图
  * * c - 人物
  * * L - 加载进度条
- *     * e - 完成进度条
+ * * e - 完成进度条
  */
 var Runtime;
 (function (Runtime) {
@@ -3952,6 +4005,16 @@ var Runtime;
                 .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
+            this._vo = true;
+            this._ca = undefined;
+            this._pc = undefined;
+            this._i = {
+                o: Resource.Resource.g(assets + 'logo.png', raw),
+                e: Resource.Resource.g(assets + 'thx.png', raw),
+                s: Resource.Resource.g(assets + 'oops.mp3', raw),
+                f: Resource.Resource.g(assets + 'focus.mp3', raw),
+                c: Resource.Resource.g(assets + 'click.mp3', raw)
+            };
             this._s = {
                 b: new Audio(),
                 e: new Audio()
@@ -3960,19 +4023,7 @@ var Runtime;
             this._s['b'].loop = true;
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
-            this._vo = true;
-            this._i = {
-                o: Resource.Resource.g(assets + 'logo.png', raw),
-                e: Resource.Resource.g(assets + 'thx.png', raw),
-                s: Resource.Resource.g(assets + 'oops.mp3', raw),
-                s5: Resource.Resource.g(assets + '5stars.png', raw),
-                s4: Resource.Resource.g(assets + '4stars.png', raw),
-                s3: Resource.Resource.g(assets + '3stars.png', raw),
-                s2: Resource.Resource.g(assets + '2stars.png', raw),
-                s1: Resource.Resource.g(assets + '1star.png', raw),
-                f: Resource.Resource.g(assets + 'focus.mp3', raw),
-                c: Resource.Resource.g(assets + 'click.mp3', raw)
-            };
+            this._s['b'].src = this._i['s'].l();
             this._f = {};
             this._e = [0, 0];
             this._l = function (event) {
@@ -4238,25 +4289,22 @@ var Runtime;
          */
         CanvasDirector.prototype.stars = function (rank, grade, value) {
             var _this = this;
-            var stars = this._x['sr'], key = 's' + rank.toString(), score = parseInt(value, 10) || 0;
-            return this.c([[this._i[key]]])
+            var stars = this._x['sr'], key = rank, score = parseInt(value, 10) || 0;
+            return this.lightOff()
                 .then(function () {
-                return _this.lightOff()
-                    .then(function () {
-                    _this._r.dispatchEvent(new Ev.Rank({
-                        target: _this._r.gE(),
-                        grade: grade,
-                        score: score
-                    }));
-                    _this._x['t'].h(0);
-                    stars.u(_this._i[key], _this._r.nickname(), value).v();
-                    return _this.lightOn();
-                }).then(function () { return stars.p(new G.Delay(2000)); })
-                    .then(function () { return _this.lightOff(); })
-                    .then(function () {
-                    stars.h(0);
-                    return _this._r;
-                });
+                _this._r.dispatchEvent(new Ev.Rank({
+                    target: _this._r.gE(),
+                    grade: grade,
+                    score: score
+                }));
+                _this._x['t'].h(0);
+                stars.u(key, _this._r.nickname(), value).v();
+                return _this.lightOn();
+            }).then(function () { return stars.p(new G.Delay(2000)); })
+                .then(function () { return _this.lightOff(); })
+                .then(function () {
+                stars.h(0);
+                return _this._r;
             });
         };
         /**
@@ -4340,8 +4388,7 @@ var Runtime;
                 mx = parseFloat(strArr[0]);
                 my = parseFloat(strArr[1]);
                 return _this.cameraZoom(mx, my, 20, -1);
-            })
-                .then(function (runtime) {
+            }).then(function (runtime) {
                 runtime.gS().d('.z');
                 runtime.gS().d('_z');
                 var gOld = _this._c.q('b')[0], gNew = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
@@ -4458,10 +4505,35 @@ var Runtime;
                     });
                 };
                 var gChoose = _this._x['C'], event = 'choose', handler = function () {
-                    gChoose.removeEventListener(event, handler);
-                    gChoose.h().then(function () {
-                        resolve(_this._r);
-                    });
+                    if (_this._pc) {
+                        var option_1 = _this._pc, amount_1 = option_1.gA() ? 0 : option_1.gM();
+                        if (!amount_1) {
+                            option_1.p(_this._r);
+                            gChoose.removeEventListener(event, handler);
+                            gChoose.h().then(function () {
+                                resolve(_this._r);
+                            });
+                            _this._pc = undefined;
+                        }
+                        else {
+                            var states_1 = _this._r.gS(), id_1 = option_1.gI(), fail = function () { return; }, suc = function () {
+                                option_1.p(_this._r);
+                                states_1.ep(id_1, amount_1);
+                                gChoose.removeEventListener(event, handler);
+                                gChoose.h().then(function () {
+                                    resolve(_this._r);
+                                });
+                                _this._pc = undefined;
+                            };
+                            _this._r.dispatchEvent(new Ev.Pay({
+                                target: states_1,
+                                amount: amount_1,
+                                id: id_1,
+                                suc: suc,
+                                fail: fail
+                            }));
+                        }
+                    }
                 };
                 gChoose.u(options).addEventListener(event, handler);
                 _this.lightOn()
@@ -4475,13 +4547,20 @@ var Runtime;
             var _this = this;
             return _super.prototype.reset.call(this).then(function (runtime) {
                 var gBack = _this._c.q('b')[0], gColor = new G.Color(CanvasDirector.BOUNDS, '#000');
+                // 需要先删除旧选择再添加新选择，否则在选择处读档时，时序流中断(因为未删除监听事件)
+                _this._c.e(_this._x['C']);
+                _this._x['C'] = new Sprite.Choose('', _this._pt['choose'])
+                    .addEventListener('choose', function (ev) {
+                    _this._pc = ev.choice;
+                });
+                _this._c.a(_this._x['C'], _this._x['t']);
                 _this._c.a(gColor, gBack)
                     .e(gBack);
                 gColor.i('b');
                 _this._c.q('M')[0].c();
                 _this._c.q('c')[0].c()
                     .o(0);
-                _this._ca = undefined;
+                _this._pc = undefined;
                 _this._x['G'].h(0);
                 _this._x['W'].h(0);
                 _this._x['T'].h(0);
@@ -4594,9 +4673,8 @@ var Runtime;
         CanvasDirector.prototype.cameraShake = function () {
             var _this = this;
             var gRoom = this._c.q('b')[0];
-            return gRoom.p(new G.Shake(500)).then(function () {
-                return _super.prototype.cameraShake.call(_this);
-            });
+            return gRoom.p(new G.Shake(500))
+                .then(function () { return _super.prototype.cameraShake.call(_this); });
         };
         /**
          * 使用主题。
@@ -4604,6 +4682,7 @@ var Runtime;
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
             var resources = [], gCurtain = this._x['c'], slotsFromStart = false;
+            this._pt = theme;
             // 特写。
             this._c.a(this._x['G'] = new Sprite.CG(theme['cg']), gCurtain);
             // 状态。
@@ -4618,10 +4697,7 @@ var Runtime;
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 选择。
-            this._x['C'] = new Sprite.Choose(id, theme['choose'])
-                .addEventListener('choose', function (ev) {
-                ev.choice.p(_this._r);
-            });
+            this._x['C'] = new Sprite.Choose(id, theme['choose']);
             resources.unshift(this._x['C'].l());
             this._c.a(this._x['C'], gCurtain);
             // 常驻按钮。
@@ -4755,6 +4831,7 @@ var Runtime;
             this._c.a(this._x['st'], gCurtain);
             // 保存评分配置
             this._c.a(this._x['sr'] = new Sprite.Stars(theme['stars']), gCurtain);
+            resources.push(this._x['sr'].l());
             // 作者
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
             this.c(resources);
@@ -5181,6 +5258,7 @@ var Tag;
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
+        Option: '选项',
         And: '且',
         Or: '或',
         Otherwise: '否则',
@@ -5300,7 +5378,7 @@ var Tag;
                 32: 1
             }],
         48: ['DefWeather', 0, 1],
-        53: ['Unknown', 1, 0],
+        53: ['Unknown', [1, 2], 0],
         0: ['CharOn', [0, 1], 1],
         1: ['CharOff', 1, -1],
         2: ['CharSet', [0, 1], 1],
@@ -5336,13 +5414,16 @@ var Tag;
             }],
         59: ['LoopBreak', 0, -1],
         25: ['Choose', [0, 1], 0, {
-                53: [0]
+                53: [0],
+                99: [0]
             }],
         65: ['DefOptions', 0, 1, {
-                53: [0]
+                53: [0],
+                99: [0]
             }],
-        66: ['AddOption', 2, 0],
+        66: ['AddOption', [2, 3], 0],
         67: ['DropOption', 2, -1],
+        99: ['Option', [1, 2], 0],
         23: ['Assign', 1, 1],
         30: ['Increase', 1, 1],
         68: ['Random', 1, -1],
@@ -8802,7 +8883,8 @@ var Tag;
          * 执行。
          */
         Stars.prototype.p = function (runtime) {
-            return runtime.gD().stars(this._ms, this._mp, this._mv);
+            var states = runtime.gS(), value = this.$v(states.g(this._mv)).toString();
+            return runtime.gD().stars(this._ms, this._mp, value);
         };
         return Stars;
     }(Tag.Action));
@@ -9584,6 +9666,12 @@ var Tag;
             return this._c || this._p[0];
         };
         /**
+         * 获取标签名称。
+         */
+        Option.prototype.gN = function () {
+            return 'Option';
+        };
+        /**
          * 交互逻辑。
          */
         Option.prototype.p = function (runtime) {
@@ -9599,6 +9687,44 @@ var Tag;
         Option.prototype.sK = function (key) {
             this._k = key;
             return this;
+        };
+        /**
+         * 获取萝卜币。
+         */
+        Option.prototype.gM = function () {
+            return parseInt(this._p[1], 10) || 0;
+        };
+        /**
+         * 设置是否付费信息。
+         */
+        Option.prototype.sA = function (is) {
+            this._a = is;
+            return this;
+        };
+        /**
+         * 获取是否付费信息。
+         */
+        Option.prototype.gA = function () {
+            return this._a;
+        };
+        /**
+         * 获取编号。
+         */
+        Option.prototype.gI = function () {
+            return this._i;
+        };
+        /**
+         * 恢复编号。
+         */
+        Option.prototype.i = function (id) {
+            this._i = id;
+        };
+        /**
+         * 转化为运行时（Javascript）代码。
+         */
+        Option.prototype.toJsrn = function () {
+            var clob = _super.prototype.toJsrn.call(this);
+            return this._p[1] ? clob.substr(0, clob.length - 1) + ',"' + this._i + '")' : clob;
         };
         return Option;
     }(Tag.Unknown));
@@ -9640,9 +9766,13 @@ var Tag;
          */
         Choose.prototype.p = function (runtime) {
             var _this = this;
-            var opts;
+            var opts, states = runtime.gS();
             if (this._c) {
                 opts = runtime.gS().g('$_' + this._c) || [];
+                Util.each(opts, function (option) {
+                    if ('i' in option && option.gI())
+                        option.sA(states.qp(option.gI(), option.gM()));
+                });
                 if (this._p[0])
                     Util.each(opts, function (option) {
                         option.sK(_this._p[0]);
@@ -9651,7 +9781,14 @@ var Tag;
             else {
                 opts = [];
                 Util.each(this._s, function (tag) {
-                    opts.push(Tag.Option.f(tag).sK(_this._p[0]));
+                    if ('i' in tag) {
+                        var isPay = states.qp(tag.gI(), tag.gM());
+                        tag.sA(isPay);
+                        opts.push(tag);
+                    }
+                    else {
+                        opts.push(Tag.Option.f(tag).sK(_this._p[0]));
+                    }
                 });
             }
             if (opts.length)
@@ -9960,9 +10097,16 @@ var Tag;
          * 执行。
          */
         DefOptions.prototype.p = function (runtime) {
-            var opts = [];
+            var opts = [], states = runtime.gS();
             Util.each(this._s, function (tag) {
-                opts.push(Tag.Option.f(tag));
+                if ('i' in tag) {
+                    var isPay = states.qp(tag.gI(), tag.gM());
+                    tag.sA(isPay);
+                    opts.push(tag);
+                }
+                else {
+                    opts.push(Tag.Option.f(tag));
+                }
             });
             runtime.gS().s('$_' + this._c, opts);
             return runtime;
@@ -9998,10 +10142,31 @@ var Tag;
          * 执行。
          */
         AddOption.prototype.p = function (runtime) {
-            var states = runtime.gS(), key = '$_' + this._p[0], opts = states.g(key) || [];
-            opts.push(new Tag.Option([this._p[1]], this._c || this._p[1], [], this._l));
+            var states = runtime.gS(), key = '$_' + this._p[0], opts = states.g(key) || [], params = this._p[2] ? [this._p[1], this._p[2]] : [this._p[1]], opt = new Tag.Option(params, this._c || this._p[1], [], this._l);
+            if (this._p[2])
+                opt.i(this.gI());
+            opts.push(opt);
             states.s(key, opts);
             return runtime;
+        };
+        /**
+         * 获取编号。
+         */
+        AddOption.prototype.gI = function () {
+            return this._i;
+        };
+        /**
+         * 恢复编号。
+         */
+        AddOption.prototype.i = function (id) {
+            this._i = id;
+        };
+        /**
+         * 转化为运行时（Javascript）代码。
+         */
+        AddOption.prototype.toJsrn = function () {
+            var clob = _super.prototype.toJsrn.call(this);
+            return this._p[2] ? clob.substr(0, clob.length - 1) + ',"' + this._i + '")' : clob;
         };
         return AddOption;
     }(Tag.Action));
@@ -10639,6 +10804,26 @@ var Tag;
             return this.entityTypes[fieldType] != null && this.entityTypes[fieldType] != undefined;
         };
         /**
+         * 获取实体类型值。
+         */
+        Field.prototype.gIE = function (val) {
+            if (this._s.length == 0)
+                return undefined;
+            var fieldType = null;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            if (this.entityTypes[fieldType]) {
+                if (!val)
+                    throw new E(E.STRUCT_FIELD_MISSING, this._l);
+                var obj = this._ep.q(val, this.entityTypes[fieldType], this._l);
+                return obj;
+            }
+            return undefined;
+        };
+        /**
          * 是否名称类型。
          */
         Field.prototype.iN = function () {
@@ -10707,8 +10892,7 @@ var Tag;
             else if (this.entityTypes[fieldType]) {
                 if (!val)
                     throw new E(E.STRUCT_FIELD_MISSING, this._l);
-                var obj = this._ep.q(val, this.entityTypes[fieldType], this._l);
-                return obj;
+                return val;
             }
             return val ? val : '';
         };
@@ -11473,7 +11657,7 @@ var Tag;
                     resolve(runtime);
                 };
                 runtime.dispatchEvent(new Ev.Donate({
-                    target: runtime.gS(),
+                    target: states,
                     amount: amount,
                     suc: suc,
                     fail: fail
@@ -11565,6 +11749,49 @@ var Ev;
         return Rank;
     }(Ev.Event));
     Ev.Rank = Rank;
+})(Ev || (Ev = {}));
+/**
+ * 声明（运行时）付款数据元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IPayMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）付费数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Pay.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IPayMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Pay = (function (_super) {
+        __extends(Pay, _super);
+        /**
+         * 构造函数。
+         */
+        function Pay(metas) {
+            _super.call(this, metas);
+            this.amount = metas.amount;
+            this.suc = metas.suc;
+            this.fail = metas.fail;
+            this.id = metas.id;
+        }
+        /**
+         * 获取类型。
+         */
+        Pay.prototype.gT = function () {
+            return 'pay';
+        };
+        return Pay;
+    }(Ev.Event));
+    Ev.Pay = Pay;
 })(Ev || (Ev = {}));
 /**
  * 打包所有已定义地标签组件。
@@ -11659,6 +11886,7 @@ var Ev;
 /// <reference path="_Action/_Logic/Donate.ts" />
 /// <reference path="../Ev/_Runtime/Fin.ts" />
 /// <reference path="../Ev/_Runtime/Rank.ts" />
+/// <reference path="../Ev/_Runtime/Pay.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -11866,17 +12094,24 @@ var Runtime;
             return this;
         };
         /**
-         * 设置作者、token。
+         * 设置玩家昵称。
          */
         Runtime.prototype.user = function (nickname) {
             this._nn = nickname;
             return this;
         };
         /**
-         * 获取nickname
+         * 获取玩家昵称
          */
         Runtime.prototype.nickname = function () {
             return this._nn || '您';
+        };
+        /**
+         * 获取剧情付费信息
+         */
+        Runtime.prototype.plots = function (data) {
+            this._s.lp(data);
+            return this;
         };
         /**
          * 播报当前事件。
@@ -12082,8 +12317,14 @@ var Lex;
             if (-1 == this._i)
                 return new Tag.Root(children);
             proto = eval('Tag.' + Tag.C[name]);
+            if (params.length > 1 && parent.indexOf('选择') > -1)
+                proto = eval('Tag.Option');
             tag = new proto(params, content, children, this._l[0]);
             if (tag instanceof Tag.Idable || 'Scene' == tag.gN())
+                tag.i(u());
+            if (tag instanceof Tag.Option)
+                tag.i(u());
+            if (tag instanceof Tag.AddOption && params.length > 2)
                 tag.i(u());
             return tag;
         };
@@ -12201,7 +12442,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.21.3';
+    Bigine.version = '0.22.0';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

@@ -301,7 +301,7 @@ namespace Runtime {
         }
 
         /**
-         * 设置作者、token。
+         * 设置玩家昵称。
          */
         public user(nickname: string): Runtime {
             this._nn = nickname;
@@ -309,10 +309,18 @@ namespace Runtime {
         }
 
         /**
-         * 获取nickname
+         * 获取玩家昵称
          */
         public nickname(): string {
             return this._nn || '您';
+        }
+
+        /**
+         * 获取剧情付费信息
+         */
+        public plots(data: Util.IHashTable<string> | string): Runtime {
+            this._s.lp(data);
+            return this;
         }
 
         /**

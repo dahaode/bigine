@@ -116,6 +116,7 @@ namespace Tag {
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
+        Option: '选项',
 
         And: '且',
         Or: '或',
@@ -140,7 +141,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 99
+    export var S: { [index: number]: any[] } = { // next 100
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -247,7 +248,7 @@ namespace Tag {
 
         48: ['DefWeather', 0, 1], // 名称
 
-        53: ['Unknown', 1, 0], // [标签名称] 内容
+        53: ['Unknown', [1, 2], 0], // [标签名称] 内容
 
         0: ['CharOn', [0, 1], 1], // [位置?] 人物名, 姿态?
         1: ['CharOff', 1, -1], // [人物名]
@@ -286,13 +287,16 @@ namespace Tag {
         59: ['LoopBreak', 0, -1],
 
         25: ['Choose', [0, 1], 0, { // [变量名] 选项名?
-            53: [0]
+            53: [0],
+            99: [0]
         }],
         65: ['DefOptions', 0, 1, { // 选项名
-            53: [0]
+            53: [0],
+            99: [0]
         }],
-        66: ['AddOption', 2, 0], // [选项名，值] 描述?
+        66: ['AddOption', [2, 3], 0], // [选项名，值，金钱?] 描述?
         67: ['DropOption', 2, -1], // [选项名，值]
+        99: ['Option', [1, 2], 0], // [选项名，值] 描述?
 
         23: ['Assign', 1, 1], // [变量名] 值
         30: ['Increase', 1, 1], // [变量名] 值

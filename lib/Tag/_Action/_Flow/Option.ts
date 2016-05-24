@@ -15,7 +15,17 @@ namespace Tag {
         /**
          * 关联状态名称。
          */
-        public _k: string;
+        protected _k: string;
+
+        /**
+         * 唯一编号。
+         */
+        protected _i: string;
+
+        /**
+         * 是否已付费。
+         */
+        protected _a: boolean;
 
         /**
          * 类型转换。
@@ -23,7 +33,7 @@ namespace Tag {
         public static f(tag: Unknown): Option {
             if ('Unknown' != tag.gN())
                 throw new E(E.ACT_OPTION_CAST_FAILURE, tag.gL());
-            var opt: Option = new Option([tag.$p(0)], tag.$c(), [], tag.gL());
+            let opt: Option = new Option([tag.$p(0)], tag.$c(), [], tag.gL());
             return opt;
         }
 
@@ -32,6 +42,13 @@ namespace Tag {
          */
         public gT(): string {
             return this._c || this._p[0];
+        }
+
+        /**
+         * 获取标签名称。
+         */
+        public gN(): string {
+            return 'Option';
         }
 
         /**
@@ -53,6 +70,50 @@ namespace Tag {
         public sK(key: string): Option {
             this._k = key;
             return this;
+        }
+
+        /**
+         * 获取萝卜币。
+         */
+        public gM(): number {
+            return parseInt(this._p[1], 10) || 0;
+        }
+
+        /**
+         * 设置是否付费信息。
+         */
+        public sA(is: boolean): Option {
+            this._a = is;
+            return this;
+        }
+
+        /**
+         * 获取是否付费信息。
+         */
+        public gA(): boolean {
+            return this._a;
+        }
+
+        /**
+         * 获取编号。
+         */
+        public gI(): string {
+            return this._i;
+        }
+
+        /**
+         * 恢复编号。
+         */
+        public i(id: string): void {
+            this._i = id;
+        }
+
+        /**
+         * 转化为运行时（Javascript）代码。
+         */
+        public toJsrn(): string {
+            var clob: string = super.toJsrn();
+            return this._p[1] ? clob.substr(0, clob.length - 1) + ',"' + this._i + '")' : clob;
         }
     }
 }

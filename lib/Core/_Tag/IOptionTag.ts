@@ -9,6 +9,7 @@
 
 /// <reference path="ITag.ts" />
 /// <reference path="../_Runtime/IButtonable.ts" />
+/// <reference path="../_Tag/IIdableTag.ts" />
 
 namespace Core {
     // ITag:gL()
@@ -19,10 +20,20 @@ namespace Core {
     // ITag:toJsrn()
     // ITag:gU()
     // IButtonable:p()
-    export interface IOptionTag extends ITag, IButtonable {
+    export interface IOptionTag extends ITag, IButtonable, IIdableTag {
         /**
          * 获取描述文字。
          */
         gT(): string;
+
+        /**
+         * 获取萝卜币。
+         */
+        gM(): number;
+
+        /**
+         * 获取是否已付费。
+         */
+        gA(): boolean;
     }
 }

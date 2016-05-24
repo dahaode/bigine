@@ -116,6 +116,11 @@ namespace Core {
         nickname(): string;
 
         /**
+         * 获取剧情付费信息
+         */
+        plots(data: Util.IHashTable<string> | string): IRuntime;
+
+        /**
          * 读取存档。
          */
         l(id?: string): void;

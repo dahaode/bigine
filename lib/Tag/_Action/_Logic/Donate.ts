@@ -40,7 +40,7 @@ namespace Tag {
                     };
 
                 runtime.dispatchEvent(new Ev.Donate({
-                    target: runtime.gS(),
+                    target: states,
                     amount: amount,
                     suc: suc,
                     fail: fail

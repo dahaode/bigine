@@ -15,7 +15,7 @@
  * * M - 地图
  * * c - 人物
  * * L - 加载进度条
- *     * e - 完成进度条
+ * * e - 完成进度条
  */
 namespace Runtime {
     import Util = __Bigine_Util;
@@ -98,6 +98,16 @@ namespace Runtime {
         private _vo: boolean;
 
         /**
+         * 面板主题配置集合。
+         */
+        private _pt: Util.IHashTable<Util.IHashTable<any>>;
+
+        /**
+         * 记录点击的选项。
+         */
+        private _pc: Tag.Option;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -126,6 +136,16 @@ namespace Runtime {
                 .a(this._x['c'] = new Sprite.Curtain())
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
+            this._vo = true;
+            this._ca = undefined;
+            this._pc = undefined;
+            this._i = {
+                o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
+                e: Resource.Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
+                s: Resource.Resource.g<string>(assets + 'oops.mp3', raw),
+                f: Resource.Resource.g<string>(assets + 'focus.mp3', raw),
+                c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
+            };
             this._s = {
                 b: new Audio(),
                 e: new Audio()
@@ -134,19 +154,7 @@ namespace Runtime {
             this._s['b'].loop = true;
             this._s['e'].autoplay = true;
             this._s['e']['cd'] = -1;
-            this._vo = true;
-            this._i = {
-                o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
-                e: Resource.Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
-                s: Resource.Resource.g<string>(assets + 'oops.mp3', raw),
-                s5: Resource.Resource.g<HTMLImageElement>(assets + '5stars.png', raw),
-                s4: Resource.Resource.g<HTMLImageElement>(assets + '4stars.png', raw),
-                s3: Resource.Resource.g<HTMLImageElement>(assets + '3stars.png', raw),
-                s2: Resource.Resource.g<HTMLImageElement>(assets + '2stars.png', raw),
-                s1: Resource.Resource.g<HTMLImageElement>(assets + '1star.png', raw),
-                f: Resource.Resource.g<string>(assets + 'focus.mp3', raw),
-                c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
-            };
+            this._s['b'].src = this._i['s'].l();
             this._f = {};
             this._e = [0, 0];
             this._l = (event: KeyboardEvent) => {
@@ -434,26 +442,23 @@ namespace Runtime {
          */
         public stars(rank: Core.IDirector.Stars, grade: string, value?: string): Promise<Core.IRuntime> {
             var stars: Sprite.Stars = <Sprite.Stars> this._x['sr'],
-                key: string = 's' + rank.toString(),
+                key: number = rank,
                 score: number = parseInt(value, 10) || 0;
-            return this.c([[this._i[key]]])
+            return this.lightOff()
                 .then(() => {
-                    return this.lightOff()
-                        .then(() => {
-                            this._r.dispatchEvent(new Ev.Rank({
-                                target: this._r.gE(),
-                                grade: grade,
-                                score: score
-                            }));
-                            this._x['t'].h(0);
-                            stars.u(this._i[key], this._r.nickname(), value).v();
-                            return this.lightOn();
-                        }).then(() => stars.p(new G.Delay(2000)))
-                        .then(() => this.lightOff())
-                        .then(() => {
-                            stars.h(0);
-                            return this._r;
-                        });
+                    this._r.dispatchEvent(new Ev.Rank({
+                        target: this._r.gE(),
+                        grade: grade,
+                        score: score
+                    }));
+                    this._x['t'].h(0);
+                    stars.u(key, this._r.nickname(), value).v();
+                    return this.lightOn();
+                }).then(() => stars.p(new G.Delay(2000)))
+                .then(() => this.lightOff())
+                .then(() => {
+                    stars.h(0);
+                    return this._r;
                 });
         }
 
@@ -547,8 +552,7 @@ namespace Runtime {
                     mx = parseFloat(strArr[0]);
                     my = parseFloat(strArr[1]);
                     return this.cameraZoom(mx, my, 20, -1);
-                })
-                .then((runtime: Core.IRuntime) => {    // 进入房间特效
+                }).then((runtime: Core.IRuntime) => {    // 进入房间特效
                     runtime.gS().d('.z');
                     runtime.gS().d('_z');
                     var gOld: G.Element = this._c.q('b')[0],
@@ -675,10 +679,38 @@ namespace Runtime {
                 let gChoose: Sprite.Choose = <Sprite.Choose> this._x['C'],
                     event: string = 'choose',
                     handler: () => void = () => {
-                        gChoose.removeEventListener(event, handler);
-                        gChoose.h().then(() => {
-                            resolve(this._r);
-                        });
+                        if (this._pc) {
+                            let option: Tag.Option = this._pc,
+                                amount: number = option.gA() ? 0 : option.gM();
+                            if (!amount) {
+                                option.p(this._r);
+                                gChoose.removeEventListener(event, handler);
+                                gChoose.h().then(() => {
+                                    resolve(this._r);
+                                });
+                                this._pc = undefined;
+                            } else {
+                                let states: Core.IStates = this._r.gS(),
+                                    id: string = option.gI(),
+                                    fail: () => void = () => { return; },
+                                    suc: () => void = () => {
+                                        option.p(this._r);
+                                        states.ep(id, amount);
+                                        gChoose.removeEventListener(event, handler);
+                                        gChoose.h().then(() => {
+                                            resolve(this._r);
+                                        });
+                                        this._pc = undefined;
+                                    };
+                                this._r.dispatchEvent(new Ev.Pay({
+                                    target: states,
+                                    amount: amount,
+                                    id: id,
+                                    suc: suc,
+                                    fail: fail
+                                }));
+                            }
+                        }
                     };
                 gChoose.u(options).addEventListener(event, handler);
                 this.lightOn()
@@ -693,13 +725,20 @@ namespace Runtime {
             return super.reset().then((runtime: Core.IRuntime) => {
                 var gBack: G.Element = this._c.q('b')[0],
                     gColor: G.Color = new G.Color(CanvasDirector.BOUNDS, '#000');
+                // 需要先删除旧选择再添加新选择，否则在选择处读档时，时序流中断(因为未删除监听事件)
+                this._c.e(this._x['C']);
+                this._x['C'] = <Sprite.Choose> new Sprite.Choose('', this._pt['choose'])
+                    .addEventListener('choose', (ev: Ev.Choose) => {
+                        this._pc = <Tag.Option> ev.choice;
+                    });
+                this._c.a(this._x['C'], this._x['t']);
                 this._c.a(gColor, gBack)
                     .e(gBack);
                 gColor.i('b');
                 (<G.Sprite> this._c.q('M')[0]).c();
                 (<G.Sprite> this._c.q('c')[0]).c()
                     .o(0);
-                this._ca = undefined;
+                this._pc = undefined;
                 this._x['G'].h(0);
                 this._x['W'].h(0);
                 this._x['T'].h(0);
@@ -816,17 +855,18 @@ namespace Runtime {
          */
         public cameraShake(): Promise<Core.IRuntime> {
             var gRoom: G.Image = <G.Image> this._c.q('b')[0];
-            return gRoom.p(new G.Shake(500)).then(() =>
-                super.cameraShake());
+            return gRoom.p(new G.Shake(500))
+                .then(() => super.cameraShake());
         }
 
         /**
          * 使用主题。
          */
-        public t(id: string, theme: Util.IHashTable<Util.IHashTable<any> >): CanvasDirector {
+        public t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector {
             let resources: Resource.Resource<string | HTMLImageElement>[][] = [],
                 gCurtain: Sprite.Curtain = this._x['c'],
                 slotsFromStart: boolean = false;
+            this._pt = theme;
             // 特写。
             this._c.a(this._x['G'] = <Sprite.CG> new Sprite.CG(theme['cg']), gCurtain);
             // 状态。
@@ -841,10 +881,7 @@ namespace Runtime {
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 选择。
-            this._x['C'] = <Sprite.Choose> new Sprite.Choose(id, theme['choose'])
-                .addEventListener('choose', (ev: Ev.Choose) => {
-                    ev.choice.p(this._r);
-                });
+            this._x['C'] = <Sprite.Choose> new Sprite.Choose(id, theme['choose']);
             resources.unshift(this._x['C'].l());
             this._c.a(this._x['C'], gCurtain);
             // 常驻按钮。
@@ -980,6 +1017,7 @@ namespace Runtime {
 
             // 保存评分配置
             this._c.a(this._x['sr'] = <Sprite.Stars> new Sprite.Stars(theme['stars']), gCurtain);
+            resources.push(this._x['sr'].l());
 
             // 作者
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);

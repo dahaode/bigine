@@ -32,6 +32,7 @@
  *     * `.c` - 特写名 - Tag
  *     * `.c<站位>` - 人物名 - Tag
  *     * `.z` -  房间状态 - Tag
+ *     * `.l` -  资源加载状态 - Tag
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -108,6 +109,21 @@ namespace Core {
          * 加载存档信息。
          */
         l(): Promise<IStates>;
+
+        /**
+         * 查询是否付费。
+         */
+        qp(id: string, count: number): boolean;
+
+        /**
+         * 加载付费信息。
+         */
+        lp(data: Util.IHashTable<string> | string): IStates;
+
+        /**
+         * 增加付费信息。
+         */
+        ep(id: string, count: number): IStates;
     }
 
     export namespace IStates {

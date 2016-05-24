@@ -33,10 +33,21 @@ namespace Sprite {
         constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
             let w: number = 1280,
                 h: number = 720,
+                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+                rr: typeof Resource.Resource = Resource.Resource,
+                url: string = '//s.dahao.de/theme/',
                 _name: Util.IHashTable<any> = theme['name'],
                 _value: Util.IHashTable<any> = theme['value'],
+                _pic: Util.IHashTable<any> = theme['pic'],
                 center: G.Text.Align = G.Text.Align.Center;
             super(0, 0, w, h);
+            this._rr = [
+                rr.g<HTMLImageElement>(url + _pic['1'], raw),
+                rr.g<HTMLImageElement>(url + _pic['2'], raw),
+                rr.g<HTMLImageElement>(url + _pic['3'], raw),
+                rr.g<HTMLImageElement>(url + _pic['4'], raw),
+                rr.g<HTMLImageElement>(url + _pic['5'], raw)
+            ];
             // 渲染评分初始样式
             (<Stars> this.o(0))
                 .a(this._xs = new G.Sprite(<G.IBounds> { x: 0, y: 0, w: w, h: h }))
@@ -47,8 +58,8 @@ namespace Sprite {
         /**
          * 设置名称、数据值。
          */
-        public u(res: Resource.Resource<HTMLImageElement>, name: string, value: string): Stars {
-            this._xs.c().a(new G.Image(res.o(), { x: 0, y: 0, w: 1280, h: 720 }));
+        public u(key: number, name: string, value: string): Stars {
+            this._xs.c().a(new G.Image(this._rr[key].o(), { x: 0, y: 0, w: 1280, h: 720 }));
             this._nt.c().a(new G.TextPhrase(name));
             this._vt.c().a(new G.TextPhrase(value));
             return this;

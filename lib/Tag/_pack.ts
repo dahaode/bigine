@@ -92,3 +92,4 @@
 /// <reference path="_Action/_Logic/Donate.ts" />
 /// <reference path="../Ev/_Runtime/Fin.ts" />
 /// <reference path="../Ev/_Runtime/Rank.ts" />
+/// <reference path="../Ev/_Runtime/Pay.ts" />

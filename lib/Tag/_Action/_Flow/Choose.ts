@@ -36,9 +36,14 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            var opts: Option[];
+            var opts: Option[],
+                states: Core.IStates = runtime.gS();
             if (this._c) {
                 opts = runtime.gS().g('$_' + this._c) || [];
+                Util.each(opts, (option: Option) => {
+                    if ('i' in option && option.gI())
+                        option.sA(states.qp(option.gI(), option.gM()));
+                });
                 if (this._p[0])
                     Util.each(opts, (option: Option) => {
                         option.sK(this._p[0]);
@@ -46,7 +51,13 @@ namespace Tag {
             } else {
                 opts = [];
                 Util.each(this._s, (tag: Unknown) => {
-                    opts.push(Option.f(tag).sK(this._p[0]));
+                    if ('i' in tag) {
+                        let isPay: boolean = states.qp((<Option> tag).gI(), (<Option> tag).gM());
+                        (<Option> tag).sA(isPay);
+                        opts.push(<Option> tag);
+                    } else {
+                        opts.push(Option.f(tag).sK(this._p[0]));
+                    }
                 });
             }
             if (opts.length)
