@@ -67,6 +67,13 @@ namespace Runtime {
         }
 
         /**
+         * 加载动画。
+         */
+        public Load(): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
          * 开始动画。
          */
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {

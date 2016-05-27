@@ -127,6 +127,7 @@ declare namespace __Bigine {
     namespace Core {
         interface IDirector {
             c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
+            Load(): Promise<IRuntime>;
             OP(start: boolean, title: string, author: string): Promise<IRuntime>;
             ED(): Promise<IRuntime>;
             FAIL(): Promise<IRuntime>;
@@ -416,6 +417,7 @@ declare namespace __Bigine {
             protected _o: boolean;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
+            Load(): Promise<Core.IRuntime>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             FAIL(): Promise<Core.IRuntime>;
@@ -869,8 +871,10 @@ declare namespace __Bigine {
             private _vo;
             private _pt;
             private _pc;
+            private _lo;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
+            Load(): Promise<Core.IRuntime>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             protected $s(): Promise<Core.IRuntime>;

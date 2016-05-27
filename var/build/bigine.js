@@ -768,6 +768,7 @@ var Runtime;
                                 entity.r(_this);
                             });
                         });
+                        runtime.gS().s('.l', true);
                         resolve();
                     });
                     if (!res)
@@ -1363,6 +1364,12 @@ var Runtime;
          */
         Director.prototype.c = function (resources) {
             return Resource.Prefecher.c(resources, this._r.gL());
+        };
+        /**
+         * 加载动画。
+         */
+        Director.prototype.Load = function () {
+            return this._p;
         };
         /**
          * 开始动画。
@@ -4011,6 +4018,7 @@ var Runtime;
             this._i = {
                 o: Resource.Resource.g(assets + 'logo.png', raw),
                 e: Resource.Resource.g(assets + 'thx.png', raw),
+                l: Resource.Resource.g(assets + 'loading.png', raw),
                 s: Resource.Resource.g(assets + 'oops.mp3', raw),
                 f: Resource.Resource.g(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g(assets + 'click.mp3', raw)
@@ -4026,6 +4034,7 @@ var Runtime;
             this._s['b'].src = this._i['s'].l();
             this._f = {};
             this._e = [0, 0];
+            this._lo = [undefined, undefined];
             this._l = function (event) {
                 if ((event.keyCode == 13 || event.keyCode == 17) && !_this._a && _this._t)
                     _this._t.h();
@@ -4061,11 +4070,37 @@ var Runtime;
             return Resource.Prefecher.c(resources, this._r.gL());
         };
         /**
+         * 加载动画。
+         */
+        CanvasDirector.prototype.Load = function () {
+            var _this = this;
+            var loaded = !!this._r.gS().g('.l');
+            if (!loaded && !this._lo[0]) {
+                this._c.a(this._lo[0] = new G.Image(this._i['l'].o(), CanvasDirector.BOUNDS));
+                var speed_1 = 0.05;
+                this._lo[1] = setInterval(function () {
+                    var now = _this._lo[0].gO(), next;
+                    speed_1 = (now >= 1 || now <= 0.4) ? (speed_1 * -1) : speed_1;
+                    next = now + speed_1;
+                    _this._lo[0].o(next);
+                }, 100);
+            }
+            return _super.prototype.Load.call(this);
+        };
+        /**
          * 开始动画。
          */
         CanvasDirector.prototype.OP = function (start, title, author) {
             var _this = this;
             this._x['s'].u(title, Core.IRuntime.Series.Rest == this._fs);
+            if (this._lo[1]) {
+                clearInterval(this._lo[1]);
+                this._lo[1] = undefined;
+            }
+            if (this._lo[0]) {
+                this._c.e(this._lo[0]);
+                this._lo = undefined;
+            }
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
@@ -12017,6 +12052,7 @@ var Runtime;
          * 播放。
          */
         Runtime.prototype.play = function () {
+            this._d.Load();
             if (this._fp)
                 return this;
             this._fp = true;
@@ -12442,7 +12478,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.22.0';
+    Bigine.version = '0.22.1';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

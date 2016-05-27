@@ -216,6 +216,7 @@ namespace Runtime {
          * 播放。
          */
         public play(): Runtime {
+            this._d.Load();
             if (this._fp)
                 return this;
             this._fp = true;

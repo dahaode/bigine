@@ -108,6 +108,11 @@ namespace Runtime {
         private _pc: Tag.Option;
 
         /**
+         * loading图片，setInterval的ID。
+         */
+        private _lo: [G.Image, number];
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -142,6 +147,7 @@ namespace Runtime {
             this._i = {
                 o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
                 e: Resource.Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
+                l: Resource.Resource.g<HTMLImageElement>(assets + 'loading.png', raw),
                 s: Resource.Resource.g<string>(assets + 'oops.mp3', raw),
                 f: Resource.Resource.g<string>(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
@@ -157,6 +163,7 @@ namespace Runtime {
             this._s['b'].src = this._i['s'].l();
             this._f = {};
             this._e = [0, 0];
+            this._lo = [undefined, undefined];
             this._l = (event: KeyboardEvent) => {
                 if ((event.keyCode == 13 || event.keyCode == 17) && !this._a && this._t)
                     this._t.h();
@@ -196,10 +203,37 @@ namespace Runtime {
         }
 
         /**
+         * 加载动画。
+         */
+        public Load(): Promise<Core.IRuntime> {
+            let loaded: boolean = !!this._r.gS().g('.l');
+            if (!loaded && !this._lo[0]) {
+                this._c.a(this._lo[0] = new G.Image(this._i['l'].o(), CanvasDirector.BOUNDS));
+                let speed: number = 0.05;
+                this._lo[1] = setInterval(() => {
+                    let now: number = this._lo[0].gO(),
+                        next: number;
+                    speed = (now >= 1 || now <= 0.4) ? (speed * -1) : speed;
+                    next = now + speed;
+                    this._lo[0].o(next);
+                }, 100);
+            }
+            return super.Load();
+        }
+
+        /**
          * 开始动画。
          */
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
             (<Sprite.Start> this._x['s']).u(title, Core.IRuntime.Series.Rest == this._fs);
+            if (this._lo[1]) {
+                clearInterval(this._lo[1]);
+                this._lo[1] = undefined;
+            }
+            if (this._lo[0]) {
+                this._c.e(this._lo[0]);
+                this._lo = undefined;
+            }
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
