@@ -286,6 +286,13 @@ namespace Runtime {
         }
 
         /**
+         * 是否准备就绪标识。
+         */
+        public isReady(): boolean {
+            return this._fr;
+        }
+
+        /**
          * 设置作品标题。
          */
         public title(title: string): Runtime {

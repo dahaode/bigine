@@ -37,6 +37,11 @@ namespace Sprite {
         private _bs: Util.IHashTable<G.IBounds>;
 
         /**
+         * setInterval的ID。
+         */
+        private _si: number;
+
+        /**
          * 构造函数。
          */
         constructor(id: string, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>) {
@@ -47,20 +52,23 @@ namespace Sprite {
                 url: string = '//s.dahao.de/theme/',
                 _vback: Util.IHashTable<any> = voiceover['back'],
                 _vtext: Util.IHashTable<any> = voiceover['text'],
+                _vcurs: Util.IHashTable<any> = voiceover['cursor'],
                 _mback: Util.IHashTable<any> = monolog['back'],
                 _mavat: Util.IHashTable<any> = monolog['avatar'],
                 _mname: Util.IHashTable<any> = monolog['name'],
                 _mtext: Util.IHashTable<any> = monolog['text'],
+                _mcurs: Util.IHashTable<any> = monolog['cursor'],
                 _sback: Util.IHashTable<any> = speak['back'],
                 _savat: Util.IHashTable<any> = speak['avatar'],
                 _sname: Util.IHashTable<any> = speak['name'],
                 _stext: Util.IHashTable<any> = speak['text'],
+                _scurs: Util.IHashTable<any> = speak['cursor'],
                 left: G.Text.Align = G.Text.Align.Left;
             super(0, 0, w, h);
             this._rr = [
                 rr.g<HTMLImageElement>(url + _vback['i'], raw),
                 rr.g<HTMLImageElement>(url + _mback['i'], raw),
-                rr.g<HTMLImageElement>(url + _sback['i'], raw)
+                rr.g<HTMLImageElement>(url + _sback['i'], raw),
             ];
             this._x = {};
             this._c = {
@@ -72,6 +80,7 @@ namespace Sprite {
                 m: <G.IBounds> _mavat,
                 s: <G.IBounds> _savat
             };
+            this._si = undefined;
             (<Words> this.o(0))
                 .a(this._x['v'] = new G.Sprite(<G.IBounds> _vback)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _vback, true))
@@ -102,6 +111,21 @@ namespace Sprite {
                         .ts(_stext['ss'], _stext['ss'], _stext['ss'])
                     ).o(0)
                 );
+            if (_vcurs) {
+                let vo: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(url + _vcurs['i'], raw);
+                this._rr.push(vo);
+                (<G.Sprite> this._x['v']).a(this._x['vc'] = new G.Image(vo.o(), <G.IBounds> _vcurs, true));
+            }
+            if (_mcurs) {
+                let mo: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(url + _mcurs['i'], raw);
+                this._rr.push(mo);
+                (<G.Sprite> this._x['m']).a(this._x['mc'] = new G.Image(mo.o(), <G.IBounds> _mcurs, true));
+            }
+            if (_scurs) {
+                let so: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(url + _scurs['i'], raw);
+                this._rr.push(so);
+                (<G.Sprite> this._x['s']).a(this._x['sc'] = new G.Image(so.o(), <G.IBounds> _scurs, true));
+            }
         }
 
         /**
@@ -120,6 +144,10 @@ namespace Sprite {
                 (<G.Sprite> this._x['v']).o(0);
                 (<G.Sprite> this._x['m']).o(0);
                 (<G.Sprite> this._x['s']).o(0);
+                if (this._si) {
+                    clearInterval(this._si);
+                    this._si = undefined;
+                }
                 return this;
             });
         }
@@ -128,11 +156,17 @@ namespace Sprite {
          * 旁白。
          */
         public vv(clob: string, auto: boolean = false): Promise<Words> {
-            let text: G.Text = <G.Text> this._x['vt'];
+            let text: G.Text = <G.Text> this._x['vt'],
+                image: G.Image = <G.Image> this._x['vc'];
             this.$w(<G.Text> text.o(0), clob, this._c['v']);
             (<G.Sprite> this._x['v']).o(1);
-            return this.$v(text, auto).then(() => {
+            if (image) image.o(0);
+            return this.$v(text, auto, image).then(() => {
                 (<G.Sprite> this._x['v']).o(0);
+                if (this._si) {
+                    clearInterval(this._si);
+                    this._si = undefined;
+                }
                 return this;
             });
         }
@@ -141,15 +175,21 @@ namespace Sprite {
          * 独白。
          */
         public vm(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto: boolean = false): Promise<Words> {
-            let text: G.Text = <G.Text> this._x['mt'];
+            let text: G.Text = <G.Text> this._x['mt'],
+                image: G.Image = <G.Image> this._x['mc'];
             this.$w(<G.Text> text.o(0), clob, this._c['m']);
             (<G.Sprite> this._x['ma'])
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['m'], true));
             (<G.TextPhrase> this._x['mn']).t(name);
             (<G.Sprite> this._x['m']).o(1);
-            return this.$v(text, auto).then(() => {
+            if (image) image.o(0);
+            return this.$v(text, auto, image).then(() => {
                 (<G.Sprite> this._x['m']).o(0);
+                if (this._si) {
+                    clearInterval(this._si);
+                    this._si = undefined;
+                }
                 return this;
             });
         }
@@ -158,15 +198,21 @@ namespace Sprite {
          * 对白。
          */
         public vs(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto: boolean = false): Promise<Words> {
-            let text: G.Text = <G.Text> this._x['st'];
+            let text: G.Text = <G.Text> this._x['st'],
+                image: G.Image = <G.Image> this._x['sc'];
             this.$w(<G.Text> text.o(0), clob, this._c['s']);
             (<G.Sprite> this._x['sa'])
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['s'], true));
             (<G.TextPhrase> this._x['sn']).t(name);
             (<G.Sprite> this._x['s']).o(1);
-            return this.$v(text, auto).then(() => {
+            if (image) image.o(0);
+            return this.$v(text, auto, image).then(() => {
                 (<G.Sprite> this._x['s']).o(0);
+                if (this._si) {
+                    clearInterval(this._si);
+                    this._si = undefined;
+                }
                 return this;
             });
         }
@@ -174,7 +220,7 @@ namespace Sprite {
         /**
          * 显示内容文字。
          */
-        private $v(text: G.Text, auto: boolean): Promise<G.Element> {
+        private $v(text: G.Text, auto: boolean, image: G.Image): Promise<G.Element> {
             this.o(1);
             return new Promise<void>((resolve: () => void) => {
                 let aType: G.Type = new G.Type(1),
@@ -213,6 +259,13 @@ namespace Sprite {
                 } else {
                     animation = new G.WaitForClick();
                     target = this;
+                    if (image) {
+                        image.o(1);
+                        this._si = setInterval(() => {
+                            let next: number = image.gO() == 1 ? 0 : 1;
+                            image.o(next);
+                        }, 500);
+                    }
                 }
                 this._h = animation;
                 this.dispatchEvent(new Ev.WordsAnimation({

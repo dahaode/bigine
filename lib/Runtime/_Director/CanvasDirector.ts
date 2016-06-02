@@ -232,7 +232,7 @@ namespace Runtime {
             }
             if (this._lo[0]) {
                 this._c.e(this._lo[0]);
-                this._lo = undefined;
+                this._lo[0] = undefined;
             }
             return this.c([[this._i['o']]])
                 .then(() => this.reset())

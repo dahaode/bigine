@@ -560,12 +560,13 @@ declare namespace __Bigine {
             private _c;
             private _h;
             private _bs;
+            private _si;
             constructor(id: string, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>);
             h(duration?: number): Promise<Words>;
             vv(clob: string, auto?: boolean): Promise<Words>;
             vm(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
             vs(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
-            private $v(text, auto);
+            private $v(text, auto, image);
         }
     }
     namespace Core {
@@ -2008,6 +2009,7 @@ declare namespace __Bigine {
             auto(auto?: boolean): boolean;
             volume(volume?: number): number;
             isPlaying(): boolean;
+            isReady(): boolean;
             title(title: string): Runtime;
             author(title: string): Runtime;
             user(nickname: string): Runtime;

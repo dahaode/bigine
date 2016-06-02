@@ -2060,12 +2060,12 @@ var Sprite;
          * 构造函数。
          */
         function Words(id, voiceover, monolog, speak) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _vback = voiceover['back'], _vtext = voiceover['text'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mtext = monolog['text'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _stext = speak['text'], left = G.Text.Align.Left;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _vback = voiceover['back'], _vtext = voiceover['text'], _vcurs = voiceover['cursor'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mtext = monolog['text'], _mcurs = monolog['cursor'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _stext = speak['text'], _scurs = speak['cursor'], left = G.Text.Align.Left;
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(url + _vback['i'], raw),
                 rr.g(url + _mback['i'], raw),
-                rr.g(url + _sback['i'], raw)
+                rr.g(url + _sback['i'], raw),
             ];
             this._x = {};
             this._c = {
@@ -2077,6 +2077,7 @@ var Sprite;
                 m: _mavat,
                 s: _savat
             };
+            this._si = undefined;
             this.o(0)
                 .a(this._x['v'] = new G.Sprite(_vback)
                 .a(new G.Image(this._rr[0].o(), _vback, true))
@@ -2099,6 +2100,21 @@ var Sprite;
                 .a(this._x['sn'] = new G.TextPhrase())).a(this._x['st'] = new G.Text(_stext, _stext['s'], _stext['lh'], left, true)
                 .tc(_stext['c'])
                 .ts(_stext['ss'], _stext['ss'], _stext['ss'])).o(0));
+            if (_vcurs) {
+                var vo = rr.g(url + _vcurs['i'], raw);
+                this._rr.push(vo);
+                this._x['v'].a(this._x['vc'] = new G.Image(vo.o(), _vcurs, true));
+            }
+            if (_mcurs) {
+                var mo = rr.g(url + _mcurs['i'], raw);
+                this._rr.push(mo);
+                this._x['m'].a(this._x['mc'] = new G.Image(mo.o(), _mcurs, true));
+            }
+            if (_scurs) {
+                var so = rr.g(url + _scurs['i'], raw);
+                this._rr.push(so);
+                this._x['s'].a(this._x['sc'] = new G.Image(so.o(), _scurs, true));
+            }
         }
         /**
          * 隐藏。
@@ -2117,6 +2133,10 @@ var Sprite;
                 _this._x['v'].o(0);
                 _this._x['m'].o(0);
                 _this._x['s'].o(0);
+                if (_this._si) {
+                    clearInterval(_this._si);
+                    _this._si = undefined;
+                }
                 return _this;
             });
         };
@@ -2126,11 +2146,17 @@ var Sprite;
         Words.prototype.vv = function (clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
-            var text = this._x['vt'];
+            var text = this._x['vt'], image = this._x['vc'];
             this.$w(text.o(0), clob, this._c['v']);
             this._x['v'].o(1);
-            return this.$v(text, auto).then(function () {
+            if (image)
+                image.o(0);
+            return this.$v(text, auto, image).then(function () {
                 _this._x['v'].o(0);
+                if (_this._si) {
+                    clearInterval(_this._si);
+                    _this._si = undefined;
+                }
                 return _this;
             });
         };
@@ -2140,15 +2166,21 @@ var Sprite;
         Words.prototype.vm = function (avatar, name, clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
-            var text = this._x['mt'];
+            var text = this._x['mt'], image = this._x['mc'];
             this.$w(text.o(0), clob, this._c['m']);
             this._x['ma']
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['m'], true));
             this._x['mn'].t(name);
             this._x['m'].o(1);
-            return this.$v(text, auto).then(function () {
+            if (image)
+                image.o(0);
+            return this.$v(text, auto, image).then(function () {
                 _this._x['m'].o(0);
+                if (_this._si) {
+                    clearInterval(_this._si);
+                    _this._si = undefined;
+                }
                 return _this;
             });
         };
@@ -2158,22 +2190,28 @@ var Sprite;
         Words.prototype.vs = function (avatar, name, clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
-            var text = this._x['st'];
+            var text = this._x['st'], image = this._x['sc'];
             this.$w(text.o(0), clob, this._c['s']);
             this._x['sa']
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['s'], true));
             this._x['sn'].t(name);
             this._x['s'].o(1);
-            return this.$v(text, auto).then(function () {
+            if (image)
+                image.o(0);
+            return this.$v(text, auto, image).then(function () {
                 _this._x['s'].o(0);
+                if (_this._si) {
+                    clearInterval(_this._si);
+                    _this._si = undefined;
+                }
                 return _this;
             });
         };
         /**
          * 显示内容文字。
          */
-        Words.prototype.$v = function (text, auto) {
+        Words.prototype.$v = function (text, auto, image) {
             var _this = this;
             this.o(1);
             return new Promise(function (resolve) {
@@ -2212,6 +2250,13 @@ var Sprite;
                 else {
                     animation = new G.WaitForClick();
                     target = _this;
+                    if (image) {
+                        image.o(1);
+                        _this._si = setInterval(function () {
+                            var next = image.gO() == 1 ? 0 : 1;
+                            image.o(next);
+                        }, 500);
+                    }
                 }
                 _this._h = animation;
                 _this.dispatchEvent(new Ev.WordsAnimation({
@@ -4099,7 +4144,7 @@ var Runtime;
             }
             if (this._lo[0]) {
                 this._c.e(this._lo[0]);
-                this._lo = undefined;
+                this._lo[0] = undefined;
             }
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
@@ -12116,6 +12161,12 @@ var Runtime;
             return this._fp;
         };
         /**
+         * 是否准备就绪标识。
+         */
+        Runtime.prototype.isReady = function () {
+            return this._fr;
+        };
+        /**
          * 设置作品标题。
          */
         Runtime.prototype.title = function (title) {
@@ -12478,7 +12529,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.22.1';
+    Bigine.version = '0.22.2';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map
