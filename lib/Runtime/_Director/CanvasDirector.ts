@@ -712,10 +712,17 @@ namespace Runtime {
                 };
                 let gChoose: Sprite.Choose = <Sprite.Choose> this._x['C'],
                     event: string = 'choose',
+                    states: Core.IStates = this._r.gS(),
                     handler: () => void = () => {
                         if (this._pc) {
                             let option: Tag.Option = this._pc,
-                                amount: number = option.gA() ? 0 : option.gM();
+                                isPay: boolean,
+                                amount: number;
+                            if (option.gI()) {
+                                isPay = states.qp(option.gI(), option.gM());
+                                option.sA(isPay);
+                            }
+                            amount = option.gA() ? 0 : option.gM();
                             if (!amount) {
                                 option.p(this._r);
                                 gChoose.removeEventListener(event, handler);
@@ -724,8 +731,7 @@ namespace Runtime {
                                 });
                                 this._pc = undefined;
                             } else {
-                                let states: Core.IStates = this._r.gS(),
-                                    id: string = option.gI(),
+                                let id: string = option.gI(),
                                     fail: () => void = () => { return; },
                                     suc: () => void = () => {
                                         option.p(this._r);

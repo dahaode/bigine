@@ -4584,9 +4584,14 @@ var Runtime;
                         reject(error);
                     });
                 };
-                var gChoose = _this._x['C'], event = 'choose', handler = function () {
+                var gChoose = _this._x['C'], event = 'choose', states = _this._r.gS(), handler = function () {
                     if (_this._pc) {
-                        var option_1 = _this._pc, amount_1 = option_1.gA() ? 0 : option_1.gM();
+                        var option_1 = _this._pc, isPay = void 0, amount_1;
+                        if (option_1.gI()) {
+                            isPay = states.qp(option_1.gI(), option_1.gM());
+                            option_1.sA(isPay);
+                        }
+                        amount_1 = option_1.gA() ? 0 : option_1.gM();
                         if (!amount_1) {
                             option_1.p(_this._r);
                             gChoose.removeEventListener(event, handler);
@@ -4596,9 +4601,9 @@ var Runtime;
                             _this._pc = undefined;
                         }
                         else {
-                            var states_1 = _this._r.gS(), id_1 = option_1.gI(), fail = function () { return; }, suc = function () {
+                            var id_1 = option_1.gI(), fail = function () { return; }, suc = function () {
                                 option_1.p(_this._r);
-                                states_1.ep(id_1, amount_1);
+                                states.ep(id_1, amount_1);
                                 gChoose.removeEventListener(event, handler);
                                 gChoose.h().then(function () {
                                     resolve(_this._r);
@@ -4606,7 +4611,7 @@ var Runtime;
                                 _this._pc = undefined;
                             };
                             _this._r.dispatchEvent(new Ev.Pay({
-                                target: states_1,
+                                target: states,
                                 amount: amount_1,
                                 id: id_1,
                                 suc: suc,
@@ -12529,7 +12534,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.22.2';
+    Bigine.version = '0.22.3';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map
