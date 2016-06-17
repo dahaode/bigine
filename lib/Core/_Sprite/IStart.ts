@@ -10,10 +10,12 @@
 /// <reference path="ISprite.ts" />
 
 namespace Core {
+	import G = __Bigine_C2D;
+
     export interface IStart extends ISprite {
         /**
          * 更新作品标题。
          */
-        u(title: string, series: boolean): IStart;
+        u(title: string, series: boolean, stage: G.Stage): IStart;
     }
 }

@@ -72,7 +72,8 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
-                value: string = this.$v(states.g(this._mv)).toString();
+                star: any = states.g(this._mv),
+                value: string = star ? this.$v(star).toString() : '0';
             return runtime.gD().stars(this._ms, this._mp, value);
         }
     }

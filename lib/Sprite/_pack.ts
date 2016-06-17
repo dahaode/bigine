@@ -22,3 +22,4 @@
 /// <reference path="SeriesSlots.ts" />
 /// <reference path="Set.ts" />
 /// <reference path="Stars.ts" />
+/// <reference path="Loading.ts" />

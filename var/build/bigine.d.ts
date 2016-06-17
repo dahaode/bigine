@@ -127,7 +127,7 @@ declare namespace __Bigine {
     namespace Core {
         interface IDirector {
             c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
-            Load(): Promise<IRuntime>;
+            Load(loaded: boolean): Promise<IRuntime>;
             OP(start: boolean, title: string, author: string): Promise<IRuntime>;
             ED(): Promise<IRuntime>;
             FAIL(): Promise<IRuntime>;
@@ -417,7 +417,7 @@ declare namespace __Bigine {
             protected _o: boolean;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
-            Load(): Promise<Core.IRuntime>;
+            Load(loaded: boolean): Promise<Core.IRuntime>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             FAIL(): Promise<Core.IRuntime>;
@@ -494,7 +494,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface IStart extends ISprite {
-            u(title: string, series: boolean): IStart;
+            u(title: string, series: boolean, stage: G.Stage): IStart;
         }
     }
     namespace Ev {
@@ -531,8 +531,12 @@ declare namespace __Bigine {
         class Start extends Sprite implements Core.IStart {
             private _x;
             private _y;
+            private _ke;
+            private _bn;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
-            u(title: string, series: boolean): Start;
+            u(title: string, series: boolean, stage: G.Stage): Start;
+            protected ev(series: boolean, stage: G.Stage): void;
+            h(duration?: number): Promise<Sprite>;
         }
     }
     namespace Core {
@@ -761,7 +765,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface IChoose extends ISprite {
-            u(options: IOptionTag[]): IChoose;
+            u(options: IOptionTag[], stage: G.Stage): IChoose;
         }
     }
     namespace Ev {
@@ -779,8 +783,13 @@ declare namespace __Bigine {
     namespace Sprite {
         class Choose extends Sprite implements Core.IChoose {
             private _c;
+            private _bn;
+            private _bi;
+            private _ke;
             constructor(id: string, theme: Util.IHashTable<any>);
-            u(options: Core.IOptionTag[]): Choose;
+            u(options: Core.IOptionTag[], stage: G.Stage): Choose;
+            protected ev(options: Core.IOptionTag[], stage: G.Stage): void;
+            h(duration?: number): Promise<Sprite>;
         }
     }
     namespace Sprite {
@@ -854,6 +863,17 @@ declare namespace __Bigine {
             u(key: number, name: string, value: string): Stars;
         }
     }
+    namespace Sprite {
+        class Loading extends Sprite {
+            private _x;
+            private _ws;
+            private _gi;
+            private _si;
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            u(): Loading;
+            h(duration?: number): Promise<Sprite>;
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;
@@ -872,10 +892,10 @@ declare namespace __Bigine {
             private _vo;
             private _pt;
             private _pc;
-            private _lo;
+            private _ps;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
-            Load(): Promise<Core.IRuntime>;
+            Load(loaded: boolean): Promise<Core.IRuntime>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             protected $s(): Promise<Core.IRuntime>;
@@ -2003,6 +2023,7 @@ declare namespace __Bigine {
             gS(): States;
             gD(): Director;
             play(): Runtime;
+            protected playing(): Runtime;
             replay(): Runtime;
             destroy(): Promise<Runtime>;
             fix(): void;
