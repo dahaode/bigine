@@ -768,7 +768,6 @@ var Runtime;
                                 entity.r(_this);
                             });
                         });
-                        runtime.gS().s('.l', true);
                         resolve();
                     });
                     if (!res)
@@ -1368,7 +1367,7 @@ var Runtime;
         /**
          * 加载动画。
          */
-        Director.prototype.Load = function () {
+        Director.prototype.Load = function (loaded) {
             return this._p;
         };
         /**
@@ -1957,6 +1956,8 @@ var Sprite;
                 rr.g(url + _load['ih'], raw)
             ];
             this._y = {};
+            this._bn =
+                this._ke = undefined;
             this.o(0)
                 .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
                 .a(this._y['n'] = new G.Button(_new)
@@ -1966,7 +1967,7 @@ var Sprite;
                 .b(function () {
                 _this.dispatchEvent(new Ev.StartSeries({ target: _this }));
             }, new G.Image(this._rr[4].o(), _series, true), new G.Image(this._rr[3].o(), _series, true))
-                .o(0)).a(new G.Button(_load)
+                .o(0)).a(this._y['l'] = new G.Button(_load)
                 .b(function () {
                 _this.dispatchEvent(new Ev.StartLoad({ target: _this }));
             }, new G.Image(this._rr[6].o(), _load, true), new G.Image(this._rr[5].o(), _load, true))).a(new G.Text(_title, _title['s'], _title['lh'], this.$a(_title['a']))
@@ -1976,14 +1977,78 @@ var Sprite;
         /**
          * 设置名称。
          */
-        Start.prototype.u = function (title, series) {
+        Start.prototype.u = function (title, series, stage) {
             if (title)
                 this._x.t(title);
             if (series) {
                 this._y['n'].o(0);
                 this._y['s'].o(1);
             }
+            this.ev(series, stage);
             return this;
+        };
+        /**
+         * 添加按键事件。
+         */
+        Start.prototype.ev = function (series, stage) {
+            var _this = this;
+            this._ke = function (event) {
+                var old = _this._bn;
+                switch (event.keyCode) {
+                    case 37:
+                        _this._bn = series ? _this._y['s'] : _this._y['n'];
+                        break;
+                    case 39:
+                        _this._bn = _this._y['l'];
+                        break;
+                    case 13:
+                        if (_this._bn == _this._y['n']) {
+                            _this.dispatchEvent(new Ev.StartNew({ target: _this }));
+                        }
+                        else if (_this._bn == _this._y['s']) {
+                            _this.dispatchEvent(new Ev.StartSeries({ target: _this }));
+                        }
+                        else if (_this._bn == _this._y['l']) {
+                            _this.dispatchEvent(new Ev.StartLoad({ target: _this }));
+                        }
+                        return;
+                }
+                if (_this._bn) {
+                    var bound = _this._bn.gB();
+                    stage.$s(bound.x, bound.y);
+                    if (old != undefined && old != _this._bn) {
+                        old.dispatchEvent(new G.SpriteBlurEvent({
+                            target: old,
+                            x: bound.x,
+                            y: bound.y,
+                            from: undefined,
+                            fromX: 0,
+                            fromY: 0,
+                            stage: stage
+                        }));
+                    }
+                    if (old != _this._bn) {
+                        _this._bn.dispatchEvent(new G.SpriteFocusEvent({
+                            target: _this._bn,
+                            x: bound.x,
+                            y: bound.y,
+                            from: undefined,
+                            fromX: 0,
+                            fromY: 0,
+                            stage: stage
+                        }));
+                    }
+                }
+            };
+            window.addEventListener('keydown', this._ke);
+        };
+        /**
+         * 隐藏。
+         */
+        Start.prototype.h = function (duration) {
+            window.removeEventListener('keydown', this._ke);
+            this._bn = undefined;
+            return _super.prototype.h.call(this, duration);
         };
         return Start;
     }(Sprite.Sprite));
@@ -3520,28 +3585,35 @@ var Sprite;
                 rr.g(url + theme['radish']['i'], raw)
             ];
             this._c = theme;
+            this._bn = [];
+            this._bi =
+                this._ke = undefined;
             this.o(0);
         }
         /**
          * 配置。
          */
-        Choose.prototype.u = function (options) {
+        Choose.prototype.u = function (options, stage) {
             var _this = this;
             var margin = this._c['m'], _back = this._c['back'], _text = this._c['text'], _count = this._c['count'], _radish = this._c['radish'], opts = options.slice(0, 6), x = 0 | (1280 - _back['w']) / 2, y = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
             this.c();
+            this._bn = [];
+            this._bi = undefined;
             Util.each(options.slice(0, 6), function (option) {
                 var text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['s'], _text['lh'], G.Text.Align.Center)
                     .tc(_text['c'])
                     .ts(_text['ss']);
                 var money = option.gA() ? 0 : option.gM();
-                _this.$w(text, option.gT(), _text['ch']);
-                _this.a(new G.Button(x, y, _back['w'], _back['h'])
+                var btn = new G.Button(x, y, _back['w'], _back['h'])
                     .b(function () {
                     _this.dispatchEvent(new Ev.Choose({
                         target: _this,
                         choice: option
                     }));
-                }, new G.Image(_this._rr[1].o(), x, y, _back['w'], _back['h'], true), new G.Image(_this._rr[0].o(), x, y, _back['w'], _back['h'], true))).a(text);
+                }, new G.Image(_this._rr[1].o(), x, y, _back['w'], _back['h'], true), new G.Image(_this._rr[0].o(), x, y, _back['w'], _back['h'], true));
+                _this._bn.push(btn);
+                _this.$w(text, option.gT(), _text['ch']);
+                _this.a(btn).a(text);
                 if (money) {
                     var xC = x + _text['x'] + _text['w'] - _count['w'], yC = y + _text['y'] + 0.5 * _back['h'], xR = x + _text['x'] + _text['w'] - _count['w'] - _radish['w'] - 10, yR = y + _text['y'] + 0.5 * (_back['h'] - _radish['h']), count = new G.Text(xC, yC, _count['w'], _count['h'], _count['s'], _count['lh'], G.Text.Align.Left)
                         .tc(_count['c'])
@@ -3552,7 +3624,80 @@ var Sprite;
                 }
                 y += _back['h'] + margin;
             });
+            this.ev(options, stage);
             return this;
+        };
+        /**
+         * 添加按键事件。
+         */
+        Choose.prototype.ev = function (options, stage) {
+            var _this = this;
+            this._ke = function (event) {
+                var old = _this._bi;
+                switch (event.keyCode) {
+                    case 38:
+                        if (!_this._bi) {
+                            _this._bi = 0;
+                        }
+                        else {
+                            _this._bi--;
+                        }
+                        break;
+                    case 40:
+                        if (_this._bi == undefined) {
+                            _this._bi = 0;
+                        }
+                        else if (_this._bi < _this._bn.length - 1) {
+                            _this._bi++;
+                        }
+                        break;
+                    case 13:
+                        if (_this._bi != undefined) {
+                            _this.dispatchEvent(new Ev.Choose({
+                                target: _this,
+                                choice: options[_this._bi]
+                            }));
+                        }
+                        return;
+                }
+                if (old != _this._bi) {
+                    var btn = _this._bn[_this._bi], bound = btn.gB();
+                    stage.$s(bound.x, bound.y);
+                    if (old != undefined && _this._bn[old]) {
+                        _this._bn[old].dispatchEvent(new G.SpriteBlurEvent({
+                            target: _this._bn[old],
+                            x: bound.x,
+                            y: bound.y,
+                            from: undefined,
+                            fromX: 0,
+                            fromY: 0,
+                            stage: stage
+                        }));
+                    }
+                    if (_this._bn[_this._bi]) {
+                        _this._bn[_this._bi].dispatchEvent(new G.SpriteFocusEvent({
+                            target: _this._bn[_this._bi],
+                            x: bound.x,
+                            y: bound.y,
+                            from: undefined,
+                            fromX: 0,
+                            fromY: 0,
+                            stage: stage
+                        }));
+                    }
+                }
+                event.preventDefault();
+            };
+            window.addEventListener('keydown', this._ke);
+        };
+        /**
+         * 隐藏。
+         */
+        Choose.prototype.h = function (duration) {
+            window.removeEventListener('keydown', this._ke);
+            this._bn = [];
+            this._bi = undefined;
+            return _super.prototype.h.call(this, duration);
         };
         return Choose;
     }(Sprite.Sprite));
@@ -3987,6 +4132,79 @@ var Sprite;
     Sprite.Stars = Stars;
 })(Sprite || (Sprite = {}));
 /**
+ * 定义Loading信息组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Loading.ts
+ */
+/// <reference path="Sprite.ts" />
+var Sprite;
+(function (Sprite) {
+    var Util = __Bigine_Util;
+    var G = __Bigine_C2D;
+    var Loading = (function (_super) {
+        __extends(Loading, _super);
+        /**
+         * 构造函数。
+         */
+        function Loading(theme) {
+            var w = 1280, h = 720, _text = theme['text'];
+            _super.call(this, 0, 0, w, h);
+            this._rr = [
+                Resource.Resource.g('//s.dahao.de/theme/_/loading.png', Core.IResource.Type.Raw)
+            ];
+            this._ws = theme['words'] || {};
+            this._si = undefined;
+            this.o(0)
+                .a(this._gi = new G.Image(this._rr[0].o(), 0, 0, w, h))
+                .a(new G.Text(_text, _text['s'], _text['h'], this.$a(_text['a']))
+                .tc(_text['c'])
+                .a(this._x = new G.TextPhrase('')));
+        }
+        /**
+         * 设置底层信息。
+         */
+        Loading.prototype.u = function () {
+            var _this = this;
+            var speed = 0.05, time = 30, index = 1, max = 0;
+            Util.each(this._ws, function (word) {
+                max++;
+            });
+            index = 1 + Math.round(Math.random() * (max - 1));
+            this._gi.o(1);
+            this._si = setInterval(function () {
+                var now = _this._gi.gO();
+                speed = (now >= 1 || now <= 0.4) ? (speed * -1) : speed;
+                now += speed;
+                _this._gi.o(now);
+                if (max > 0 && time >= 30) {
+                    if (!_this._ws[index])
+                        index = 1;
+                    _this._x.t(_this._ws[index]);
+                    index++;
+                    time = 0;
+                }
+                time++;
+            }, 100);
+            return this;
+        };
+        /**
+         * 隐藏。
+         */
+        Loading.prototype.h = function (duration) {
+            if (this._si) {
+                clearInterval(this._si);
+                this._si = undefined;
+            }
+            return _super.prototype.h.call(this, duration);
+        };
+        return Loading;
+    }(Sprite.Sprite));
+    Sprite.Loading = Loading;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -4009,6 +4227,7 @@ var Sprite;
 /// <reference path="SeriesSlots.ts" />
 /// <reference path="Set.ts" />
 /// <reference path="Stars.ts" />
+/// <reference path="Loading.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -4060,10 +4279,10 @@ var Runtime;
             this._vo = true;
             this._ca = undefined;
             this._pc = undefined;
+            this._ps = false;
             this._i = {
                 o: Resource.Resource.g(assets + 'logo.png', raw),
                 e: Resource.Resource.g(assets + 'thx.png', raw),
-                l: Resource.Resource.g(assets + 'loading.png', raw),
                 s: Resource.Resource.g(assets + 'oops.mp3', raw),
                 f: Resource.Resource.g(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g(assets + 'click.mp3', raw)
@@ -4079,9 +4298,8 @@ var Runtime;
             this._s['b'].src = this._i['s'].l();
             this._f = {};
             this._e = [0, 0];
-            this._lo = [undefined, undefined];
             this._l = function (event) {
-                if ((event.keyCode == 13 || event.keyCode == 17) && !_this._a && _this._t)
+                if ((event.keyCode == 13 || event.keyCode == 17) && !_this._a && _this._t && !_this._pc)
                     _this._t.h();
             };
             this._fs = Core.IRuntime.Series.Alone;
@@ -4117,35 +4335,39 @@ var Runtime;
         /**
          * 加载动画。
          */
-        CanvasDirector.prototype.Load = function () {
+        CanvasDirector.prototype.Load = function (loaded) {
             var _this = this;
-            var loaded = !!this._r.gS().g('.l');
-            if (!loaded && !this._lo[0]) {
-                this._c.a(this._lo[0] = new G.Image(this._i['l'].o(), CanvasDirector.BOUNDS));
-                var speed_1 = 0.05;
-                this._lo[1] = setInterval(function () {
-                    var now = _this._lo[0].gO(), next;
-                    speed_1 = (now >= 1 || now <= 0.4) ? (speed_1 * -1) : speed_1;
-                    next = now + speed_1;
-                    _this._lo[0].o(next);
-                }, 100);
+            if (loaded) {
+                Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version, function (des) {
+                    if (!_this._ps) {
+                        if (!_this._x['ld'])
+                            _this._c.a(_this._x['ld'] = new Sprite.Loading(des));
+                        return _this.c([_this._x['ld'].l()])
+                            .then(function () {
+                            _this._x['ld'].u().v(0);
+                            return _super.prototype.Load.call(_this, loaded);
+                        });
+                    }
+                    return _super.prototype.Load.call(_this, loaded);
+                }, function (error, status) {
+                    throw error;
+                });
             }
-            return _super.prototype.Load.call(this);
+            else {
+                if (this._x['ld'])
+                    this._x['ld'].h(0);
+                return _super.prototype.Load.call(this, loaded);
+            }
         };
         /**
          * 开始动画。
          */
         CanvasDirector.prototype.OP = function (start, title, author) {
             var _this = this;
-            this._x['s'].u(title, Core.IRuntime.Series.Rest == this._fs);
-            if (this._lo[1]) {
-                clearInterval(this._lo[1]);
-                this._lo[1] = undefined;
-            }
-            if (this._lo[0]) {
-                this._c.e(this._lo[0]);
-                this._lo[0] = undefined;
-            }
+            this._ps = true;
+            if (this._x['ld'])
+                this._x['ld'].h(0);
+            this._x['s'].u(title, Core.IRuntime.Series.Rest == this._fs, this._c);
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
@@ -4620,7 +4842,7 @@ var Runtime;
                         }
                     }
                 };
-                gChoose.u(options).addEventListener(event, handler);
+                gChoose.u(options, _this._c).addEventListener(event, handler);
                 _this.lightOn()
                     .then(function () { return gChoose.v(); });
             });
@@ -4919,6 +5141,9 @@ var Runtime;
             resources.push(this._x['sr'].l());
             // 作者
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
+            // Loading
+            /*this._c.a(this._x['ld'] = <Sprite.Loading> new Sprite.Loading(theme['load']));
+            resources.push(this._x['ld'].l());*/
             this.c(resources);
             return this;
         };
@@ -8968,7 +9193,7 @@ var Tag;
          * 执行。
          */
         Stars.prototype.p = function (runtime) {
-            var states = runtime.gS(), value = this.$v(states.g(this._mv)).toString();
+            var states = runtime.gS(), star = states.g(this._mv), value = star ? this.$v(star).toString() : '0';
             return runtime.gD().stars(this._ms, this._mp, value);
         };
         return Stars;
@@ -12021,7 +12246,8 @@ var Runtime;
                 _this._fr = true;
                 if (_this._fp) {
                     _this._fp = false;
-                    _this.play();
+                    _this._d.Load(false);
+                    _this.playing();
                 }
             });
             this.addEventListener('begin', function () {
@@ -12099,10 +12325,17 @@ var Runtime;
             return this._d;
         };
         /**
-         * 播放。
+         * 点击开始播放、重新播放调用。
          */
         Runtime.prototype.play = function () {
-            this._d.Load();
+            this._d.Load(true);
+            this.playing();
+            return this;
+        };
+        /**
+         * 播放。
+         */
+        Runtime.prototype.playing = function () {
             if (this._fp)
                 return this;
             this._fp = true;
@@ -12534,7 +12767,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.22.3';
+    Bigine.version = '0.22.4';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

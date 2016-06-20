@@ -27,7 +27,7 @@ namespace Core {
         /**
          * 加载动画。
          */
-        Load(): Promise<IRuntime>;
+        Load(loaded: boolean): Promise<IRuntime>;
 
         /**
          * 开场动画。

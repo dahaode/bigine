@@ -128,7 +128,8 @@ namespace Runtime {
                 this._fr = true;
                 if (this._fp) {
                     this._fp = false;
-                    this.play();
+                    this._d.Load(false);
+                    this.playing();
                 }
             });
             this.addEventListener('begin', () => {
@@ -213,10 +214,18 @@ namespace Runtime {
         }
 
         /**
-         * 播放。
+         * 点击开始播放、重新播放调用。
          */
         public play(): Runtime {
-            this._d.Load();
+            this._d.Load(true);
+            this.playing();
+            return this;
+        }
+
+        /**
+         * 播放。
+         */
+        protected playing(): Runtime {
             if (this._fp)
                 return this;
             this._fp = true;

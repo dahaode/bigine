@@ -11,10 +11,12 @@
 /// <reference path="../_Tag/IOptionTag.ts" />
 
 namespace Core {
+	import G = __Bigine_C2D;
+
     export interface IChoose extends ISprite {
         /**
          * 配置。
          */
-        u(options: IOptionTag[]): IChoose;
+        u(options: IOptionTag[], stage: G.Stage): IChoose;
     }
 }

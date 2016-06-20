@@ -64,7 +64,6 @@ namespace Runtime {
                                 entity.r(this);
                             });
                         });
-                        runtime.gS().s('.l', true);
                         resolve();
                     });
                     if (!res)

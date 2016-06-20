@@ -69,7 +69,7 @@ namespace Runtime {
         /**
          * 加载动画。
          */
-        public Load(): Promise<Core.IRuntime> {
+        public Load(loaded: boolean): Promise<Core.IRuntime> {
             return this._p;
         }
 
