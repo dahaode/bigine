@@ -54,6 +54,8 @@ namespace Tag {
                 bgm: string = states.g('_b'),
                 cg: string = states.g(kid),
                 cur: string = states.g('_ra'),
+                ll: Core.IDirector.Position = pos.LLeft,
+                llChar: string = states.g(kid + ll),
                 l: Core.IDirector.Position = pos.Left,
                 lChar: string = states.g(kid + l),
                 cl: Core.IDirector.Position = pos.CLeft,
@@ -64,6 +66,8 @@ namespace Tag {
                 crChar: string = states.g(kid + cr),
                 r: Core.IDirector.Position = pos.Right,
                 rChar: string = states.g(kid + r),
+                rr: Core.IDirector.Position = pos.RRight,
+                rrChar: string = states.g(kid + rr),
                 ctype: Core.IEpisode.Entity = type.Chr,
                 room: DefRoom;
             if (bgm)
@@ -97,6 +101,12 @@ namespace Tag {
                         rescg: Core.IResource<HTMLImageElement> = defcg ? (<DefCG> defcg).o() : undefined;
                     return director.setCG(rescg);
                 });
+            if (llChar)
+                q = q.then(() => {
+                    states.m(kid + ll, kdata + ll)
+                        .s(kpos + llChar, ll);
+                    return director.charSet((<DefChar> episode.q(llChar, ctype)).o(states.g(kpose + ll)), ll);
+                });
             if (lChar)
                 q = q.then(() => {
                     states.m(kid + l, kdata + l)
@@ -126,6 +136,12 @@ namespace Tag {
                     states.m(kid + r, kdata + r)
                         .s(kpos + rChar, r);
                     return director.charSet((<DefChar> episode.q(rChar, ctype)).o(states.g(kpose + r)), r);
+                });
+            if (rrChar)
+                q = q.then(() => {
+                    states.m(kid + rr, kdata + rr)
+                        .s(kpos + rrChar, rr);
+                    return director.charSet((<DefChar> episode.q(rrChar, ctype)).o(states.g(kpose + rr)), rr);
                 });
             return q;
         }

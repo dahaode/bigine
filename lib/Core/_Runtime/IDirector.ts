@@ -167,9 +167,13 @@ namespace Core {
          */
         export enum Position {
             /**
+             * 最左。
+             */
+            LLeft = 1,
+            /**
              * 左。
              */
-            Left = 1,
+            Left,
             /**
              * 左中。
              */
@@ -185,7 +189,11 @@ namespace Core {
             /**
              * 右。
              */
-            Right
+            Right,
+            /**
+             * 最右。
+             */
+            RRight
         }
 
         /**

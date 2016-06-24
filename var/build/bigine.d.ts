@@ -157,11 +157,13 @@ declare namespace __Bigine {
         }
         namespace IDirector {
             enum Position {
-                Left = 1,
-                CLeft = 2,
-                Center = 3,
-                CRight = 4,
-                Right = 5,
+                LLeft = 1,
+                Left = 2,
+                CLeft = 3,
+                Center = 4,
+                CRight = 5,
+                Right = 6,
+                RRight = 7,
             }
             enum Stars {
                 OK = 0,
@@ -1594,7 +1596,9 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class Increase extends Action {
+            private _ep;
             gN(): string;
+            $b(ep: Core.IEpisode): void;
             t(states: Core.IStates): boolean;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
@@ -2033,6 +2037,7 @@ declare namespace __Bigine {
             isReady(): boolean;
             title(title: string): Runtime;
             author(title: string): Runtime;
+            domain(text: string): Runtime;
             user(nickname: string): Runtime;
             nickname(): string;
             plots(data: Util.IHashTable<string> | string): Runtime;
@@ -2074,6 +2079,7 @@ declare namespace __Bigine {
     function Bigine(code: number, content?: string | number, params?: (number | string)[], children?: Core.ITag[], id?: string): Core.ITag;
     namespace Bigine {
         var version: string;
+        var domain: string;
     }
 }
 

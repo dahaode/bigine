@@ -263,25 +263,33 @@ var Core;
          */
         (function (Position) {
             /**
+             * 最左。
+             */
+            Position[Position["LLeft"] = 1] = "LLeft";
+            /**
              * 左。
              */
-            Position[Position["Left"] = 1] = "Left";
+            Position[Position["Left"] = 2] = "Left";
             /**
              * 左中。
              */
-            Position[Position["CLeft"] = 2] = "CLeft";
+            Position[Position["CLeft"] = 3] = "CLeft";
             /**
              * 中。
              */
-            Position[Position["Center"] = 3] = "Center";
+            Position[Position["Center"] = 4] = "Center";
             /**
              * 右中。
              */
-            Position[Position["CRight"] = 4] = "CRight";
+            Position[Position["CRight"] = 5] = "CRight";
             /**
              * 右。
              */
-            Position[Position["Right"] = 5] = "Right";
+            Position[Position["Right"] = 6] = "Right";
+            /**
+             * 最右。
+             */
+            Position[Position["RRight"] = 7] = "RRight";
         })(IDirector.Position || (IDirector.Position = {}));
         var Position = IDirector.Position;
         /**
@@ -679,7 +687,7 @@ var Resource;
             var _this = this;
             if (!this._q) {
                 this._q = new Promise(function (resolve, reject) {
-                    var url = _this._l + '?bigine-0.20.0', xhr, img;
+                    var url = _this._l + '?bigine-0.22.5' + Bigine.domain, xhr, img;
                     if ('.mp3' == _this._l.substr(-4)) {
                         _this._l = url;
                         return resolve(url);
@@ -2148,6 +2156,7 @@ var Sprite;
                 .a(new G.Image(this._rr[0].o(), _vback, true))
                 .a(this._x['vt'] = new G.Text(_vtext, _vtext['s'], _vtext['lh'], left, true)
                 .tc(_vtext['c'])
+                .tl(_vtext['ls'])
                 .ts(_vtext['ss'], _vtext['ss'], _vtext['ss'])).o(0)).a(this._x['m'] = new G.Sprite(_mback)
                 .a(new G.Image(this._rr[1].o(), _mback, true))
                 .a(this._x['ma'] = new G.Sprite(_mavat, true))
@@ -2156,6 +2165,7 @@ var Sprite;
                 .ts(_mname['ss'], _mname['ss'], _mname['ss'])
                 .a(this._x['mn'] = new G.TextPhrase())).a(this._x['mt'] = new G.Text(_mtext, _mtext['s'], _mtext['lh'], left, true)
                 .tc(_mtext['c'])
+                .tl(_mtext['ls'])
                 .ts(_mtext['ss'], _mtext['ss'], _mtext['ss'])).o(0)).a(this._x['s'] = new G.Sprite(_sback)
                 .a(new G.Image(this._rr[2].o(), _sback, true))
                 .a(this._x['sa'] = new G.Sprite(_savat, true))
@@ -2164,6 +2174,7 @@ var Sprite;
                 .ts(_sname['ss'], _sname['ss'], _sname['ss'])
                 .a(this._x['sn'] = new G.TextPhrase())).a(this._x['st'] = new G.Text(_stext, _stext['s'], _stext['lh'], left, true)
                 .tc(_stext['c'])
+                .tl(_stext['ls'])
                 .ts(_stext['ss'], _stext['ss'], _stext['ss'])).o(0));
             if (_vcurs) {
                 var vo = rr.g(url + _vcurs['i'], raw);
@@ -4338,7 +4349,7 @@ var Runtime;
         CanvasDirector.prototype.Load = function (loaded) {
             var _this = this;
             if (loaded) {
-                Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version, function (des) {
+                Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version + Bigine.domain, function (des) {
                     if (!_this._ps) {
                         if (!_this._x['ld'])
                             _this._c.a(_this._x['ld'] = new Sprite.Loading(des));
@@ -4504,6 +4515,9 @@ var Runtime;
             if (!gChar)
                 return this._p;
             switch (to) {
+                case pos.LLeft:
+                    x = -600;
+                    break;
                 case pos.Left:
                     x = -400;
                     break;
@@ -4518,6 +4532,9 @@ var Runtime;
                     break;
                 case pos.Right:
                     x = 400;
+                    break;
+                case pos.RRight:
+                    x = 600;
                     break;
             }
             return gChar.p(new G.Move(500, {
@@ -4536,6 +4553,9 @@ var Runtime;
             //var bounds: G.IBounds = CanvasDirector.BOUNDS,
             var bounds = { x: 0, y: 0, w: 1280, h: 720 }, pos = Core.IDirector.Position, x;
             switch (position) {
+                case pos.LLeft:
+                    x = -600;
+                    break;
                 case pos.Left:
                     x = -400;
                     break;
@@ -4550,6 +4570,9 @@ var Runtime;
                     break;
                 case pos.Right:
                     x = 400;
+                    break;
+                case pos.RRight:
+                    x = 600;
                     break;
             }
             // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
@@ -4697,7 +4720,7 @@ var Runtime;
                     .o(0);
                 _this._c.a(gNew, 'M');
                 if (time) {
-                    return gNew.p(new G.FadeIn(1000)).then(function () {
+                    return gNew.p(new G.FadeIn(500)).then(function () {
                         _this._c.e(gOld);
                         return runtime;
                     });
@@ -4720,12 +4743,12 @@ var Runtime;
             var gCurtain = this._x['c'], curtain;
             switch (this._ca) {
                 case 'Fade':
-                    return gCurtain.v(1500)
+                    return gCurtain.v(500)
                         .then(function () {
                         gOld.o(0);
                         gCurtain.h(20);
                     }).then(function () {
-                        return gNew.p(new G.FadeIn(1500));
+                        return gNew.p(new G.FadeIn(500));
                     }).then(function () {
                         _this._c.e(gOld);
                         return _this._r;
@@ -4736,6 +4759,11 @@ var Runtime;
                 case 'ShutterV':
                     curtain = new G.Shutter(1000, { direction: 'V' });
                     break;
+                case 'Gradient':
+                    return gNew.p(new G.FadeIn(500)).then(function () {
+                        _this._c.e(gOld);
+                        return _this._r;
+                    });
                 default:
                     curtain = new G.FadeIn(20);
                     break;
@@ -5141,9 +5169,6 @@ var Runtime;
             resources.push(this._x['sr'].l());
             // 作者
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
-            // Loading
-            /*this._c.a(this._x['ld'] = <Sprite.Loading> new Sprite.Loading(theme['load']));
-            resources.push(this._x['ld'].l());*/
             this.c(resources);
             return this;
         };
@@ -7397,11 +7422,23 @@ var Tag;
             _super.call(this, params, content, children, lineNo);
             var pos = Core.IDirector.Position, exp = content.split('，');
             switch (params[0]) {
+                case '最左':
+                    this._mp = pos.LLeft;
+                    break;
                 case '左':
                     this._mp = pos.Left;
                     break;
+                case '左中':
+                    this._mp = pos.CLeft;
+                    break;
+                case '最右':
+                    this._mp = pos.RRight;
+                    break;
                 case '右':
                     this._mp = pos.Right;
+                    break;
+                case '右中':
+                    this._mp = pos.CRight;
                     break;
                 case '中':
                 case undefined:
@@ -7644,7 +7681,7 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), cg = states.g(kid), cur = states.g('_ra'), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), ctype = type.Chr, room;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), cg = states.g(kid), cur = states.g('_ra'), ll = pos.LLeft, llChar = states.g(kid + ll), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), rr = pos.RRight, rrChar = states.g(kid + rr), ctype = type.Chr, room;
             if (bgm)
                 q = q.then(function () {
                     var defbgm = episode.q(bgm, type.BGM);
@@ -7672,6 +7709,12 @@ var Tag;
                     states.m(kid, kdata);
                     var defcg = episode.q(cg, type.CG), rescg = defcg ? defcg.o() : undefined;
                     return director.setCG(rescg);
+                });
+            if (llChar)
+                q = q.then(function () {
+                    states.m(kid + ll, kdata + ll)
+                        .s(kpos + llChar, ll);
+                    return director.charSet(episode.q(llChar, ctype).o(states.g(kpose + ll)), ll);
                 });
             if (lChar)
                 q = q.then(function () {
@@ -7702,6 +7745,12 @@ var Tag;
                     states.m(kid + r, kdata + r)
                         .s(kpos + rChar, r);
                     return director.charSet(episode.q(rChar, ctype).o(states.g(kpose + r)), r);
+                });
+            if (rrChar)
+                q = q.then(function () {
+                    states.m(kid + rr, kdata + rr)
+                        .s(kpos + rrChar, rr);
+                    return director.charSet(episode.q(rrChar, ctype).o(states.g(kpose + rr)), rr);
                 });
             return q;
         };
@@ -8285,7 +8334,8 @@ var Tag;
 var Tag;
 (function (Tag) {
     var Util = __Bigine_Util;
-    var _theme = 'dahao';
+    var _oldbase = 'dahao';
+    var _newbase = 'bigood';
     var Theme = (function (_super) {
         __extends(Theme, _super);
         function Theme() {
@@ -8302,14 +8352,15 @@ var Tag;
          */
         Theme.prototype.l = function (callback) {
             var _this = this;
-            var version = Bigine.version;
-            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json?' + version, function (des) {
+            var version = Bigine.version, domain = Bigine.domain;
+            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, function (des) {
                 des = _this.path(des, _this._c);
-                if (_this._c == 'dahao') {
+                if (_this._c == _oldbase || _this._c == _newbase) {
                     callback(des);
                     return;
                 }
-                Util.Remote.get('//s.dahao.de/theme/' + _theme + '/theme.json?' + version, function (src) {
+                var _theme = des['base'] ? (des['base']['theme'] == _newbase ? _newbase : _oldbase) : _oldbase;
+                Util.Remote.get('//s.dahao.de/theme/' + _theme + '/theme.json?' + version + domain, function (src) {
                     src = _this.path(src, _theme);
                     callback(_this.extend(des, src));
                 }, function (error, status) {
@@ -8823,11 +8874,23 @@ var Tag;
             _super.call(this, params, content, children, lineNo);
             var pos = Core.IDirector.Position, exp = content.split('，');
             switch (params[0]) {
+                case '最左':
+                    this._mp = pos.LLeft;
+                    break;
                 case '左':
                     this._mp = pos.Left;
                     break;
+                case '左中':
+                    this._mp = pos.CLeft;
+                    break;
+                case '最右':
+                    this._mp = pos.RRight;
+                    break;
                 case '右':
                     this._mp = pos.Right;
+                    break;
+                case '右中':
+                    this._mp = pos.CRight;
                     break;
                 case '中':
                 case undefined:
@@ -9547,13 +9610,44 @@ var Tag;
             return 'Increase';
         };
         /**
+         * 绑定（运行时）作品（实体）。
+         */
+        Increase.prototype.$b = function (ep) {
+            this._ep = ep;
+        };
+        /**
          * （执行）检查。
          */
         Increase.prototype.t = function (states) {
             var depth = states.g('$d');
-            states.s(this._p[0], states.g(this._p[0]) + this.$v(this._c))
-                .c(this._p[0], '$v' + depth)
-                .s('$t' + depth, false);
+            var sign = '／';
+            // 如果是设置结构体类型数据中字段值
+            if (/^.+／.+$/ig.test(this._p[0])) {
+                var vari = this._p[0].split(sign)[0];
+                var fieldName = this._p[0].split(sign)[1];
+                var data = states.g(vari);
+                var cStruct = this._ep.q(data['：'], Core.IEpisode.Entity.Struct);
+                // 如果是实体类型字段
+                if ('object' == typeof data[fieldName]) {
+                    // 取出集合的结构
+                    data[fieldName] = this._ep.q(this._c, cStruct.gET(fieldName), this._l);
+                }
+                else if ('string' == typeof data[fieldName]) {
+                    data[fieldName] = parseInt(data[fieldName], 10) + this.$v(this._c);
+                }
+                else if ('number' == typeof data[fieldName]) {
+                    data[fieldName] += this.$v(this._c);
+                }
+                else {
+                    data[fieldName] = this.$v(this._c);
+                }
+                states.s(vari, data);
+            }
+            else {
+                states.s(this._p[0], states.g(this._p[0]) + this.$v(this._c))
+                    .c(this._p[0], '$v' + depth)
+                    .s('$t' + depth, false);
+            }
             return true;
         };
         /**
@@ -10212,11 +10306,23 @@ var Tag;
             this._mc = params[0];
             var pos = Core.IDirector.Position;
             switch (content) {
+                case '最左':
+                    this._mp = pos.LLeft;
+                    break;
                 case '左':
                     this._mp = pos.Left;
                     break;
+                case '左中':
+                    this._mp = pos.CLeft;
+                    break;
+                case '最右':
+                    this._mp = pos.RRight;
+                    break;
                 case '右':
                     this._mp = pos.Right;
+                    break;
+                case '右中':
+                    this._mp = pos.CRight;
                     break;
                 case '中':
                 case undefined:
@@ -11826,6 +11932,9 @@ var Tag;
                 case '垂直百叶窗':
                     this._a = 'ShutterV';
                     break;
+                case '渐变':
+                    this._a = 'Gradient';
+                    break;
                 case undefined:
                     this._a = undefined;
                     break;
@@ -12419,6 +12528,13 @@ var Runtime;
             return this;
         };
         /**
+         * 设置跨域标记。
+         */
+        Runtime.prototype.domain = function (text) {
+            Bigine.domain = text || '';
+            return this;
+        };
+        /**
          * 设置玩家昵称。
          */
         Runtime.prototype.user = function (nickname) {
@@ -12499,9 +12615,13 @@ var Runtime;
                     states.m('_a', '.a') // 识别重建用状态数据
                         .m(ks, '.s')
                         .m(kdc, krc)
+                        .m(kdc + pos.LLeft, krc + pos.LLeft)
                         .m(kdc + pos.Left, krc + pos.Left)
+                        .m(kdc + pos.CLeft, krc + pos.CLeft)
                         .m(kdc + pos.Center, krc + pos.Center)
-                        .m(kdc + pos.Right, krc + pos.Right);
+                        .m(kdc + pos.CRight, krc + pos.CRight)
+                        .m(kdc + pos.Right, krc + pos.Right)
+                        .m(kdc + pos.RRight, krc + pos.RRight);
                     _this._d.h();
                     _this.t(function () {
                         _this._fh = false;
@@ -12767,7 +12887,8 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.22.4';
+    Bigine.version = '0.22.5';
+    Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

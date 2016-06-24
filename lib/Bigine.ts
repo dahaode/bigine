@@ -60,4 +60,5 @@ function Bigine(code: any, ...args: any[]): any {
 
 namespace Bigine {
     export var version: string = '${BIGINE_VERSION}';
+    export var domain: string = '';
 }

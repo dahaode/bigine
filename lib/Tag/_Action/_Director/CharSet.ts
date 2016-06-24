@@ -40,11 +40,23 @@ namespace Tag {
             var pos: typeof Core.IDirector.Position = Core.IDirector.Position,
                 exp: string[] = content.split('，');
             switch (params[0]) {
+                case '最左':
+                    this._mp = pos.LLeft;
+                    break;
                 case '左':
                     this._mp = pos.Left;
                     break;
+                case '左中':
+                    this._mp = pos.CLeft;
+                    break;
+                case '最右':
+                    this._mp = pos.RRight;
+                    break;
                 case '右':
                     this._mp = pos.Right;
+                    break;
+                case '右中':
+                    this._mp = pos.CRight;
                     break;
                 case '中':
                 case undefined:

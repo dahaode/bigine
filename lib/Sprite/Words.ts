@@ -86,6 +86,7 @@ namespace Sprite {
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _vback, true))
                     .a(this._x['vt'] = new G.Text(<G.IBounds> _vtext, _vtext['s'], _vtext['lh'], left, true)
                         .tc(_vtext['c'])
+                        .tl(_vtext['ls'])
                         .ts(_vtext['ss'], _vtext['ss'], _vtext['ss'])
                     ).o(0)
                 ).a(this._x['m'] = new G.Sprite(<G.IBounds> _mback)
@@ -97,6 +98,7 @@ namespace Sprite {
                         .a(this._x['mn'] = new G.TextPhrase())
                     ).a(this._x['mt'] = new G.Text(<G.IBounds> _mtext, _mtext['s'], _mtext['lh'], left, true)
                         .tc(_mtext['c'])
+                        .tl(_mtext['ls'])
                         .ts(_mtext['ss'], _mtext['ss'], _mtext['ss'])
                     ).o(0)
                 ).a(this._x['s'] = new G.Sprite(<G.IBounds> _sback)
@@ -108,6 +110,7 @@ namespace Sprite {
                         .a(this._x['sn'] = new G.TextPhrase())
                     ).a(this._x['st'] = new G.Text(<G.IBounds> _stext, _stext['s'], _stext['lh'], left, true)
                         .tc(_stext['c'])
+                        .tl(_stext['ls'])
                         .ts(_stext['ss'], _stext['ss'], _stext['ss'])
                     ).o(0)
                 );

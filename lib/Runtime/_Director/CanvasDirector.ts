@@ -206,7 +206,7 @@ namespace Runtime {
          */
         public Load(loaded: boolean): Promise<Core.IRuntime> {
             if (loaded) {
-                Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version,
+                Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version + Bigine.domain,
                     (des) => {
                         if (!this._ps) {
                             if (!this._x['ld']) this._c.a(this._x['ld'] = <Sprite.Loading> new Sprite.Loading(des));
@@ -385,6 +385,9 @@ namespace Runtime {
             if (!gChar)
                 return this._p;
             switch (to) {
+                case pos.LLeft:
+                    x = -600;
+                    break;
                 case pos.Left:
                     x = -400;
                     break;
@@ -399,6 +402,9 @@ namespace Runtime {
                     break;
                 case pos.Right:
                     x = 400;
+                    break;
+                case pos.RRight:
+                    x = 600;
                     break;
             }
             return gChar.p(new G.Move(500, {
@@ -420,6 +426,9 @@ namespace Runtime {
                 pos: typeof Core.IDirector.Position = Core.IDirector.Position,
                 x: number;
             switch (position) {
+                case pos.LLeft:
+                    x = -600;
+                    break;
                 case pos.Left:
                     x = -400;
                     break;
@@ -434,6 +443,9 @@ namespace Runtime {
                     break;
                 case pos.Right:
                     x = 400;
+                    break;
+                case pos.RRight:
+                    x = 600;
                     break;
             }
             // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
@@ -593,7 +605,7 @@ namespace Runtime {
                             .o(0);
                     this._c.a(gNew, 'M');
                     if (time) {
-                        return gNew.p(new G.FadeIn(1000)).then(() => {
+                        return gNew.p(new G.FadeIn(500)).then(() => {
                             this._c.e(gOld);
                             return runtime;
                         });
@@ -618,12 +630,12 @@ namespace Runtime {
                 curtain: G.Animation;
             switch (this._ca) {
                 case 'Fade':
-                    return gCurtain.v(1500)
+                    return gCurtain.v(500)
                         .then(() => {
                             gOld.o(0);
                             gCurtain.h(20);
                         }).then(() =>
-                            gNew.p(new G.FadeIn(1500))
+                            gNew.p(new G.FadeIn(500))
                         ).then(() => {
                             this._c.e(gOld);
                             return this._r;
@@ -634,6 +646,11 @@ namespace Runtime {
                 case 'ShutterV':
                     curtain = new G.Shutter(1000, { direction: 'V' });
                     break;
+                case 'Gradient':
+                    return gNew.p(new G.FadeIn(500)).then(() => {
+                        this._c.e(gOld);
+                        return this._r;
+                    });
                 default:
                     curtain = new G.FadeIn(20);
                     break;
@@ -1060,10 +1077,6 @@ namespace Runtime {
 
             // 作者
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
-
-            // Loading
-            /*this._c.a(this._x['ld'] = <Sprite.Loading> new Sprite.Loading(theme['load']));
-            resources.push(this._x['ld'].l());*/
 
             this.c(resources);
             return this;

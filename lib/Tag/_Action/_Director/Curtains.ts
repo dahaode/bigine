@@ -25,15 +25,15 @@ namespace Tag {
                 case '淡入淡出':
                     this._a = 'Fade';
                     break;
-
                 case '水平百叶窗':
                     this._a = 'ShutterH';
                     break;
-
                 case '垂直百叶窗':
                     this._a = 'ShutterV';
                     break;
-
+                case '渐变':
+                    this._a = 'Gradient';
+                    break;
                 case undefined:
                     this._a = undefined;
                     break;

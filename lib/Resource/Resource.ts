@@ -109,7 +109,7 @@ namespace Resource {
         public o(): Promise<T> {
             if (!this._q) {
                 this._q = new Promise<T>((resolve: (value?: T | Thenable<T>) => void, reject: (reason?: any) => void) => {
-                    var url: string = this._l + '?bigine-0.20.0',
+                    var url: string = this._l + '?bigine-0.22.5' + Bigine.domain,
                         xhr: XMLHttpRequest,
                         img: HTMLImageElement;
                     if ('.mp3' == this._l.substr(-4)) {

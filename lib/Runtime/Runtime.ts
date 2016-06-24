@@ -318,6 +318,14 @@ namespace Runtime {
         }
 
         /**
+         * 设置跨域标记。
+         */
+        public domain(text: string): Runtime {
+            Bigine.domain = text || '';
+            return this;
+        }
+
+        /**
          * 设置玩家昵称。
          */
         public user(nickname: string): Runtime {
@@ -417,9 +425,13 @@ namespace Runtime {
                     states.m('_a', '.a') // 识别重建用状态数据
                         .m(ks, '.s')
                         .m(kdc, krc)
+                        .m(kdc + pos.LLeft, krc + pos.LLeft)
                         .m(kdc + pos.Left, krc + pos.Left)
+                        .m(kdc + pos.CLeft, krc + pos.CLeft)
                         .m(kdc + pos.Center, krc + pos.Center)
-                        .m(kdc + pos.Right, krc + pos.Right);
+                        .m(kdc + pos.CRight, krc + pos.CRight)
+                        .m(kdc + pos.Right, krc + pos.Right)
+                        .m(kdc + pos.RRight, krc + pos.RRight);
                     this._d.h();
                     this.t(() => {
                         this._fh = false;
