@@ -88,9 +88,9 @@ namespace Runtime {
         private _fs: Core.IRuntime.Series;
 
         /**
-         * 切幕动画。
+         * 动画(切幕动画，神态动画)。
          */
-        private _ca: string;
+        private _ca: [string, string];
 
         /**
          * 声音开关。
@@ -142,7 +142,7 @@ namespace Runtime {
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
-            this._ca = undefined;
+            this._ca = [undefined, undefined];
             this._pc = undefined;
             this._ps = false;
             this._i = {
@@ -362,16 +362,29 @@ namespace Runtime {
             var states: Core.IStates = this._r.gS(),
                 kamount: string = '$c',
                 gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
-                gChar: G.Element = gChars.q(<any> position)[0];
-            if (gChar) {
-                gChars.e(gChar);
-            } else
-                states.s(kamount, 1 + (<number> states.g(kamount) || 0));
-            gChar = this.$c(resource, position).o(1).i(<any> position);
-            gChars.a(gChar);
+                gOld: G.Element = gChars.q(<any> position)[0],
+                gNew: G.Element;
+            gNew = this.$c(resource, position).o(0).i(<any> position);
+            gChars.a(gNew);
             if (!this._x['G'].gO())
                 gChars.o(1);
-            return this._p;
+            switch (this._ca[1]) {
+                case 'Gradient':
+                    return gNew.p(new G.FadeIn(500)).then(() => {
+                        if (gOld) {
+                            gChars.e(gOld);
+                        } else
+                            states.s(kamount, 1 + (<number> states.g(kamount) || 0));
+                        return this._r;
+                    });
+                default:
+                    if (gOld) {
+                        gChars.e(gOld);
+                    } else
+                        states.s(kamount, 1 + (<number> states.g(kamount) || 0));
+                    gNew.o(1);
+                    return this._p;
+            }
         }
 
         /**
@@ -610,7 +623,7 @@ namespace Runtime {
                             return runtime;
                         });
                     }
-                    if (!this._ca || map) {
+                    if (!this._ca[0] || map) {
                         return this.lightOn().then(() => {
                             this._c.e(gOld);
                             gNew.o(1);
@@ -628,7 +641,7 @@ namespace Runtime {
         protected $ca(gOld: G.Element, gNew: G.Element): Promise<Core.IRuntime> {
             let gCurtain: Sprite.Curtain = this._x['c'],
                 curtain: G.Animation;
-            switch (this._ca) {
+            switch (this._ca[0]) {
                 case 'Fade':
                     return gCurtain.v(500)
                         .then(() => {
@@ -836,7 +849,7 @@ namespace Runtime {
          * 切幕动画。
          */
         public curtain(name: string): Promise<Core.IRuntime> {
-            this._ca = name;
+            this._ca[0] = name;
             return super.curtain(name);
         }
 
@@ -913,6 +926,23 @@ namespace Runtime {
             var gRoom: G.Image = <G.Image> this._c.q('b')[0];
             return gRoom.p(new G.Shake(500))
                 .then(() => super.cameraShake());
+        }
+
+        /**
+         * 状态栏开/关。
+         */
+        public status(onoff: boolean): Promise<Core.IRuntime> {
+            var gStatus: Sprite.Status = <Sprite.Status> this._x['S'];
+            onoff ? gStatus.v(0) : gStatus.h(0);
+            return super.status(onoff);
+        }
+
+        /**
+         * 切幕动画。
+         */
+        public expression(name: string): Promise<Core.IRuntime> {
+            this._ca[1] = name;
+            return super.expression(name);
         }
 
         /**

@@ -54,6 +54,7 @@ namespace Tag {
                 bgm: string = states.g('_b'),
                 cg: string = states.g(kid),
                 cur: string = states.g('_ra'),
+                exp: string = states.g('_rb'),
                 ll: Core.IDirector.Position = pos.LLeft,
                 llChar: string = states.g(kid + ll),
                 l: Core.IDirector.Position = pos.Left,
@@ -78,6 +79,10 @@ namespace Tag {
             if (cur)
                 q = q.then(() =>
                     director.curtain(cur)
+                );
+            if (exp)
+                q = q.then(() =>
+                    director.expression(exp)
                 );
             if (kroom && !states.g(kdo))
                 q = q.then(() => {

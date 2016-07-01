@@ -159,6 +159,16 @@ namespace Core {
          */
         cameraShake(): Promise<IRuntime>;
 
+        /**
+         * 状态栏开/关。
+         */
+        status(onoff: boolean): Promise<IRuntime>;
+
+        /**
+         * 神态动画。
+         */
+        expression(name: string): Promise<IRuntime>;
+
     }
 
     export namespace IDirector {

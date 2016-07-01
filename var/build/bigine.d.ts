@@ -154,6 +154,8 @@ declare namespace __Bigine {
             cameraMove(mx: number, my: number, ms: number): Promise<IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<IRuntime>;
             cameraShake(): Promise<IRuntime>;
+            status(onoff: boolean): Promise<IRuntime>;
+            expression(name: string): Promise<IRuntime>;
         }
         namespace IDirector {
             enum Position {
@@ -446,6 +448,8 @@ declare namespace __Bigine {
             cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
             cameraShake(): Promise<Core.IRuntime>;
+            status(onoff: boolean): Promise<Core.IRuntime>;
+            expression(name: string): Promise<Core.IRuntime>;
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
             s(sheet: [string, string][]): Director;
@@ -926,6 +930,8 @@ declare namespace __Bigine {
             cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
             cameraShake(): Promise<Core.IRuntime>;
+            status(onoff: boolean): Promise<Core.IRuntime>;
+            expression(name: string): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             s(sheet: [string, string][]): CanvasDirector;
             p(sheet: Array<Util.IHashTable<any>>): CanvasDirector;
@@ -1932,6 +1938,26 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class CameraShake extends Camera {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class ShowStatus extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class HideStatus extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class Expression extends Action {
+            private _a;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }

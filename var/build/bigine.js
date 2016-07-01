@@ -95,6 +95,7 @@ var Ev;
  *     * `_w` - 天气名 - Tag
  *     * `_z` -  房间状态 - Tag    // 添加镜头控制命令时所需记录的存档信息
  *     * `_ra` -  切幕动画 - Tag    // 添加切幕动画命令时所需记录的存档信息
+ *     * `_rb` -  神态动画 - Tag    // 添加神态动画命令时所需记录的存档信息
  * 2. `.` 表明为会话持久信息，不能被存档记录；
  *     * `.p<人物名>` - 人物站位 - Runtime/Tag
  *     * `.a` - 动作编号 - Runtime/Tag
@@ -1539,6 +1540,18 @@ var Runtime;
          * 抖动镜头。
          */
         Director.prototype.cameraShake = function () {
+            return this._p;
+        };
+        /**
+         * 状态栏开/关。
+         */
+        Director.prototype.status = function (onoff) {
+            return this._p;
+        };
+        /**
+         * 神态动画。
+         */
+        Director.prototype.expression = function (name) {
             return this._p;
         };
         /**
@@ -3802,15 +3815,20 @@ var Sprite;
          */
         SeriesSlots.prototype.vs = function (states, duration) {
             var _this = this;
+            var type = Core.IStates.Save.End, $1 = states.q('1', type), _1 = this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
             return states.l().then(function () {
-                var type = Core.IStates.Save.End, $1 = states.q('1', type), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
-                _this.a(_this._x['1'] = new G.Button(_1)
+                _this.e(_this._x['1'])
+                    .a(_this._x['1'] = new G.Button(_1)
                     .b(function () {
                     _this.dispatchEvent(new Ev.SlotsSave({ target: _this }));
                 }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true))
                     .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
                     .tc(_1t['c'])
                     .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）'))));
+                return _this.v(duration);
+            }).catch(function () {
+                _this.e(_this._x['1'])
+                    .a(new G.Image(_this._rr[4].o(), _1));
                 return _this.v(duration);
             });
         };
@@ -4288,7 +4306,7 @@ var Runtime;
                 .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
-            this._ca = undefined;
+            this._ca = [undefined, undefined];
             this._pc = undefined;
             this._ps = false;
             this._i = {
@@ -4494,17 +4512,31 @@ var Runtime;
          * 设置人物。
          */
         CanvasDirector.prototype.charSet = function (resource, position) {
-            var states = this._r.gS(), kamount = '$c', gChars = this._c.q('c')[0], gChar = gChars.q(position)[0];
-            if (gChar) {
-                gChars.e(gChar);
-            }
-            else
-                states.s(kamount, 1 + (states.g(kamount) || 0));
-            gChar = this.$c(resource, position).o(1).i(position);
-            gChars.a(gChar);
+            var _this = this;
+            var states = this._r.gS(), kamount = '$c', gChars = this._c.q('c')[0], gOld = gChars.q(position)[0], gNew;
+            gNew = this.$c(resource, position).o(0).i(position);
+            gChars.a(gNew);
             if (!this._x['G'].gO())
                 gChars.o(1);
-            return this._p;
+            switch (this._ca[1]) {
+                case 'Gradient':
+                    return gNew.p(new G.FadeIn(500)).then(function () {
+                        if (gOld) {
+                            gChars.e(gOld);
+                        }
+                        else
+                            states.s(kamount, 1 + (states.g(kamount) || 0));
+                        return _this._r;
+                    });
+                default:
+                    if (gOld) {
+                        gChars.e(gOld);
+                    }
+                    else
+                        states.s(kamount, 1 + (states.g(kamount) || 0));
+                    gNew.o(1);
+                    return this._p;
+            }
         };
         /**
          * 人物移动。
@@ -4725,7 +4757,7 @@ var Runtime;
                         return runtime;
                     });
                 }
-                if (!_this._ca || map) {
+                if (!_this._ca[0] || map) {
                     return _this.lightOn().then(function () {
                         _this._c.e(gOld);
                         gNew.o(1);
@@ -4741,7 +4773,7 @@ var Runtime;
         CanvasDirector.prototype.$ca = function (gOld, gNew) {
             var _this = this;
             var gCurtain = this._x['c'], curtain;
-            switch (this._ca) {
+            switch (this._ca[0]) {
                 case 'Fade':
                     return gCurtain.v(500)
                         .then(function () {
@@ -4937,7 +4969,7 @@ var Runtime;
          * 切幕动画。
          */
         CanvasDirector.prototype.curtain = function (name) {
-            this._ca = name;
+            this._ca[0] = name;
             return _super.prototype.curtain.call(this, name);
         };
         /**
@@ -5010,6 +5042,21 @@ var Runtime;
             var gRoom = this._c.q('b')[0];
             return gRoom.p(new G.Shake(500))
                 .then(function () { return _super.prototype.cameraShake.call(_this); });
+        };
+        /**
+         * 状态栏开/关。
+         */
+        CanvasDirector.prototype.status = function (onoff) {
+            var gStatus = this._x['S'];
+            onoff ? gStatus.v(0) : gStatus.h(0);
+            return _super.prototype.status.call(this, onoff);
+        };
+        /**
+         * 切幕动画。
+         */
+        CanvasDirector.prototype.expression = function (name) {
+            this._ca[1] = name;
+            return _super.prototype.expression.call(this, name);
         };
         /**
          * 使用主题。
@@ -5571,6 +5618,9 @@ var Tag;
         StopBGM: '停止音乐',
         Pause: '停顿',
         Curtains: '切幕动画',
+        Expression: '神态动画',
+        ShowStatus: '显示状态栏',
+        HideStatus: '隐藏状态栏',
         Assert: '当数据',
         Assign: '设置数据',
         Compare: '对比数据',
@@ -5731,7 +5781,7 @@ var Tag;
         64: ['StopBGM', 0, -1],
         13: ['HideCG', 0, -1],
         14: ['ShowCG', 1, -1],
-        15: ['AsRoom', 1, -1],
+        15: ['AsRoom', [1, 2], 0],
         16: ['Freeze', 0, -1],
         17: ['AsTime', 1, -1],
         18: ['Enter', 1, -1],
@@ -5744,6 +5794,9 @@ var Tag;
         95: ['CameraMove', [0, 1], 1],
         96: ['Curtains', [0, 1], -1],
         97: ['CameraShake', 0, -1],
+        100: ['ShowStatus', 0, -1],
+        101: ['HideStatus', 0, -1],
+        102: ['Expression', [0, 1], -1],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
@@ -7373,13 +7426,12 @@ var Tag;
          * 执行。
          */
         AsRoom.prototype.p = function (runtime) {
-            var states = runtime.gS(), kroom = '_rd', room = states.g(kroom), ktime = '_t', time = states.g(ktime), director = runtime.gD(), map = this._mo.gM();
-            if (!time) {
+            var states = runtime.gS(), kroom = '_rd', room = states.g(kroom), ktime = '_t', time = this._p[1] || states.g(ktime), director = runtime.gD(), map = this._mo.gM();
+            if (!time)
                 time = '午';
-                states.s(ktime, time);
-            }
             if (room == this._p[0])
                 return runtime;
+            states.s(ktime, time);
             states.s(kroom, this._p[0]);
             states.s('$rd', this._mo);
             return director.asRoom(this._mo.o(time), false, map ? true : false)
@@ -7681,7 +7733,7 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), cg = states.g(kid), cur = states.g('_ra'), ll = pos.LLeft, llChar = states.g(kid + ll), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), rr = pos.RRight, rrChar = states.g(kid + rr), ctype = type.Chr, room;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), cg = states.g(kid), cur = states.g('_ra'), exp = states.g('_rb'), ll = pos.LLeft, llChar = states.g(kid + ll), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), rr = pos.RRight, rrChar = states.g(kid + rr), ctype = type.Chr, room;
             if (bgm)
                 q = q.then(function () {
                     var defbgm = episode.q(bgm, type.BGM);
@@ -7690,6 +7742,10 @@ var Tag;
             if (cur)
                 q = q.then(function () {
                     return director.curtain(cur);
+                });
+            if (exp)
+                q = q.then(function () {
+                    return director.expression(exp);
                 });
             if (kroom && !states.g(kdo))
                 q = q.then(function () {
@@ -8446,6 +8502,9 @@ var Tag;
                     Util.each(room['snaps'] || {}, function (id, title) {
                         times.push(new Tag.Unknown([title], id, [], -1));
                     });
+                    if (times.length == 0) {
+                        times.push(new Tag.Unknown(['默认'], '00000000-0000-0000-0000-000000000000', [], -1));
+                    }
                     ret['rooms'][index] = new Tag.DefRoom([], room['title'], [
                         new Tag.Times([], '', times, -1)
                     ], -1);
@@ -8456,8 +8515,11 @@ var Tag;
                     Util.each(chr['poses'] || {}, function (id, title) {
                         poses.push(new Tag.Unknown([title], id, [], -1));
                     });
+                    if (poses.length == 0) {
+                        poses.push(new Tag.Unknown(['默认'], '00000000-0000-0000-0000-000000000002', [], -1));
+                    }
                     ret['chars'][index] = new Tag.DefChar([], chr['title'], [
-                        new Tag.Avatar([], chr['avatar'], [], -1),
+                        new Tag.Avatar([], (chr['avatar'] || '00000000-0000-0000-0000-000000000001'), [], -1),
                         new Tag.Poses([], '', poses, -1)
                     ], -1);
                 });
@@ -8475,6 +8537,12 @@ var Tag;
                             new Tag.Region([], regstr, [], -1)
                         ], -1));
                     });
+                    if (children.length == 1) {
+                        children.push(new Tag.Point([], '默认', [
+                            new Tag.HLImage([], '00000000-0000-0000-0000-000000000003', [], -1),
+                            new Tag.Region([], '0，0，1080，1920，0', [], -1)
+                        ], -1));
+                    }
                     ret['maps'][index] = new Tag.DefMap([], map['title'], children, -1);
                 });
                 ret['bgms'] = {};
@@ -10943,6 +11011,10 @@ var Tag;
          * 执行。
          */
         Define.prototype.p = function (runtime) {
+            // 如果是继承上一章的数据
+            var states = runtime.gS(), field = states.g(this._c);
+            if (field)
+                return runtime;
             runtime.gS().s(this._c, this._ms.g(this._md));
             return runtime;
         };
@@ -11995,6 +12067,120 @@ var Tag;
     Tag.CameraShake = CameraShake;
 })(Tag || (Tag = {}));
 /**
+ * 定义显示状态栏动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/ShowStatus.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var ShowStatus = (function (_super) {
+        __extends(ShowStatus, _super);
+        function ShowStatus() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        ShowStatus.prototype.gN = function () {
+            return 'ShowStatus';
+        };
+        /**
+         * 执行。
+         */
+        ShowStatus.prototype.p = function (runtime) {
+            return runtime.gD().status(true);
+        };
+        return ShowStatus;
+    }(Tag.Action));
+    Tag.ShowStatus = ShowStatus;
+})(Tag || (Tag = {}));
+/**
+ * 定义隐藏状态栏动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/HideStatus.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var HideStatus = (function (_super) {
+        __extends(HideStatus, _super);
+        function HideStatus() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        HideStatus.prototype.gN = function () {
+            return 'HideStatus';
+        };
+        /**
+         * 执行。
+         */
+        HideStatus.prototype.p = function (runtime) {
+            return runtime.gD().status(false);
+        };
+        return HideStatus;
+    }(Tag.Action));
+    Tag.HideStatus = HideStatus;
+})(Tag || (Tag = {}));
+/**
+ * 定义神态动画动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/Expression.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Expression = (function (_super) {
+        __extends(Expression, _super);
+        /**
+         * 构造函数。
+         */
+        function Expression(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            switch (params[0]) {
+                case '渐变':
+                    this._a = 'Gradient';
+                    break;
+                case '默认':
+                case undefined:
+                    this._a = undefined;
+                    break;
+                default:
+                    throw new E(E.TAG_PARAMS_NOT_TRUE, lineNo);
+            }
+        }
+        /**
+         * 获取标签名称。
+         */
+        Expression.prototype.gN = function () {
+            return 'Expression';
+        };
+        /**
+         * 执行。
+         */
+        Expression.prototype.p = function (runtime) {
+            var states = runtime.gS(), curtain = states.g('_rb');
+            if (curtain == this._a)
+                return runtime;
+            this._a ? states.s('_rb', this._a) : states.d('_rb');
+            return runtime.gD().expression(this._a);
+        };
+        return Expression;
+    }(Tag.Action));
+    Tag.Expression = Expression;
+})(Tag || (Tag = {}));
+/**
  * 声明（运行时）打赏成功元信息接口规范。
  *
  * @author    李倩 <qli@atfacg.com>
@@ -12302,6 +12488,9 @@ var Ev;
 /// <reference path="_Action/_Director/CameraSet.ts" />
 /// <reference path="_Action/_Director/Curtains.ts" />
 /// <reference path="_Action/_Director/CameraShake.ts" />
+/// <reference path="_Action/_Director/ShowStatus.ts" />
+/// <reference path="_Action/_Director/HideStatus.ts" />
+/// <reference path="_Action/_Director/Expression.ts" />
 /// <reference path="_Action/_Logic/Donate.ts" />
 /// <reference path="../Ev/_Runtime/Fin.ts" />
 /// <reference path="../Ev/_Runtime/Rank.ts" />
@@ -12887,7 +13076,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.22.5';
+    Bigine.version = '0.23.0';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

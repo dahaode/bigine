@@ -262,6 +262,20 @@ namespace Runtime {
         }
 
         /**
+         * 状态栏开/关。
+         */
+        public status(onoff: boolean): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 神态动画。
+         */
+        public expression(name: string): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
          * 获取动态创建标识。
          */
         public gD(): boolean {

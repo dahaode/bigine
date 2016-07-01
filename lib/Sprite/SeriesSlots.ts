@@ -73,13 +73,14 @@ namespace Sprite {
          * 显示存档位。
          */
         public vs(states: Core.IStates, duration?: number): Promise<SeriesSlots> {
+            let type: Core.IStates.Save = Core.IStates.Save.End,
+                $1: [string, number] = states.q('1', type),
+                _1: Util.IHashTable<any> = this._c[1],
+                _1t: Util.IHashTable<any> = _1['text'],
+                right: G.Text.Align = G.Text.Align.Right;
             return states.l().then(() => {
-                let type: Core.IStates.Save = Core.IStates.Save.End,
-                    $1: [string, number] = states.q('1', type),
-                    _1: Util.IHashTable<any> = this._c[1],
-                    _1t: Util.IHashTable<any> = _1['text'],
-                    right: G.Text.Align = G.Text.Align.Right;
-                this.a(this._x['1'] = new G.Button(<G.IBounds> _1)
+                this.e(this._x['1'])
+                    .a(this._x['1'] = new G.Button(<G.IBounds> _1)
                     .b(() => {
                         this.dispatchEvent(new Ev.SlotsSave({ target: this }));
                     }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
@@ -88,6 +89,10 @@ namespace Sprite {
                         .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
                     )
                 );
+                return this.v(duration);
+            }).catch(() => {
+                this.e(this._x['1'])
+                    .a(new G.Image(this._rr[4].o(), <G.IBounds> _1));
                 return this.v(duration);
             });
         }

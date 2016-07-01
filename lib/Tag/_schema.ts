@@ -92,6 +92,9 @@ namespace Tag {
         StopBGM: '停止音乐',
         Pause: '停顿',
         Curtains: '切幕动画',
+        Expression: '神态动画',
+        ShowStatus: '显示状态栏',
+        HideStatus: '隐藏状态栏',
 
         Assert: '当数据',
         Assign: '设置数据',
@@ -141,7 +144,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 100
+    export var S: { [index: number]: any[] } = { // next 103
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -267,7 +270,7 @@ namespace Tag {
         64: ['StopBGM', 0, -1],
         13: ['HideCG', 0, -1],
         14: ['ShowCG', 1, -1], // [特写名]
-        15: ['AsRoom', 1, -1], // [房间名]
+        15: ['AsRoom', [1, 2], 0], // [房间名, 时间?]
         16: ['Freeze', 0, -1],
         17: ['AsTime', 1, -1], // [房间时刻名]
         18: ['Enter', 1, -1], // [房间名]
@@ -280,6 +283,9 @@ namespace Tag {
         95: ['CameraMove', [0, 1], 1],   // [速度：快、中、慢] 镜头移动到的位置
         96: ['Curtains', [0, 1], -1], // [切幕动画名称]
         97: ['CameraShake', 0, -1],
+        100: ['ShowStatus', 0, -1],
+        101: ['HideStatus', 0, -1],
+        102: ['Expression', [0, 1], -1],   // [神态动画名称]
 
         58: ['Loop', 0, -1, {
             '-1': [1]

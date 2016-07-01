@@ -39,15 +39,13 @@ namespace Tag {
                 kroom: string = '_rd',
                 room: string = states.g(kroom),
                 ktime: string = '_t',
-                time: string = states.g(ktime),
+                time: string = this._p[1] || states.g(ktime),
                 director: Core.IDirector = runtime.gD(),
                 map: DefMap = this._mo.gM();
-            if (!time) {
-                time = '午';
-                states.s(ktime, time);
-            }
+            if (!time) time = '午';
             if (room == this._p[0])
                 return runtime;
+            states.s(ktime, time);
             states.s(kroom, this._p[0]);
             states.s('$rd', this._mo);
             return director.asRoom(this._mo.o(time), false, map ? true : false)

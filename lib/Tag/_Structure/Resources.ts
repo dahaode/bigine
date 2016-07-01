@@ -38,6 +38,9 @@ namespace Tag {
                     Util.each(<Util.IHashTable<string>> room['snaps'] || {}, (id: string, title: string) => {
                         times.push(new Unknown([title], id, [], -1));
                     });
+                    if (times.length == 0) {
+                        times.push(new Unknown(['默认'], '00000000-0000-0000-0000-000000000000', [], -1));
+                    }
                     ret['rooms'][index] = new DefRoom([], <string> room['title'], [
                         new Times([], '', times, -1)
                     ], -1);
@@ -48,8 +51,11 @@ namespace Tag {
                     Util.each(<Util.IHashTable<string>> chr['poses'] || {}, (id: string, title: string) => {
                         poses.push(new Unknown([title], id, [], -1));
                     });
+                    if (poses.length == 0) {
+                        poses.push(new Unknown(['默认'], '00000000-0000-0000-0000-000000000002', [], -1));
+                    }
                     ret['chars'][index] = new DefChar([], <string> chr['title'], [
-                        new Avatar([], <string> chr['avatar'], [], -1),
+                        new Avatar([], <string> (chr['avatar'] || '00000000-0000-0000-0000-000000000001') , [], -1),
                         new Poses([], '', poses, -1)
                     ], -1);
                 });
@@ -68,6 +74,12 @@ namespace Tag {
                             new Region([], regstr, [], -1)
                         ], -1));
                     });
+                    if (children.length == 1) {
+                        children.push(new Point([], '默认', [
+                            new HLImage([], '00000000-0000-0000-0000-000000000003', [], -1),
+                            new Region([], '0，0，1080，1920，0', [], -1)
+                        ], -1));
+                    }
                     ret['maps'][index] = new DefMap([], <string> map['title'], children, -1);
                 });
                 ret['bgms'] = {};

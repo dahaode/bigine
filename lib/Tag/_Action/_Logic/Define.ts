@@ -53,6 +53,10 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
+            // 如果是继承上一章的数据
+            let states: Core.IStates = runtime.gS(),
+                field: Util.IHashTable<any> = states.g(this._c);
+            if (field) return runtime;
             runtime.gS().s(this._c, this._ms.g(this._md));
             return runtime;
         }
