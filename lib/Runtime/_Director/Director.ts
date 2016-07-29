@@ -36,6 +36,11 @@ namespace Runtime {
         protected _a: boolean;
 
         /**
+         * 暂停状态时记录的自动播放状态。
+         */
+        protected _ra: boolean;
+
+        /**
          * 音量。
          */
         protected _v: number;
@@ -53,6 +58,7 @@ namespace Runtime {
             this._p = Promise.resolve(this._r);
             this._d =
             this._a =
+            this._ra =
             this._o = false;
             this._v = 1;
         }
@@ -350,6 +356,23 @@ namespace Runtime {
          * 连载模式。
          */
         public e(type: Core.IRuntime.Series): Director {
+            return this;
+        }
+
+        /**
+         * 暂停播放。
+         */
+        public rp(): Director {
+            this._ra = this._a;
+            this._a = false;
+            return this;
+        }
+
+        /**
+         * 恢复播放。
+         */
+        public rr(): Director {
+            this._a = this._ra;
             return this;
         }
     }

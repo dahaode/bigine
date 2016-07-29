@@ -1362,7 +1362,8 @@ var Runtime;
             this._p = Promise.resolve(this._r);
             this._d =
                 this._a =
-                    this._o = false;
+                    this._ra =
+                        this._o = false;
             this._v = 1;
         }
         /**
@@ -1619,6 +1620,21 @@ var Runtime;
          * 连载模式。
          */
         Director.prototype.e = function (type) {
+            return this;
+        };
+        /**
+         * 暂停播放。
+         */
+        Director.prototype.rp = function () {
+            this._ra = this._a;
+            this._a = false;
+            return this;
+        };
+        /**
+         * 恢复播放。
+         */
+        Director.prototype.rr = function () {
+            this._a = this._ra;
             return this;
         };
         return Director;
@@ -5325,6 +5341,20 @@ var Runtime;
          */
         CanvasDirector.prototype.e = function (type) {
             this._fs = type;
+            return this;
+        };
+        /**
+         * 暂停播放。
+         */
+        CanvasDirector.prototype.rp = function () {
+            _super.prototype.rp.call(this)._s['b'].pause();
+            return this;
+        };
+        /**
+         * 恢复播放。
+         */
+        CanvasDirector.prototype.rr = function () {
+            _super.prototype.rp.call(this)._s['b'].play();
             return this;
         };
         /**
@@ -12858,6 +12888,20 @@ var Runtime;
             this._fs = first ? series.First : series.Rest;
             return this;
         };
+        /**
+         * 暂停播放。
+         */
+        Runtime.prototype.pause = function () {
+            this._d.rp();
+            return this;
+        };
+        /**
+         * 恢复播放。
+         */
+        Runtime.prototype.resume = function () {
+            this._d.rr();
+            return this;
+        };
         return Runtime;
     }());
     Runtime_1.Runtime = Runtime;
@@ -13076,7 +13120,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.23.0';
+    Bigine.version = '0.23.1';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

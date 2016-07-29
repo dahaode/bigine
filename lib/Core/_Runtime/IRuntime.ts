@@ -134,6 +134,16 @@ namespace Core {
          * 连载模式。
          */
         series(first?: boolean): IRuntime;
+
+        /**
+         * 暂停播放。
+         */
+        pause(): IRuntime;
+
+        /**
+         * 恢复播放。
+         */
+        resume(): IRuntime;
     }
 
     export namespace IRuntime {

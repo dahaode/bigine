@@ -168,7 +168,6 @@ namespace Core {
          * 神态动画。
          */
         expression(name: string): Promise<IRuntime>;
-
     }
 
     export namespace IDirector {

@@ -481,5 +481,21 @@ namespace Runtime {
             this._fs = first ? series.First : series.Rest;
             return this;
         }
+
+        /**
+         * 暂停播放。
+         */
+        public pause(): Runtime {
+            this._d.rp();
+            return this;
+        }
+
+        /**
+         * 恢复播放。
+         */
+        public resume(): Runtime {
+            this._d.rr();
+            return this;
+        }
     }
 }

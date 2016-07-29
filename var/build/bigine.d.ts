@@ -201,6 +201,8 @@ declare namespace __Bigine {
             l(id?: string): void;
             bind(viewport: HTMLElement): IRuntime;
             series(first?: boolean): IRuntime;
+            pause(): IRuntime;
+            resume(): IRuntime;
         }
         namespace IRuntime {
             enum Series {
@@ -417,6 +419,7 @@ declare namespace __Bigine {
             protected _p: Promise<Core.IRuntime>;
             protected _d: boolean;
             protected _a: boolean;
+            protected _ra: boolean;
             protected _v: number;
             protected _o: boolean;
             constructor(runtime: Core.IRuntime);
@@ -461,6 +464,8 @@ declare namespace __Bigine {
             h(): void;
             b(viewport: HTMLElement): Director;
             e(type: Core.IRuntime.Series): Director;
+            rp(): Director;
+            rr(): Director;
         }
     }
     namespace Runtime {
@@ -942,6 +947,8 @@ declare namespace __Bigine {
             h(): void;
             b(viewport: HTMLElement): CanvasDirector;
             e(type: Core.IRuntime.Series): CanvasDirector;
+            rp(): CanvasDirector;
+            rr(): CanvasDirector;
         }
     }
     namespace Runtime {
@@ -2074,6 +2081,8 @@ declare namespace __Bigine {
             l(id: string): void;
             bind(viewport: HTMLElement): Runtime;
             series(first?: boolean): Runtime;
+            pause(): Runtime;
+            resume(): Runtime;
         }
     }
     namespace Lex {

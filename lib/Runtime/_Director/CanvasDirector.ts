@@ -1232,5 +1232,21 @@ namespace Runtime {
             this._fs = type;
             return this;
         }
+
+        /**
+         * 暂停播放。
+         */
+        public rp(): CanvasDirector {
+            (<CanvasDirector> super.rp())._s['b'].pause();
+            return this;
+        }
+
+        /**
+         * 恢复播放。
+         */
+        public rr(): CanvasDirector {
+            (<CanvasDirector> super.rp())._s['b'].play();
+            return this;
+        }
     }
 }
