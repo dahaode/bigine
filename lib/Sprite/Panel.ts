@@ -87,6 +87,11 @@ namespace Sprite {
         private _dr: Util.IHashTable<any>;
 
         /**
+         * 主题是否已渲染
+         */
+        private _pi: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
@@ -95,23 +100,18 @@ namespace Sprite {
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 url: string = '//s.dahao.de/theme/',
-                _mask: Util.IHashTable<any> = theme['mask'],
-                _back: Util.IHashTable<any> = theme['back'],
                 _close: Util.IHashTable<any> = theme['close'],
                 _tab: Util.IHashTable<any> = theme['tab'],
                 _simp: Util.IHashTable<any> = theme['simp'],
-                _coll: Util.IHashTable<any> = theme['coll'],
-                _type: Util.IHashTable<any> = theme['type'],
-                i: number = 1,
-                left: G.Text.Align = G.Text.Align.Left;
-                // j: Util.IHashTable<any>;
+                _coll: Util.IHashTable<any> = theme['coll'];
             super(0, 0, w, h);
             this._pt = theme;
+            this._pi = false;
             this._ti = 0;
             this._tai = {};
             this._rr = [
                 // 0: 面板背景
-                rr.g<HTMLImageElement>(url + _back['i'], raw),
+                rr.g<HTMLImageElement>(url + theme['back']['i'], raw),
                 // 1: 关闭按钮
                 rr.g<HTMLImageElement>(url + _close['i'], raw),
                 // 2: 关闭按钮~hover
@@ -146,9 +146,69 @@ namespace Sprite {
             this._cc = [];
             this._cp = 0;
             this._dr = {};
+            this.o(0);
+        }
+
+        /**
+         * 配置。
+         */
+        public u(sheet: Array<Util.IHashTable<any>>, runtime: Core.IRuntime): Panel {
+            this._ep = runtime.gE();
+            if (sheet.length == 0) return this;
+            // 集合面板翻页上一页按钮
+            let pBounds: G.IBounds = <G.IBounds> this._pt['coll']['arrow']['p'];
+            this.pI()
+                .a(this._ca['p'] = new G.Button(pBounds)
+                .b(() => {
+                    this._cp = this._cp == 0 ?  (this._cc.length - 1) : (this._cp - 1);
+                    this.uC(sheet[this._ti], this._dr);
+                },
+                new G.Image(this._rr[8].o(), pBounds, true),
+                new G.Image(this._rr[7].o(), pBounds, true)));
+            this._ca['p'].o(0);
+            // 集合面板翻页下一页按钮
+            let nBounds: G.IBounds = <G.IBounds> this._pt['coll']['arrow']['n'];
+            this.a(this._ca['n'] = new G.Button(nBounds)
+                .b(() => {
+                    this._cp = (this._cp == this._cc.length - 1) ? 0 : (this._cp + 1);
+                    this.uC(sheet[this._ti], this._dr);
+                },
+                new G.Image(this._rr[10].o(), nBounds, true),
+                new G.Image(this._rr[9].o(), nBounds, true)));
+            this._ca['n'].o(0);
+
+            this.uT(sheet);
+            // 显示第一个标签页的数据
+            this.uContent(sheet[0], null);
+            // 监听数据变化
+            runtime.addEventListener('state', (ev: Ev.State) => {
+                this._dr = ev.data;
+                this.uContent(sheet[this._ti], ev.data);
+            });
+            return this;
+        }
+
+        /**
+         * 初始化渲染。
+         */
+        private pI(): Panel {
+            if (this._pi) return this;
+            let w: number = 1280,
+                h: number = 720,
+                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+                rr: typeof Resource.Resource = Resource.Resource,
+                url: string = '//s.dahao.de/theme/',
+                theme: Util.IHashTable<Util.IHashTable<any>> = this._pt,
+                _mask: Util.IHashTable<any> = theme['mask'],
+                _back: Util.IHashTable<any> = theme['back'],
+                _close: Util.IHashTable<any> = theme['close'],
+                _simp: Util.IHashTable<any> = theme['simp'],
+                _coll: Util.IHashTable<any> = theme['coll'],
+                _type: Util.IHashTable<any> = theme['type'],
+                i: number = 1,
+                left: G.Text.Align = G.Text.Align.Left;
             // 渲染面板初始样式
-            (<Panel> this.o(0))
-                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+            this.a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
                 .a(new G.Image(this._rr[0].o(), <G.IBounds> _back))
                 .a(new G.Button(<G.IBounds> _close)
                     .b(() => {
@@ -202,43 +262,7 @@ namespace Sprite {
                     this._cv[name + 'v'].o(0);
                 }
             });
-        }
 
-        /**
-         * 配置。
-         */
-        public u(sheet: Array<Util.IHashTable<any>>, runtime: Core.IRuntime): Panel {
-            this._ep = runtime.gE();
-            if (sheet.length == 0) return this;
-            // 集合面板翻页上一页按钮
-            let pBounds: G.IBounds = <G.IBounds> this._pt['coll']['arrow']['p'];
-            this.a(this._ca['p'] = new G.Button(pBounds)
-                .b(() => {
-                    this._cp = this._cp == 0 ?  (this._cc.length - 1) : (this._cp - 1);
-                    this.uC(sheet[this._ti], this._dr);
-                },
-                new G.Image(this._rr[8].o(), pBounds, true),
-                new G.Image(this._rr[7].o(), pBounds, true)));
-            this._ca['p'].o(0);
-            // 集合面板翻页下一页按钮
-            let nBounds: G.IBounds = <G.IBounds> this._pt['coll']['arrow']['n'];
-            this.a(this._ca['n'] = new G.Button(nBounds)
-                .b(() => {
-                    this._cp = (this._cp == this._cc.length - 1) ? 0 : (this._cp + 1);
-                    this.uC(sheet[this._ti], this._dr);
-                },
-                new G.Image(this._rr[10].o(), nBounds, true),
-                new G.Image(this._rr[9].o(), nBounds, true)));
-            this._ca['n'].o(0);
-
-            this.uT(sheet);
-            // 显示第一个标签页的数据
-            this.uContent(sheet[0], null);
-            // 监听数据变化
-            runtime.addEventListener('state', (ev: Ev.State) => {
-                this._dr = ev.data;
-                this.uContent(sheet[this._ti], ev.data);
-            });
             return this;
         }
 
