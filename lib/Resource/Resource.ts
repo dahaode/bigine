@@ -40,6 +40,17 @@ namespace Resource {
         private _r: boolean;
 
         /**
+         * 获取资源。
+         */
+        public static g<U>(uri: string, type: Core.IResource.Type): Resource<U> {
+            uri = uri.replace(/^.+:\/\//, '//');
+            var key: string = uri + type;
+            if (!(key in $r))
+                $r[key] = new Resource<U>(uri, type);
+            return $r[key];
+        }
+
+        /**
          * 构造函数。
          */
         constructor(uri: string, type: Core.IResource.Type) {
@@ -83,17 +94,6 @@ namespace Resource {
             this._l = env.Protocol + this._l;
             this._w = [];
             this._r = false;
-        }
-
-        /**
-         * 获取资源。
-         */
-        public static g<U>(uri: string, type: Core.IResource.Type): Resource<U> {
-            uri = uri.replace(/^.+:\/\//, '//');
-            var key: string = uri + type;
-            if (!(key in $r))
-                $r[key] = new Resource<U>(uri, type);
-            return $r[key];
         }
 
         /**

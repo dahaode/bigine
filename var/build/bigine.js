@@ -3145,16 +3145,15 @@ var Sprite;
          * 构造函数。
          */
         function Panel(id, theme) {
-            var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _mask = theme['mask'], _back = theme['back'], _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'], _type = theme['type'], i = 1, left = G.Text.Align.Left;
-            // j: Util.IHashTable<any>;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'];
             _super.call(this, 0, 0, w, h);
             this._pt = theme;
+            this._pi = false;
             this._ti = 0;
             this._tai = {};
             this._rr = [
                 // 0: 面板背景
-                rr.g(url + _back['i'], raw),
+                rr.g(url + theme['back']['i'], raw),
                 // 1: 关闭按钮
                 rr.g(url + _close['i'], raw),
                 // 2: 关闭按钮~hover
@@ -3189,9 +3188,53 @@ var Sprite;
             this._cc = [];
             this._cp = 0;
             this._dr = {};
+            this.o(0);
+        }
+        /**
+         * 配置。
+         */
+        Panel.prototype.u = function (sheet, runtime) {
+            var _this = this;
+            this._ep = runtime.gE();
+            if (sheet.length == 0)
+                return this;
+            // 集合面板翻页上一页按钮
+            var pBounds = this._pt['coll']['arrow']['p'];
+            this.pI()
+                .a(this._ca['p'] = new G.Button(pBounds)
+                .b(function () {
+                _this._cp = _this._cp == 0 ? (_this._cc.length - 1) : (_this._cp - 1);
+                _this.uC(sheet[_this._ti], _this._dr);
+            }, new G.Image(this._rr[8].o(), pBounds, true), new G.Image(this._rr[7].o(), pBounds, true)));
+            this._ca['p'].o(0);
+            // 集合面板翻页下一页按钮
+            var nBounds = this._pt['coll']['arrow']['n'];
+            this.a(this._ca['n'] = new G.Button(nBounds)
+                .b(function () {
+                _this._cp = (_this._cp == _this._cc.length - 1) ? 0 : (_this._cp + 1);
+                _this.uC(sheet[_this._ti], _this._dr);
+            }, new G.Image(this._rr[10].o(), nBounds, true), new G.Image(this._rr[9].o(), nBounds, true)));
+            this._ca['n'].o(0);
+            this.uT(sheet);
+            // 显示第一个标签页的数据
+            this.uContent(sheet[0], null);
+            // 监听数据变化
+            runtime.addEventListener('state', function (ev) {
+                _this._dr = ev.data;
+                _this.uContent(sheet[_this._ti], ev.data);
+            });
+            return this;
+        };
+        /**
+         * 初始化渲染。
+         */
+        Panel.prototype.pI = function () {
+            var _this = this;
+            if (this._pi)
+                return this;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', theme = this._pt, _mask = theme['mask'], _back = theme['back'], _close = theme['close'], _simp = theme['simp'], _coll = theme['coll'], _type = theme['type'], i = 1, left = G.Text.Align.Left;
             // 渲染面板初始样式
-            this.o(0)
-                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+            this.a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
                 .a(new G.Image(this._rr[0].o(), _back))
                 .a(new G.Button(_close)
                 .b(function () {
@@ -3243,39 +3286,6 @@ var Sprite;
                     _this.a(_this._cv[name + 'v']);
                     _this._cv[name + 'v'].o(0);
                 }
-            });
-        }
-        /**
-         * 配置。
-         */
-        Panel.prototype.u = function (sheet, runtime) {
-            var _this = this;
-            this._ep = runtime.gE();
-            if (sheet.length == 0)
-                return this;
-            // 集合面板翻页上一页按钮
-            var pBounds = this._pt['coll']['arrow']['p'];
-            this.a(this._ca['p'] = new G.Button(pBounds)
-                .b(function () {
-                _this._cp = _this._cp == 0 ? (_this._cc.length - 1) : (_this._cp - 1);
-                _this.uC(sheet[_this._ti], _this._dr);
-            }, new G.Image(this._rr[8].o(), pBounds, true), new G.Image(this._rr[7].o(), pBounds, true)));
-            this._ca['p'].o(0);
-            // 集合面板翻页下一页按钮
-            var nBounds = this._pt['coll']['arrow']['n'];
-            this.a(this._ca['n'] = new G.Button(nBounds)
-                .b(function () {
-                _this._cp = (_this._cp == _this._cc.length - 1) ? 0 : (_this._cp + 1);
-                _this.uC(sheet[_this._ti], _this._dr);
-            }, new G.Image(this._rr[10].o(), nBounds, true), new G.Image(this._rr[9].o(), nBounds, true)));
-            this._ca['n'].o(0);
-            this.uT(sheet);
-            // 显示第一个标签页的数据
-            this.uContent(sheet[0], null);
-            // 监听数据变化
-            runtime.addEventListener('state', function (ev) {
-                _this._dr = ev.data;
-                _this.uContent(sheet[_this._ti], ev.data);
             });
             return this;
         };
@@ -13120,7 +13130,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.23.1';
+    Bigine.version = '0.23.2';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

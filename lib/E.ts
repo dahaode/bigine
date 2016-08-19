@@ -110,22 +110,6 @@ class E extends Error {
     public signal: E.Signal;
 
     /**
-     * 构造函数。
-     */
-    constructor(message: string, lineNo?: number) {
-        super();
-        if ('captureStackTrace' in Error)
-            Error['captureStackTrace'](this, E);
-        this.signal = (lineNo in E.Signal) ?
-            lineNo :
-            E.Signal.OK;
-        if (0 < lineNo)
-            message = '第 ' + lineNo + ' 行' + message;
-        this.name = 'BigineError';
-        this.message = message;
-    }
-
-    /**
      * 中断顺序时序流。
      */
     public static doHalt<T>(): Promise<T> {
@@ -155,6 +139,22 @@ class E extends Error {
         if (E.Signal.BREAK == error.signal)
             return Promise.resolve<void>();
         return Promise.reject(error);
+    }
+
+    /**
+     * 构造函数。
+     */
+    constructor(message: string, lineNo?: number) {
+        super();
+        if ('captureStackTrace' in Error)
+            Error['captureStackTrace'](this, E);
+        this.signal = (lineNo in E.Signal) ?
+            lineNo :
+            E.Signal.OK;
+        if (0 < lineNo)
+            message = '第 ' + lineNo + ' 行' + message;
+        this.name = 'BigineError';
+        this.message = message;
     }
 }
 

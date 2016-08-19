@@ -24,13 +24,6 @@ namespace Resource {
         private _p: Promise<void>;
 
         /**
-         * 构造函数。
-         */
-        constructor() {
-            this._p = Promise.resolve<void>();
-        }
-
-        /**
          * 预加载资源。
          */
         public static c(resources: Resource<string | HTMLImageElement>[][], logger?: Util.ILogger): Promise<void> {
@@ -45,6 +38,13 @@ namespace Resource {
                     ret = p;
             });
             return ret;
+        }
+
+        /**
+         * 构造函数。
+         */
+        constructor() {
+            this._p = Promise.resolve<void>();
         }
 
         /**

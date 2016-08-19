@@ -299,8 +299,8 @@ declare namespace __Bigine {
             private _q;
             private _w;
             private _r;
-            constructor(uri: string, type: Core.IResource.Type);
             static g<U>(uri: string, type: Core.IResource.Type): Resource<U>;
+            constructor(uri: string, type: Core.IResource.Type);
             l(): string;
             o(): Promise<T>;
             w(callback: (value: T) => void): Resource<T>;
@@ -398,8 +398,8 @@ declare namespace __Bigine {
     namespace Resource {
         class Prefecher {
             private _p;
-            constructor();
             static c(resources: Resource<string | HTMLImageElement>[][], logger?: Util.ILogger): Promise<void>;
+            constructor();
             private q(resources, logger?);
         }
     }
@@ -756,8 +756,10 @@ declare namespace __Bigine {
             private _cp;
             private _ep;
             private _dr;
+            private _pi;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
             u(sheet: Array<Util.IHashTable<any>>, runtime: Core.IRuntime): Panel;
+            private pI();
             private uT(sheet);
             private uContent(sheet, data);
             private uS(sheet, data);
@@ -1070,11 +1072,11 @@ declare namespace __Bigine {
         static STRUCT_FIELD_TYPE_TOO_MANY: string;
         static STRUCT_FIELD_CANNOT_EMPTY: string;
         signal: E.Signal;
-        constructor(message: string, lineNo?: number);
         static doHalt<T>(): Promise<T>;
         static ignoreHalt(error: E): Promise<void>;
         static doBreak<T>(): Promise<T>;
         static ignoreBreak(error: E): Promise<void>;
+        constructor(message: string, lineNo?: number);
     }
     namespace E {
         enum Signal {
