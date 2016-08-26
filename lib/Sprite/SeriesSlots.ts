@@ -78,7 +78,41 @@ namespace Sprite {
                 _1: Util.IHashTable<any> = this._c[1],
                 _1t: Util.IHashTable<any> = _1['text'],
                 right: G.Text.Align = G.Text.Align.Right;
-            return states.l().then(() => {
+            let succ: () => Promise<SeriesSlots>;
+            let fail: () => Promise<SeriesSlots>;
+            let loop: () => Promise<SeriesSlots> = () => {
+                return states.l()
+                    .then(() => succ())
+                    .catch(() => fail());
+            };
+            succ = () => {
+                this.e(this._x['1'])
+                    .a(this._x['1'] = new G.Button(<G.IBounds> _1)
+                    .b(() => {
+                        this.dispatchEvent(new Ev.SlotsSave({ target: this }));
+                    }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
+                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
+                        .tc(_1t['c'])
+                        .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
+                    )
+                );
+                return this.v(duration);
+            };
+            fail = () => {
+                this.e(this._x['1'])
+                    .a(this._x['1'] = new G.Button(<G.IBounds> _1)
+                    .b(() => {
+                        loop();
+                    }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
+                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
+                        .tc(_1t['c'])
+                        .a(new G.TextPhrase('（未登录）'))
+                    )
+                );
+                return this.v(duration);
+            };
+            return loop();
+            /*return states.l().then(() => {
                 this.e(this._x['1'])
                     .a(this._x['1'] = new G.Button(<G.IBounds> _1)
                     .b(() => {
@@ -94,7 +128,7 @@ namespace Sprite {
                 this.e(this._x['1'])
                     .a(new G.Image(this._rr[4].o(), <G.IBounds> _1));
                 return this.v(duration);
-            });
+            });*/
         }
 
         /**

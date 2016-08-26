@@ -526,6 +526,45 @@ var Ev;
     Ev.Ready = Ready;
 })(Ev || (Ev = {}));
 /**
+ * 声明（运行时）（loading文件加载完成）就绪事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/ILoadingMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
+/**
+ * 定义（运行时）（loading文件加载完成）就绪事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Loading.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="ILoadingMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Loading = (function (_super) {
+        __extends(Loading, _super);
+        /**
+         * 构造函数。
+         */
+        function Loading(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        Loading.prototype.gT = function () {
+            return 'loading';
+        };
+        return Loading;
+    }(Ev.Event));
+    Ev.Loading = Loading;
+})(Ev || (Ev = {}));
+/**
  * 声明（运行时）错误事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -751,6 +790,7 @@ var Resource;
  * @file      Runtime/Episode.ts
  */
 /// <reference path="../Ev/_Runtime/Ready.ts" />
+/// <reference path="../Ev/_Runtime/Loading.ts" />
 /// <reference path="../Ev/_Runtime/Error.ts" />
 /// <reference path="../Ev/_Runtime/End.ts" />
 /// <reference path="../Resource/Resource.ts" />
@@ -768,37 +808,46 @@ var Runtime;
             this._p = ep.a();
             this._s = ep.gS();
             this._t = ep.gT();
+            this._l = null;
             ep.r(this);
-            Promise.all([
-                new Promise(function (resolve) {
-                    var res = ep.l(function (entities) {
-                        Util.each(entities, function (typed) {
-                            Util.each(typed, function (entity) {
-                                entity.r(_this);
-                            });
-                        });
-                        resolve();
-                    });
-                    if (!res)
-                        resolve();
-                }).then(function () {
-                    ep.b(_this);
-                }),
-                new Promise(function (resolve) {
-                    ep.t(function (data) {
-                        _this._c = data;
-                        resolve();
-                    });
-                })
-            ]).then(function () {
-                runtime.dispatchEvent(new Ev.Ready({
+            Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version + Bigine.domain, function (des) {
+                _this._l = des;
+                runtime.dispatchEvent(new Ev.Loading({
                     target: _this
                 }));
-            })['catch'](function (error) {
-                runtime.dispatchEvent(new Ev.Error({
-                    target: _this,
-                    error: error
-                }));
+                Promise.all([
+                    new Promise(function (resolve) {
+                        var res = ep.l(function (entities) {
+                            Util.each(entities, function (typed) {
+                                Util.each(typed, function (entity) {
+                                    entity.r(_this);
+                                });
+                            });
+                            resolve();
+                        });
+                        if (!res)
+                            resolve();
+                    }).then(function () {
+                        ep.b(_this);
+                    }),
+                    new Promise(function (resolve) {
+                        ep.t(function (data) {
+                            _this._c = data;
+                            resolve();
+                        });
+                    })
+                ]).then(function () {
+                    runtime.dispatchEvent(new Ev.Ready({
+                        target: _this
+                    }));
+                })['catch'](function (error) {
+                    runtime.dispatchEvent(new Ev.Error({
+                        target: _this,
+                        error: error
+                    }));
+                });
+            }, function (error, status) {
+                throw error;
             });
         }
         /**
@@ -886,6 +935,12 @@ var Runtime;
             if (!this._c)
                 throw new E(E.EP_THEME_NOT_LOADED);
             return this._c;
+        };
+        /**
+         * 获取Loading主题信息。
+         */
+        Episode.prototype.gL = function () {
+            return this._l;
         };
         return Episode;
     }());
@@ -1377,7 +1432,7 @@ var Runtime;
         /**
          * 加载动画。
          */
-        Director.prototype.Load = function (loaded) {
+        Director.prototype.Load = function (loaded, theme) {
             return this._p;
         };
         /**
@@ -3842,7 +3897,14 @@ var Sprite;
         SeriesSlots.prototype.vs = function (states, duration) {
             var _this = this;
             var type = Core.IStates.Save.End, $1 = states.q('1', type), _1 = this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
-            return states.l().then(function () {
+            var succ;
+            var fail;
+            var loop = function () {
+                return states.l()
+                    .then(function () { return succ(); })
+                    .catch(function () { return fail(); });
+            };
+            succ = function () {
                 _this.e(_this._x['1'])
                     .a(_this._x['1'] = new G.Button(_1)
                     .b(function () {
@@ -3852,11 +3914,36 @@ var Sprite;
                     .tc(_1t['c'])
                     .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）'))));
                 return _this.v(duration);
-            }).catch(function () {
+            };
+            fail = function () {
                 _this.e(_this._x['1'])
-                    .a(new G.Image(_this._rr[4].o(), _1));
+                    .a(_this._x['1'] = new G.Button(_1)
+                    .b(function () {
+                    loop();
+                }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true))
+                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
+                    .tc(_1t['c'])
+                    .a(new G.TextPhrase('（未登录）'))));
                 return _this.v(duration);
-            });
+            };
+            return loop();
+            /*return states.l().then(() => {
+                this.e(this._x['1'])
+                    .a(this._x['1'] = new G.Button(<G.IBounds> _1)
+                    .b(() => {
+                        this.dispatchEvent(new Ev.SlotsSave({ target: this }));
+                    }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
+                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
+                        .tc(_1t['c'])
+                        .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
+                    )
+                );
+                return this.v(duration);
+            }).catch(() => {
+                this.e(this._x['1'])
+                    .a(new G.Image(this._rr[4].o(), <G.IBounds> _1));
+                return this.v(duration);
+            });*/
         };
         /**
          * 显示读档位。
@@ -4334,7 +4421,6 @@ var Runtime;
             this._vo = true;
             this._ca = [undefined, undefined];
             this._pc = undefined;
-            this._ps = false;
             this._i = {
                 o: Resource.Resource.g(assets + 'logo.png', raw),
                 e: Resource.Resource.g(assets + 'thx.png', raw),
@@ -4390,23 +4476,12 @@ var Runtime;
         /**
          * 加载动画。
          */
-        CanvasDirector.prototype.Load = function (loaded) {
-            var _this = this;
+        CanvasDirector.prototype.Load = function (loaded, theme) {
             if (loaded) {
-                Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version + Bigine.domain, function (des) {
-                    if (!_this._ps) {
-                        if (!_this._x['ld'])
-                            _this._c.a(_this._x['ld'] = new Sprite.Loading(des));
-                        return _this.c([_this._x['ld'].l()])
-                            .then(function () {
-                            _this._x['ld'].u().v(0);
-                            return _super.prototype.Load.call(_this, loaded);
-                        });
-                    }
-                    return _super.prototype.Load.call(_this, loaded);
-                }, function (error, status) {
-                    throw error;
-                });
+                if (!this._x['ld'])
+                    this._c.a(this._x['ld'] = new Sprite.Loading(theme));
+                this._x['ld'].u().v(0);
+                return _super.prototype.Load.call(this, loaded);
             }
             else {
                 if (this._x['ld'])
@@ -4419,9 +4494,6 @@ var Runtime;
          */
         CanvasDirector.prototype.OP = function (start, title, author) {
             var _this = this;
-            this._ps = true;
-            if (this._x['ld'])
-                this._x['ld'].h(0);
             this._x['s'].u(title, Core.IRuntime.Series.Rest == this._fs, this._c);
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
@@ -4460,7 +4532,6 @@ var Runtime;
             var _this = this;
             return this.c([[this._i['e']]])
                 .then(function () {
-                var gED = new G.Image(_this._i['e'].o(), CanvasDirector.BOUNDS);
                 _this.playBGM();
                 _this.playSE();
                 return _this.lightOff()
@@ -4468,13 +4539,7 @@ var Runtime;
                     _this._r.dispatchEvent(new Ev.Fin({
                         target: _this._r.gE()
                     }));
-                    _this._c.a(gED, _this._x['c']);
                     _this._x['t'].h(0);
-                    return _this.lightOn();
-                }).then(function () { return gED.p(new G.Delay(2000)); })
-                    .then(function () { return _this.lightOff(); })
-                    .then(function () {
-                    _this._c.e(gED);
                     return _super.prototype.ED.call(_this);
                 });
             }).then(function () { return _this.$s(); });
@@ -12568,7 +12633,8 @@ var Runtime;
             this._s = new Runtime_1.States(this);
             this._d = Runtime_1.DirectorFactory.c(this);
             this._fr =
-                this._fh = false;
+                this._fl =
+                    this._fh = false;
             this._fp = this._d.gD();
             this._fv = 1;
             this._fa = this._e.gA();
@@ -12576,6 +12642,12 @@ var Runtime;
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
+            this.addEventListener('loading', function () {
+                _this._fl = true;
+                if (_this._fp) {
+                    _this._d.Load(true, _this._e.gL());
+                }
+            });
             this.addEventListener('ready', function () {
                 _this._s.l();
                 _this._d.t(_this._e.gT(), _this._e.gC())
@@ -12585,7 +12657,7 @@ var Runtime;
                 if (_this._fp) {
                     _this._fp = false;
                     _this._d.Load(false);
-                    _this.playing();
+                    _this.play();
                 }
             });
             this.addEventListener('begin', function () {
@@ -12666,14 +12738,6 @@ var Runtime;
          * 点击开始播放、重新播放调用。
          */
         Runtime.prototype.play = function () {
-            this._d.Load(true);
-            this.playing();
-            return this;
-        };
-        /**
-         * 播放。
-         */
-        Runtime.prototype.playing = function () {
             if (this._fp)
                 return this;
             this._fp = true;
@@ -13130,7 +13194,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.23.2';
+    Bigine.version = '0.23.3';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

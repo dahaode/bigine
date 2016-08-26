@@ -108,11 +108,6 @@ namespace Runtime {
         private _pc: Tag.Option;
 
         /**
-         * 是否准备开始标识。
-         */
-        private _ps: boolean;
-
-        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -144,7 +139,6 @@ namespace Runtime {
             this._vo = true;
             this._ca = [undefined, undefined];
             this._pc = undefined;
-            this._ps = false;
             this._i = {
                 o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
                 e: Resource.Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
@@ -204,22 +198,11 @@ namespace Runtime {
         /**
          * 加载动画。
          */
-        public Load(loaded: boolean): Promise<Core.IRuntime> {
+        public Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime> {
             if (loaded) {
-                Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version + Bigine.domain,
-                    (des) => {
-                        if (!this._ps) {
-                            if (!this._x['ld']) this._c.a(this._x['ld'] = <Sprite.Loading> new Sprite.Loading(des));
-                            return this.c([this._x['ld'].l()])
-                                .then(() => {
-                                    (<Sprite.Loading> this._x['ld']).u().v(0);
-                                    return super.Load(loaded);
-                                });
-                        }
-                        return super.Load(loaded);
-                    }, (error: Error, status?: any) => {
-                        throw error;
-                    });
+                if (!this._x['ld']) this._c.a(this._x['ld'] = <Sprite.Loading> new Sprite.Loading(theme));
+                (<Sprite.Loading> this._x['ld']).u().v(0);
+                return super.Load(loaded);
             } else {
                 if (this._x['ld']) (<Sprite.Loading> this._x['ld']).h(0);
                 return super.Load(loaded);
@@ -230,8 +213,6 @@ namespace Runtime {
          * 开始动画。
          */
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
-            this._ps = true;
-            if (this._x['ld']) (<Sprite.Loading> this._x['ld']).h(0);
             (<Sprite.Start> this._x['s']).u(title, Core.IRuntime.Series.Rest == this._fs, this._c);
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
@@ -269,7 +250,6 @@ namespace Runtime {
         public ED(): Promise<Core.IRuntime> {
             return this.c([[this._i['e']]])
                 .then(() => {
-                    var gED: G.Image = new G.Image(this._i['e'].o(), CanvasDirector.BOUNDS);
                     this.playBGM();
                     this.playSE();
                     return this.lightOff()
@@ -277,13 +257,7 @@ namespace Runtime {
                             this._r.dispatchEvent(new Ev.Fin({
                                 target: this._r.gE()
                             }));
-                            this._c.a(gED, this._x['c']);
                             this._x['t'].h(0);
-                            return this.lightOn();
-                        }).then(() => gED.p(new G.Delay(2000)))
-                        .then(() => this.lightOff())
-                        .then(() => {
-                            this._c.e(gED);
                             return super.ED();
                         });
                 }).then(() => this.$s());

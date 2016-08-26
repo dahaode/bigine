@@ -27,7 +27,7 @@ namespace Core {
         /**
          * 加载动画。
          */
-        Load(loaded: boolean): Promise<IRuntime>;
+        Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<IRuntime>;
 
         /**
          * 开场动画。

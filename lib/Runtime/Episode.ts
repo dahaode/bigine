@@ -8,6 +8,7 @@
  */
 
 /// <reference path="../Ev/_Runtime/Ready.ts" />
+/// <reference path="../Ev/_Runtime/Loading.ts" />
 /// <reference path="../Ev/_Runtime/Error.ts" />
 /// <reference path="../Ev/_Runtime/End.ts" />
 /// <reference path="../Resource/Resource.ts" />
@@ -47,6 +48,11 @@ namespace Runtime {
         private _t: string;
 
         /**
+         * Loading主题名称。
+         */
+        private _l: Util.IHashTable<Util.IHashTable<any>>;
+
+        /**
          * 构造函数。
          */
         constructor(ep: Core.IRootTag, runtime: Core.IRuntime) {
@@ -55,38 +61,48 @@ namespace Runtime {
             this._p = ep.a();
             this._s = ep.gS();
             this._t = ep.gT();
+            this._l = null;
             ep.r(this);
-            Promise.all([
-                new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-                    var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
-                        Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
-                            Util.each(typed, (entity: Core.IEntityTag) => {
-                                entity.r(this);
+            Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version + Bigine.domain,
+                (des) => {
+                    this._l = des;
+                    runtime.dispatchEvent(new Ev.Loading({
+                        target: this
+                    }));
+                    Promise.all([
+                        new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                            var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
+                                Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
+                                    Util.each(typed, (entity: Core.IEntityTag) => {
+                                        entity.r(this);
+                                    });
+                                });
+                                resolve();
                             });
-                        });
-                        resolve();
+                            if (!res)
+                                resolve();
+                        }).then(() => {
+                            ep.b(this);
+                        }),
+                        new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                            ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
+                                this._c = data;
+                                resolve();
+                            });
+                        })
+                    ]).then(() => {
+                        runtime.dispatchEvent(new Ev.Ready({
+                            target: this
+                        }));
+                    })['catch']((error: any) => {
+                        runtime.dispatchEvent(new Ev.Error({
+                            target: this,
+                            error: error
+                        }));
                     });
-                    if (!res)
-                        resolve();
-                }).then(() => {
-                    ep.b(this);
-                }),
-                new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-                    ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
-                        this._c = data;
-                        resolve();
-                    });
-                })
-            ]).then(() => {
-                runtime.dispatchEvent(new Ev.Ready({
-                    target: this
-                }));
-            })['catch']((error: any) => {
-                runtime.dispatchEvent(new Ev.Error({
-                    target: this,
-                    error: error
-                }));
-            });
+                }, (error: Error, status?: any) => {
+                    throw error;
+                });
         }
 
         /**
@@ -182,6 +198,13 @@ namespace Runtime {
             if (!this._c)
                 throw new E(E.EP_THEME_NOT_LOADED);
             return this._c;
+        }
+
+        /**
+         * 获取Loading主题信息。
+         */
+        public gL(): Util.IHashTable<Util.IHashTable<any>> {
+            return this._l;
         }
     }
 }

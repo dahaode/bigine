@@ -127,7 +127,7 @@ declare namespace __Bigine {
     namespace Core {
         interface IDirector {
             c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
-            Load(loaded: boolean): Promise<IRuntime>;
+            Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<IRuntime>;
             OP(start: boolean, title: string, author: string): Promise<IRuntime>;
             ED(): Promise<IRuntime>;
             FAIL(): Promise<IRuntime>;
@@ -272,6 +272,16 @@ declare namespace __Bigine {
         }
     }
     namespace Ev {
+        interface ILoadingMetas extends Util.IEventMetas<Core.IEpisode> {
+        }
+    }
+    namespace Ev {
+        class Loading extends Event<Core.IEpisode> {
+            constructor(metas: ILoadingMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
         interface IErrorMetas extends Util.IEventMetas<any> {
             error: Error;
         }
@@ -314,6 +324,7 @@ declare namespace __Bigine {
             private _p;
             private _s;
             private _t;
+            private _l;
             constructor(ep: Core.IRootTag, runtime: Core.IRuntime);
             a(scene: Core.ISceneTag): Episode;
             p(type: Core.ISceneTag.Type, runtime: Core.IRuntime): Promise<Core.IRuntime>;
@@ -324,6 +335,7 @@ declare namespace __Bigine {
             gT(): string;
             gA(): boolean;
             gC(): Util.IHashTable<Util.IHashTable<any>>;
+            gL(): Util.IHashTable<Util.IHashTable<any>>;
         }
     }
     namespace Ev {
@@ -424,7 +436,7 @@ declare namespace __Bigine {
             protected _o: boolean;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
-            Load(loaded: boolean): Promise<Core.IRuntime>;
+            Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             FAIL(): Promise<Core.IRuntime>;
@@ -905,10 +917,9 @@ declare namespace __Bigine {
             private _vo;
             private _pt;
             private _pc;
-            private _ps;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
-            Load(loaded: boolean): Promise<Core.IRuntime>;
+            Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
             OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             protected $s(): Promise<Core.IRuntime>;
@@ -2042,6 +2053,7 @@ declare namespace __Bigine {
             private _l;
             private _s;
             private _d;
+            private _fl;
             private _fr;
             private _fp;
             private _fv;
@@ -2062,7 +2074,6 @@ declare namespace __Bigine {
             gS(): States;
             gD(): Director;
             play(): Runtime;
-            protected playing(): Runtime;
             replay(): Runtime;
             destroy(): Promise<Runtime>;
             fix(): void;

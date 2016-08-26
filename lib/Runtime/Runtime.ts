@@ -48,6 +48,11 @@ namespace Runtime {
         private _d: Director;
 
         /**
+         * loading是否加载完成。
+         */
+        private _fl: boolean;
+
+        /**
          * 是否准备就绪标识。
          */
         private _fr: boolean;
@@ -112,6 +117,7 @@ namespace Runtime {
             this._s = new States(this);
             this._d = DirectorFactory.c(this);
             this._fr =
+            this._fl =
             this._fh = false;
             this._fp = this._d.gD();
             this._fv = 1;
@@ -120,6 +126,12 @@ namespace Runtime {
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
+            this.addEventListener('loading', () => {
+                this._fl = true;
+                if (this._fp) {
+                    this._d.Load(true, this._e.gL());
+                }
+            });
             this.addEventListener('ready', () => {
                 this._s.l();
                 this._d.t(this._e.gT(), this._e.gC())
@@ -129,7 +141,7 @@ namespace Runtime {
                 if (this._fp) {
                     this._fp = false;
                     this._d.Load(false);
-                    this.playing();
+                    this.play();
                 }
             });
             this.addEventListener('begin', () => {
@@ -217,15 +229,6 @@ namespace Runtime {
          * 点击开始播放、重新播放调用。
          */
         public play(): Runtime {
-            this._d.Load(true);
-            this.playing();
-            return this;
-        }
-
-        /**
-         * 播放。
-         */
-        protected playing(): Runtime {
             if (this._fp)
                 return this;
             this._fp = true;
