@@ -40,10 +40,7 @@ namespace Sprite {
                 _close: Util.IHashTable<any> = theme['close'],
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _auto: Util.IHashTable<any> = theme['auto'],
-                _1: Util.IHashTable<any> = theme['1'],
-                _2: Util.IHashTable<any> = theme['2'],
-                _3: Util.IHashTable<any> = theme['3'],
-                _4: Util.IHashTable<any> = theme['4'];
+                _1: Util.IHashTable<any> = theme['1'];
             super(0, 0, w, h);
             this._c = [_auto, _1];
             this._x = {};
@@ -54,9 +51,6 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(url + _auto['ih'], raw),
                 rr.g<HTMLImageElement>(url + _1['i'], raw),
                 rr.g<HTMLImageElement>(url + _1['ih'], raw),
-                rr.g<HTMLImageElement>(url + _2['i'], raw),
-                rr.g<HTMLImageElement>(url + _3['i'], raw),
-                rr.g<HTMLImageElement>(url + _4['i'], raw)
             ];
             (<SeriesSlots> this.o(0))
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -64,9 +58,7 @@ namespace Sprite {
                     .b(() => {
                         this.dispatchEvent(new Ev.SlotsClose({ target: this }));
                     }, new G.Image(this._rr[1].o(), <G.IBounds> _close, true), new G.Image(this._rr[0].o(), <G.IBounds> _close, true))
-                ).a(new G.Image(this._rr[6].o(), <G.IBounds> _2))
-                .a(new G.Image(this._rr[7].o(), <G.IBounds> _3))
-                .a(new G.Image(this._rr[8].o(), <G.IBounds> _4));
+                );
         }
 
         /**
@@ -89,7 +81,10 @@ namespace Sprite {
                 this.e(this._x['1'])
                     .a(this._x['1'] = new G.Button(<G.IBounds> _1)
                     .b(() => {
-                        this.dispatchEvent(new Ev.SlotsSave({ target: this }));
+                        this.dispatchEvent(new Ev.SlotsSave({
+                            target: this,
+                            slot: '1',
+                        }));
                     }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
                     .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
                         .tc(_1t['c'])
@@ -112,23 +107,6 @@ namespace Sprite {
                 return this.v(duration);
             };
             return loop();
-            /*return states.l().then(() => {
-                this.e(this._x['1'])
-                    .a(this._x['1'] = new G.Button(<G.IBounds> _1)
-                    .b(() => {
-                        this.dispatchEvent(new Ev.SlotsSave({ target: this }));
-                    }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
-                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
-                        .tc(_1t['c'])
-                        .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
-                    )
-                );
-                return this.v(duration);
-            }).catch(() => {
-                this.e(this._x['1'])
-                    .a(new G.Image(this._rr[4].o(), <G.IBounds> _1));
-                return this.v(duration);
-            });*/
         }
 
         /**

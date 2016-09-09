@@ -94,7 +94,7 @@ namespace Core {
          *
          * 此方法应触发 Save 事件。
          */
-        e(manual: boolean, series?: boolean): Util.IHashTable<any>;
+        e(manual: string, series?: boolean): Util.IHashTable<any>;
 
         /**
          * 导入数据。
@@ -105,6 +105,11 @@ namespace Core {
          * 查询档位信息。
          */
         q(index: string, type?: IStates.Save): [string, number];
+
+        /**
+         * 查询档位信息。
+         */
+        qa(type?: IStates.Save): Util.IHashTable<[string, number]>;
 
         /**
          * 加载存档信息。

@@ -13,10 +13,16 @@
 namespace Ev {
     export class SlotsSave extends Event<Core.ISlots> {
         /**
+         * 档位。
+         */
+        public slot: string;
+
+        /**
          * 构造函数。
          */
         constructor(metas: ISlotsSaveMetas) {
             super(metas);
+            this.slot = metas.slot;
         }
 
         /**

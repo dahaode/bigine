@@ -29,7 +29,7 @@ namespace Tag {
                     scene = scene.gU();
                 brief = scene.$c();
             }
-            runtime.gS().e(false);
+            runtime.gS().e('auto');
             return runtime;
         }
     }

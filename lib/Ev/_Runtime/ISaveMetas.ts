@@ -24,9 +24,9 @@ namespace Ev {
         series?: boolean;
 
         /**
-         * 是否手动存档。
+         * 档位。
          */
-        manual: boolean;
+        manual: string;
 
         /**
          * 回调函数。

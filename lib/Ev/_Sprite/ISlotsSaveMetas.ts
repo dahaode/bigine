@@ -14,5 +14,9 @@ namespace Ev {
     import Util = __Bigine_Util;
 
     export interface ISlotsSaveMetas extends Util.IEventMetas<Core.ISlots> {
+		/**
+		 * 档位
+		 */
+        slot: string;
     }
 }

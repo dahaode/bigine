@@ -159,11 +159,11 @@ namespace Runtime {
          *
          * 此方法应触发 Save 事件。
          */
-        public e(manual: boolean, series?: boolean): Util.IHashTable<any> {
+        public e(manual: string, series?: boolean): Util.IHashTable<any> {
             if (!this._p)
                 return {};
             let save: (id: string) => void = (id: string) => {
-                    this._s[series ? 'end' : 'work'][manual ? '1' : 'auto'] = [id, + new Date()];
+                    this._s[series ? 'end' : 'work'][manual] = [id, + new Date()];
                 },
                 data: Util.IHashTable<any> = this._p;
             if (series) {
@@ -209,6 +209,23 @@ namespace Runtime {
                     break;
             }
             return this._s[type][index];
+        }
+
+        /**
+         * 查询档位所有存档。
+         */
+        public qa(series?: Core.IStates.Save): Util.IHashTable<[string, number]> {
+            let save: typeof Core.IStates.Save = Core.IStates.Save,
+                type: string = 'work';
+            switch (series) {
+                case save.Series:
+                    type = 'series';
+                    break;
+                case save.End:
+                    type = 'end';
+                    break;
+            }
+            return this._s[type];
         }
 
         /**

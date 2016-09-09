@@ -27,7 +27,7 @@ namespace Ev {
         /**
          * 是否手动存档。
          */
-        public manual: boolean;
+        public manual: string;
 
         /**
          * 回调函数。

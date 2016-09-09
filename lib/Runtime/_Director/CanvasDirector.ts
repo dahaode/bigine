@@ -271,15 +271,19 @@ namespace Runtime {
                 return Promise.resolve(this._r);
             return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                 let $c: string = 'slots.close',
-                    close: () => void = () => {
-                        this._x['ss'].removeEventListener($c, close);
-                        resolve(this._r);
-                    },
                     $s: string = 'slots.save',
-                    save: () => void = () => {
-                        this._x['ss'].removeEventListener($s, save);
-                        resolve(this._r);
-                    };
+                    close: () => void,
+                    save: () => void;
+                close = () => {
+                    this._x['ss'].removeEventListener($s, save);
+                    this._x['ss'].removeEventListener($c, close);
+                    resolve(this._r);
+                };
+                save = () => {
+                    this._x['ss'].removeEventListener($s, save);
+                    this._x['ss'].removeEventListener($c, close);
+                    resolve(this._r);
+                };
                 this.lightOn().then(() => {
                     (<Sprite.SeriesSlots> this._x['ss']
                         .addEventListener($c, close)
@@ -1026,10 +1030,10 @@ namespace Runtime {
                 .addEventListener('slots.close', () => {
                     this._x[slotsFromStart ? 's' : 'm'].v();
                     this._x['sl'].h();
-                }).addEventListener('slots.save', () => {
+                }).addEventListener('slots.save', (ev: Ev.SlotsSave) => {
                     this._x[slotsFromStart ? 's' : 'm'].v();
                     this._x['sl'].h();
-                    this._r.gS().e(true);
+                    this._r.gS().e(ev.slot);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
                     this.lightOff().then(() => {
                         this._x['sl'].h(0);
@@ -1045,12 +1049,12 @@ namespace Runtime {
             this._x['ss'] = <Sprite.SeriesSlots> new Sprite.SeriesSlots(id, theme['series'])
                 .addEventListener('slots.close', () => {
                     if (!slotsFromStart)
-                        this._r.gS().e(false, true);
+                        this._r.gS().e('auto', true);
                     slotsFromStart = false;
                     this._x['ss'].h();
                 }).addEventListener('slots.save', () => {
                     this._x['ss'].h();
-                    this._r.gS().e(true, true);
+                    this._r.gS().e('1', true);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
                     slotsFromStart = false;
                     this.lightOff().then(() => {

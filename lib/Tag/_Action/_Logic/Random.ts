@@ -23,7 +23,7 @@ namespace Tag {
          */
         public t(states: Core.IStates): boolean {
             var depth: number = states.g('$d');
-            states.s(this._p[0], 1 | 100 * Math.random())
+            states.s(this._p[0], Math.round(100 * Math.random()))
                 .c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;

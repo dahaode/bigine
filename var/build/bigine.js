@@ -727,7 +727,7 @@ var Resource;
             var _this = this;
             if (!this._q) {
                 this._q = new Promise(function (resolve, reject) {
-                    var url = _this._l + '?bigine-0.22.5' + Bigine.domain, xhr, img;
+                    var url = _this._l + '?bigine-0.23.4' + Bigine.domain, xhr, img;
                     if ('.mp3' == _this._l.substr(-4)) {
                         _this._l = url;
                         return resolve(url);
@@ -1192,7 +1192,7 @@ var Runtime;
             if (!this._p)
                 return {};
             var save = function (id) {
-                _this._s[series ? 'end' : 'work'][manual ? '1' : 'auto'] = [id, +new Date()];
+                _this._s[series ? 'end' : 'work'][manual] = [id, +new Date()];
             }, data = this._p;
             if (series) {
                 data = {
@@ -1234,6 +1234,21 @@ var Runtime;
                     break;
             }
             return this._s[type][index];
+        };
+        /**
+         * 查询档位所有存档。
+         */
+        States.prototype.qa = function (series) {
+            var save = Core.IStates.Save, type = 'work';
+            switch (series) {
+                case save.Series:
+                    type = 'series';
+                    break;
+                case save.End:
+                    type = 'end';
+                    break;
+            }
+            return this._s[type];
         };
         /**
          * 加载存档信息。
@@ -2914,6 +2929,7 @@ var Ev;
          */
         function SlotsSave(metas) {
             _super.call(this, metas);
+            this.slot = metas.slot;
         }
         /**
          * 获取类型。
@@ -2951,7 +2967,7 @@ var Sprite;
             var _this = this;
             var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
             _super.call(this, 0, 0, w, h);
-            this._c = [_auto, _1];
+            this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
             this._rr = [
                 rr.g(url + _close['i'], raw),
@@ -2961,17 +2977,18 @@ var Sprite;
                 rr.g(url + _1['i'], raw),
                 rr.g(url + _1['ih'], raw),
                 rr.g(url + _2['i'], raw),
+                rr.g(url + _2['ih'], raw),
                 rr.g(url + _3['i'], raw),
-                rr.g(url + _4['i'], raw)
+                rr.g(url + _3['ih'], raw),
+                rr.g(url + _4['i'], raw),
+                rr.g(url + _4['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
-            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true))).a(new G.Image(this._rr[6].o(), _2))
-                .a(new G.Image(this._rr[7].o(), _3))
-                .a(new G.Image(this._rr[8].o(), _4));
+            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true)));
         }
         /**
          * 显示存档位。
@@ -2979,14 +2996,36 @@ var Sprite;
         Slots.prototype.vs = function (states, duration) {
             var _this = this;
             return states.l().then(function () {
-                var $1 = states.q('1'), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
-                _this.a(_this._x['1'] = new G.Button(_1)
-                    .b(function () {
-                    _this.dispatchEvent(new Ev.SlotsSave({ target: _this }));
-                }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true))
-                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
-                    .tc(_1t['c'])
-                    .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）'))));
+                var slots = states.qa();
+                var last = 1;
+                var right = G.Text.Align.Right;
+                var button = function (index, slot) {
+                    var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                    _this.a(_this._x[index] = new G.Button(_i)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsSave({
+                            target: _this,
+                            slot: index
+                        }));
+                    }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                        .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
+                        .tc(_it['c'])
+                        .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
+                };
+                Util.each(slots, function (slot, index) {
+                    button(index, slot);
+                    last++;
+                });
+                if (last <= 4)
+                    button(last.toString());
+                last++;
+                if (last <= 4) {
+                    for (var i = last; i <= 4; i++) {
+                        var _ii = 4 + (i - 1) * 2;
+                        var _i = _this._c[i];
+                        _this.a(_this._x[i.toString()] = new G.Image(_this._rr[_ii].o(), _i));
+                    }
+                }
                 return _this.v(duration);
             });
         };
@@ -2996,7 +3035,34 @@ var Sprite;
         Slots.prototype.vl = function (states, duration) {
             var _this = this;
             return states.l().then(function () {
-                var $a = states.q('auto'), _a = _this._c[0], _at = _a['text'], $1 = states.q('1'), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+                var slots = states.qa();
+                var last = 1;
+                var right = G.Text.Align.Right;
+                var $a = states.q('auto'), _a = _this._c[0], _at = _a['text'];
+                var button = function (index, slot) {
+                    var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                    _this.a(_this._x[index] = new G.Button(_i)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsLoad({
+                            target: _this,
+                            id: slot[0]
+                        }));
+                    }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                        .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
+                        .tc(_it['c'])
+                        .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
+                };
+                Util.each(slots, function (slot, index) {
+                    button(index, slot);
+                    last++;
+                });
+                if (last <= 4) {
+                    for (var i = last; i <= 4; i++) {
+                        var _ii = 4 + (i - 1) * 2;
+                        var _i = _this._c[i];
+                        _this.a(_this._x[i.toString()] = new G.Image(_this._rr[_ii].o(), _i));
+                    }
+                }
                 _this.a(_this._x['a'] = $a ?
                     new G.Button(_a)
                         .b(function () {
@@ -3006,24 +3072,11 @@ var Sprite;
                         }));
                     }, new G.Image(_this._rr[3].o(), _a, true), new G.Image(_this._rr[2].o(), _a, true)) :
                     new G.Sprite(_a)
-                        .a(new G.Image(_this._rr[2].o(), _a, true))).a(_this._x['1'] = $1 ?
-                    new G.Button(_1)
-                        .b(function () {
-                        _this.dispatchEvent(new Ev.SlotsLoad({
-                            target: _this,
-                            id: $1[0]
-                        }));
-                    }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true)) :
-                    new G.Sprite(_1)
-                        .a(new G.Image(_this._rr[4].o(), _1, true)));
+                        .a(new G.Image(_this._rr[2].o(), _a, true)));
                 _this._x['a']
                     .a(new G.Text(_at, _at['s'], _at['lh'], right, true)
                     .tc(_at['c'])
                     .a(new G.TextPhrase($a ? _this.$d($a[1]) : '（无）')));
-                _this._x['1']
-                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
-                    .tc(_1t['c'])
-                    .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）')));
                 return _this.v(duration);
             });
         };
@@ -3867,7 +3920,7 @@ var Sprite;
          */
         function SeriesSlots(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'];
             _super.call(this, 0, 0, w, h);
             this._c = [_auto, _1];
             this._x = {};
@@ -3878,18 +3931,13 @@ var Sprite;
                 rr.g(url + _auto['ih'], raw),
                 rr.g(url + _1['i'], raw),
                 rr.g(url + _1['ih'], raw),
-                rr.g(url + _2['i'], raw),
-                rr.g(url + _3['i'], raw),
-                rr.g(url + _4['i'], raw)
             ];
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
-            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true))).a(new G.Image(this._rr[6].o(), _2))
-                .a(new G.Image(this._rr[7].o(), _3))
-                .a(new G.Image(this._rr[8].o(), _4));
+            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true)));
         }
         /**
          * 显示存档位。
@@ -3908,7 +3956,10 @@ var Sprite;
                 _this.e(_this._x['1'])
                     .a(_this._x['1'] = new G.Button(_1)
                     .b(function () {
-                    _this.dispatchEvent(new Ev.SlotsSave({ target: _this }));
+                    _this.dispatchEvent(new Ev.SlotsSave({
+                        target: _this,
+                        slot: '1'
+                    }));
                 }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true))
                     .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
                     .tc(_1t['c'])
@@ -3927,23 +3978,6 @@ var Sprite;
                 return _this.v(duration);
             };
             return loop();
-            /*return states.l().then(() => {
-                this.e(this._x['1'])
-                    .a(this._x['1'] = new G.Button(<G.IBounds> _1)
-                    .b(() => {
-                        this.dispatchEvent(new Ev.SlotsSave({ target: this }));
-                    }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
-                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
-                        .tc(_1t['c'])
-                        .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
-                    )
-                );
-                return this.v(duration);
-            }).catch(() => {
-                this.e(this._x['1'])
-                    .a(new G.Image(this._rr[4].o(), <G.IBounds> _1));
-                return this.v(duration);
-            });*/
         };
         /**
          * 显示读档位。
@@ -4552,11 +4586,15 @@ var Runtime;
             if (Core.IRuntime.Series.Alone == this._fs)
                 return Promise.resolve(this._r);
             return new Promise(function (resolve) {
-                var $c = 'slots.close', close = function () {
+                var $c = 'slots.close', $s = 'slots.save', close, save;
+                close = function () {
+                    _this._x['ss'].removeEventListener($s, save);
                     _this._x['ss'].removeEventListener($c, close);
                     resolve(_this._r);
-                }, $s = 'slots.save', save = function () {
+                };
+                save = function () {
                     _this._x['ss'].removeEventListener($s, save);
+                    _this._x['ss'].removeEventListener($c, close);
                     resolve(_this._r);
                 };
                 _this.lightOn().then(function () {
@@ -5254,10 +5292,10 @@ var Runtime;
                 .addEventListener('slots.close', function () {
                 _this._x[slotsFromStart ? 's' : 'm'].v();
                 _this._x['sl'].h();
-            }).addEventListener('slots.save', function () {
+            }).addEventListener('slots.save', function (ev) {
                 _this._x[slotsFromStart ? 's' : 'm'].v();
                 _this._x['sl'].h();
-                _this._r.gS().e(true);
+                _this._r.gS().e(ev.slot);
             }).addEventListener('slots.load', function (ev) {
                 _this.lightOff().then(function () {
                     _this._x['sl'].h(0);
@@ -5273,12 +5311,12 @@ var Runtime;
             this._x['ss'] = new Sprite.SeriesSlots(id, theme['series'])
                 .addEventListener('slots.close', function () {
                 if (!slotsFromStart)
-                    _this._r.gS().e(false, true);
+                    _this._r.gS().e('auto', true);
                 slotsFromStart = false;
                 _this._x['ss'].h();
             }).addEventListener('slots.save', function () {
                 _this._x['ss'].h();
-                _this._r.gS().e(true, true);
+                _this._r.gS().e('1', true);
             }).addEventListener('slots.load', function (ev) {
                 slotsFromStart = false;
                 _this.lightOff().then(function () {
@@ -9290,7 +9328,7 @@ var Tag;
                     scene = scene.gU();
                 brief = scene.$c();
             }
-            runtime.gS().e(false);
+            runtime.gS().e('auto');
             return runtime;
         };
         return Save;
@@ -10831,7 +10869,7 @@ var Tag;
          */
         Random.prototype.t = function (states) {
             var depth = states.g('$d');
-            states.s(this._p[0], 1 | 100 * Math.random())
+            states.s(this._p[0], Math.round(100 * Math.random()))
                 .c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;
@@ -13194,7 +13232,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.23.3';
+    Bigine.version = '0.23.4';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

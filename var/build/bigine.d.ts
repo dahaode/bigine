@@ -52,9 +52,10 @@ declare namespace __Bigine {
             m(src: string, dest: string): IStates;
             t(text: string): string;
             p(): IStates;
-            e(manual: boolean, series?: boolean): Util.IHashTable<any>;
+            e(manual: string, series?: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): IStates;
             q(index: string, type?: IStates.Save): [string, number];
+            qa(type?: IStates.Save): Util.IHashTable<[string, number]>;
             l(): Promise<IStates>;
             qp(id: string, count: number): boolean;
             lp(data: Util.IHashTable<string> | string): IStates;
@@ -354,7 +355,7 @@ declare namespace __Bigine {
         interface ISaveMetas extends Util.IEventMetas<Core.IStates> {
             data: Util.IHashTable<any>;
             series?: boolean;
-            manual: boolean;
+            manual: string;
             callback: (id: string) => void;
         }
     }
@@ -362,7 +363,7 @@ declare namespace __Bigine {
         class Save extends Event<Core.IStates> {
             data: Util.IHashTable<any>;
             series: boolean;
-            manual: boolean;
+            manual: string;
             callback: (id: string) => void;
             constructor(metas: ISaveMetas);
             gT(): string;
@@ -398,9 +399,10 @@ declare namespace __Bigine {
             m(src: string, dest: string): States;
             t(text: string): string;
             p(): States;
-            e(manual: boolean, series?: boolean): Util.IHashTable<any>;
+            e(manual: string, series?: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): States;
             q(index: string, series?: Core.IStates.Save): [string, number];
+            qa(series?: Core.IStates.Save): Util.IHashTable<[string, number]>;
             l(): Promise<States>;
             qp(id: string, count: number): boolean;
             lp(data: Util.IHashTable<string> | string): States;
@@ -707,10 +709,12 @@ declare namespace __Bigine {
     }
     namespace Ev {
         interface ISlotsSaveMetas extends Util.IEventMetas<Core.ISlots> {
+            slot: string;
         }
     }
     namespace Ev {
         class SlotsSave extends Event<Core.ISlots> {
+            slot: string;
             constructor(metas: ISlotsSaveMetas);
             gT(): string;
         }
