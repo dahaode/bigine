@@ -158,7 +158,7 @@ namespace Runtime {
             this._f = {};
             this._e = [0, 0];
             this._l = (event: KeyboardEvent) => {
-                if ((event.keyCode == 13 || event.keyCode == 17) && !this._a && this._t && !this._pc)
+                if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc)
                     this._t.h();
             };
             this._fs = Core.IRuntime.Series.Alone;
@@ -213,7 +213,8 @@ namespace Runtime {
          * 开始动画。
          */
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
-            (<Sprite.Start> this._x['s']).u(title, Core.IRuntime.Series.Rest == this._fs, this._c);
+            let series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
+            (<Sprite.Start> this._x['s']).u(title, series, this._c);
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
@@ -288,7 +289,7 @@ namespace Runtime {
                     (<Sprite.SeriesSlots> this._x['ss']
                         .addEventListener($c, close)
                         .addEventListener($s, save)
-                    ).vs(this._r.gS());
+                    ).vs(this._r.gS(), this._fs);
                 });
             }).then(() => this.lightOff());
         }

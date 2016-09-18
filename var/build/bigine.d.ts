@@ -201,7 +201,7 @@ declare namespace __Bigine {
             plots(data: Util.IHashTable<string> | string): IRuntime;
             l(id?: string): void;
             bind(viewport: HTMLElement): IRuntime;
-            series(first?: boolean): IRuntime;
+            series(value?: string): IRuntime;
             pause(): IRuntime;
             resume(): IRuntime;
         }
@@ -210,6 +210,7 @@ declare namespace __Bigine {
                 Alone = 0,
                 First = 1,
                 Rest = 2,
+                Last = 3,
             }
         }
     }
@@ -832,8 +833,9 @@ declare namespace __Bigine {
         class SeriesSlots extends Sprite implements Core.ISlots {
             private _c;
             private _x;
+            private _de;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
-            vs(states: Core.IStates, duration?: number): Promise<SeriesSlots>;
+            vs(states: Core.IStates, fs?: Core.IRuntime.Series, duration?: number): Promise<SeriesSlots>;
             vl(states: Core.IStates, duration?: number): Promise<SeriesSlots>;
             h(duration?: number): Promise<SeriesSlots>;
             private $d(stamp);
@@ -2097,7 +2099,7 @@ declare namespace __Bigine {
             t(flow: () => Runtime | Thenable<Runtime>): Runtime;
             l(id: string): void;
             bind(viewport: HTMLElement): Runtime;
-            series(first?: boolean): Runtime;
+            series(value?: string): Runtime;
             pause(): Runtime;
             resume(): Runtime;
         }

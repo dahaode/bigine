@@ -133,7 +133,7 @@ namespace Core {
         /**
          * 连载模式。
          */
-        series(first?: boolean): IRuntime;
+        series(value?: string): IRuntime;
 
         /**
          * 暂停播放。
@@ -162,7 +162,11 @@ namespace Core {
             /**
              * 后续集。
              */
-            Rest
+            Rest,
+            /**
+             * 最后一集。
+             */
+            Last,
         }
     }
 }

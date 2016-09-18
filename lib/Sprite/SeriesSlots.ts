@@ -29,6 +29,11 @@ namespace Sprite {
         private _x: Util.IHashTable<G.Element>;
 
         /**
+         * 文字元素。
+         */
+        private _de: G.Element;
+
+        /**
          * 构造函数。
          */
         constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
@@ -37,6 +42,7 @@ namespace Sprite {
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 url: string = '//s.dahao.de/theme/',
+                _desc: Util.IHashTable<any> = theme['text'],
                 _close: Util.IHashTable<any> = theme['close'],
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _auto: Util.IHashTable<any> = theme['auto'],
@@ -58,14 +64,19 @@ namespace Sprite {
                     .b(() => {
                         this.dispatchEvent(new Ev.SlotsClose({ target: this }));
                     }, new G.Image(this._rr[1].o(), <G.IBounds> _close, true), new G.Image(this._rr[0].o(), <G.IBounds> _close, true))
+                )
+                .a(this._de = new G.Text(<G.IBounds> _desc, _desc['s'], _desc['lh'], this.$a(_desc['a']), true)
+                    .tc(_desc['c'])
+                    .a(new G.TextPhrase(_desc['desc']))
                 );
         }
 
         /**
          * 显示存档位。
          */
-        public vs(states: Core.IStates, duration?: number): Promise<SeriesSlots> {
+        public vs(states: Core.IStates, fs?: Core.IRuntime.Series, duration?: number): Promise<SeriesSlots> {
             let type: Core.IStates.Save = Core.IStates.Save.End,
+                series: Core.IRuntime.Series = Core.IRuntime.Series.Last,
                 $1: [string, number] = states.q('1', type),
                 _1: Util.IHashTable<any> = this._c[1],
                 _1t: Util.IHashTable<any> = _1['text'],
@@ -77,6 +88,7 @@ namespace Sprite {
                     .then(() => succ())
                     .catch(() => fail());
             };
+            fs == series ? this._de.o(0) : this._de.o(1);
             succ = () => {
                 this.e(this._x['1'])
                     .a(this._x['1'] = new G.Button(<G.IBounds> _1)
@@ -153,6 +165,7 @@ namespace Sprite {
                         .tc(_1t['c'])
                         .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
                     );
+                this._de.o(0);
                 return this.v(duration);
             });
         }

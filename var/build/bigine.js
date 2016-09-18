@@ -352,6 +352,10 @@ var Core;
              * 后续集。
              */
             Series[Series["Rest"] = 2] = "Rest";
+            /**
+             * 最后一集。
+             */
+            Series[Series["Last"] = 3] = "Last";
         })(IRuntime.Series || (IRuntime.Series = {}));
         var Series = IRuntime.Series;
     })(IRuntime = Core.IRuntime || (Core.IRuntime = {}));
@@ -3920,7 +3924,7 @@ var Sprite;
          */
         function SeriesSlots(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _desc = theme['text'], _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'];
             _super.call(this, 0, 0, w, h);
             this._c = [_auto, _1];
             this._x = {};
@@ -3937,14 +3941,17 @@ var Sprite;
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
-            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true)));
+            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true)))
+                .a(this._de = new G.Text(_desc, _desc['s'], _desc['lh'], this.$a(_desc['a']), true)
+                .tc(_desc['c'])
+                .a(new G.TextPhrase(_desc['desc'])));
         }
         /**
          * 显示存档位。
          */
-        SeriesSlots.prototype.vs = function (states, duration) {
+        SeriesSlots.prototype.vs = function (states, fs, duration) {
             var _this = this;
-            var type = Core.IStates.Save.End, $1 = states.q('1', type), _1 = this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+            var type = Core.IStates.Save.End, series = Core.IRuntime.Series.Last, $1 = states.q('1', type), _1 = this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
             var succ;
             var fail;
             var loop = function () {
@@ -3952,6 +3959,7 @@ var Sprite;
                     .then(function () { return succ(); })
                     .catch(function () { return fail(); });
             };
+            fs == series ? this._de.o(0) : this._de.o(1);
             succ = function () {
                 _this.e(_this._x['1'])
                     .a(_this._x['1'] = new G.Button(_1)
@@ -4013,6 +4021,7 @@ var Sprite;
                     .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
                     .tc(_1t['c'])
                     .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）')));
+                _this._de.o(0);
                 return _this.v(duration);
             });
         };
@@ -4474,7 +4483,7 @@ var Runtime;
             this._f = {};
             this._e = [0, 0];
             this._l = function (event) {
-                if ((event.keyCode == 13 || event.keyCode == 17) && !_this._a && _this._t && !_this._pc)
+                if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc)
                     _this._t.h();
             };
             this._fs = Core.IRuntime.Series.Alone;
@@ -4528,7 +4537,8 @@ var Runtime;
          */
         CanvasDirector.prototype.OP = function (start, title, author) {
             var _this = this;
-            this._x['s'].u(title, Core.IRuntime.Series.Rest == this._fs, this._c);
+            var series = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
+            this._x['s'].u(title, series, this._c);
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
@@ -4600,7 +4610,7 @@ var Runtime;
                 _this.lightOn().then(function () {
                     _this._x['ss']
                         .addEventListener($c, close)
-                        .addEventListener($s, save).vs(_this._r.gS());
+                        .addEventListener($s, save).vs(_this._r.gS(), _this._fs);
                 });
             }).then(function () { return _this.lightOff(); });
         };
@@ -12995,9 +13005,19 @@ var Runtime;
         /**
          * 连载模式。
          */
-        Runtime.prototype.series = function (first) {
+        Runtime.prototype.series = function (value) {
             var series = Core.IRuntime.Series;
-            this._fs = first ? series.First : series.Rest;
+            switch (value) {
+                case 'f':
+                    this._fs = series.First;
+                    break;
+                case 'l':
+                    this._fs = series.Last;
+                    break;
+                default:
+                    this._fs = series.Rest;
+                    break;
+            }
             return this;
         };
         /**
@@ -13232,7 +13252,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.23.4';
+    Bigine.version = '0.24.0';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

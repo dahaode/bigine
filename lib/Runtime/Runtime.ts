@@ -479,9 +479,19 @@ namespace Runtime {
         /**
          * 连载模式。
          */
-        public series(first?: boolean): Runtime {
+        public series(value?: string): Runtime {
             let series: typeof Core.IRuntime.Series = Core.IRuntime.Series;
-            this._fs = first ? series.First : series.Rest;
+            switch (value) {
+                case 'f':
+                    this._fs = series.First;
+                    break;
+                case 'l':
+                    this._fs = series.Last;
+                    break;
+                default:
+                    this._fs = series.Rest;
+                    break;
+            }
             return this;
         }
 
