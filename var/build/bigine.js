@@ -3004,25 +3004,26 @@ var Sprite;
                 var last = 1;
                 var right = G.Text.Align.Right;
                 var button = function (index, slot) {
-                    var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
-                    _this.a(_this._x[index] = new G.Button(_i)
-                        .b(function () {
-                        _this.dispatchEvent(new Ev.SlotsSave({
-                            target: _this,
-                            slot: index
-                        }));
-                    }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
-                        .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
-                        .tc(_it['c'])
-                        .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
+                    if (index != 'auto') {
+                        var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                        _this.a(_this._x[index] = new G.Button(_i)
+                            .b(function () {
+                            _this.dispatchEvent(new Ev.SlotsSave({
+                                target: _this,
+                                slot: index
+                            }));
+                        }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                            .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
+                            .tc(_it['c'])
+                            .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
+                        last++;
+                    }
                 };
                 Util.each(slots, function (slot, index) {
                     button(index, slot);
-                    last++;
                 });
                 if (last <= 4)
                     button(last.toString());
-                last++;
                 if (last <= 4) {
                     for (var i = last; i <= 4; i++) {
                         var _ii = 4 + (i - 1) * 2;
@@ -3044,21 +3045,23 @@ var Sprite;
                 var right = G.Text.Align.Right;
                 var $a = states.q('auto'), _a = _this._c[0], _at = _a['text'];
                 var button = function (index, slot) {
-                    var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
-                    _this.a(_this._x[index] = new G.Button(_i)
-                        .b(function () {
-                        _this.dispatchEvent(new Ev.SlotsLoad({
-                            target: _this,
-                            id: slot[0]
-                        }));
-                    }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
-                        .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
-                        .tc(_it['c'])
-                        .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
+                    if (index != 'auto') {
+                        var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                        _this.a(_this._x[index] = new G.Button(_i)
+                            .b(function () {
+                            _this.dispatchEvent(new Ev.SlotsLoad({
+                                target: _this,
+                                id: slot[0]
+                            }));
+                        }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                            .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
+                            .tc(_it['c'])
+                            .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
+                        last++;
+                    }
                 };
                 Util.each(slots, function (slot, index) {
                     button(index, slot);
-                    last++;
                 });
                 if (last <= 4) {
                     for (var i = last; i <= 4; i++) {
@@ -13252,7 +13255,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.24.0';
+    Bigine.version = '0.23.5';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
