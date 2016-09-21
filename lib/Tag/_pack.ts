@@ -96,3 +96,7 @@
 /// <reference path="../Ev/_Runtime/Fin.ts" />
 /// <reference path="../Ev/_Runtime/Rank.ts" />
 /// <reference path="../Ev/_Runtime/Pay.ts" />
+/// <reference path="_Action/_Director/PlayESM.ts" />
+/// <reference path="_Action/_Director/StopESM.ts" />
+/// <reference path="_Action/_Director/StopSE.ts" />
+/// <reference path="_Action/_Director/VolumeSet.ts" />

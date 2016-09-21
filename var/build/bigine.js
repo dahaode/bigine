@@ -83,6 +83,7 @@ var Ev;
  * 1. `_` 表明为场效相关信息，需要被存档记录；
  *     * `_a` - 动作编号 - Runtime
  *     * `_b` - 背景音乐名 - Tag
+ *     * `_e` - 环境音乐名 - Tag    // 添加环境音乐命令时所需记录的存档信息
  *     * `_c` - 特写名 - Tag
  *     * `_c<站位>` - 人物名 - Tag
  *     * `_s<站位>` - 人物神态名 - Tag
@@ -187,6 +188,10 @@ var Core;
              * 原生（图片）。
              */
             Type[Type["Raw"] = 7] = "Raw";
+            /**
+             * 环境音乐。
+             */
+            Type[Type["ESM"] = 8] = "ESM";
         })(IResource.Type || (IResource.Type = {}));
         var Type = IResource.Type;
     })(IResource = Core.IResource || (Core.IResource = {}));
@@ -1520,15 +1525,21 @@ var Runtime;
             return this._p;
         };
         /**
-         * 播放背景音乐。
+         * 播放 背景音乐 / 环境音乐。
          */
-        Director.prototype.playBGM = function (resource) {
+        Director.prototype.playMusic = function (type, resource, vol) {
             return this._p;
         };
         /**
          * 播放音效。
          */
-        Director.prototype.playSE = function (resource) {
+        Director.prototype.playSE = function (resource, vol) {
+            return this._p;
+        };
+        /**
+         * 设置音量。
+         */
+        Director.prototype.volumeSet = function (type, vol) {
             return this._p;
         };
         /**
@@ -4476,13 +4487,15 @@ var Runtime;
             };
             this._s = {
                 b: new Audio(),
-                e: new Audio()
+                e: new Audio(),
+                s: new Audio()
             };
-            this._s['b'].autoplay = true;
-            this._s['b'].loop = true;
-            this._s['e'].autoplay = true;
+            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
+            this._s['b'].loop = this._s['s'].loop = true;
+            this._s['b'].src = this._s['s'].src = this._i['s'].l();
+            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
+            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
             this._s['e']['cd'] = -1;
-            this._s['b'].src = this._i['s'].l();
             this._f = {};
             this._e = [0, 0];
             this._l = function (event) {
@@ -4579,7 +4592,8 @@ var Runtime;
             var _this = this;
             return this.c([[this._i['e']]])
                 .then(function () {
-                _this.playBGM();
+                _this.playMusic(Core.IResource.Type.BGM);
+                _this.playMusic(Core.IResource.Type.ESM);
                 _this.playSE();
                 return _this.lightOff()
                     .then(function () {
@@ -4660,24 +4674,31 @@ var Runtime;
             gChars.a(gNew);
             if (!this._x['G'].gO())
                 gChars.o(1);
-            switch (this._ca[1]) {
-                case 'Gradient':
-                    return gNew.p(new G.FadeIn(500)).then(function () {
-                        if (gOld) {
-                            gChars.e(gOld);
-                        }
-                        else
-                            states.s(kamount, 1 + (states.g(kamount) || 0));
+            if (this._ca[1] == 'Gradient') {
+                if (gOld) {
+                    return Promise.all([
+                        gOld.p(new G.FadeOut(500)),
+                        gNew.p(new G.FadeIn(500))
+                    ]).then(function () {
+                        gChars.e(gOld);
                         return _this._r;
                     });
-                default:
-                    if (gOld) {
-                        gChars.e(gOld);
-                    }
-                    else
+                }
+                else {
+                    return gNew.p(new G.FadeIn(500)).then(function () {
                         states.s(kamount, 1 + (states.g(kamount) || 0));
-                    gNew.o(1);
-                    return this._p;
+                        return _this._r;
+                    });
+                }
+            }
+            else {
+                if (gOld) {
+                    gChars.e(gOld);
+                }
+                else
+                    states.s(kamount, 1 + (states.g(kamount) || 0));
+                gNew.o(1);
+                return this._p;
             }
         };
         /**
@@ -4807,36 +4828,60 @@ var Runtime;
             });
         };
         /**
-         * 播放背景音乐。
+         * 播放 背景音乐 / 环境音乐。
          */
-        CanvasDirector.prototype.playBGM = function (resource) {
+        CanvasDirector.prototype.playMusic = function (type, resource, vol) {
             var _this = this;
-            var oops = this._i['s'].l(), url = resource ? resource.l() : oops, bgm = this._s['b'], volume = bgm.volume, change = function () {
-                bgm.volume = volume;
-                if (bgm.src != url)
-                    bgm.src = url;
-                return _super.prototype.playBGM.call(_this, resource);
+            var oops = this._i['s'].l(), url = resource ? resource.l() : oops, music = type == Core.IResource.Type.BGM ? this._s['b'] : this._s['s'], volume = music['baseVolume'] * (vol || 1), change = function () {
+                music['scale'] = vol || 1;
+                music.volume = volume;
+                if (music.src != url)
+                    music.src = url;
+                return _super.prototype.playMusic.call(_this, type, resource, vol);
             };
             if (!resource)
-                bgm.play();
-            if (bgm.src && bgm.src != oops)
-                return new G.AudioFadeOut(1500).p(bgm).then(change);
+                music.play();
+            if (music.src && music.src != oops)
+                return new G.AudioFadeOut(1500).p(music).then(change);
             return change();
         };
         /**
          * 播放音效。
          */
-        CanvasDirector.prototype.playSE = function (resource) {
+        CanvasDirector.prototype.playSE = function (resource, vol) {
             var _this = this;
             var url = (resource || this._i['s']).l(), se = this._s['e'], type = 'ended', resume = function () {
                 se.removeEventListener(type, resume);
                 _this._s['b'].play();
+                _this._s['s'].play();
             };
             se.addEventListener(type, resume);
+            se.volume = se['baseVolume'] * (vol || 1);
             se.src = url;
             if (!resource)
                 this._s['e'].play();
-            return _super.prototype.playSE.call(this, resource);
+            return _super.prototype.playSE.call(this, resource, vol);
+        };
+        /**
+         * 设置音量。
+         */
+        CanvasDirector.prototype.volumeSet = function (type, vol) {
+            var mType = Core.IResource.Type;
+            var mMusic;
+            switch (type) {
+                case mType.BGM:
+                    mMusic = this._s['b'];
+                    break;
+                case mType.ESM:
+                    mMusic = this._s['s'];
+                    break;
+                case mType.SE:
+                    mMusic = this._s['e'];
+                    break;
+            }
+            mMusic['scale'] = vol;
+            new G.AudioFade(1500, vol * mMusic['baseVolume']).p(mMusic);
+            return _super.prototype.volumeSet.call(this, type, vol);
         };
         /**
          * 关闭特写。
@@ -4880,17 +4925,15 @@ var Runtime;
             if (map === void 0) { map = false; }
             return _super.prototype.asRoom.call(this, resource)
                 .then(function (runtime) {
-                var camera = runtime.gS().g('.z'), strArr, mx, my;
-                if (!camera)
-                    return runtime;
-                strArr = camera.split(',');
-                mx = parseFloat(strArr[0]);
-                my = parseFloat(strArr[1]);
-                return _this.cameraZoom(mx, my, 20, -1);
-            }).then(function (runtime) {
-                runtime.gS().d('.z');
-                runtime.gS().d('_z');
-                var gOld = _this._c.q('b')[0], gNew = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
+                // 强制复位
+                var camera = runtime.gS().g('.z');
+                var gOld = _this._c.q('b')[0];
+                if (camera) {
+                    gOld.x(0).y(0).sW(1280).sH(720);
+                    runtime.gS().d('.z');
+                    runtime.gS().d('_z');
+                }
+                var gNew = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
                     .o(0);
                 _this._c.a(gNew, 'M');
                 if (time) {
@@ -4906,6 +4949,7 @@ var Runtime;
                         return runtime;
                     });
                 }
+                // 进入房间特效
                 return _this.$ca(gOld, gNew);
             });
         };
@@ -4920,10 +4964,9 @@ var Runtime;
                     return gCurtain.v(500)
                         .then(function () {
                         gOld.o(0);
-                        gCurtain.h(20);
+                        _this.lightOn();
                     }).then(function () {
-                        return gNew.p(new G.FadeIn(500));
-                    }).then(function () {
+                        gNew.p(new G.FadeIn(500));
                         _this._c.e(gOld);
                         return _this._r;
                     });
@@ -4939,8 +4982,11 @@ var Runtime;
                         return _this._r;
                     });
                 default:
-                    curtain = new G.FadeIn(20);
-                    break;
+                    return this.lightOn().then(function () {
+                        _this._c.e(gOld);
+                        gNew.o(1);
+                        return _this._r;
+                    });
             }
             return this.lightOn()
                 .then(function () {
@@ -5270,7 +5316,7 @@ var Runtime;
                 });
             }).addEventListener('menu.set', function () {
                 slotsFromStart = false;
-                _this._x['st'].vv(_this._s['b'].volume, _this._s['e'].volume, _this._vo)
+                _this._x['st'].vv(_this._s['b']['baseVolume'], _this._s['e']['baseVolume'], _this._vo)
                     .then(function () {
                     _this._x['m'].h();
                 })['catch'](function () {
@@ -5348,8 +5394,15 @@ var Runtime;
                 _this._x[slotsFromStart ? 's' : 'm'].v();
                 _this._x['st'].h();
             }).addEventListener('set.volume', function (ev) {
-                _this._s['b'].volume = ev.bVolume * 0.01;
-                _this._s['e'].volume = ev.eVolume * 0.01;
+                var bgm = _this._s['b'];
+                var esm = _this._s['s'];
+                var se = _this._s['e'];
+                bgm['baseVolume'] = ev.bVolume * 0.01;
+                bgm.volume = ev.bVolume * 0.01 * bgm['scale'];
+                esm['baseVolume'] = ev.bVolume * 0.01;
+                esm.volume = ev.bVolume * 0.01 * esm['scale'];
+                se['baseVolume'] = ev.eVolume * 0.01;
+                se.volume = ev.eVolume * 0.01 * se['scale'];
             });
             resources.push(this._x['st'].l());
             this._c.a(this._x['st'], gCurtain);
@@ -5402,8 +5455,12 @@ var Runtime;
          * 设置音量。
          */
         CanvasDirector.prototype.v = function (volume) {
-            this._s['b'].volume = volume;
-            this._s['e'].volume = volume;
+            this._s['b']['baseVolume'] = volume;
+            this._s['b'].volume = volume * this._s['b']['scale'];
+            this._s['s']['baseVolume'] = volume;
+            this._s['s'].volume = volume * this._s['s']['scale'];
+            this._s['e']['baseVolume'] = volume;
+            this._s['e'].volume = volume * this._s['e']['scale'];
             this._vo = volume == 1;
             var set = this._x['st'];
             if (set.gO() > 0)
@@ -5436,6 +5493,7 @@ var Runtime;
             this._c = undefined;
             this._s['b'].pause();
             this._s['e'].pause();
+            this._s['s'].pause();
             this._s = {};
             window.removeEventListener('keydown', this._l);
         };
@@ -5452,7 +5510,8 @@ var Runtime;
                 this._q();
                 this._q = undefined;
             }
-            this.playBGM();
+            this.playMusic(Core.IResource.Type.BGM);
+            this.playMusic(Core.IResource.Type.ESM);
             this.playSE();
         };
         /**
@@ -5777,6 +5836,10 @@ var Tag;
         Expression: '神态动画',
         ShowStatus: '显示状态栏',
         HideStatus: '隐藏状态栏',
+        PlayESM: '环境音乐',
+        StopESM: '环境静音',
+        StopSE: '停止音效',
+        VolumeSet: '设置音量',
         Assert: '当数据',
         Assign: '设置数据',
         Compare: '对比数据',
@@ -5933,15 +5996,18 @@ var Tag;
         9: ['End', 0, -1],
         10: ['Fail', 0, -1],
         11: ['Stars', [1, 2], -1],
-        12: ['PlayBGM', 1, -1],
+        12: ['PlayBGM', [1, 2], -1],
+        103: ['PlayESM', [1, 2], -1],
         64: ['StopBGM', 0, -1],
+        104: ['StopESM', 0, -1],
+        105: ['StopSE', 0, -1],
         13: ['HideCG', 0, -1],
         14: ['ShowCG', 1, -1],
         15: ['AsRoom', [1, 2], 0],
         16: ['Freeze', 0, -1],
         17: ['AsTime', 1, -1],
         18: ['Enter', 1, -1],
-        19: ['PlaySE', 1, -1],
+        19: ['PlaySE', [1, 2], -1],
         20: ['Weather', 1, -1],
         91: ['Pause', [0, 1], -1],
         92: ['CameraSet', 0, 1],
@@ -5953,6 +6019,7 @@ var Tag;
         100: ['ShowStatus', 0, -1],
         101: ['HideStatus', 0, -1],
         102: ['Expression', [0, 1], -1],
+        106: ['VolumeSet', 2, -1],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
@@ -7731,11 +7798,11 @@ var Tag;
          * 执行。
          */
         PlayBGM.prototype.p = function (runtime) {
-            var states = runtime.gS(), key = '_b', bgm = states.g(key);
-            if (bgm == this._p[0])
+            var states = runtime.gS(), key = '_b', vol = 0.01 * parseInt(this._p[1] || '100', 10), bgm = states.g(key);
+            if (bgm && bgm[0] == this._p[0])
                 return runtime;
-            states.s(key, this._p[0]);
-            return runtime.gD().playBGM(this._mo ? this._mo.o() : undefined);
+            states.s(key, this._p);
+            return runtime.gD().playMusic(Core.IResource.Type.BGM, this._mo ? this._mo.o() : undefined, vol);
         };
         /**
          * 获取依赖素材资源列表。
@@ -7752,6 +7819,61 @@ var Tag;
         return PlayBGM;
     }(Tag.Action));
     Tag.PlayBGM = PlayBGM;
+})(Tag || (Tag = {}));
+/**
+ * 定义播放环境音乐动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/PlayESM.ts
+ */
+/// <reference path="../../Action.ts" />
+/// <reference path="../../_Definition/DefBGM.ts" />
+var Tag;
+(function (Tag) {
+    var PlayESM = (function (_super) {
+        __extends(PlayESM, _super);
+        function PlayESM() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        PlayESM.prototype.gN = function () {
+            return 'PlayESM';
+        };
+        /**
+         * 绑定（运行时）作品（实体）。
+         */
+        PlayESM.prototype.$b = function (ep) {
+            this._mo = ep.q(this._p[0], Core.IEpisode.Entity.BGM, this._l);
+        };
+        /**
+         * 执行。
+         */
+        PlayESM.prototype.p = function (runtime) {
+            var states = runtime.gS(), key = '_e', vol = 0.01 * parseInt(this._p[1] || '100', 10), esm = states.g(key);
+            if (esm && esm[0] == this._p[0])
+                return runtime;
+            states.s(key, this._p);
+            return runtime.gD().playMusic(Core.IResource.Type.ESM, this._mo ? this._mo.o() : undefined, vol);
+        };
+        /**
+         * 获取依赖素材资源列表。
+         */
+        PlayESM.prototype.$d = function () {
+            return this._mo ? [this._mo.o()] : [];
+        };
+        /**
+         * 获取关联音乐。
+         */
+        PlayESM.prototype.gB = function () {
+            return this._mo;
+        };
+        return PlayESM;
+    }(Tag.Action));
+    Tag.PlayESM = PlayESM;
 })(Tag || (Tag = {}));
 /**
  * 定义播放音效动作标签组件。
@@ -7786,7 +7908,8 @@ var Tag;
          * 执行。
          */
         PlaySE.prototype.p = function (runtime) {
-            return runtime.gD().playSE(this._mo ? this._mo.o() : undefined);
+            var vol = 0.01 * parseInt(this._p[1] || '100', 10);
+            return runtime.gD().playSE(this._mo ? this._mo.o() : undefined, vol);
         };
         /**
          * 获取依赖素材资源列表。
@@ -7889,11 +8012,18 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), cg = states.g(kid), cur = states.g('_ra'), exp = states.g('_rb'), ll = pos.LLeft, llChar = states.g(kid + ll), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), rr = pos.RRight, rrChar = states.g(kid + rr), ctype = type.Chr, room;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), esm = states.g('_e'), cg = states.g(kid), cur = states.g('_ra'), exp = states.g('_rb'), ll = pos.LLeft, llChar = states.g(kid + ll), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), rr = pos.RRight, rrChar = states.g(kid + rr), ctype = type.Chr, room;
             if (bgm)
                 q = q.then(function () {
-                    var defbgm = episode.q(bgm, type.BGM);
-                    return director.playBGM(defbgm ? defbgm.o() : undefined);
+                    var defbgm = episode.q(typeof bgm == 'string' ? bgm : bgm[0], type.BGM);
+                    var vol = typeof bgm == 'string' ? 1 : 0.01 * parseInt(bgm[1] || '100', 10);
+                    return director.playMusic(Core.IResource.Type.BGM, defbgm ? defbgm.o() : undefined, vol);
+                });
+            if (esm)
+                q = q.then(function () {
+                    var defesm = episode.q(typeof esm == 'string' ? esm : esm[0], type.BGM);
+                    var vol = typeof esm == 'string' ? 1 : 0.01 * parseInt(esm[1] || '100', 10);
+                    return director.playMusic(Core.IResource.Type.ESM, defesm ? defesm.o() : undefined, vol);
                 });
             if (cur)
                 q = q.then(function () {
@@ -8062,6 +8192,7 @@ var Tag;
 /// <reference path="../../_Action/_Director/AsRoom.ts" />
 /// <reference path="../../_Action/_Director/CharOn.ts" />
 /// <reference path="../../_Action/_Director/PlayBGM.ts" />
+/// <reference path="../../_Action/_Director/PlayESM.ts" />
 /// <reference path="../../_Action/_Director/PlaySE.ts" />
 /// <reference path="../../_Action/_Director/ShowCG.ts" />
 /// <reference path="../../_Action/_Text/Speak.ts" />
@@ -8165,6 +8296,7 @@ var Tag;
                     case 'CharPose':
                     case 'CharSet':
                     case 'PlayBGM':
+                    case 'PlayESM':
                     case 'PlaySE':
                     case 'ShowCG':
                         frame = frame.concat(action.$d());
@@ -10703,7 +10835,7 @@ var Tag;
          */
         StopBGM.prototype.p = function (runtime) {
             runtime.gS().d('_b');
-            return runtime.gD().playBGM();
+            return runtime.gD().playMusic(Core.IResource.Type.BGM);
         };
         return StopBGM;
     }(Tag.Action));
@@ -12555,6 +12687,120 @@ var Ev;
     Ev.Pay = Pay;
 })(Ev || (Ev = {}));
 /**
+ * 定义停止环境音乐动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/StopESM.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var StopESM = (function (_super) {
+        __extends(StopESM, _super);
+        function StopESM() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        StopESM.prototype.gN = function () {
+            return 'StopESM';
+        };
+        /**
+         * 执行。
+         */
+        StopESM.prototype.p = function (runtime) {
+            runtime.gS().d('_e');
+            return runtime.gD().playMusic(Core.IResource.Type.ESM);
+        };
+        return StopESM;
+    }(Tag.Action));
+    Tag.StopESM = StopESM;
+})(Tag || (Tag = {}));
+/**
+ * 定义停止音效动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/StopSE.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var StopSE = (function (_super) {
+        __extends(StopSE, _super);
+        function StopSE() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        StopSE.prototype.gN = function () {
+            return 'StopSE';
+        };
+        /**
+         * 执行。
+         */
+        StopSE.prototype.p = function (runtime) {
+            runtime.gS().d('_e');
+            return runtime.gD().playSE();
+        };
+        return StopSE;
+    }(Tag.Action));
+    Tag.StopSE = StopSE;
+})(Tag || (Tag = {}));
+/**
+ * 定义设置音量动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/VolumeSet.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var VolumeSet = (function (_super) {
+        __extends(VolumeSet, _super);
+        /**
+         * 构造函数。
+         */
+        function VolumeSet(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            var type = Core.IResource.Type;
+            switch (params[0]) {
+                case '音效':
+                    this._mt = type.SE;
+                    break;
+                case '环境':
+                    this._mt = type.ESM;
+                    break;
+                case '音乐':
+                case undefined:
+                    this._mt = type.BGM;
+                    break;
+            }
+        }
+        /**
+         * 获取标签名称。
+         */
+        VolumeSet.prototype.gN = function () {
+            return 'VolumeSet';
+        };
+        /**
+         * 执行。
+         */
+        VolumeSet.prototype.p = function (runtime) {
+            return runtime.gD().volumeSet(this._mt, 0.01 * parseInt(this._p[1], 10) || 1);
+        };
+        return VolumeSet;
+    }(Tag.Action));
+    Tag.VolumeSet = VolumeSet;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -12651,6 +12897,10 @@ var Ev;
 /// <reference path="../Ev/_Runtime/Fin.ts" />
 /// <reference path="../Ev/_Runtime/Rank.ts" />
 /// <reference path="../Ev/_Runtime/Pay.ts" />
+/// <reference path="_Action/_Director/PlayESM.ts" />
+/// <reference path="_Action/_Director/StopESM.ts" />
+/// <reference path="_Action/_Director/StopSE.ts" />
+/// <reference path="_Action/_Director/VolumeSet.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -12798,7 +13048,8 @@ var Runtime;
             this._s.i({});
             if (Core.IRuntime.Series.Alone != this._fs)
                 this._d.e(this._fs);
-            this._d.playBGM();
+            this._d.playMusic(Core.IResource.Type.BGM);
+            this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
             this._d.OP(!this._e.gA(), this._n, this._c);
             return this;
@@ -13255,7 +13506,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.23.5';
+    Bigine.version = '0.24.0';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

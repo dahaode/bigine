@@ -238,7 +238,8 @@ namespace Runtime {
             this._s.i({});
             if (Core.IRuntime.Series.Alone != this._fs)
                 this._d.e(this._fs);
-            this._d.playBGM();
+            this._d.playMusic(Core.IResource.Type.BGM);
+            this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
             this._d.OP(!this._e.gA(), this._n, this._c);
             return this;

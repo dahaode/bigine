@@ -154,16 +154,23 @@ namespace Runtime {
         }
 
         /**
-         * 播放背景音乐。
+         * 播放 背景音乐 / 环境音乐。
          */
-        public playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime> {
+        public playMusic(type: Core.IResource.Type, resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 播放音效。
          */
-        public playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime> {
+        public playSE(resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 设置音量。
+         */
+        public volumeSet(type: Core.IResource.Type, vol: number): Promise<Core.IRuntime> {
             return this._p;
         }
 

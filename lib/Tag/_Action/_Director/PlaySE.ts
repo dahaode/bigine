@@ -35,7 +35,8 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            return runtime.gD().playSE(this._mo ? this._mo.o() : undefined);
+            var vol: number = 0.01 * parseInt(this._p[1] || '100', 10);
+            return runtime.gD().playSE(this._mo ? this._mo.o() : undefined, vol);
         }
 
         /**

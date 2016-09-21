@@ -148,13 +148,15 @@ namespace Runtime {
             };
             this._s = {
                 b: new Audio(),
-                e: new Audio()
+                e: new Audio(),
+                s: new Audio()
             };
-            this._s['b'].autoplay = true;
-            this._s['b'].loop = true;
-            this._s['e'].autoplay = true;
+            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
+            this._s['b'].loop = this._s['s'].loop = true;
+            this._s['b'].src = this._s['s'].src = this._i['s'].l();
+            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
+            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
             this._s['e']['cd'] = -1;
-            this._s['b'].src = this._i['s'].l();
             this._f = {};
             this._e = [0, 0];
             this._l = (event: KeyboardEvent) => {
@@ -251,7 +253,8 @@ namespace Runtime {
         public ED(): Promise<Core.IRuntime> {
             return this.c([[this._i['e']]])
                 .then(() => {
-                    this.playBGM();
+                    this.playMusic(Core.IResource.Type.BGM);
+                    this.playMusic(Core.IResource.Type.ESM);
                     this.playSE();
                     return this.lightOff()
                         .then(() => {
@@ -347,22 +350,28 @@ namespace Runtime {
             gChars.a(gNew);
             if (!this._x['G'].gO())
                 gChars.o(1);
-            switch (this._ca[1]) {
-                case 'Gradient':
-                    return gNew.p(new G.FadeIn(500)).then(() => {
-                        if (gOld) {
-                            gChars.e(gOld);
-                        } else
-                            states.s(kamount, 1 + (<number> states.g(kamount) || 0));
+            if (this._ca[1] == 'Gradient') {  // 神态渐变
+                if (gOld) {
+                    return Promise.all([
+                        gOld.p(new G.FadeOut(500)),
+                        gNew.p(new G.FadeIn(500))
+                    ]).then(() => {
+                        gChars.e(gOld);
                         return this._r;
                     });
-                default:
-                    if (gOld) {
-                        gChars.e(gOld);
-                    } else
+                } else {
+                    return gNew.p(new G.FadeIn(500)).then(() => {
                         states.s(kamount, 1 + (<number> states.g(kamount) || 0));
-                    gNew.o(1);
-                    return this._p;
+                        return this._r;
+                    });
+                }
+            } else {   // 神态无动画
+                if (gOld) {
+                    gChars.e(gOld);
+                } else
+                    states.s(kamount, 1 + (<number> states.g(kamount) || 0));
+                gNew.o(1);
+                return this._p;
             }
         }
 
@@ -500,42 +509,67 @@ namespace Runtime {
         }
 
         /**
-         * 播放背景音乐。
+         * 播放 背景音乐 / 环境音乐。
          */
-        public playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime> {
+        public playMusic(type: Core.IResource.Type, resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime> {
             var oops: string = this._i['s'].l(),
                 url: string = resource ? resource.l() : oops,
-                bgm: HTMLAudioElement = this._s['b'],
-                volume: number = bgm.volume,
+                music: HTMLAudioElement = type == Core.IResource.Type.BGM ? this._s['b'] : this._s['s'],
+                volume: number = music['baseVolume'] * (vol || 1),
                 change: () => Promise<Core.IRuntime> = () => {
-                    bgm.volume = volume;
-                    if (bgm.src != url)
-                        bgm.src = url;
-                    return super.playBGM(resource);
+                    music['scale'] = vol || 1;
+                    music.volume = volume;
+                    if (music.src != url)
+                        music.src = url;
+                    return super.playMusic(type, resource, vol);
                 };
             if (!resource)
-                bgm.play();
-            if (bgm.src && bgm.src != oops)
-                return new G.AudioFadeOut(1500).p(bgm).then(change);
+                music.play();
+            if (music.src && music.src != oops)
+                return new G.AudioFadeOut(1500).p(music).then(change);
             return change();
         }
 
         /**
          * 播放音效。
          */
-        public playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime> {
+        public playSE(resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime> {
             var url: string = (resource || this._i['s']).l(),
                 se: HTMLAudioElement = this._s['e'],
                 type: string = 'ended',
                 resume: () => void = () => {
                     se.removeEventListener(type, resume);
                     this._s['b'].play();
+                    this._s['s'].play();
                 };
             se.addEventListener(type, resume);
+            se.volume = se['baseVolume'] * (vol || 1);
             se.src = url;
             if (!resource)
                 this._s['e'].play();
-            return super.playSE(resource);
+            return super.playSE(resource, vol);
+        }
+
+        /**
+         * 设置音量。
+         */
+        public volumeSet(type: Core.IResource.Type, vol: number): Promise<Core.IRuntime> {
+            var mType: typeof Core.IResource.Type = Core.IResource.Type;
+            var mMusic: HTMLAudioElement;
+            switch (type) {
+                case mType.BGM:
+                    mMusic = this._s['b'];
+                    break;
+                case mType.ESM:
+                    mMusic = this._s['s'];
+                    break;
+                case mType.SE:
+                    mMusic = this._s['e'];
+                    break;
+            }
+            mMusic['scale'] = vol;
+            new G.AudioFade(1500, vol * mMusic['baseVolume']).p(mMusic);
+            return super.volumeSet(type, vol);
         }
 
         /**
@@ -578,22 +612,16 @@ namespace Runtime {
          */
         public asRoom(resource: Resource.Resource<HTMLImageElement>, time: boolean = false, map: boolean = false): Promise<Core.IRuntime> {
             return super.asRoom(resource)
-                .then((runtime: Core.IRuntime) => {   // 强制复位
-                    var camera: string = <string> runtime.gS().g('.z'),
-                        strArr: Array <string>,
-                        mx: number,
-                        my: number;
-                    if (!camera)
-                        return runtime;
-                    strArr = camera.split(',');
-                    mx = parseFloat(strArr[0]);
-                    my = parseFloat(strArr[1]);
-                    return this.cameraZoom(mx, my, 20, -1);
-                }).then((runtime: Core.IRuntime) => {    // 进入房间特效
-                    runtime.gS().d('.z');
-                    runtime.gS().d('_z');
-                    var gOld: G.Element = this._c.q('b')[0],
-                        gNew: G.Element = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
+                .then((runtime: Core.IRuntime) => {
+                    // 强制复位
+                    var camera: string = <string> runtime.gS().g('.z');
+                    var gOld: G.Element = <G.Element> this._c.q('b')[0];
+                    if (camera) {
+                        gOld.x(0).y(0).sW(1280).sH(720);
+                        runtime.gS().d('.z');
+                        runtime.gS().d('_z');
+                    }
+                    var gNew: G.Element = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
                             .o(0);
                     this._c.a(gNew, 'M');
                     if (time) {
@@ -609,7 +637,7 @@ namespace Runtime {
                             return runtime;
                         });
                     }
-
+                    // 进入房间特效
                     return this.$ca(gOld, gNew);
                 });
         }
@@ -625,10 +653,9 @@ namespace Runtime {
                     return gCurtain.v(500)
                         .then(() => {
                             gOld.o(0);
-                            gCurtain.h(20);
-                        }).then(() =>
-                            gNew.p(new G.FadeIn(500))
-                        ).then(() => {
+                            this.lightOn();
+                        }).then(() => {
+                            gNew.p(new G.FadeIn(500));
                             this._c.e(gOld);
                             return this._r;
                         });
@@ -644,8 +671,11 @@ namespace Runtime {
                         return this._r;
                     });
                 default:
-                    curtain = new G.FadeIn(20);
-                    break;
+                    return this.lightOn().then(() => {
+                        this._c.e(gOld);
+                        gNew.o(1);
+                        return this._r;
+                    });
             }
             return this.lightOn()
                 .then(() =>
@@ -995,7 +1025,7 @@ namespace Runtime {
                         });
                 }).addEventListener('menu.set', () => {
                     slotsFromStart = false;
-                    (<Sprite.Set> this._x['st']).vv(this._s['b'].volume, this._s['e'].volume, this._vo)
+                    (<Sprite.Set> this._x['st']).vv(this._s['b']['baseVolume'], this._s['e']['baseVolume'], this._vo)
                         .then(() => {
                             this._x['m'].h();
                         })['catch'](() => {
@@ -1074,8 +1104,15 @@ namespace Runtime {
                     this._x[slotsFromStart ? 's' : 'm'].v();
                     this._x['st'].h();
                 }).addEventListener('set.volume', (ev: Ev.SetVolume) => {
-                    this._s['b'].volume = ev.bVolume * 0.01;
-                    this._s['e'].volume = ev.eVolume * 0.01;
+                    var bgm: HTMLAudioElement = this._s['b'];
+                    var esm: HTMLAudioElement = this._s['s'];
+                    var se: HTMLAudioElement = this._s['e'];
+                    bgm['baseVolume'] = ev.bVolume * 0.01;
+                    bgm.volume = ev.bVolume * 0.01 * bgm['scale'];
+                    esm['baseVolume'] = ev.bVolume * 0.01;
+                    esm.volume = ev.bVolume * 0.01 * esm['scale'];
+                    se['baseVolume'] = ev.eVolume * 0.01;
+                    se.volume = ev.eVolume * 0.01 * se['scale'];
                 });
             resources.push(this._x['st'].l());
             this._c.a(this._x['st'], gCurtain);
@@ -1134,8 +1171,12 @@ namespace Runtime {
          * 设置音量。
          */
         public v(volume: number): CanvasDirector {
-            this._s['b'].volume = volume;
-            this._s['e'].volume = volume;
+            this._s['b']['baseVolume'] = volume;
+            this._s['b'].volume = volume * this._s['b']['scale'];
+            this._s['s']['baseVolume'] = volume;
+            this._s['s'].volume = volume * this._s['s']['scale'];
+            this._s['e']['baseVolume'] = volume;
+            this._s['e'].volume = volume * this._s['e']['scale'];
             this._vo = volume == 1;
             let set: Sprite.Set = <Sprite.Set> this._x['st'];
             if (set.gO() > 0) set.vv(volume, volume, this._vo);
@@ -1175,6 +1216,7 @@ namespace Runtime {
             this._c = undefined;
             this._s['b'].pause();
             this._s['e'].pause();
+            this._s['s'].pause();
             this._s = {};
             window.removeEventListener('keydown', this._l);
         }
@@ -1192,7 +1234,8 @@ namespace Runtime {
                 this._q();
                 this._q = undefined;
             }
-            this.playBGM();
+            this.playMusic(Core.IResource.Type.BGM);
+            this.playMusic(Core.IResource.Type.ESM);
             this.playSE();
         }
 

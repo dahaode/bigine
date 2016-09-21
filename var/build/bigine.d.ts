@@ -85,6 +85,7 @@ declare namespace __Bigine {
                 BGM = 5,
                 SE = 6,
                 Raw = 7,
+                ESM = 8,
             }
         }
     }
@@ -139,8 +140,9 @@ declare namespace __Bigine {
             words(words: string, theme: string, who?: string, avatar?: IResource<HTMLImageElement>): Promise<IRuntime>;
             tip(words: string): Promise<IRuntime>;
             stars(rank: IDirector.Stars, grade: string, value: string): Promise<IRuntime>;
-            playBGM(resource?: IResource<string>): Promise<IRuntime>;
-            playSE(resource?: IResource<string>): Promise<IRuntime>;
+            playMusic(type: Core.IResource.Type, resource?: IResource<string>, vol?: number): Promise<IRuntime>;
+            playSE(resource?: IResource<string>, vol?: number): Promise<IRuntime>;
+            volumeSet(type: Core.IResource.Type, vol: number): Promise<IRuntime>;
             hideCG(): Promise<IRuntime>;
             showCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
             asRoom(resource: IResource<HTMLImageElement>, time?: boolean, map?: boolean): Promise<IRuntime>;
@@ -450,8 +452,9 @@ declare namespace __Bigine {
             words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             tip(words: string): Promise<Core.IRuntime>;
             stars(rank: Core.IDirector.Stars, grade: string, value: string): Promise<Core.IRuntime>;
-            playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
-            playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
+            playMusic(type: Core.IResource.Type, resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime>;
+            playSE(resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime>;
+            volumeSet(type: Core.IResource.Type, vol: number): Promise<Core.IRuntime>;
             hideCG(): Promise<Core.IRuntime>;
             showCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean, map?: boolean): Promise<Core.IRuntime>;
@@ -937,8 +940,9 @@ declare namespace __Bigine {
             words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             tip(words: string): Promise<Core.IRuntime>;
             stars(rank: Core.IDirector.Stars, grade: string, value?: string): Promise<Core.IRuntime>;
-            playBGM(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
-            playSE(resource?: Resource.Resource<string>): Promise<Core.IRuntime>;
+            playMusic(type: Core.IResource.Type, resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime>;
+            playSE(resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime>;
+            volumeSet(type: Core.IResource.Type, vol: number): Promise<Core.IRuntime>;
             hideCG(): Promise<Core.IRuntime>;
             showCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             asRoom(resource: Resource.Resource<HTMLImageElement>, time?: boolean, map?: boolean): Promise<Core.IRuntime>;
@@ -1343,6 +1347,16 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class PlayBGM extends Action {
+            private _mo;
+            gN(): string;
+            $b(ep: Core.IEpisode): void;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+            $d(): Core.IResource<string>[];
+            gB(): DefBGM;
+        }
+    }
+    namespace Tag {
+        class PlayESM extends Action {
             private _mo;
             gN(): string;
             $b(ep: Core.IEpisode): void;
@@ -2050,6 +2064,26 @@ declare namespace __Bigine {
             private fail;
             constructor(metas: IPayMetas);
             gT(): string;
+        }
+    }
+    namespace Tag {
+        class StopESM extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class StopSE extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class VolumeSet extends Action {
+            private _mt;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
     }
     namespace Runtime {

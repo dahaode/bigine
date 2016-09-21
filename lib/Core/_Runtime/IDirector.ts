@@ -80,14 +80,19 @@ namespace Core {
         stars(rank: IDirector.Stars, grade: string, value: string): Promise<IRuntime>;
 
         /**
-         * 播放背景音乐。
+         * 播放 背景音乐 / 环境音乐。
          */
-        playBGM(resource?: IResource<string>): Promise<IRuntime>;
+        playMusic(type: Core.IResource.Type, resource?: IResource<string>, vol?: number): Promise<IRuntime>;
 
         /**
          * 播放音效。
          */
-        playSE(resource?: IResource<string>): Promise<IRuntime>;
+        playSE(resource?: IResource<string>, vol?: number): Promise<IRuntime>;
+
+        /**
+         * 设置音量。
+         */
+        volumeSet(type: Core.IResource.Type, vol: number): Promise<IRuntime>;
 
         /**
          * 关闭特写。

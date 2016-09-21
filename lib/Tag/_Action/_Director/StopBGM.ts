@@ -23,7 +23,7 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             runtime.gS().d('_b');
-            return runtime.gD().playBGM();
+            return runtime.gD().playMusic(Core.IResource.Type.BGM);
         }
     }
 }

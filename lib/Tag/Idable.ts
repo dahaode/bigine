@@ -51,7 +51,8 @@ namespace Tag {
                 kdo: string = '$rd',
                 kcamera: string = '_z',
                 camera: string = states.g(kcamera),
-                bgm: string = states.g('_b'),
+                bgm: any = states.g('_b'),
+                esm: any = states.g('_e'),
                 cg: string = states.g(kid),
                 cur: string = states.g('_ra'),
                 exp: string = states.g('_rb'),
@@ -73,8 +74,15 @@ namespace Tag {
                 room: DefRoom;
             if (bgm)
                 q = q.then(() => {
-                    var defbgm: DefBGM = <DefBGM> episode.q(bgm, type.BGM);
-                    return director.playBGM(defbgm ? defbgm.o() : undefined);
+                    var defbgm: DefBGM = <DefBGM> episode.q(typeof bgm == 'string' ? bgm : bgm[0], type.BGM);
+                    var vol: number = typeof bgm == 'string' ? 1 : 0.01 * parseInt(bgm[1] || '100', 10);
+                    return director.playMusic(Core.IResource.Type.BGM, defbgm ? defbgm.o() : undefined, vol);
+                });
+            if (esm)
+                q = q.then(() => {
+                    var defesm: DefBGM = <DefBGM> episode.q(typeof esm == 'string' ? esm : esm[0], type.BGM);
+                    var vol: number = typeof esm == 'string' ? 1 : 0.01 * parseInt(esm[1] || '100', 10);
+                    return director.playMusic(Core.IResource.Type.ESM, defesm ? defesm.o() : undefined, vol);
                 });
             if (cur)
                 q = q.then(() =>

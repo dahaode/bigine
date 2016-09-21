@@ -95,6 +95,10 @@ namespace Tag {
         Expression: '神态动画',
         ShowStatus: '显示状态栏',
         HideStatus: '隐藏状态栏',
+        PlayESM: '环境音乐',
+        StopESM: '环境静音',
+        StopSE: '停止音效',
+        VolumeSet: '设置音量',
 
         Assert: '当数据',
         Assign: '设置数据',
@@ -144,7 +148,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 103
+    export var S: { [index: number]: any[] } = { // next 107
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -266,15 +270,18 @@ namespace Tag {
         9: ['End', 0, -1],
         10: ['Fail', 0, -1],
         11: ['Stars', [1, 2], -1], // [星级, 数据值?]
-        12: ['PlayBGM', 1, -1], // [背景音乐名]
+        12: ['PlayBGM', [1, 2], -1], // [背景音乐名, 音量?]
+        103: ['PlayESM', [1, 2], -1], // [环境音乐名, 音量?]
         64: ['StopBGM', 0, -1],
+        104: ['StopESM', 0, -1],
+        105: ['StopSE', 0, -1],
         13: ['HideCG', 0, -1],
         14: ['ShowCG', 1, -1], // [特写名]
         15: ['AsRoom', [1, 2], 0], // [房间名, 时间?]
         16: ['Freeze', 0, -1],
         17: ['AsTime', 1, -1], // [房间时刻名]
         18: ['Enter', 1, -1], // [房间名]
-        19: ['PlaySE', 1, -1], // [音效名]
+        19: ['PlaySE', [1, 2], -1], // [音效名, 音量?]
         20: ['Weather', 1, -1], // [天气名]
         91: ['Pause', [0, 1], -1], // [停顿时间：长、中、短]
         92: ['CameraSet', 0, 1],  // 镜头设置的位置
@@ -286,6 +293,7 @@ namespace Tag {
         100: ['ShowStatus', 0, -1],
         101: ['HideStatus', 0, -1],
         102: ['Expression', [0, 1], -1],   // [神态动画名称]
+        106: ['VolumeSet', 2, -1],   // [设置音乐的类型, 大小]  
 
         58: ['Loop', 0, -1, {
             '-1': [1]

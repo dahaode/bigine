@@ -10,6 +10,7 @@
 /// <reference path="../../_Action/_Director/AsRoom.ts" />
 /// <reference path="../../_Action/_Director/CharOn.ts" />
 /// <reference path="../../_Action/_Director/PlayBGM.ts" />
+/// <reference path="../../_Action/_Director/PlayESM.ts" />
 /// <reference path="../../_Action/_Director/PlaySE.ts" />
 /// <reference path="../../_Action/_Director/ShowCG.ts" />
 /// <reference path="../../_Action/_Text/Speak.ts" />
@@ -121,6 +122,7 @@ namespace Tag {
                     case 'CharPose':
                     case 'CharSet':
                     case 'PlayBGM':
+                    case 'PlayESM':
                     case 'PlaySE':
                     case 'ShowCG':
                         frame = frame.concat(action.$d());
