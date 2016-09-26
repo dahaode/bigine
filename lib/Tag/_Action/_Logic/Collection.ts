@@ -32,11 +32,12 @@ namespace Tag {
                 },
                 obj: Util.IHashTable<any>;
             Util.each(this._s, (child: Unknown) => {
-                obj = states.g(child.$p(0));
+                var name: string = child.$p(0);
+                obj = states.g(name);
                 if ('object' != typeof obj || !(type in obj) || obj[type] != this._p[0]) {
                     throw new E(E.COLL_STRUCT_DISMATCHED, this._l);
                 }
-                coll[''].push(obj);
+                coll[''].push(name);
             });
             states.s(this._c, coll);
             return runtime;

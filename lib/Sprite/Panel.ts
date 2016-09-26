@@ -72,7 +72,7 @@ namespace Sprite {
         /**
          * 当前集合面板中显示的集合
          */
-        private _cc: Array<Util.IHashTable<any>>;
+        private _cc: Array<string>;
         /**
          * 当前集合面板中的页数
          */
@@ -385,7 +385,8 @@ namespace Sprite {
             // 取出集合数据
             let collName: string = sheet['cn'][0];
             this._cc = data[collName][''];
-            let collData: Util.IHashTable<any> = this._cc[this._cp];
+            let name: string = this._cc[this._cp];
+            let collData: Util.IHashTable<any> = data[name];
             // 取出集合的结构
             let cStruct: Tag.Struct = <Tag.Struct> this._ep.q(sheet['s'], Core.IEpisode.Entity.Struct);
             let i: number = 1;
