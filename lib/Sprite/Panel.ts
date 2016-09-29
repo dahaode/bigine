@@ -72,7 +72,7 @@ namespace Sprite {
         /**
          * 当前集合面板中显示的集合
          */
-        private _cc: Array<string>;
+        private _cc: Array<string | Util.IHashTable<any>>;
         /**
          * 当前集合面板中的页数
          */
@@ -383,67 +383,69 @@ namespace Sprite {
             // 取出集合数据
             let collName: string = sheet['cn'][0];
             this._cc = data[collName][''];
-            let name: string = this._cc[this._cp];
+            let name: any = this._cc[this._cp];
             let collData: Util.IHashTable<any> = data[name];
             // 取出集合的结构
             let cStruct: Tag.Struct = <Tag.Struct> this._ep.q(sheet['s'], Core.IEpisode.Entity.Struct);
             let i: number = 1;
-            Util.each(cStruct.gS(), (field: Tag.Field) => {
-                let fieldName: string = field.$c(),
-                    fieldValue: string | number | Tag.Entity = collData[fieldName],
-                    fieldType: string = field.gT();
-                // 渲染头像
-                if (field.iE()) {
-                    let hBounds: G.IBounds = <G.IBounds> this._pt['coll']['head'];
-                    let iBounds: G.IBounds = <G.IBounds> {x: 0, y: 0, w: hBounds['w'], h: hBounds['h']};
-                    let entity: Tag.Entity = field.gIE(<string> fieldValue);
-                    (<G.Sprite> this._cv['head']).c().a(
-                        new G.Image((<any> entity).o().o(), iBounds)
-                        ).o(1);
-                } else if (field.iN()) { // 渲染名称
-                    (<G.Text> this._cv['name']).c().a(
-                        new G.TextPhrase(<string> fieldValue)
-                        ).o(1);
-                } else { // 其它字段
-                    if (fieldValue == '空') {
-                        i ++;
-                        return;
-                    }
-                    (<G.Text> this._ct[i + 't']).c().a(
-                        new G.TextPhrase(fieldName)
-                        ).o(1);
-                    // 心或星类型的字段
-                    (<G.Sprite> this._cv[i + 'v']).c();   // 先清空
-                    if (Util.indexOf(this._sTypes, field.gT()) > -1) {
-                        let lValue: number = <number> field.gL(),
-                            rValue: number = <number> fieldValue;
-                        for (let j: number = 0; j < lValue; j++) {
-                            let tTheme: Util.IHashTable<any> = this._pt['type'][field.gT()],
-                                typeBound: G.IBounds = <G.IBounds> Util.clone(tTheme),
-                                res: Resource.Resource<HTMLImageElement> = j < rValue ? this._tResource[fieldType]['ei'] : this._tResource[fieldType]['fi'],
-                                image: G.Image = new G.Image(res.o(), <G.IBounds> typeBound, false);
-                            typeBound['x'] = j * (this._pt['type'][fieldType]['m'] + this._pt['type'][fieldType]['w']);
-                            typeBound['y'] = (this._pt['coll'][i + '']['value']['lh'] - this._pt['type'][fieldType]['h']) / 2;
-                            (<G.Sprite> this._cv[i + 'v']).a(image);
-                        }
-                        this._cv[i + 'v'].o(1);
-                    } else {
-                        // 普通字段
-                        let tValue: Util.IHashTable<any> = this._pt['coll'][i + '']['value'],
-                            iBound: G.IBounds = <G.IBounds> Util.clone(tValue),
-                            align: G.Text.Align = G.Text.Align.Left;
-                        iBound['x'] = 0;
-                        iBound['y'] = 0;
-                        (<G.Sprite> this._cv[i + 'v']).a(
-                            new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(
-                                new G.TextPhrase(fieldValue + '')
-                                )
+            if (collData) {
+                Util.each(cStruct.gS(), (field: Tag.Field) => {
+                    let fieldName: string = field.$c(),
+                        fieldValue: string | number | Tag.Entity = collData[fieldName],
+                        fieldType: string = field.gT();
+                    // 渲染头像
+                    if (field.iE()) {
+                        let hBounds: G.IBounds = <G.IBounds> this._pt['coll']['head'];
+                        let iBounds: G.IBounds = <G.IBounds> {x: 0, y: 0, w: hBounds['w'], h: hBounds['h']};
+                        let entity: Tag.Entity = field.gIE(<string> fieldValue);
+                        (<G.Sprite> this._cv['head']).c().a(
+                            new G.Image((<any> entity).o().o(), iBounds)
                             ).o(1);
+                    } else if (field.iN()) { // 渲染名称
+                        (<G.Text> this._cv['name']).c().a(
+                            new G.TextPhrase(<string> fieldValue)
+                            ).o(1);
+                    } else { // 其它字段
+                        if (fieldValue == '空') {
+                            i ++;
+                            return;
+                        }
+                        (<G.Text> this._ct[i + 't']).c().a(
+                            new G.TextPhrase(fieldName)
+                            ).o(1);
+                        // 心或星类型的字段
+                        (<G.Sprite> this._cv[i + 'v']).c();   // 先清空
+                        if (Util.indexOf(this._sTypes, field.gT()) > -1) {
+                            let lValue: number = <number> field.gL(),
+                                rValue: number = <number> fieldValue;
+                            for (let j: number = 0; j < lValue; j++) {
+                                let tTheme: Util.IHashTable<any> = this._pt['type'][field.gT()],
+                                    typeBound: G.IBounds = <G.IBounds> Util.clone(tTheme),
+                                    res: Resource.Resource<HTMLImageElement> = j < rValue ? this._tResource[fieldType]['ei'] : this._tResource[fieldType]['fi'],
+                                    image: G.Image = new G.Image(res.o(), <G.IBounds> typeBound, false);
+                                typeBound['x'] = j * (this._pt['type'][fieldType]['m'] + this._pt['type'][fieldType]['w']);
+                                typeBound['y'] = (this._pt['coll'][i + '']['value']['lh'] - this._pt['type'][fieldType]['h']) / 2;
+                                (<G.Sprite> this._cv[i + 'v']).a(image);
+                            }
+                            this._cv[i + 'v'].o(1);
+                        } else {
+                            // 普通字段
+                            let tValue: Util.IHashTable<any> = this._pt['coll'][i + '']['value'],
+                                iBound: G.IBounds = <G.IBounds> Util.clone(tValue),
+                                align: G.Text.Align = G.Text.Align.Left;
+                            iBound['x'] = 0;
+                            iBound['y'] = 0;
+                            (<G.Sprite> this._cv[i + 'v']).a(
+                                new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(
+                                    new G.TextPhrase(fieldValue + '')
+                                    )
+                                ).o(1);
 
+                        }
+                        i ++;
                     }
-                    i ++;
-                }
-            });
+                });
+            }
             this._ca['p'].o(1);
             this._ca['n'].o(1);
             return this;

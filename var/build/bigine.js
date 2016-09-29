@@ -3576,46 +3576,48 @@ var Sprite;
             // 取出集合的结构
             var cStruct = this._ep.q(sheet['s'], Core.IEpisode.Entity.Struct);
             var i = 1;
-            Util.each(cStruct.gS(), function (field) {
-                var fieldName = field.$c(), fieldValue = collData[fieldName], fieldType = field.gT();
-                // 渲染头像
-                if (field.iE()) {
-                    var hBounds = _this._pt['coll']['head'];
-                    var iBounds = { x: 0, y: 0, w: hBounds['w'], h: hBounds['h'] };
-                    var entity = field.gIE(fieldValue);
-                    _this._cv['head'].c().a(new G.Image(entity.o().o(), iBounds)).o(1);
-                }
-                else if (field.iN()) {
-                    _this._cv['name'].c().a(new G.TextPhrase(fieldValue)).o(1);
-                }
-                else {
-                    if (fieldValue == '空') {
-                        i++;
-                        return;
+            if (collData) {
+                Util.each(cStruct.gS(), function (field) {
+                    var fieldName = field.$c(), fieldValue = collData[fieldName], fieldType = field.gT();
+                    // 渲染头像
+                    if (field.iE()) {
+                        var hBounds = _this._pt['coll']['head'];
+                        var iBounds = { x: 0, y: 0, w: hBounds['w'], h: hBounds['h'] };
+                        var entity = field.gIE(fieldValue);
+                        _this._cv['head'].c().a(new G.Image(entity.o().o(), iBounds)).o(1);
                     }
-                    _this._ct[i + 't'].c().a(new G.TextPhrase(fieldName)).o(1);
-                    // 心或星类型的字段
-                    _this._cv[i + 'v'].c(); // 先清空
-                    if (Util.indexOf(_this._sTypes, field.gT()) > -1) {
-                        var lValue = field.gL(), rValue = fieldValue;
-                        for (var j = 0; j < lValue; j++) {
-                            var tTheme = _this._pt['type'][field.gT()], typeBound = Util.clone(tTheme), res = j < rValue ? _this._tResource[fieldType]['ei'] : _this._tResource[fieldType]['fi'], image = new G.Image(res.o(), typeBound, false);
-                            typeBound['x'] = j * (_this._pt['type'][fieldType]['m'] + _this._pt['type'][fieldType]['w']);
-                            typeBound['y'] = (_this._pt['coll'][i + '']['value']['lh'] - _this._pt['type'][fieldType]['h']) / 2;
-                            _this._cv[i + 'v'].a(image);
-                        }
-                        _this._cv[i + 'v'].o(1);
+                    else if (field.iN()) {
+                        _this._cv['name'].c().a(new G.TextPhrase(fieldValue)).o(1);
                     }
                     else {
-                        // 普通字段
-                        var tValue = _this._pt['coll'][i + '']['value'], iBound = Util.clone(tValue), align = G.Text.Align.Left;
-                        iBound['x'] = 0;
-                        iBound['y'] = 0;
-                        _this._cv[i + 'v'].a(new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(new G.TextPhrase(fieldValue + ''))).o(1);
+                        if (fieldValue == '空') {
+                            i++;
+                            return;
+                        }
+                        _this._ct[i + 't'].c().a(new G.TextPhrase(fieldName)).o(1);
+                        // 心或星类型的字段
+                        _this._cv[i + 'v'].c(); // 先清空
+                        if (Util.indexOf(_this._sTypes, field.gT()) > -1) {
+                            var lValue = field.gL(), rValue = fieldValue;
+                            for (var j = 0; j < lValue; j++) {
+                                var tTheme = _this._pt['type'][field.gT()], typeBound = Util.clone(tTheme), res = j < rValue ? _this._tResource[fieldType]['ei'] : _this._tResource[fieldType]['fi'], image = new G.Image(res.o(), typeBound, false);
+                                typeBound['x'] = j * (_this._pt['type'][fieldType]['m'] + _this._pt['type'][fieldType]['w']);
+                                typeBound['y'] = (_this._pt['coll'][i + '']['value']['lh'] - _this._pt['type'][fieldType]['h']) / 2;
+                                _this._cv[i + 'v'].a(image);
+                            }
+                            _this._cv[i + 'v'].o(1);
+                        }
+                        else {
+                            // 普通字段
+                            var tValue = _this._pt['coll'][i + '']['value'], iBound = Util.clone(tValue), align = G.Text.Align.Left;
+                            iBound['x'] = 0;
+                            iBound['y'] = 0;
+                            _this._cv[i + 'v'].a(new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(new G.TextPhrase(fieldValue + ''))).o(1);
+                        }
+                        i++;
                     }
-                    i++;
-                }
-            });
+                });
+            }
             this._ca['p'].o(1);
             this._ca['n'].o(1);
             return this;
@@ -4516,7 +4518,7 @@ var Sprite;
             this._cb = Util.clone(_text);
             this._be = _text;
             this._c = _text['ch'];
-            this._tl = 0;
+            this._tl = this._tx = 0;
             this.o(0)
                 .a(new G.Sprite(_back)
                 .a(new G.Image(this._rr[0].o(), _back, true))

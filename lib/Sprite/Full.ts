@@ -69,7 +69,7 @@ namespace Sprite {
             this._cb = <G.IBounds> Util.clone(_text);
             this._be = <G.IBounds> _text;
             this._c = _text['ch'];
-            this._tl = 0;
+            this._tl = this._tx = 0;
             (<Full> this.o(0))
                 .a(new G.Sprite(<G.IBounds> _back)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _back, true))
