@@ -289,6 +289,27 @@ namespace Runtime {
         }
 
         /**
+         * 全屏文本 开 / 关。
+         */
+        public fullWords(on: boolean): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 清除全屏文本。
+         */
+        public fullClean(): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 隐藏全屏文本。
+         */
+        public fullHide(): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
          * 获取动态创建标识。
          */
         public gD(): boolean {

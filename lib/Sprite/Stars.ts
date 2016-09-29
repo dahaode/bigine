@@ -35,18 +35,17 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 _name: Util.IHashTable<any> = theme['name'],
                 _value: Util.IHashTable<any> = theme['value'],
                 _pic: Util.IHashTable<any> = theme['pic'],
                 center: G.Text.Align = G.Text.Align.Center;
             super(0, 0, w, h);
             this._rr = [
-                rr.g<HTMLImageElement>(url + _pic['1'], raw),
-                rr.g<HTMLImageElement>(url + _pic['2'], raw),
-                rr.g<HTMLImageElement>(url + _pic['3'], raw),
-                rr.g<HTMLImageElement>(url + _pic['4'], raw),
-                rr.g<HTMLImageElement>(url + _pic['5'], raw)
+                rr.g<HTMLImageElement>(_pic['1'], raw),
+                rr.g<HTMLImageElement>(_pic['2'], raw),
+                rr.g<HTMLImageElement>(_pic['3'], raw),
+                rr.g<HTMLImageElement>(_pic['4'], raw),
+                rr.g<HTMLImageElement>(_pic['5'], raw)
             ];
             // 渲染评分初始样式
             (<Stars> this.o(0))

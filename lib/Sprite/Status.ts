@@ -35,7 +35,6 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 left: G.Text.Align = G.Text.Align.Left,
                 right: G.Text.Align = G.Text.Align.Right,
                 _back: Util.IHashTable<any> = theme['back'],
@@ -43,7 +42,7 @@ namespace Sprite {
                 j: Util.IHashTable<any>;
             super(0, 0, w, h, true);
             this._rr = [
-                rr.g<HTMLImageElement>(url + _back['i'], raw)
+                rr.g<HTMLImageElement>(_back['i'], raw)
             ];
             (<Status> this.o(0))
                 .a(new G.Image(this._rr[0].o(), <G.IBounds> _back));

@@ -74,6 +74,9 @@ namespace Tag {
         Speak: '对白',
         Tip: '提示',
         VoiceOver: '旁白',
+        FullWords: '全屏文本',
+        FullClean: '清除文本',
+        FullHide: '隐藏文本',
 
         Save: '自动存档',
         End: '游戏完结',
@@ -148,7 +151,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 107
+    export var S: { [index: number]: any[] } = { // next 110
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -293,7 +296,10 @@ namespace Tag {
         100: ['ShowStatus', 0, -1],
         101: ['HideStatus', 0, -1],
         102: ['Expression', [0, 1], -1],   // [神态动画名称]
-        106: ['VolumeSet', 2, -1],   // [设置音乐的类型, 大小]  
+        106: ['VolumeSet', 2, -1],   // [设置音乐的类型, 大小] 
+        107: ['FullWords', 1, -1],   // [开/关] 
+        108: ['FullClean', 0, -1],
+        109: ['FullHide', 0, -1],
 
         58: ['Loop', 0, -1, {
             '-1': [1]

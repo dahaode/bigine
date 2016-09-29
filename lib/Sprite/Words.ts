@@ -49,7 +49,6 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 _vback: Util.IHashTable<any> = voiceover['back'],
                 _vtext: Util.IHashTable<any> = voiceover['text'],
                 _vcurs: Util.IHashTable<any> = voiceover['cursor'],
@@ -66,9 +65,9 @@ namespace Sprite {
                 left: G.Text.Align = G.Text.Align.Left;
             super(0, 0, w, h);
             this._rr = [
-                rr.g<HTMLImageElement>(url + _vback['i'], raw),
-                rr.g<HTMLImageElement>(url + _mback['i'], raw),
-                rr.g<HTMLImageElement>(url + _sback['i'], raw),
+                rr.g<HTMLImageElement>(_vback['i'], raw),
+                rr.g<HTMLImageElement>(_mback['i'], raw),
+                rr.g<HTMLImageElement>(_sback['i'], raw),
             ];
             this._x = {};
             this._c = {
@@ -115,17 +114,17 @@ namespace Sprite {
                     ).o(0)
                 );
             if (_vcurs) {
-                let vo: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(url + _vcurs['i'], raw);
+                let vo: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(_vcurs['i'], raw);
                 this._rr.push(vo);
                 (<G.Sprite> this._x['v']).a(this._x['vc'] = new G.Image(vo.o(), <G.IBounds> _vcurs, true));
             }
             if (_mcurs) {
-                let mo: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(url + _mcurs['i'], raw);
+                let mo: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(_mcurs['i'], raw);
                 this._rr.push(mo);
                 (<G.Sprite> this._x['m']).a(this._x['mc'] = new G.Image(mo.o(), <G.IBounds> _mcurs, true));
             }
             if (_scurs) {
-                let so: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(url + _scurs['i'], raw);
+                let so: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(_scurs['i'], raw);
                 this._rr.push(so);
                 (<G.Sprite> this._x['s']).a(this._x['sc'] = new G.Image(so.o(), <G.IBounds> _scurs, true));
             }

@@ -78,6 +78,7 @@ namespace Sprite {
          */
         protected $w(element: G.Text, words: string, hiColor: string): Sprite {
             let buffer: string = '',
+                color: string = '',
                 hilite: boolean = false,
                 ii: number;
             element.c();
@@ -85,16 +86,22 @@ namespace Sprite {
                 if ('【' == words[ii] && !hilite) {
                     element.a(new G.TextPhrase(buffer));
                     buffer = '';
+                    color = words.substr(ii + 1, 7);
+                    if (/^#[0-9a-fA-F]{6}$/.test(color)) {
+                        ii += 7;
+                    } else {
+                        color = hiColor;
+                    }
                     hilite = true;
                 } else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase(buffer, hiColor));
-                    buffer = '';
+                    element.a(new G.TextPhrase(buffer, color));
+                    buffer = color = '';
                     hilite = false;
                 } else
                     buffer += words[ii];
             }
             if (buffer)
-                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
+                element.a(new G.TextPhrase(buffer, hilite ? color : ''));
             return this;
         }
     }

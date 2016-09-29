@@ -173,6 +173,21 @@ namespace Core {
          * 神态动画。
          */
         expression(name: string): Promise<IRuntime>;
+
+        /**
+         * 全屏文本 开 / 关。
+         */
+        fullWords(on: boolean): Promise<IRuntime>;
+
+        /**
+         * 清除全屏文本。
+         */
+        fullClean(): Promise<IRuntime>;
+
+        /**
+         * 隐藏全屏文本。
+         */
+        fullHide(): Promise<IRuntime>;
     }
 
     export namespace IDirector {

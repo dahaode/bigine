@@ -99,7 +99,6 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 _close: Util.IHashTable<any> = theme['close'],
                 _tab: Util.IHashTable<any> = theme['tab'],
                 _simp: Util.IHashTable<any> = theme['simp'],
@@ -111,27 +110,27 @@ namespace Sprite {
             this._tai = {};
             this._rr = [
                 // 0: 面板背景
-                rr.g<HTMLImageElement>(url + theme['back']['i'], raw),
+                rr.g<HTMLImageElement>(theme['back']['i'], raw),
                 // 1: 关闭按钮
-                rr.g<HTMLImageElement>(url + _close['i'], raw),
+                rr.g<HTMLImageElement>(_close['i'], raw),
                 // 2: 关闭按钮~hover
-                rr.g<HTMLImageElement>(url + _close['ih'], raw),
+                rr.g<HTMLImageElement>(_close['ih'], raw),
                 // 3: 标签按钮
-                rr.g<HTMLImageElement>(url + _tab['title']['i'], raw),
+                rr.g<HTMLImageElement>(_tab['title']['i'], raw),
                 // 4: 标签按钮激活状态图片
-                rr.g<HTMLImageElement>(url + _tab['title']['ia'], raw),
+                rr.g<HTMLImageElement>(_tab['title']['ia'], raw),
                 // 5: 简单面板背景
-                rr.g<HTMLImageElement>(url + _simp['back']['i'], raw),
+                rr.g<HTMLImageElement>(_simp['back']['i'], raw),
                 // 6: 集合面板背景
-                rr.g<HTMLImageElement>(url + _coll['back']['i'], raw),
+                rr.g<HTMLImageElement>(_coll['back']['i'], raw),
                 // 7: 集合面板上一个按钮
-                rr.g<HTMLImageElement>(url + _coll['arrow']['p']['i'], raw),
+                rr.g<HTMLImageElement>(_coll['arrow']['p']['i'], raw),
                 // 8: 集合面板上一个按钮~hover
-                rr.g<HTMLImageElement>(url + _coll['arrow']['p']['ih'], raw),
+                rr.g<HTMLImageElement>(_coll['arrow']['p']['ih'], raw),
                 // 9: 集合面板下一个按钮
-                rr.g<HTMLImageElement>(url + _coll['arrow']['n']['i'], raw),
+                rr.g<HTMLImageElement>(_coll['arrow']['n']['i'], raw),
                 // 10: 集合面板下一个按钮~hover
-                rr.g<HTMLImageElement>(url + _coll['arrow']['n']['ih'], raw)
+                rr.g<HTMLImageElement>(_coll['arrow']['n']['ih'], raw)
             ];
             this._st = {};
             this._sv = {};
@@ -197,7 +196,6 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 theme: Util.IHashTable<Util.IHashTable<any>> = this._pt,
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _back: Util.IHashTable<any> = theme['back'],
@@ -231,8 +229,8 @@ namespace Sprite {
 
             Util.each(_type, (typeTheme: Util.IHashTable<any>, typeName: string) => {
                 this._tResource[typeName] = {};
-                this._tResource[typeName]['ei'] = rr.g<HTMLImageElement>(url + typeTheme['ei'], raw);
-                this._tResource[typeName]['fi'] = rr.g<HTMLImageElement>(url + typeTheme['fi'], raw);
+                this._tResource[typeName]['ei'] = rr.g<HTMLImageElement>(typeTheme['ei'], raw);
+                this._tResource[typeName]['fi'] = rr.g<HTMLImageElement>(typeTheme['fi'], raw);
             });
 
             // 集合面板数据标题和数据值

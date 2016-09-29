@@ -43,13 +43,12 @@ namespace Sprite {
             let w: number = 1280,
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
-                rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/';
+                rr: typeof Resource.Resource = Resource.Resource;
             super(0, 0, w, h);
             this._rr = [
-                rr.g<HTMLImageElement>(url + theme['back']['i'], raw),
-                rr.g<HTMLImageElement>(url + theme['back']['ih'], raw),
-                rr.g<HTMLImageElement>(url + theme['radish']['i'], raw)
+                rr.g<HTMLImageElement>(theme['back']['i'], raw),
+                rr.g<HTMLImageElement>(theme['back']['ih'], raw),
+                rr.g<HTMLImageElement>(theme['radish']['i'], raw)
             ];
             this._c = theme;
             this._bn = [];

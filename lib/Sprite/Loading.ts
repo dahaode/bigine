@@ -43,7 +43,7 @@ namespace Sprite {
                 _text: Util.IHashTable<any> = theme['text'];
             super(0, 0, w, h);
             this._rr = [
-                Resource.Resource.g<HTMLImageElement>('//s.dahao.de/theme/_/loading.png', Core.IResource.Type.Raw)
+                Resource.Resource.g<HTMLImageElement>('_/loading.png', Core.IResource.Type.Raw)
             ];
             this._ws = theme['words'] || {};
             this._si = undefined;

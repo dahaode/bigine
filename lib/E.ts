@@ -104,6 +104,8 @@ class E extends Error {
 
     public static STRUCT_FIELD_CANNOT_EMPTY: string = '非空字段未设置数据';
 
+    public static FULL_ROW_TOO_MANY: string = '全屏文本中旁白文字过多';
+
     /**
      * 信号。
      */

@@ -58,13 +58,12 @@ namespace Resource {
                 types: typeof Core.IResource.Type = Core.IResource.Type,
                 ie9: boolean = env.MSIE && 'undefined' == typeof URL,
                 ext: string;
+            const offline: boolean = false;
             if (types.Raw == type) {
-                this._l = uri;
-                if ('//s.dahao.de/theme/' != this._l.substr(0, 19))
-                    throw new E(E.RES_INVALID_URI);
+                this._l = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + uri;
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = '//dahao.de/.9' + this._l.substr(18);
+                    this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
             } else {
                 if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri))
                     throw new E(E.RES_INVALID_URI);
@@ -87,11 +86,13 @@ namespace Resource {
                         filename = (env.Mobile ? 64 : 128) + '.mp3';
                         break;
                 }
-                this._l = '//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename;
+                this._l = offline ?
+                    ('app://res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename) :
+                    ('http://a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = '//dahao.de/.9' + this._l.substr(13);
+                    this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
             }
-            this._l = env.Protocol + this._l;
+            //this._l = env.Protocol + this._l;
             this._w = [];
             this._r = false;
         }
@@ -109,13 +110,15 @@ namespace Resource {
         public o(): Promise<T> {
             if (!this._q) {
                 this._q = new Promise<T>((resolve: (value?: T | Thenable<T>) => void, reject: (reason?: any) => void) => {
-                    var url: string = this._l + '?bigine-0.23.4' + Bigine.domain,
+                    var url: string = this._l,
                         xhr: XMLHttpRequest,
                         img: HTMLImageElement;
                     if ('.mp3' == this._l.substr(-4)) {
                         this._l = url;
                         return resolve(<any> url);
                     }
+                    const offline: boolean = false;
+                    if (!offline) url = url + '?bigine-0.24.1' + Bigine.domain;
                     if (Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
                         xhr.open('GET', url);

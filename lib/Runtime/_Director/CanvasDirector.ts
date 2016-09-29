@@ -108,6 +108,16 @@ namespace Runtime {
         private _pc: Tag.Option;
 
         /**
+         * 全屏文本排版。
+         */
+        private _fd: boolean;
+
+        /**
+         * 全屏文本打字效果。
+         */
+        private _ft: G.Animation;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -117,7 +127,7 @@ namespace Runtime {
                 canvas: HTMLCanvasElement = doc.createElement('canvas'),
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
-                assets: string = '//s.dahao.de/theme/_/';
+                assets: string = '_/';
             canvas.width = bounds.w;
             canvas.height = bounds.h;
             canvas.className = 'viewport';
@@ -139,9 +149,10 @@ namespace Runtime {
             this._vo = true;
             this._ca = [undefined, undefined];
             this._pc = undefined;
+            this._fd = false;
+            this._ft = undefined;
             this._i = {
                 o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
-                e: Resource.Resource.g<HTMLImageElement>(assets + 'thx.png', raw),
                 s: Resource.Resource.g<string>(assets + 'oops.mp3', raw),
                 f: Resource.Resource.g<string>(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
@@ -160,8 +171,10 @@ namespace Runtime {
             this._f = {};
             this._e = [0, 0];
             this._l = (event: KeyboardEvent) => {
-                if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc)
+                if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc) {
+                    if (this._ft) this._ft.h();
                     this._t.h();
+                }
             };
             this._fs = Core.IRuntime.Series.Alone;
             window.addEventListener('keydown', this._l);
@@ -251,19 +264,16 @@ namespace Runtime {
          * 完结动画。
          */
         public ED(): Promise<Core.IRuntime> {
-            return this.c([[this._i['e']]])
+            return this.lightOff()
                 .then(() => {
                     this.playMusic(Core.IResource.Type.BGM);
                     this.playMusic(Core.IResource.Type.ESM);
                     this.playSE();
-                    return this.lightOff()
-                        .then(() => {
-                            this._r.dispatchEvent(new Ev.Fin({
-                                target: this._r.gE()
-                            }));
-                            this._x['t'].h(0);
-                            return super.ED();
-                        });
+                    this._r.dispatchEvent(new Ev.Fin({
+                        target: this._r.gE()
+                    }));
+                    this._x['t'].h(0);
+                    return super.ED();
                 }).then(() => this.$s());
         }
 
@@ -381,39 +391,16 @@ namespace Runtime {
         public charMove(from: Core.IDirector.Position, to: Core.IDirector.Position): Promise<Core.IRuntime> {
             var gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
                 gChar: G.Element = gChars.q(<any> from)[0],
-                pos: typeof Core.IDirector.Position = Core.IDirector.Position,
-                x: number;
+                x: number = this.$x(to);
             if (!gChar)
                 return this._p;
-            switch (to) {
-                case pos.LLeft:
-                    x = -600;
-                    break;
-                case pos.Left:
-                    x = -400;
-                    break;
-                case pos.CLeft:
-                    x = -200;
-                    break;
-                case pos.Center:
-                    x = 0;
-                    break;
-                case pos.CRight:
-                    x = 200;
-                    break;
-                case pos.Right:
-                    x = 400;
-                    break;
-                case pos.RRight:
-                    x = 600;
-                    break;
-            }
             return gChar.p(new G.Move(500, {
-                x: x,
-                y: gChar.gB().y
-            })).then(() => {
-                gChar.i(<any> to);
-                return this._r;
+                        x: x,
+                        y: gChar.gB().y
+                    })
+                ).then(() => {
+                    gChar.i(<any> to);
+                    return this._r;
                 });
         }
 
@@ -424,8 +411,19 @@ namespace Runtime {
             // 为防止立绘随着镜头的缩放而缩放，这里的立绘显示暂设定为固定IBounds{ x: 0, y: 0, w: 1280, h: 720 }
             //var bounds: G.IBounds = CanvasDirector.BOUNDS,
             var bounds: G.IBounds = <G.IBounds> { x: 0, y: 0, w: 1280, h: 720 },
-                pos: typeof Core.IDirector.Position = Core.IDirector.Position,
-                x: number;
+                x: number = this.$x(position);
+            // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
+            return <G.Image> new G.Image(resource.o(), x, 0, bounds.w, bounds.h, true)
+                .i(<any> position)
+                .o(0);
+        }
+
+        /**
+         * 计算立绘位置 x 坐标。
+         */
+        protected $x(position: Core.IDirector.Position): number {
+            var pos: typeof Core.IDirector.Position = Core.IDirector.Position,
+                x: number = 0;
             switch (position) {
                 case pos.LLeft:
                     x = -600;
@@ -449,24 +447,73 @@ namespace Runtime {
                     x = 600;
                     break;
             }
-            // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
-            return <G.Image> new G.Image(resource.o(), x, 0, bounds.w, bounds.h, true)
-                .i(<any> position)
-                .o(0);
+            return x;
         }
 
         /**
          * 某白。
          */
         public words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
-            let sprite: Sprite.Words = <Sprite.Words> this._x['W'];
-            return this._x['c'].h(20).then(() => {
-                let type: string = theme[0];
-                if ('v' == type)
-                    return sprite.vv(words, this._a);
-                return sprite['v' + type](avatar, who, words, this._a);
-            }).then(() => {
-                sprite.h(0);
+            if (this._fd) {
+                return theme == 'voiceover' ? this.full(words) : super.words(words, theme);
+            } else {
+                let sprite: Sprite.Words = <Sprite.Words> this._x['W'];
+                return this._x['c'].h(20).then(() => {
+                    let type: string = theme[0];
+                    if ('v' == type)
+                        return sprite.vv(words, this._a);
+                    return sprite['v' + type](avatar, who, words, this._a);
+                }).then(() => {
+                    sprite.h(0);
+                    return this._r;
+                });
+            }
+        }
+
+        /**
+         * 某白在全屏中显示。
+         */
+        protected full(words: string): Promise<Core.IRuntime> {
+            let work: HTMLElement = <HTMLElement> document.querySelectorAll('.bg-work')[0],
+                canvas: HTMLCanvasElement = <HTMLCanvasElement> work.firstChild,
+                full: Sprite.Full = <Sprite.Full> this._x['F'];
+            return this.lightOn().then(() => {
+                return full.vh(words, this._a, canvas.getContext('2d'));
+            }).then(() => this._r);
+        }
+
+        /**
+         * 全屏文本 开 / 关。
+         */
+        public fullWords(on: boolean): Promise<Core.IRuntime> {
+            if (on) {
+                this._fd = true;
+                return super.fullWords(on);
+            } else {
+                return super.fullWords(on).then((runtime: Core.IRuntime) => {
+                    this._fd = false;
+                    (<Sprite.Full> this._x['F']).h();
+                    return this._r;
+                });
+            }
+        }
+
+        /**
+         * 清除全屏文本。
+         */
+        public fullClean(): Promise<Core.IRuntime> {
+            return super.fullClean().then((runtime: Core.IRuntime) => {
+                (<Sprite.Full> this._x['F']).clean();
+                return this._r;
+            });
+        }
+
+        /**
+         * 隐藏全屏文本。
+         */
+        public fullHide(): Promise<Core.IRuntime> {
+            return super.fullHide().then((runtime: Core.IRuntime) => {
+                (<Sprite.Full> this._x['F']).o(0);
                 return this._r;
             });
         }
@@ -647,15 +694,18 @@ namespace Runtime {
          */
         protected $ca(gOld: G.Element, gNew: G.Element): Promise<Core.IRuntime> {
             let gCurtain: Sprite.Curtain = this._x['c'],
+                gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
                 curtain: G.Animation;
             switch (this._ca[0]) {
                 case 'Fade':
                     return gCurtain.v(500)
                         .then(() => {
                             gOld.o(0);
+                            gChars.o(0);
                             this.lightOn();
                         }).then(() => {
                             gNew.p(new G.FadeIn(500));
+                            gChars.p(new G.FadeIn(500));
                             this._c.e(gOld);
                             return this._r;
                         });
@@ -817,8 +867,10 @@ namespace Runtime {
                 (<G.Sprite> this._c.q('c')[0]).c()
                     .o(0);
                 this._pc = undefined;
+                this._fd = false;
                 this._x['G'].h(0);
                 this._x['W'].h(0);
+                this._x['F'].h(0);
                 this._x['T'].h(0);
                 this._x['C'].h(0);
                 return runtime;
@@ -975,6 +1027,14 @@ namespace Runtime {
                 });
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
+            // 全屏文本。
+            this._x['F'] = <Sprite.Full> new Sprite.Full(id, theme['full'])
+                .addEventListener('full.animation', (ev: Ev.FullAnimation) => {
+                    this._t = this._h = ev.animation;
+                    this._ft = ev.type;
+                });
+            resources.unshift(this._x['F'].l());
+            this._c.a(this._x['F'], gCurtain);
             // 选择。
             this._x['C'] = <Sprite.Choose> new Sprite.Choose(id, theme['choose']);
             resources.unshift(this._x['C'].l());

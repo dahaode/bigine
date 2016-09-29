@@ -100,3 +100,6 @@
 /// <reference path="_Action/_Director/StopESM.ts" />
 /// <reference path="_Action/_Director/StopSE.ts" />
 /// <reference path="_Action/_Director/VolumeSet.ts" />
+/// <reference path="_Action/_Text/FullWords.ts" />
+/// <reference path="_Action/_Text/FullClean.ts" />
+/// <reference path="_Action/_Text/FullHide.ts" />

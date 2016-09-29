@@ -41,25 +41,24 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
+        constructor(id: string, theme: Util.IHashTable<any>) {
             let w: number = 1280,
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 _new: Util.IHashTable<any> = theme['new'],
                 _series: Util.IHashTable<any> = theme['series'],
                 _load: Util.IHashTable<any> = theme['load'],
                 _title: Util.IHashTable<any> = theme['title'];
             super(0, 0, w, h);
             this._rr = [
-                rr.g<HTMLImageElement>(url + theme['i'], raw),
-                rr.g<HTMLImageElement>(url + _new['i'], raw),
-                rr.g<HTMLImageElement>(url + _new['ih'], raw),
-                rr.g<HTMLImageElement>(url + _series['i'], raw),
-                rr.g<HTMLImageElement>(url + _series['ih'], raw),
-                rr.g<HTMLImageElement>(url + _load['i'], raw),
-                rr.g<HTMLImageElement>(url + _load['ih'], raw)
+                rr.g<HTMLImageElement>(theme['i'], raw),
+                rr.g<HTMLImageElement>(_new['i'], raw),
+                rr.g<HTMLImageElement>(_new['ih'], raw),
+                rr.g<HTMLImageElement>(_series['i'], raw),
+                rr.g<HTMLImageElement>(_series['ih'], raw),
+                rr.g<HTMLImageElement>(_load['i'], raw),
+                rr.g<HTMLImageElement>(_load['ih'], raw)
             ];
             this._y = {};
             this._bn =

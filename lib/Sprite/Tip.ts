@@ -33,12 +33,11 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 _back: Util.IHashTable<any> = theme['back'],
                 _text: Util.IHashTable<any> = theme['text'];
             super(0, 0, w, h);
             this._rr = [
-                rr.g<HTMLImageElement>(url + _back['i'], raw)
+                rr.g<HTMLImageElement>(_back['i'], raw)
             ];
             this._c = _text['ch'];
             (<Tip> this.o(0))

@@ -159,6 +159,9 @@ declare namespace __Bigine {
             cameraShake(): Promise<IRuntime>;
             status(onoff: boolean): Promise<IRuntime>;
             expression(name: string): Promise<IRuntime>;
+            fullWords(on: boolean): Promise<IRuntime>;
+            fullClean(): Promise<IRuntime>;
+            fullHide(): Promise<IRuntime>;
         }
         namespace IDirector {
             enum Position {
@@ -471,6 +474,9 @@ declare namespace __Bigine {
             cameraShake(): Promise<Core.IRuntime>;
             status(onoff: boolean): Promise<Core.IRuntime>;
             expression(name: string): Promise<Core.IRuntime>;
+            fullWords(on: boolean): Promise<Core.IRuntime>;
+            fullClean(): Promise<Core.IRuntime>;
+            fullHide(): Promise<Core.IRuntime>;
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
             s(sheet: [string, string][]): Director;
@@ -562,7 +568,7 @@ declare namespace __Bigine {
             private _y;
             private _ke;
             private _bn;
-            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(id: string, theme: Util.IHashTable<any>);
             u(title: string, series: boolean, stage: G.Stage): Start;
             protected ev(series: boolean, stage: G.Stage): void;
             h(duration?: number): Promise<Sprite>;
@@ -908,6 +914,42 @@ declare namespace __Bigine {
             h(duration?: number): Promise<Sprite>;
         }
     }
+    namespace Core {
+        interface IFull extends ISprite {
+            vh(clob: string, auto?: boolean, context?: CanvasRenderingContext2D): Promise<IFull>;
+        }
+    }
+    namespace Ev {
+        interface IFullAnimationMetas extends Util.IEventMetas<Core.IFull> {
+            animation: G.Animation;
+            type: G.Animation;
+        }
+    }
+    namespace Ev {
+        class FullAnimation extends Event<Core.IFull> {
+            animation: G.Animation;
+            type: G.Animation;
+            constructor(metas: IFullAnimationMetas);
+            gT(): string;
+        }
+    }
+    namespace Sprite {
+        class Full extends Sprite implements Core.IFull {
+            private _x;
+            private _h;
+            private _be;
+            private _cb;
+            private _c;
+            private _tl;
+            private _tx;
+            constructor(id: string, full: Util.IHashTable<Util.IHashTable<any>>);
+            h(duration?: number): Promise<Full>;
+            vh(clob: string, auto: boolean, context: CanvasRenderingContext2D): Promise<Full>;
+            protected every(clob: string, context: CanvasRenderingContext2D, auto: boolean, wait: boolean, pause?: number): Promise<Full>;
+            clean(): Promise<Full>;
+            $v(text: G.Text, auto: boolean, wait: boolean): Promise<G.Element>;
+        }
+    }
     namespace Runtime {
         class CanvasDirector extends Director {
             static BOUNDS: G.IBounds;
@@ -926,6 +968,8 @@ declare namespace __Bigine {
             private _vo;
             private _pt;
             private _pc;
+            private _fd;
+            private _ft;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
@@ -937,7 +981,12 @@ declare namespace __Bigine {
             charSet(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
             charMove(from: Core.IDirector.Position, to: Core.IDirector.Position): Promise<Core.IRuntime>;
             protected $c(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image;
+            protected $x(position: Core.IDirector.Position): number;
             words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
+            protected full(words: string): Promise<Core.IRuntime>;
+            fullWords(on: boolean): Promise<Core.IRuntime>;
+            fullClean(): Promise<Core.IRuntime>;
+            fullHide(): Promise<Core.IRuntime>;
             tip(words: string): Promise<Core.IRuntime>;
             stars(rank: Core.IDirector.Stars, grade: string, value?: string): Promise<Core.IRuntime>;
             playMusic(type: Core.IResource.Type, resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime>;
@@ -1092,6 +1141,7 @@ declare namespace __Bigine {
         static STRUCT_FIELD_MISSING: string;
         static STRUCT_FIELD_TYPE_TOO_MANY: string;
         static STRUCT_FIELD_CANNOT_EMPTY: string;
+        static FULL_ROW_TOO_MANY: string;
         signal: E.Signal;
         static doHalt<T>(): Promise<T>;
         static ignoreHalt(error: E): Promise<void>;
@@ -1465,6 +1515,11 @@ declare namespace __Bigine {
             gI(): string;
             gT(): Core.IEpisode.Entity;
             gC(): DefChar;
+        }
+    }
+    namespace Core {
+        namespace ITheme {
+            const THEME: Util.IHashTable<any>;
         }
     }
     namespace Tag {
@@ -2082,6 +2137,26 @@ declare namespace __Bigine {
         class VolumeSet extends Action {
             private _mt;
             constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class FullWords extends Action {
+            private _a;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class FullClean extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class FullHide extends Action {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }

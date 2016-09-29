@@ -56,6 +56,8 @@ namespace Tag {
                 cg: string = states.g(kid),
                 cur: string = states.g('_ra'),
                 exp: string = states.g('_rb'),
+                kfull: string = '_f',
+                full: boolean = states.g(kfull),
                 ll: Core.IDirector.Position = pos.LLeft,
                 llChar: string = states.g(kid + ll),
                 l: Core.IDirector.Position = pos.Left,
@@ -155,6 +157,10 @@ namespace Tag {
                     states.m(kid + rr, kdata + rr)
                         .s(kpos + rrChar, rr);
                     return director.charSet((<DefChar> episode.q(rrChar, ctype)).o(states.g(kpose + rr)), rr);
+                });
+            if (full)
+                q = q.then(() => {
+                    return director.fullWords(full);
                 });
             return q;
         }

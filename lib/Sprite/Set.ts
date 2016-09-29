@@ -65,7 +65,6 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 _close: Util.IHashTable<any> = theme['close'],
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _title: Util.IHashTable<any> = theme['title'],
@@ -75,11 +74,11 @@ namespace Sprite {
             this._pt = theme;
             this._vo = true;
             this._rr = [
-                rr.g<HTMLImageElement>(url + _close['i'], raw),
-                rr.g<HTMLImageElement>(url + _close['ih'], raw),
-                rr.g<HTMLImageElement>(url + _bgm['bar']['i'], raw),
-                rr.g<HTMLImageElement>(url + _bgm['bg']['i'], raw),
-                rr.g<HTMLImageElement>(url + _bgm['bar']['ih'], raw)
+                rr.g<HTMLImageElement>(_close['i'], raw),
+                rr.g<HTMLImageElement>(_close['ih'], raw),
+                rr.g<HTMLImageElement>(_bgm['bar']['i'], raw),
+                rr.g<HTMLImageElement>(_bgm['bg']['i'], raw),
+                rr.g<HTMLImageElement>(_bgm['bar']['ih'], raw)
             ];
             (<Set> this.o(0))
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))

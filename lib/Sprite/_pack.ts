@@ -23,3 +23,4 @@
 /// <reference path="Set.ts" />
 /// <reference path="Stars.ts" />
 /// <reference path="Loading.ts" />
+/// <reference path="Full.ts" />

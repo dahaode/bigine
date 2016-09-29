@@ -97,6 +97,7 @@ var Ev;
  *     * `_z` -  房间状态 - Tag    // 添加镜头控制命令时所需记录的存档信息
  *     * `_ra` -  切幕动画 - Tag    // 添加切幕动画命令时所需记录的存档信息
  *     * `_rb` -  神态动画 - Tag    // 添加神态动画命令时所需记录的存档信息
+ *     * `_f` -  全屏文本 - Tag    // 添加全屏文本命令时所需记录的存档信息
  * 2. `.` 表明为会话持久信息，不能被存档记录；
  *     * `.p<人物名>` - 人物站位 - Runtime/Tag
  *     * `.a` - 动作编号 - Runtime/Tag
@@ -676,13 +677,12 @@ var Resource;
          */
         function Resource(uri, type) {
             var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext;
+            var offline = false;
             if (types.Raw == type) {
-                this._l = uri;
-                if ('//s.dahao.de/theme/' != this._l.substr(0, 19))
-                    throw new E(E.RES_INVALID_URI);
+                this._l = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + uri;
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = '//dahao.de/.9' + this._l.substr(18);
+                    this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
             }
             else {
                 if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri))
@@ -705,11 +705,13 @@ var Resource;
                         filename = (env.Mobile ? 64 : 128) + '.mp3';
                         break;
                 }
-                this._l = '//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename;
+                this._l = offline ?
+                    ('app://res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename) :
+                    ('http://a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = '//dahao.de/.9' + this._l.substr(13);
+                    this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
             }
-            this._l = env.Protocol + this._l;
+            //this._l = env.Protocol + this._l;
             this._w = [];
             this._r = false;
         }
@@ -736,11 +738,14 @@ var Resource;
             var _this = this;
             if (!this._q) {
                 this._q = new Promise(function (resolve, reject) {
-                    var url = _this._l + '?bigine-0.23.4' + Bigine.domain, xhr, img;
+                    var url = _this._l, xhr, img;
                     if ('.mp3' == _this._l.substr(-4)) {
                         _this._l = url;
                         return resolve(url);
                     }
+                    var offline = false;
+                    if (!offline)
+                        url = url + '?bigine-0.24.1' + Bigine.domain;
                     if (Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
@@ -1641,6 +1646,24 @@ var Runtime;
             return this._p;
         };
         /**
+         * 全屏文本 开 / 关。
+         */
+        Director.prototype.fullWords = function (on) {
+            return this._p;
+        };
+        /**
+         * 清除全屏文本。
+         */
+        Director.prototype.fullClean = function () {
+            return this._p;
+        };
+        /**
+         * 隐藏全屏文本。
+         */
+        Director.prototype.fullHide = function () {
+            return this._p;
+        };
+        /**
          * 获取动态创建标识。
          */
         Director.prototype.gD = function () {
@@ -1818,24 +1841,31 @@ var Sprite;
          * 处理文本高亮规则。
          */
         Sprite.prototype.$w = function (element, words, hiColor) {
-            var buffer = '', hilite = false, ii;
+            var buffer = '', color = '', hilite = false, ii;
             element.c();
             for (ii = 0; ii < words.length; ii++) {
                 if ('【' == words[ii] && !hilite) {
                     element.a(new G.TextPhrase(buffer));
                     buffer = '';
+                    color = words.substr(ii + 1, 7);
+                    if (/^#[0-9a-fA-F]{6}$/.test(color)) {
+                        ii += 7;
+                    }
+                    else {
+                        color = hiColor;
+                    }
                     hilite = true;
                 }
                 else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase(buffer, hiColor));
-                    buffer = '';
+                    element.a(new G.TextPhrase(buffer, color));
+                    buffer = color = '';
                     hilite = false;
                 }
                 else
                     buffer += words[ii];
             }
             if (buffer)
-                element.a(new G.TextPhrase(buffer, hilite ? hiColor : ''));
+                element.a(new G.TextPhrase(buffer, hilite ? color : ''));
             return this;
         };
         return Sprite;
@@ -2066,16 +2096,16 @@ var Sprite;
          */
         function Start(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _new = theme['new'], _series = theme['series'], _load = theme['load'], _title = theme['title'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _new = theme['new'], _series = theme['series'], _load = theme['load'], _title = theme['title'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
-                rr.g(url + theme['i'], raw),
-                rr.g(url + _new['i'], raw),
-                rr.g(url + _new['ih'], raw),
-                rr.g(url + _series['i'], raw),
-                rr.g(url + _series['ih'], raw),
-                rr.g(url + _load['i'], raw),
-                rr.g(url + _load['ih'], raw)
+                rr.g(theme['i'], raw),
+                rr.g(_new['i'], raw),
+                rr.g(_new['ih'], raw),
+                rr.g(_series['i'], raw),
+                rr.g(_series['ih'], raw),
+                rr.g(_load['i'], raw),
+                rr.g(_load['ih'], raw)
             ];
             this._y = {};
             this._bn =
@@ -2247,12 +2277,12 @@ var Sprite;
          * 构造函数。
          */
         function Words(id, voiceover, monolog, speak) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _vback = voiceover['back'], _vtext = voiceover['text'], _vcurs = voiceover['cursor'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mtext = monolog['text'], _mcurs = monolog['cursor'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _stext = speak['text'], _scurs = speak['cursor'], left = G.Text.Align.Left;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _vback = voiceover['back'], _vtext = voiceover['text'], _vcurs = voiceover['cursor'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mtext = monolog['text'], _mcurs = monolog['cursor'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _stext = speak['text'], _scurs = speak['cursor'], left = G.Text.Align.Left;
             _super.call(this, 0, 0, w, h);
             this._rr = [
-                rr.g(url + _vback['i'], raw),
-                rr.g(url + _mback['i'], raw),
-                rr.g(url + _sback['i'], raw),
+                rr.g(_vback['i'], raw),
+                rr.g(_mback['i'], raw),
+                rr.g(_sback['i'], raw),
             ];
             this._x = {};
             this._c = {
@@ -2291,17 +2321,17 @@ var Sprite;
                 .tl(_stext['ls'])
                 .ts(_stext['ss'], _stext['ss'], _stext['ss'])).o(0));
             if (_vcurs) {
-                var vo = rr.g(url + _vcurs['i'], raw);
+                var vo = rr.g(_vcurs['i'], raw);
                 this._rr.push(vo);
                 this._x['v'].a(this._x['vc'] = new G.Image(vo.o(), _vcurs, true));
             }
             if (_mcurs) {
-                var mo = rr.g(url + _mcurs['i'], raw);
+                var mo = rr.g(_mcurs['i'], raw);
                 this._rr.push(mo);
                 this._x['m'].a(this._x['mc'] = new G.Image(mo.o(), _mcurs, true));
             }
             if (_scurs) {
-                var so = rr.g(url + _scurs['i'], raw);
+                var so = rr.g(_scurs['i'], raw);
                 this._rr.push(so);
                 this._x['s'].a(this._x['sc'] = new G.Image(so.o(), _scurs, true));
             }
@@ -2571,13 +2601,13 @@ var Sprite;
          */
         function Tray(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _menu = theme['menu'], _panel = theme['panel'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _menu = theme['menu'], _panel = theme['panel'];
             _super.call(this, 0, 0, w, h, true);
             this._rr = [
-                rr.g(url + _menu['i'], raw),
-                rr.g(url + _menu['ih'], raw),
-                rr.g(url + _panel['i'], raw),
-                rr.g(url + _panel['ih'], raw)
+                rr.g(_menu['i'], raw),
+                rr.g(_menu['ih'], raw),
+                rr.g(_panel['i'], raw),
+                rr.g(_panel['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Button(_menu)
@@ -2792,17 +2822,17 @@ var Sprite;
          */
         function Menu(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _save = theme['save'], _load = theme['load'], _set = theme['set'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _mask = theme['mask'], _save = theme['save'], _load = theme['load'], _set = theme['set'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
-                rr.g(url + _close['i'], raw),
-                rr.g(url + _close['ih'], raw),
-                rr.g(url + _save['i'], raw),
-                rr.g(url + _save['ih'], raw),
-                rr.g(url + _load['i'], raw),
-                rr.g(url + _load['ih'], raw),
-                rr.g(url + _set['i'], raw),
-                rr.g(url + _set['ih'], raw)
+                rr.g(_close['i'], raw),
+                rr.g(_close['ih'], raw),
+                rr.g(_save['i'], raw),
+                rr.g(_save['ih'], raw),
+                rr.g(_load['i'], raw),
+                rr.g(_load['ih'], raw),
+                rr.g(_set['i'], raw),
+                rr.g(_set['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -2980,23 +3010,23 @@ var Sprite;
          */
         function Slots(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
             _super.call(this, 0, 0, w, h);
             this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
             this._rr = [
-                rr.g(url + _close['i'], raw),
-                rr.g(url + _close['ih'], raw),
-                rr.g(url + _auto['i'], raw),
-                rr.g(url + _auto['ih'], raw),
-                rr.g(url + _1['i'], raw),
-                rr.g(url + _1['ih'], raw),
-                rr.g(url + _2['i'], raw),
-                rr.g(url + _2['ih'], raw),
-                rr.g(url + _3['i'], raw),
-                rr.g(url + _3['ih'], raw),
-                rr.g(url + _4['i'], raw),
-                rr.g(url + _4['ih'], raw)
+                rr.g(_close['i'], raw),
+                rr.g(_close['ih'], raw),
+                rr.g(_auto['i'], raw),
+                rr.g(_auto['ih'], raw),
+                rr.g(_1['i'], raw),
+                rr.g(_1['ih'], raw),
+                rr.g(_2['i'], raw),
+                rr.g(_2['ih'], raw),
+                rr.g(_3['i'], raw),
+                rr.g(_3['ih'], raw),
+                rr.g(_4['i'], raw),
+                rr.g(_4['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -3146,10 +3176,10 @@ var Sprite;
          * 构造函数。
          */
         function Status(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', left = G.Text.Align.Left, right = G.Text.Align.Right, _back = theme['back'], i = 1, j;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, left = G.Text.Align.Left, right = G.Text.Align.Right, _back = theme['back'], i = 1, j;
             _super.call(this, 0, 0, w, h, true);
             this._rr = [
-                rr.g(url + _back['i'], raw)
+                rr.g(_back['i'], raw)
             ];
             this.o(0)
                 .a(new G.Image(this._rr[0].o(), _back));
@@ -3271,7 +3301,7 @@ var Sprite;
          * 构造函数。
          */
         function Panel(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'];
             _super.call(this, 0, 0, w, h);
             this._pt = theme;
             this._pi = false;
@@ -3279,27 +3309,27 @@ var Sprite;
             this._tai = {};
             this._rr = [
                 // 0: 面板背景
-                rr.g(url + theme['back']['i'], raw),
+                rr.g(theme['back']['i'], raw),
                 // 1: 关闭按钮
-                rr.g(url + _close['i'], raw),
+                rr.g(_close['i'], raw),
                 // 2: 关闭按钮~hover
-                rr.g(url + _close['ih'], raw),
+                rr.g(_close['ih'], raw),
                 // 3: 标签按钮
-                rr.g(url + _tab['title']['i'], raw),
+                rr.g(_tab['title']['i'], raw),
                 // 4: 标签按钮激活状态图片
-                rr.g(url + _tab['title']['ia'], raw),
+                rr.g(_tab['title']['ia'], raw),
                 // 5: 简单面板背景
-                rr.g(url + _simp['back']['i'], raw),
+                rr.g(_simp['back']['i'], raw),
                 // 6: 集合面板背景
-                rr.g(url + _coll['back']['i'], raw),
+                rr.g(_coll['back']['i'], raw),
                 // 7: 集合面板上一个按钮
-                rr.g(url + _coll['arrow']['p']['i'], raw),
+                rr.g(_coll['arrow']['p']['i'], raw),
                 // 8: 集合面板上一个按钮~hover
-                rr.g(url + _coll['arrow']['p']['ih'], raw),
+                rr.g(_coll['arrow']['p']['ih'], raw),
                 // 9: 集合面板下一个按钮
-                rr.g(url + _coll['arrow']['n']['i'], raw),
+                rr.g(_coll['arrow']['n']['i'], raw),
                 // 10: 集合面板下一个按钮~hover
-                rr.g(url + _coll['arrow']['n']['ih'], raw)
+                rr.g(_coll['arrow']['n']['ih'], raw)
             ];
             this._st = {};
             this._sv = {};
@@ -3358,7 +3388,7 @@ var Sprite;
             var _this = this;
             if (this._pi)
                 return this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', theme = this._pt, _mask = theme['mask'], _back = theme['back'], _close = theme['close'], _simp = theme['simp'], _coll = theme['coll'], _type = theme['type'], i = 1, left = G.Text.Align.Left;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, theme = this._pt, _mask = theme['mask'], _back = theme['back'], _close = theme['close'], _simp = theme['simp'], _coll = theme['coll'], _type = theme['type'], i = 1, left = G.Text.Align.Left;
             // 渲染面板初始样式
             this.a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
                 .a(new G.Image(this._rr[0].o(), _back))
@@ -3380,8 +3410,8 @@ var Sprite;
             }
             Util.each(_type, function (typeTheme, typeName) {
                 _this._tResource[typeName] = {};
-                _this._tResource[typeName]['ei'] = rr.g(url + typeTheme['ei'], raw);
-                _this._tResource[typeName]['fi'] = rr.g(url + typeTheme['fi'], raw);
+                _this._tResource[typeName]['ei'] = rr.g(typeTheme['ei'], raw);
+                _this._tResource[typeName]['fi'] = rr.g(typeTheme['fi'], raw);
             });
             // 集合面板数据标题和数据值
             Util.each(_coll, function (config, name) {
@@ -3541,7 +3571,8 @@ var Sprite;
             // 取出集合数据
             var collName = sheet['cn'][0];
             this._cc = data[collName][''];
-            var collData = this._cc[this._cp];
+            var name = this._cc[this._cp];
+            var collData = data[name];
             // 取出集合的结构
             var cStruct = this._ep.q(sheet['s'], Core.IEpisode.Entity.Struct);
             var i = 1;
@@ -3659,10 +3690,10 @@ var Sprite;
          * 构造函数。
          */
         function Tip(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _back = theme['back'], _text = theme['text'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _back = theme['back'], _text = theme['text'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
-                rr.g(url + _back['i'], raw)
+                rr.g(_back['i'], raw)
             ];
             this._c = _text['ch'];
             this.o(0)
@@ -3753,12 +3784,12 @@ var Sprite;
          * 构造函数。
          */
         function Choose(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/';
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource;
             _super.call(this, 0, 0, w, h);
             this._rr = [
-                rr.g(url + theme['back']['i'], raw),
-                rr.g(url + theme['back']['ih'], raw),
-                rr.g(url + theme['radish']['i'], raw)
+                rr.g(theme['back']['i'], raw),
+                rr.g(theme['back']['ih'], raw),
+                rr.g(theme['radish']['i'], raw)
             ];
             this._c = theme;
             this._bn = [];
@@ -3938,17 +3969,17 @@ var Sprite;
          */
         function SeriesSlots(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _desc = theme['text'], _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _desc = theme['text'], _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'];
             _super.call(this, 0, 0, w, h);
             this._c = [_auto, _1];
             this._x = {};
             this._rr = [
-                rr.g(url + _close['i'], raw),
-                rr.g(url + _close['ih'], raw),
-                rr.g(url + _auto['i'], raw),
-                rr.g(url + _auto['ih'], raw),
-                rr.g(url + _1['i'], raw),
-                rr.g(url + _1['ih'], raw),
+                rr.g(_close['i'], raw),
+                rr.g(_close['ih'], raw),
+                rr.g(_auto['i'], raw),
+                rr.g(_auto['ih'], raw),
+                rr.g(_1['i'], raw),
+                rr.g(_1['ih'], raw),
             ];
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -4180,16 +4211,16 @@ var Sprite;
          */
         function Set(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _close = theme['close'], _mask = theme['mask'], _title = theme['title'], _bgm = theme['bgm'], _se = theme['se'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _mask = theme['mask'], _title = theme['title'], _bgm = theme['bgm'], _se = theme['se'];
             _super.call(this, 0, 0, w, h);
             this._pt = theme;
             this._vo = true;
             this._rr = [
-                rr.g(url + _close['i'], raw),
-                rr.g(url + _close['ih'], raw),
-                rr.g(url + _bgm['bar']['i'], raw),
-                rr.g(url + _bgm['bg']['i'], raw),
-                rr.g(url + _bgm['bar']['ih'], raw)
+                rr.g(_close['i'], raw),
+                rr.g(_close['ih'], raw),
+                rr.g(_bgm['bar']['i'], raw),
+                rr.g(_bgm['bg']['i'], raw),
+                rr.g(_bgm['bar']['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -4302,14 +4333,14 @@ var Sprite;
          * 构造函数。
          */
         function Stars(theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, url = '//s.dahao.de/theme/', _name = theme['name'], _value = theme['value'], _pic = theme['pic'], center = G.Text.Align.Center;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _name = theme['name'], _value = theme['value'], _pic = theme['pic'], center = G.Text.Align.Center;
             _super.call(this, 0, 0, w, h);
             this._rr = [
-                rr.g(url + _pic['1'], raw),
-                rr.g(url + _pic['2'], raw),
-                rr.g(url + _pic['3'], raw),
-                rr.g(url + _pic['4'], raw),
-                rr.g(url + _pic['5'], raw)
+                rr.g(_pic['1'], raw),
+                rr.g(_pic['2'], raw),
+                rr.g(_pic['3'], raw),
+                rr.g(_pic['4'], raw),
+                rr.g(_pic['5'], raw)
             ];
             // 渲染评分初始样式
             this.o(0)
@@ -4352,7 +4383,7 @@ var Sprite;
             var w = 1280, h = 720, _text = theme['text'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
-                Resource.Resource.g('//s.dahao.de/theme/_/loading.png', Core.IResource.Type.Raw)
+                Resource.Resource.g('_/loading.png', Core.IResource.Type.Raw)
             ];
             this._ws = theme['words'] || {};
             this._si = undefined;
@@ -4404,6 +4435,266 @@ var Sprite;
     Sprite.Loading = Loading;
 })(Sprite || (Sprite = {}));
 /**
+ * 声明画面调度全屏文本接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/IFull.ts
+ */
+/// <reference path="ISprite.ts" />
+/// <reference path="../_Resource/IResource.ts" />
+/**
+ * 声明（画面调度）全屏文本动画事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IFullAnimationMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IFull.ts" />
+/**
+ * 定义（画面调度）全屏文本动画事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/FullAnimation.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IFullAnimationMetas.ts" />
+var Ev;
+(function (Ev) {
+    var FullAnimation = (function (_super) {
+        __extends(FullAnimation, _super);
+        /**
+         * 构造函数。
+         */
+        function FullAnimation(metas) {
+            _super.call(this, metas);
+            this.animation = metas.animation;
+            this.type = metas.type;
+        }
+        /**
+         * 获取类型。
+         */
+        FullAnimation.prototype.gT = function () {
+            return 'full.animation';
+        };
+        return FullAnimation;
+    }(Ev.Event));
+    Ev.FullAnimation = FullAnimation;
+})(Ev || (Ev = {}));
+/**
+ * 定义画面调度全屏文本组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Full.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Resource/Resource.ts" />
+/// <reference path="../Ev/_Sprite/FullAnimation.ts" />
+var Sprite;
+(function (Sprite) {
+    var Util = __Bigine_Util;
+    var G = __Bigine_C2D;
+    var Full = (function (_super) {
+        __extends(Full, _super);
+        /**
+         * 构造函数。
+         */
+        function Full(id, full) {
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _back = full['back'], _text = full['text'];
+            _super.call(this, 0, 0, w, h);
+            this._rr = [
+                rr.g(_back['i'], raw)
+            ];
+            this._x = {};
+            this._cb = Util.clone(_text);
+            this._be = _text;
+            this._c = _text['ch'];
+            this._tl = 0;
+            this.o(0)
+                .a(new G.Sprite(_back)
+                .a(new G.Image(this._rr[0].o(), _back, true))
+                .a(this._x['f'] = new G.Sprite(_back))).o(0);
+        }
+        /**
+         * 隐藏。
+         */
+        Full.prototype.h = function (duration) {
+            var _this = this;
+            if (this._h) {
+                this._h.h();
+                this._h = undefined;
+                this.dispatchEvent(new Ev.FullAnimation({
+                    target: this,
+                    animation: undefined,
+                    type: undefined
+                }));
+            }
+            return _super.prototype.h.call(this, duration).then(function () {
+                _this._tl = 0;
+                _this._cb = Util.clone(_this._be);
+                _this._x['f'].c();
+                _this._x['f'].o(0);
+                return _this;
+            });
+        };
+        /**
+         * 横向文本。
+         */
+        Full.prototype.vh = function (clob, auto, context) {
+            var _this = this;
+            if (auto === void 0) { auto = false; }
+            var words = clob.split('\\r'), funcs = [];
+            Util.each(words, function (word, index) {
+                var bufs = word.split('\\l');
+                if (bufs.length == 1) {
+                    funcs.push(function () { return _this.every(word, context, auto, index == words.length - 1); });
+                }
+                else {
+                    Util.each(bufs, function (buffer, i) {
+                        funcs.push(function () { return _this.every(buffer, context, auto, false, i); });
+                    });
+                }
+            });
+            return funcs.reduce(function (previous, current) {
+                return previous.then(current);
+            }, Promise.resolve());
+        };
+        /**
+         * 对于分解的话进行处理。
+         */
+        Full.prototype.every = function (clob, context, auto, wait, pause) {
+            var _this = this;
+            if (pause === void 0) { pause = -1; }
+            var eRow = 0, row, tBound, bBound = this._be, tText, left = G.Text.Align.Left, lHeight = Math.max(bBound['lh'], bBound['s']), sClob;
+            while (/^\\n.*/.test(clob)) {
+                eRow++;
+                clob = clob.substr(2, clob.length);
+            }
+            if (eRow > 0) {
+                this._cb.y += eRow * lHeight;
+                this._tl += eRow;
+                this._tx = 0;
+            }
+            else {
+                if (pause > 0)
+                    this._cb.y -= lHeight;
+            }
+            if (clob == '')
+                return Promise.resolve(this);
+            context.canvas.style.letterSpacing = bBound['ls'] + 'px'; // 设置字间距
+            context.save();
+            context.font = bBound['s'] + 'px/' + lHeight + 'px ' + G.TextPhrase.FONT;
+            context.textBaseline = 'middle';
+            context.shadowBlur = context.shadowOffsetX = context.shadowOffsetY = bBound['ss'];
+            context.shadowColor = '#000';
+            sClob = clob.replace('【', '');
+            sClob = sClob.replace('】', '');
+            row = Math.ceil(context.measureText(sClob).width / bBound.w);
+            if (this._tl + row > bBound['row']) {
+                this._tl = 0;
+                this._cb = Util.clone(bBound);
+                this._x['f'].c();
+            }
+            tBound = Util.clone(this._cb);
+            tText = new G.Text(tBound, tBound['s'], tBound['lh'], left, true)
+                .tc(tBound['c'])
+                .tl(tBound['ls'])
+                .to(pause > 0 ? this._tx : 0)
+                .ts(tBound['ss'], tBound['ss'], tBound['ss']);
+            this._x['f'].a(tText);
+            this.$w(tText.o(0), clob, this._c);
+            this._x['f'].o(1);
+            return this.$v(tText, auto, pause >= 0 ? true : wait).then(function () {
+                if (_this._h) {
+                    var pnt = tText.gCp(), line = tText.gTl();
+                    _this._cb.y = pnt.y;
+                    _this._tx = pnt.x - bBound.x;
+                    _this._tl = _this._tl + line - (pause > 0 ? 1 : 0);
+                }
+                return _this;
+            });
+        };
+        /**
+         * 清除文本内容。
+         */
+        Full.prototype.clean = function () {
+            this._tl = 0;
+            this._cb = Util.clone(this._be);
+            this._x['f'].c();
+            return Promise.resolve(this);
+        };
+        /**
+         * 显示内容文字。
+         */
+        Full.prototype.$v = function (text, auto, wait) {
+            var _this = this;
+            this.o(1);
+            return new Promise(function (resolve) {
+                var aType = new G.Type(1), aWFC;
+                if (auto)
+                    return text.p(aType).then(function () {
+                        resolve();
+                    });
+                aWFC = new G.WaitForClick(function () {
+                    aType.h();
+                });
+                _this._h = aWFC;
+                _this.dispatchEvent(new Ev.FullAnimation({
+                    target: _this,
+                    animation: aWFC,
+                    type: aType
+                }));
+                Promise.race([
+                    text.p(aType).then(function () {
+                        aWFC.h();
+                    }),
+                    _this.p(aWFC)
+                ]).then(function () {
+                    _this._h = undefined;
+                    _this.dispatchEvent(new Ev.FullAnimation({
+                        target: _this,
+                        animation: undefined,
+                        type: undefined
+                    }));
+                    resolve();
+                });
+            }).then(function () {
+                var animation, target;
+                if (wait) {
+                    if (auto) {
+                        animation = new G.TypeDelay(9);
+                        target = text;
+                    }
+                    else {
+                        animation = new G.WaitForClick();
+                        target = _this;
+                    }
+                }
+                else {
+                    animation = new G.TypeDelay(0.1);
+                    target = text;
+                }
+                _this._h = animation;
+                _this.dispatchEvent(new Ev.FullAnimation({
+                    target: _this,
+                    animation: animation,
+                    type: undefined
+                }));
+                return target.p(animation);
+            });
+        };
+        return Full;
+    }(Sprite.Sprite));
+    Sprite.Full = Full;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -4427,6 +4718,7 @@ var Sprite;
 /// <reference path="Set.ts" />
 /// <reference path="Stars.ts" />
 /// <reference path="Loading.ts" />
+/// <reference path="Full.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -4456,7 +4748,7 @@ var Runtime;
         function CanvasDirector(runtime) {
             var _this = this;
             _super.call(this, runtime);
-            var doc = document, els = doc.querySelectorAll('.bg-work'), canvas = doc.createElement('canvas'), raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, assets = '//s.dahao.de/theme/_/';
+            var doc = document, els = doc.querySelectorAll('.bg-work'), canvas = doc.createElement('canvas'), raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, assets = '_/';
             canvas.width = bounds.w;
             canvas.height = bounds.h;
             canvas.className = 'viewport';
@@ -4478,9 +4770,10 @@ var Runtime;
             this._vo = true;
             this._ca = [undefined, undefined];
             this._pc = undefined;
+            this._fd = false;
+            this._ft = undefined;
             this._i = {
                 o: Resource.Resource.g(assets + 'logo.png', raw),
-                e: Resource.Resource.g(assets + 'thx.png', raw),
                 s: Resource.Resource.g(assets + 'oops.mp3', raw),
                 f: Resource.Resource.g(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g(assets + 'click.mp3', raw)
@@ -4499,8 +4792,11 @@ var Runtime;
             this._f = {};
             this._e = [0, 0];
             this._l = function (event) {
-                if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc)
+                if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc) {
+                    if (_this._ft)
+                        _this._ft.h();
                     _this._t.h();
+                }
             };
             this._fs = Core.IRuntime.Series.Alone;
             window.addEventListener('keydown', this._l);
@@ -4590,19 +4886,16 @@ var Runtime;
          */
         CanvasDirector.prototype.ED = function () {
             var _this = this;
-            return this.c([[this._i['e']]])
+            return this.lightOff()
                 .then(function () {
                 _this.playMusic(Core.IResource.Type.BGM);
                 _this.playMusic(Core.IResource.Type.ESM);
                 _this.playSE();
-                return _this.lightOff()
-                    .then(function () {
-                    _this._r.dispatchEvent(new Ev.Fin({
-                        target: _this._r.gE()
-                    }));
-                    _this._x['t'].h(0);
-                    return _super.prototype.ED.call(_this);
-                });
+                _this._r.dispatchEvent(new Ev.Fin({
+                    target: _this._r.gE()
+                }));
+                _this._x['t'].h(0);
+                return _super.prototype.ED.call(_this);
             }).then(function () { return _this.$s(); });
         };
         /**
@@ -4706,32 +4999,9 @@ var Runtime;
          */
         CanvasDirector.prototype.charMove = function (from, to) {
             var _this = this;
-            var gChars = this._c.q('c')[0], gChar = gChars.q(from)[0], pos = Core.IDirector.Position, x;
+            var gChars = this._c.q('c')[0], gChar = gChars.q(from)[0], x = this.$x(to);
             if (!gChar)
                 return this._p;
-            switch (to) {
-                case pos.LLeft:
-                    x = -600;
-                    break;
-                case pos.Left:
-                    x = -400;
-                    break;
-                case pos.CLeft:
-                    x = -200;
-                    break;
-                case pos.Center:
-                    x = 0;
-                    break;
-                case pos.CRight:
-                    x = 200;
-                    break;
-                case pos.Right:
-                    x = 400;
-                    break;
-                case pos.RRight:
-                    x = 600;
-                    break;
-            }
             return gChar.p(new G.Move(500, {
                 x: x,
                 y: gChar.gB().y
@@ -4746,7 +5016,17 @@ var Runtime;
         CanvasDirector.prototype.$c = function (resource, position) {
             // 为防止立绘随着镜头的缩放而缩放，这里的立绘显示暂设定为固定IBounds{ x: 0, y: 0, w: 1280, h: 720 }
             //var bounds: G.IBounds = CanvasDirector.BOUNDS,
-            var bounds = { x: 0, y: 0, w: 1280, h: 720 }, pos = Core.IDirector.Position, x;
+            var bounds = { x: 0, y: 0, w: 1280, h: 720 }, x = this.$x(position);
+            // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
+            return new G.Image(resource.o(), x, 0, bounds.w, bounds.h, true)
+                .i(position)
+                .o(0);
+        };
+        /**
+         * 计算立绘位置 x 坐标。
+         */
+        CanvasDirector.prototype.$x = function (position) {
+            var pos = Core.IDirector.Position, x = 0;
             switch (position) {
                 case pos.LLeft:
                     x = -600;
@@ -4770,24 +5050,73 @@ var Runtime;
                     x = 600;
                     break;
             }
-            // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
-            return new G.Image(resource.o(), x, 0, bounds.w, bounds.h, true)
-                .i(position)
-                .o(0);
+            return x;
         };
         /**
          * 某白。
          */
         CanvasDirector.prototype.words = function (words, theme, who, avatar) {
             var _this = this;
-            var sprite = this._x['W'];
-            return this._x['c'].h(20).then(function () {
-                var type = theme[0];
-                if ('v' == type)
-                    return sprite.vv(words, _this._a);
-                return sprite['v' + type](avatar, who, words, _this._a);
-            }).then(function () {
-                sprite.h(0);
+            if (this._fd) {
+                return theme == 'voiceover' ? this.full(words) : _super.prototype.words.call(this, words, theme);
+            }
+            else {
+                var sprite_1 = this._x['W'];
+                return this._x['c'].h(20).then(function () {
+                    var type = theme[0];
+                    if ('v' == type)
+                        return sprite_1.vv(words, _this._a);
+                    return sprite_1['v' + type](avatar, who, words, _this._a);
+                }).then(function () {
+                    sprite_1.h(0);
+                    return _this._r;
+                });
+            }
+        };
+        /**
+         * 某白在全屏中显示。
+         */
+        CanvasDirector.prototype.full = function (words) {
+            var _this = this;
+            var work = document.querySelectorAll('.bg-work')[0], canvas = work.firstChild, full = this._x['F'];
+            return this.lightOn().then(function () {
+                return full.vh(words, _this._a, canvas.getContext('2d'));
+            }).then(function () { return _this._r; });
+        };
+        /**
+         * 全屏文本 开 / 关。
+         */
+        CanvasDirector.prototype.fullWords = function (on) {
+            var _this = this;
+            if (on) {
+                this._fd = true;
+                return _super.prototype.fullWords.call(this, on);
+            }
+            else {
+                return _super.prototype.fullWords.call(this, on).then(function (runtime) {
+                    _this._fd = false;
+                    _this._x['F'].h();
+                    return _this._r;
+                });
+            }
+        };
+        /**
+         * 清除全屏文本。
+         */
+        CanvasDirector.prototype.fullClean = function () {
+            var _this = this;
+            return _super.prototype.fullClean.call(this).then(function (runtime) {
+                _this._x['F'].clean();
+                return _this._r;
+            });
+        };
+        /**
+         * 隐藏全屏文本。
+         */
+        CanvasDirector.prototype.fullHide = function () {
+            var _this = this;
+            return _super.prototype.fullHide.call(this).then(function (runtime) {
+                _this._x['F'].o(0);
                 return _this._r;
             });
         };
@@ -4958,15 +5287,17 @@ var Runtime;
          */
         CanvasDirector.prototype.$ca = function (gOld, gNew) {
             var _this = this;
-            var gCurtain = this._x['c'], curtain;
+            var gCurtain = this._x['c'], gChars = this._c.q('c')[0], curtain;
             switch (this._ca[0]) {
                 case 'Fade':
                     return gCurtain.v(500)
                         .then(function () {
                         gOld.o(0);
+                        gChars.o(0);
                         _this.lightOn();
                     }).then(function () {
                         gNew.p(new G.FadeIn(500));
+                        gChars.p(new G.FadeIn(500));
                         _this._c.e(gOld);
                         return _this._r;
                     });
@@ -5116,8 +5447,10 @@ var Runtime;
                 _this._c.q('c')[0].c()
                     .o(0);
                 _this._pc = undefined;
+                _this._fd = false;
                 _this._x['G'].h(0);
                 _this._x['W'].h(0);
+                _this._x['F'].h(0);
                 _this._x['T'].h(0);
                 _this._x['C'].h(0);
                 return runtime;
@@ -5266,6 +5599,14 @@ var Runtime;
             });
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
+            // 全屏文本。
+            this._x['F'] = new Sprite.Full(id, theme['full'])
+                .addEventListener('full.animation', function (ev) {
+                _this._t = _this._h = ev.animation;
+                _this._ft = ev.type;
+            });
+            resources.unshift(this._x['F'].l());
+            this._c.a(this._x['F'], gCurtain);
             // 选择。
             this._x['C'] = new Sprite.Choose(id, theme['choose']);
             resources.unshift(this._x['C'].l());
@@ -5817,6 +6158,9 @@ var Tag;
         Speak: '对白',
         Tip: '提示',
         VoiceOver: '旁白',
+        FullWords: '全屏文本',
+        FullClean: '清除文本',
+        FullHide: '隐藏文本',
         Save: '自动存档',
         End: '游戏完结',
         Fail: '游戏失败',
@@ -6020,6 +6364,9 @@ var Tag;
         101: ['HideStatus', 0, -1],
         102: ['Expression', [0, 1], -1],
         106: ['VolumeSet', 2, -1],
+        107: ['FullWords', 1, -1],
+        108: ['FullClean', 0, -1],
+        109: ['FullHide', 0, -1],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
@@ -6225,6 +6572,7 @@ var E = (function (_super) {
     E.STRUCT_FIELD_MISSING = '实体字段内容缺失';
     E.STRUCT_FIELD_TYPE_TOO_MANY = '指定类型的字段定义过多';
     E.STRUCT_FIELD_CANNOT_EMPTY = '非空字段未设置数据';
+    E.FULL_ROW_TOO_MANY = '全屏文本中旁白文字过多';
     return E;
 }(Error));
 var E;
@@ -7823,8 +8171,8 @@ var Tag;
 /**
  * 定义播放环境音乐动作标签组件。
  *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Tag/_Action/_Director/PlayESM.ts
  */
@@ -8012,7 +8360,7 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), esm = states.g('_e'), cg = states.g(kid), cur = states.g('_ra'), exp = states.g('_rb'), ll = pos.LLeft, llChar = states.g(kid + ll), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), rr = pos.RRight, rrChar = states.g(kid + rr), ctype = type.Chr, room;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), esm = states.g('_e'), cg = states.g(kid), cur = states.g('_ra'), exp = states.g('_rb'), kfull = '_f', full = states.g(kfull), ll = pos.LLeft, llChar = states.g(kid + ll), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), rr = pos.RRight, rrChar = states.g(kid + rr), ctype = type.Chr, room;
             if (bgm)
                 q = q.then(function () {
                     var defbgm = episode.q(typeof bgm == 'string' ? bgm : bgm[0], type.BGM);
@@ -8093,6 +8441,10 @@ var Tag;
                     states.m(kid + rr, kdata + rr)
                         .s(kpos + rrChar, rr);
                     return director.charSet(episode.q(rrChar, ctype).o(states.g(kpose + rr)), rr);
+                });
+            if (full)
+                q = q.then(function () {
+                    return director.fullWords(full);
                 });
             return q;
         };
@@ -8666,6 +9018,1346 @@ var Tag;
     Tag.Player = Player;
 })(Tag || (Tag = {}));
 /**
+ * 声明默认主题对象组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Resource/ITheme.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+var Core;
+(function (Core) {
+    var ITheme;
+    (function (ITheme) {
+        ITheme.THEME = {
+            "author": {
+                "title": {
+                    "x": 0,
+                    "y": 324,
+                    "w": 1280,
+                    "h": 72,
+                    "s": 72,
+                    "lh": 72,
+                    "a": "center",
+                    "c": "#fff"
+                },
+                "director": {
+                    "x": 0,
+                    "y": 408,
+                    "w": 1280,
+                    "h": 24,
+                    "s": 24,
+                    "lh": 24,
+                    "a": "center",
+                    "c": "#fff"
+                }
+            },
+            "full": {
+                "back": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "i": "full.png"
+                },
+                "text": {
+                    "x": 100,
+                    "y": 100,
+                    "w": 1080,
+                    "h": 520,
+                    "lh": 38,
+                    "ls": 5,
+                    "s": 28,
+                    "ss": 3,
+                    "c": "#fff",
+                    "ch": "#f90",
+                    "row": 13
+                }
+            },
+            "stars": {
+                "name": {
+                    "x": -200,
+                    "y": -200,
+                    "w": 100,
+                    "h": 72,
+                    "s": 38,
+                    "lh": 72,
+                    "a": "center",
+                    "c": "#fff"
+                },
+                "value": {
+                    "x": -100,
+                    "y": -200,
+                    "w": 100,
+                    "h": 72,
+                    "s": 38,
+                    "lh": 72,
+                    "a": "center",
+                    "c": "#fff"
+                },
+                "pic": {
+                    "1": "rank/star.png",
+                    "2": "rank/stars2.png",
+                    "3": "rank/stars3.png",
+                    "4": "rank/stars4.png",
+                    "5": "rank/stars5.png"
+                }
+            },
+            "start": {
+                "i": "start/bg.jpg",
+                "new": {
+                    "x": 494,
+                    "y": 218,
+                    "w": 0,
+                    "h": 0,
+                    "i": "start/new.png",
+                    "ih": "start/new~hover.png"
+                },
+                "series": {
+                    "x": 494,
+                    "y": 218,
+                    "w": 0,
+                    "h": 0,
+                    "i": "start/Continue.png",
+                    "ih": "start/Continue~hover.png"
+                },
+                "load": {
+                    "x": 494,
+                    "y": 384,
+                    "w": 0,
+                    "h": 0,
+                    "i": "start/load.png",
+                    "ih": "start/load~hover.png"
+                },
+                "title": {
+                    "x": 1280,
+                    "y": 0,
+                    "w": 1020,
+                    "h": 48,
+                    "s": 48,
+                    "lh": 48,
+                    "c": "#ff9600"
+                }
+            },
+            "speak": {
+                "back": {
+                    "x": 0,
+                    "y": 490,
+                    "w": 1280,
+                    "h": 230,
+                    "i": "speak.png"
+                },
+                "avatar": {
+                    "x": 0,
+                    "y": 492,
+                    "w": 228,
+                    "h": 228
+                },
+                "name": {
+                    "x": 234,
+                    "y": 540,
+                    "w": 700,
+                    "h": 155,
+                    "s": 30,
+                    "lh": 42,
+                    "ss": 0,
+                    "c": "#fff"
+                },
+                "text": {
+                    "x": 250,
+                    "y": 590,
+                    "w": 800,
+                    "h": 155,
+                    "s": 28,
+                    "lh": 36,
+                    "ss": 0,
+                    "ls": 5,
+                    "c": "#fff",
+                    "ch": "#f90"
+                }
+            },
+            "monolog": {
+                "back": {
+                    "x": 0,
+                    "y": 490,
+                    "w": 1280,
+                    "h": 230,
+                    "i": "speak.png"
+                },
+                "avatar": {
+                    "x": 0,
+                    "y": 492,
+                    "w": 228,
+                    "h": 228
+                },
+                "name": {
+                    "x": 234,
+                    "y": 540,
+                    "w": 700,
+                    "h": 155,
+                    "s": 30,
+                    "lh": 42,
+                    "ss": 0,
+                    "c": "#fff"
+                },
+                "text": {
+                    "x": 250,
+                    "y": 590,
+                    "w": 800,
+                    "h": 155,
+                    "s": 28,
+                    "lh": 36,
+                    "ss": 0,
+                    "ls": 5,
+                    "c": "#fff",
+                    "ch": "#f90"
+                }
+            },
+            "voiceover": {
+                "back": {
+                    "x": 0,
+                    "y": 490,
+                    "w": 1280,
+                    "h": 230,
+                    "i": "speak.png"
+                },
+                "text": {
+                    "x": 250,
+                    "y": 540,
+                    "w": 800,
+                    "h": 155,
+                    "s": 28,
+                    "lh": 36,
+                    "ss": 0,
+                    "ls": 5,
+                    "c": "#fff",
+                    "ch": "#f90"
+                }
+            },
+            "cg": {
+                "x": 0,
+                "y": 0,
+                "w": 1280,
+                "h": 720
+            },
+            "tip": {
+                "back": {
+                    "x": 0,
+                    "y": 300,
+                    "w": 1280,
+                    "h": 110,
+                    "i": "tip.png"
+                },
+                "text": {
+                    "x": 0,
+                    "y": 340,
+                    "w": 1280,
+                    "h": 30,
+                    "s": 36,
+                    "lh": 48,
+                    "c": "#fff",
+                    "ch": "#f90",
+                    "ss": 3
+                }
+            },
+            "choose": {
+                "m": 20,
+                "back": {
+                    "w": 800,
+                    "h": 66,
+                    "i": "choose/image.png",
+                    "ih": "choose/hover.png"
+                },
+                "text": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 800,
+                    "h": 66,
+                    "s": 32,
+                    "lh": 66,
+                    "c": "#fff",
+                    "ch": "#f90",
+                    "ss": 2
+                },
+                "radish": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 80,
+                    "h": 42,
+                    "i": "choose/luobo.png"
+                },
+                "count": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 80,
+                    "h": 28,
+                    "s": 28,
+                    "lh": 28,
+                    "c": "#f90",
+                    "ch": "#f90",
+                    "ss": 2
+                }
+            },
+            "tray": {
+                "menu": {
+                    "x": 1164,
+                    "y": 580,
+                    "w": 96,
+                    "h": 96,
+                    "i": "menu/menu.png",
+                    "ih": "menu/menu~hover.png"
+                },
+                "panel": {
+                    "x": 1100,
+                    "y": 618,
+                    "w": 60,
+                    "h": 63,
+                    "i": "menu/panel.png",
+                    "ih": "menu/panel~hover.png"
+                }
+            },
+            "menu": {
+                "mask": {
+                    "cb": "#000",
+                    "o": 0.8
+                },
+                "close": {
+                    "x": 1166,
+                    "y": 582,
+                    "w": 94,
+                    "h": 94,
+                    "i": "menu/back.png",
+                    "ih": "menu/back~hover.png"
+                },
+                "save": {
+                    "x": 466,
+                    "y": 122,
+                    "w": 0,
+                    "h": 0,
+                    "i": "menu/save.png",
+                    "ih": "menu/save~hover.png"
+                },
+                "load": {
+                    "x": 466,
+                    "y": 260,
+                    "w": 0,
+                    "h": 0,
+                    "i": "menu/load.png",
+                    "ih": "menu/load~hover.png"
+                },
+                "set": {
+                    "x": 466,
+                    "y": 394,
+                    "w": 0,
+                    "h": 0,
+                    "i": "menu/setup.png",
+                    "ih": "menu/setup~hover.png"
+                }
+            },
+            "set": {
+                "mask": {
+                    "cb": "#000",
+                    "o": 0.8
+                },
+                "close": {
+                    "x": 1166,
+                    "y": 582,
+                    "w": 94,
+                    "h": 94,
+                    "i": "menu/back.png",
+                    "ih": "menu/back~hover.png"
+                },
+                "title": {
+                    "x": 320,
+                    "y": 190,
+                    "w": 600,
+                    "h": 36,
+                    "s": 48,
+                    "lh": 42,
+                    "c": "#fff",
+                    "a": "left"
+                },
+                "bgm": {
+                    "name": {
+                        "x": 390,
+                        "y": 294,
+                        "w": 100,
+                        "h": 36,
+                        "s": 25,
+                        "lh": 42,
+                        "c": "#fff",
+                        "a": "left"
+                    },
+                    "bar": {
+                        "x": 530,
+                        "y": 297,
+                        "w": 365,
+                        "h": 23,
+                        "i": "menu/bar.png",
+                        "ih": "menu/bar.png"
+                    },
+                    "bg": {
+                        "x": 0,
+                        "y": 0,
+                        "w": 1280,
+                        "h": 720,
+                        "i": "menu/barbg02.png"
+                    },
+                    "volume": {
+                        "x": 920,
+                        "y": 294,
+                        "w": 50,
+                        "h": 50,
+                        "s": 25,
+                        "lh": 42,
+                        "c": "#fff",
+                        "a": "center"
+                    }
+                },
+                "se": {
+                    "name": {
+                        "x": 400,
+                        "y": 424,
+                        "w": 100,
+                        "h": 36,
+                        "s": 25,
+                        "lh": 42,
+                        "c": "#fff",
+                        "a": "left"
+                    },
+                    "bar": {
+                        "x": 530,
+                        "y": 427,
+                        "w": 365,
+                        "h": 23,
+                        "i": "menu/bar.png",
+                        "ih": "menu/bar.png"
+                    },
+                    "bg": {
+                        "x": 0,
+                        "y": 0,
+                        "w": 1280,
+                        "h": 720,
+                        "i": "menu/barbg02.png"
+                    },
+                    "volume": {
+                        "x": 920,
+                        "y": 424,
+                        "w": 50,
+                        "h": 50,
+                        "s": 25,
+                        "lh": 42,
+                        "c": "#fff",
+                        "a": "center"
+                    }
+                }
+            },
+            "slots": {
+                "mask": {
+                    "cb": "#000",
+                    "o": 0.8
+                },
+                "close": {
+                    "x": 1166,
+                    "y": 582,
+                    "w": 94,
+                    "h": 94,
+                    "i": "menu/back.png",
+                    "ih": "menu/back~hover.png"
+                },
+                "auto": {
+                    "x": 416,
+                    "y": 470,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/auto.png",
+                    "ih": "menu/auto~hover.png",
+                    "text": {
+                        "x": 560,
+                        "y": 500,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                },
+                "1": {
+                    "x": 154,
+                    "y": 114,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/1.png",
+                    "ih": "menu/1~hover.png",
+                    "text": {
+                        "x": 300,
+                        "y": 142,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                },
+                "2": {
+                    "x": 674,
+                    "y": 114,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/2.png",
+                    "ih": "menu/2~hover.png",
+                    "text": {
+                        "x": 822,
+                        "y": 144,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                },
+                "3": {
+                    "x": 154,
+                    "y": 305,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/3.png",
+                    "ih": "menu/3~hover.png",
+                    "text": {
+                        "x": 300,
+                        "y": 334,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                },
+                "4": {
+                    "x": 674,
+                    "y": 305,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/4.png",
+                    "ih": "menu/4~hover.png",
+                    "text": {
+                        "x": 822,
+                        "y": 334,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                }
+            },
+            "series": {
+                "mask": {
+                    "cb": "#000",
+                    "o": 0.8
+                },
+                "close": {
+                    "x": 1166,
+                    "y": 582,
+                    "w": 94,
+                    "h": 94,
+                    "i": "menu/back.png",
+                    "ih": "menu/back~hover.png"
+                },
+                "text": {
+                    "x": 0,
+                    "y": 30,
+                    "w": 1280,
+                    "h": 42,
+                    "s": 30,
+                    "lh": 30,
+                    "a": "right",
+                    "c": "#fff",
+                    "desc": "本集已完结，请存档后方可进入下一集"
+                },
+                "auto": {
+                    "x": 416,
+                    "y": 470,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/auto.png",
+                    "ih": "menu/auto~hover.png",
+                    "text": {
+                        "x": 560,
+                        "y": 500,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                },
+                "1": {
+                    "x": 154,
+                    "y": 114,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/1.png",
+                    "ih": "menu/1~hover.png",
+                    "text": {
+                        "x": 300,
+                        "y": 142,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                },
+                "2": {
+                    "x": 674,
+                    "y": 114,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/2.png",
+                    "ih": "menu/2~hover.png",
+                    "text": {
+                        "x": 822,
+                        "y": 142,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                },
+                "3": {
+                    "x": 154,
+                    "y": 305,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/3.png",
+                    "ih": "menu/1~hover.png",
+                    "text": {
+                        "x": 300,
+                        "y": 334,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                },
+                "4": {
+                    "x": 674,
+                    "y": 305,
+                    "w": 484,
+                    "h": 120,
+                    "i": "menu/4.png",
+                    "ih": "menu/1~hover.png",
+                    "text": {
+                        "x": 822,
+                        "y": 334,
+                        "w": 320,
+                        "h": 80,
+                        "s": 25,
+                        "lh": 80,
+                        "c": "#fff"
+                    }
+                }
+            },
+            "status": {
+                "back": {
+                    "x": 0,
+                    "y": 14,
+                    "w": 1280,
+                    "h": 62,
+                    "i": "status.png"
+                },
+                "1": {
+                    "title": {
+                        "x": 64,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    },
+                    "value": {
+                        "x": 64,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    }
+                },
+                "2": {
+                    "title": {
+                        "x": 240,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    },
+                    "value": {
+                        "x": 240,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    }
+                },
+                "3": {
+                    "title": {
+                        "x": 445,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    },
+                    "value": {
+                        "x": 445,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    }
+                },
+                "4": {
+                    "title": {
+                        "x": 650,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    },
+                    "value": {
+                        "x": 650,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    }
+                },
+                "5": {
+                    "title": {
+                        "x": 855,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    },
+                    "value": {
+                        "x": 855,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    }
+                },
+                "6": {
+                    "title": {
+                        "x": 1060,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    },
+                    "value": {
+                        "x": 1060,
+                        "y": 8,
+                        "w": 140,
+                        "h": 40,
+                        "s": 24,
+                        "lh": 60,
+                        "c": "#fff"
+                    }
+                }
+            },
+            "panel": {
+                "mask": {
+                    "cb": "#000",
+                    "o": 0.8
+                },
+                "back": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 0,
+                    "h": 0,
+                    "i": "panel/panelbg.png"
+                },
+                "close": {
+                    "x": 1080,
+                    "y": 36,
+                    "w": 82,
+                    "h": 61,
+                    "i": "panel/close.png",
+                    "ih": "panel/close~hover.png"
+                },
+                "tab": {
+                    "title": {
+                        "w": 155,
+                        "h": 56,
+                        "i": "panel/tab.png",
+                        "ia": "panel/tab~choose.png",
+                        "s": 28,
+                        "lh": 60,
+                        "c": "#ffffff"
+                    },
+                    "1": {
+                        "x": 120,
+                        "y": 42
+                    },
+                    "2": {
+                        "x": 280,
+                        "y": 42
+                    },
+                    "3": {
+                        "x": 440,
+                        "y": 42
+                    },
+                    "4": {
+                        "x": 600,
+                        "y": 42
+                    },
+                    "5": {
+                        "x": 760,
+                        "y": 42
+                    },
+                    "6": {
+                        "x": 920,
+                        "y": 42
+                    }
+                },
+                "type": {
+                    "星": {
+                        "w": 25,
+                        "h": 25,
+                        "m": 5,
+                        "ei": "panel/star.png",
+                        "fi": "panel/star~hover.png"
+                    },
+                    "心": {
+                        "w": 25,
+                        "h": 25,
+                        "m": 5,
+                        "ei": "panel/heart.png",
+                        "fi": "panel/heart~hover.png"
+                    }
+                },
+                "simp": {
+                    "back": {
+                        "x": 0,
+                        "y": 0,
+                        "w": 0,
+                        "h": 0,
+                        "i": "panel/simppanelbg.png"
+                    },
+                    "1": {
+                        "title": {
+                            "x": 155,
+                            "y": 170,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 330,
+                            "y": 170,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "2": {
+                        "title": {
+                            "x": 150,
+                            "y": 247,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 330,
+                            "y": 247,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "3": {
+                        "title": {
+                            "x": 155,
+                            "y": 327,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 330,
+                            "y": 327,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "4": {
+                        "title": {
+                            "x": 155,
+                            "y": 407,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 330,
+                            "y": 407,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "5": {
+                        "title": {
+                            "x": 155,
+                            "y": 487,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 330,
+                            "y": 487,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "6": {
+                        "title": {
+                            "x": 155,
+                            "y": 567,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 330,
+                            "y": 567,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "7": {
+                        "title": {
+                            "x": 675,
+                            "y": 170,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 850,
+                            "y": 170,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "8": {
+                        "title": {
+                            "x": 675,
+                            "y": 247,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 850,
+                            "y": 247,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "9": {
+                        "title": {
+                            "x": 675,
+                            "y": 327,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 850,
+                            "y": 327,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "10": {
+                        "title": {
+                            "x": 675,
+                            "y": 407,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 850,
+                            "y": 407,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "11": {
+                        "title": {
+                            "x": 675,
+                            "y": 487,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 850,
+                            "y": 487,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    },
+                    "12": {
+                        "title": {
+                            "x": 675,
+                            "y": 567,
+                            "w": 210,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 850,
+                            "y": 567,
+                            "w": 300,
+                            "h": 74,
+                            "s": 32,
+                            "lh": 74,
+                            "c": "#fff"
+                        }
+                    }
+                },
+                "coll": {
+                    "back": {
+                        "x": 0,
+                        "y": 0,
+                        "w": 0,
+                        "h": 0,
+                        "i": "panel/collpanelbg.png"
+                    },
+                    "arrow": {
+                        "p": {
+                            "x": 20,
+                            "y": 343,
+                            "w": 80,
+                            "h": 80,
+                            "i": "panel/p.png",
+                            "ih": "panel/p~hover.png"
+                        },
+                        "n": {
+                            "x": 1192,
+                            "y": 343,
+                            "w": 80,
+                            "h": 80,
+                            "i": "panel/n.png",
+                            "ih": "panel/n~hover.png"
+                        }
+                    },
+                    "head": {
+                        "x": 150,
+                        "y": 260,
+                        "w": 150,
+                        "h": 150
+                    },
+                    "name": {
+                        "x": 150,
+                        "y": 400,
+                        "w": 150,
+                        "h": 80,
+                        "s": 36,
+                        "lh": 80,
+                        "c": "#000"
+                    },
+                    "1": {
+                        "title": {
+                            "x": 350,
+                            "y": 220,
+                            "w": 210,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 500,
+                            "y": 220,
+                            "w": 300,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    },
+                    "2": {
+                        "title": {
+                            "x": 350,
+                            "y": 290,
+                            "w": 210,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 500,
+                            "y": 290,
+                            "w": 300,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    },
+                    "3": {
+                        "title": {
+                            "x": 350,
+                            "y": 360,
+                            "w": 210,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 500,
+                            "y": 360,
+                            "w": 300,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    },
+                    "4": {
+                        "title": {
+                            "x": 350,
+                            "y": 430,
+                            "w": 210,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 500,
+                            "y": 430,
+                            "w": 300,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    },
+                    "5": {
+                        "title": {
+                            "x": 350,
+                            "y": 500,
+                            "w": 210,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 500,
+                            "y": 500,
+                            "w": 300,
+                            "h": 66,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    },
+                    "6": {
+                        "title": {
+                            "x": 750,
+                            "y": 220,
+                            "w": 210,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 900,
+                            "y": 220,
+                            "w": 300,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    },
+                    "7": {
+                        "title": {
+                            "x": 750,
+                            "y": 290,
+                            "w": 210,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 900,
+                            "y": 290,
+                            "w": 300,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    },
+                    "8": {
+                        "title": {
+                            "x": 750,
+                            "y": 360,
+                            "w": 210,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 900,
+                            "y": 360,
+                            "w": 300,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    },
+                    "9": {
+                        "title": {
+                            "x": 750,
+                            "y": 430,
+                            "w": 210,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 900,
+                            "y": 430,
+                            "w": 300,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    },
+                    "10": {
+                        "title": {
+                            "x": 750,
+                            "y": 500,
+                            "w": 210,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        },
+                        "value": {
+                            "x": 900,
+                            "y": 500,
+                            "w": 300,
+                            "h": 80,
+                            "s": 28,
+                            "lh": 66,
+                            "c": "#fff"
+                        }
+                    }
+                }
+            }
+        };
+    })(ITheme = Core.ITheme || (Core.ITheme = {}));
+})(Core || (Core = {}));
+/**
  * 定义主题标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -8675,11 +10367,11 @@ var Tag;
  */
 /// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../Unknown.ts" />
+/// <reference path="../../Core/_Resource/ITheme.ts" />
 var Tag;
 (function (Tag) {
     var Util = __Bigine_Util;
-    var _oldbase = 'dahao';
-    var _newbase = 'bigood';
+    var _base = '_';
     var Theme = (function (_super) {
         __extends(Theme, _super);
         function Theme() {
@@ -8696,20 +10388,10 @@ var Tag;
          */
         Theme.prototype.l = function (callback) {
             var _this = this;
-            var version = Bigine.version, domain = Bigine.domain;
+            var version = Bigine.version, domain = Bigine.domain, src = this.path(Core.ITheme.THEME, _base);
             Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, function (des) {
                 des = _this.path(des, _this._c);
-                if (_this._c == _oldbase || _this._c == _newbase) {
-                    callback(des);
-                    return;
-                }
-                var _theme = des['base'] ? (des['base']['theme'] == _newbase ? _newbase : _oldbase) : _oldbase;
-                Util.Remote.get('//s.dahao.de/theme/' + _theme + '/theme.json?' + version + domain, function (src) {
-                    src = _this.path(src, _theme);
-                    callback(_this.extend(des, src));
-                }, function (error, status) {
-                    throw error;
-                });
+                callback(_this.extend(des, src));
             }, function (error, status) {
                 throw error;
             });
@@ -11343,11 +13025,12 @@ var Tag;
                 '': []
             }, obj;
             Util.each(this._s, function (child) {
-                obj = states.g(child.$p(0));
+                var name = child.$p(0);
+                obj = states.g(name);
                 if ('object' != typeof obj || !(type in obj) || obj[type] != _this._p[0]) {
                     throw new E(E.COLL_STRUCT_DISMATCHED, _this._l);
                 }
-                coll[''].push(obj);
+                coll[''].push(name);
             });
             states.s(this._c, coll);
             return runtime;
@@ -12689,8 +14372,8 @@ var Ev;
 /**
  * 定义停止环境音乐动作标签组件。
  *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Tag/_Action/_Director/StopESM.ts
  */
@@ -12723,7 +14406,7 @@ var Tag;
  * 定义停止音效动作标签组件。
  *
  * @author    李倩 <qli@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Tag/_Action/_Director/StopSE.ts
  */
@@ -12755,8 +14438,8 @@ var Tag;
 /**
  * 定义设置音量动作标签组件。
  *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
  * @file      Tag/_Action/_Director/VolumeSet.ts
  */
@@ -12799,6 +14482,123 @@ var Tag;
         return VolumeSet;
     }(Tag.Action));
     Tag.VolumeSet = VolumeSet;
+})(Tag || (Tag = {}));
+/**
+ * 定义全屏文本动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Text/FullWords.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var FullWords = (function (_super) {
+        __extends(FullWords, _super);
+        /**
+         * 构造函数。
+         */
+        function FullWords(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            this._a = params[0] == '开' ? true : false;
+        }
+        /**
+         * 获取标签名称。
+         */
+        FullWords.prototype.gN = function () {
+            return 'FullWords';
+        };
+        /**
+         * 执行。
+         */
+        FullWords.prototype.p = function (runtime) {
+            var _this = this;
+            var states = runtime.gS(), kdir = '_f', dir = states.g(kdir);
+            if ((this._a && dir) || (!this._a && !dir))
+                return runtime;
+            this._a ? states.s(kdir, true) : states.d('_f');
+            return Promise.resolve(_super.prototype.p.call(this, runtime)).then(function () {
+                return runtime.gD().fullWords(_this._a);
+            });
+        };
+        return FullWords;
+    }(Tag.Action));
+    Tag.FullWords = FullWords;
+})(Tag || (Tag = {}));
+/**
+ * 定义清除全屏文本动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Text/FullClean.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var FullClean = (function (_super) {
+        __extends(FullClean, _super);
+        function FullClean() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        FullClean.prototype.gN = function () {
+            return 'FullClean';
+        };
+        /**
+         * 执行。
+         */
+        FullClean.prototype.p = function (runtime) {
+            var states = runtime.gS(), kdir = '_f', dir = states.g(kdir);
+            if (!dir)
+                return runtime;
+            return Promise.resolve(_super.prototype.p.call(this, runtime)).then(function () {
+                return runtime.gD().fullClean();
+            });
+        };
+        return FullClean;
+    }(Tag.Action));
+    Tag.FullClean = FullClean;
+})(Tag || (Tag = {}));
+/**
+ * 定义隐藏全屏文本动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Text/FullHide.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var FullHide = (function (_super) {
+        __extends(FullHide, _super);
+        function FullHide() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        FullHide.prototype.gN = function () {
+            return 'FullHide';
+        };
+        /**
+         * 执行。
+         */
+        FullHide.prototype.p = function (runtime) {
+            var states = runtime.gS(), kdir = '_f', dir = states.g(kdir);
+            if (!dir)
+                return runtime;
+            return Promise.resolve(_super.prototype.p.call(this, runtime)).then(function () {
+                return runtime.gD().fullHide();
+            });
+        };
+        return FullHide;
+    }(Tag.Action));
+    Tag.FullHide = FullHide;
 })(Tag || (Tag = {}));
 /**
  * 打包所有已定义地标签组件。
@@ -12901,6 +14701,9 @@ var Tag;
 /// <reference path="_Action/_Director/StopESM.ts" />
 /// <reference path="_Action/_Director/StopSE.ts" />
 /// <reference path="_Action/_Director/VolumeSet.ts" />
+/// <reference path="_Action/_Text/FullWords.ts" />
+/// <reference path="_Action/_Text/FullClean.ts" />
+/// <reference path="_Action/_Text/FullHide.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -13506,7 +15309,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.24.0';
+    Bigine.version = '0.24.1';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

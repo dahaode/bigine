@@ -27,7 +27,6 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 _close: Util.IHashTable<any> = theme['close'],
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _save: Util.IHashTable<any> = theme['save'],
@@ -35,14 +34,14 @@ namespace Sprite {
                 _set: Util.IHashTable<any> = theme['set'];
             super(0, 0, w, h);
             this._rr = [
-                rr.g<HTMLImageElement>(url + _close['i'], raw),
-                rr.g<HTMLImageElement>(url + _close['ih'], raw),
-                rr.g<HTMLImageElement>(url + _save['i'], raw),
-                rr.g<HTMLImageElement>(url + _save['ih'], raw),
-                rr.g<HTMLImageElement>(url + _load['i'], raw),
-                rr.g<HTMLImageElement>(url + _load['ih'], raw),
-                rr.g<HTMLImageElement>(url + _set['i'], raw),
-                rr.g<HTMLImageElement>(url + _set['ih'], raw)
+                rr.g<HTMLImageElement>(_close['i'], raw),
+                rr.g<HTMLImageElement>(_close['ih'], raw),
+                rr.g<HTMLImageElement>(_save['i'], raw),
+                rr.g<HTMLImageElement>(_save['ih'], raw),
+                rr.g<HTMLImageElement>(_load['i'], raw),
+                rr.g<HTMLImageElement>(_load['ih'], raw),
+                rr.g<HTMLImageElement>(_set['i'], raw),
+                rr.g<HTMLImageElement>(_set['ih'], raw)
             ];
             (<Menu> this.o(0))
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))

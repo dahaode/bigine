@@ -9,11 +9,11 @@
 
 /// <reference path="../../../include/tsd.d.ts" />
 /// <reference path="../Unknown.ts" />
+/// <reference path="../../Core/_Resource/ITheme.ts" />
 
 namespace Tag {
     import Util = __Bigine_Util;
-    const _oldbase: string = 'dahao';
-    const _newbase: string = 'bigood';
+    const _base: string = '_';
 
     export class Theme extends Unknown {
         /**
@@ -28,22 +28,12 @@ namespace Tag {
          */
         public l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
             let version: string = Bigine.version,
-                domain: string = Bigine.domain;
+                domain: string = Bigine.domain,
+                src: Util.IHashTable<any> = this.path(Core.ITheme.THEME, _base);
             Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain,
                 (des) => {
                     des = this.path(des, this._c);
-                    if (this._c == _oldbase || this._c == _newbase) {
-                        callback(des);
-                        return;
-                    }
-                    let _theme: string = des['base'] ? (des['base']['theme'] == _newbase ? _newbase : _oldbase) : _oldbase;
-                    Util.Remote.get('//s.dahao.de/theme/' + _theme + '/theme.json?' + version + domain,
-                        (src) => {
-                            src = this.path(src, _theme);
-                            callback(this.extend(des, src));
-                        }, (error: Error, status?: any) => {
-                            throw error;
-                        });
+                    callback(this.extend(des, src));
                 }, (error: Error, status?: any) => {
                 throw error;
             });

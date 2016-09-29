@@ -270,7 +270,7 @@ namespace Runtime {
             if (typeof data == 'string' && data == 'all') {
                 this._all = true;
             } else if (typeof data == 'object') {
-                this._sp = <Util.IHashTable<string>> data;
+                this._sp = <Util.IHashTable<string>> data ;
             }
             return this;
         }

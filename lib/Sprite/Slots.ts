@@ -36,7 +36,6 @@ namespace Sprite {
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                url: string = '//s.dahao.de/theme/',
                 _close: Util.IHashTable<any> = theme['close'],
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _auto: Util.IHashTable<any> = theme['auto'],
@@ -48,18 +47,18 @@ namespace Sprite {
             this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
             this._rr = [
-                rr.g<HTMLImageElement>(url + _close['i'], raw),
-                rr.g<HTMLImageElement>(url + _close['ih'], raw),
-                rr.g<HTMLImageElement>(url + _auto['i'], raw),
-                rr.g<HTMLImageElement>(url + _auto['ih'], raw),
-                rr.g<HTMLImageElement>(url + _1['i'], raw),
-                rr.g<HTMLImageElement>(url + _1['ih'], raw),
-                rr.g<HTMLImageElement>(url + _2['i'], raw),
-                rr.g<HTMLImageElement>(url + _2['ih'], raw),
-                rr.g<HTMLImageElement>(url + _3['i'], raw),
-                rr.g<HTMLImageElement>(url + _3['ih'], raw),
-                rr.g<HTMLImageElement>(url + _4['i'], raw),
-                rr.g<HTMLImageElement>(url + _4['ih'], raw)
+                rr.g<HTMLImageElement>(_close['i'], raw),
+                rr.g<HTMLImageElement>(_close['ih'], raw),
+                rr.g<HTMLImageElement>(_auto['i'], raw),
+                rr.g<HTMLImageElement>(_auto['ih'], raw),
+                rr.g<HTMLImageElement>(_1['i'], raw),
+                rr.g<HTMLImageElement>(_1['ih'], raw),
+                rr.g<HTMLImageElement>(_2['i'], raw),
+                rr.g<HTMLImageElement>(_2['ih'], raw),
+                rr.g<HTMLImageElement>(_3['i'], raw),
+                rr.g<HTMLImageElement>(_3['ih'], raw),
+                rr.g<HTMLImageElement>(_4['i'], raw),
+                rr.g<HTMLImageElement>(_4['ih'], raw)
             ];
             (<Slots> this.o(0))
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
