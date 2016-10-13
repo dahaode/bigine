@@ -78,7 +78,7 @@ namespace Sprite {
                 let last: number = 1;
                 let right: G.Text.Align = G.Text.Align.Right;
                 let button: (index: string, slot?: [string, number]) => void = (index: string, slot?: [string, number]) => {
-                    if (index != 'auto') {
+                    if (index != 'auto' && index != 'pay') {
                         let _ii: number = 4 + (last - 1) * 2,
                             _i: Util.IHashTable<any> = this._c[index],
                             _it: Util.IHashTable<any> = this._c[index]['text'];
@@ -120,11 +120,11 @@ namespace Sprite {
                 let slots: Util.IHashTable<[string, number]> = states.qa();
                 let last: number = 1;
                 let right: G.Text.Align = G.Text.Align.Right;
-                let $a: [string, number] = states.q('auto'),
+                let $a: [string, number] = <[string, number]> states.q('auto'),
                     _a: Util.IHashTable<any> = this._c[0],
                     _at: Util.IHashTable<any> = _a['text'];
                 let button: (index: string, slot?: [string, number]) => void = (index: string, slot?: [string, number]) => {
-                    if (index != 'auto') {
+                    if (index != 'auto' && index != 'pay') {
                         let _ii: number = 4 + (last - 1) * 2,
                             _i: Util.IHashTable<any> = this._c[index],
                             _it: Util.IHashTable<any> = this._c[index]['text'];

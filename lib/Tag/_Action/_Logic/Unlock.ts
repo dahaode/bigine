@@ -1,22 +1,22 @@
 /**
- * 定义打赏数据动作标签组件。
+ * 定义购买数据动作标签组件。
  *
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Tag/_Action/_Logic/Donate.ts
+ * @file      Tag/_Action/_Logic/Unlock.ts
  */
 
 /// <reference path="../../Idable.ts" />
-/// <reference path="../../../Ev/_Runtime/Donate.ts" />
+/// <reference path="../../../Ev/_Runtime/PayUnlock.ts" />
 
 namespace Tag {
-    export class Donate extends Idable {
+    export class Unlock extends Idable {
         /**
          * 获取标签名称。
          */
         public gN(): string {
-            return 'Donate';
+            return 'Unlock';
         }
 
         /**
@@ -27,20 +27,24 @@ namespace Tag {
                 .then(() => {
                     let amount: number = parseInt(this._p[0], 10) || 0,
                         states: Core.IStates = runtime.gS(),
-                        id: string = this.gI(),
-                        ktime: string = '_td',
-                        td: number = states.g(ktime),
-                        tn: number = new Date().getTime(),
+                        kal: string = '.al',
+                        autoload: boolean = states.g(kal),
                         depth: number = states.g('$d'),
+                        id: string = this.gI(),
                         yes: () => void = () => states.s('$v' + depth, true).s('$t' + depth, false),
                         no: () => void = () => states.s('$v' + depth, false).s('$t' + depth, false);
-                    if (td && states.qp(id, td, true)) {
+                    if (states.qp(id, amount)) {
                         yes();
-                        states.d(ktime);
                         return runtime;
                     } else {
+                        if (autoload) {
+                            states.d(kal);
+                            no();
+                            return runtime;
+                        }
                         return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                             let suc: () => void = () => {
+                                    states.ep(id, amount);
                                     yes();
                                     resolve(runtime);
                                 },
@@ -48,11 +52,10 @@ namespace Tag {
                                     no();
                                     resolve(runtime);
                                 };
-                            states.s(ktime, tn);
                             runtime.a(this);
                             states.l().then(() => {
                                 states.e('pay');
-                                runtime.dispatchEvent(new Ev.Donate({
+                                runtime.dispatchEvent(new Ev.PayUnlock({
                                     target: states,
                                     amount: amount,
                                     id: id,

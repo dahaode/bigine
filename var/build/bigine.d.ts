@@ -54,10 +54,10 @@ declare namespace __Bigine {
             p(): IStates;
             e(manual: string, series?: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): IStates;
-            q(index: string, type?: IStates.Save): [string, number];
+            q(index: string, type?: IStates.Save): [string, number | Util.IHashTable<any>];
             qa(type?: IStates.Save): Util.IHashTable<[string, number]>;
             l(): Promise<IStates>;
-            qp(id: string, count: number): boolean;
+            qp(id: string, count: number, donate?: boolean): boolean;
             lp(data: Util.IHashTable<string> | string): IStates;
             ep(id: string, count: number): IStates;
         }
@@ -204,7 +204,7 @@ declare namespace __Bigine {
             user(nickname: string): IRuntime;
             nickname(): string;
             plots(data: Util.IHashTable<string> | string): IRuntime;
-            l(id?: string): void;
+            l(id?: string, autoload?: boolean): void;
             bind(viewport: HTMLElement): IRuntime;
             series(value?: string): IRuntime;
             pause(): IRuntime;
@@ -407,10 +407,10 @@ declare namespace __Bigine {
             p(): States;
             e(manual: string, series?: boolean): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): States;
-            q(index: string, series?: Core.IStates.Save): [string, number];
+            q(index: string, series?: Core.IStates.Save): [string, number | Util.IHashTable<any>];
             qa(series?: Core.IStates.Save): Util.IHashTable<[string, number]>;
             l(): Promise<States>;
-            qp(id: string, count: number): boolean;
+            qp(id: string, count: number, donate?: boolean): boolean;
             lp(data: Util.IHashTable<string> | string): States;
             ep(id: string, count: number): States;
         }
@@ -490,6 +490,7 @@ declare namespace __Bigine {
             e(type: Core.IRuntime.Series): Director;
             rp(): Director;
             rr(): Director;
+            sl(id: string, aotuload?: boolean): void;
         }
     }
     namespace Runtime {
@@ -600,12 +601,16 @@ declare namespace __Bigine {
             private _h;
             private _bs;
             private _si;
+            private _cb;
+            private _tp;
             constructor(id: string, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>);
             h(duration?: number): Promise<Words>;
             vv(clob: string, auto?: boolean): Promise<Words>;
             vm(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
             vs(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
-            private $v(text, auto, image);
+            protected split(clob: string, theme: string, auto: boolean): Promise<Words>;
+            protected every(clob: string, theme: string, auto: boolean, wait: boolean, pause?: number): Promise<Words>;
+            private $v(text, auto, image, wait);
         }
     }
     namespace Core {
@@ -1010,6 +1015,7 @@ declare namespace __Bigine {
             status(onoff: boolean): Promise<Core.IRuntime>;
             expression(name: string): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
+            sl(id: string, aotuload?: boolean): void;
             s(sheet: [string, string][]): CanvasDirector;
             p(sheet: Array<Util.IHashTable<any>>): CanvasDirector;
             a(auto: boolean): boolean;
@@ -2058,23 +2064,30 @@ declare namespace __Bigine {
         }
     }
     namespace Ev {
-        interface IDonateMetas extends Util.IEventMetas<Core.IStates> {
+        interface IPayMetas extends Util.IEventMetas<Core.IStates> {
             amount: number;
+            id: string;
             suc: () => void;
             fail: () => void;
         }
     }
     namespace Ev {
-        class Donate extends Event<Core.IStates> {
+        class Pay extends Event<Core.IStates> {
             private amount;
+            private id;
             private suc;
             private fail;
-            constructor(metas: IDonateMetas);
+            constructor(metas: IPayMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        class Donate extends Pay {
             gT(): string;
         }
     }
     namespace Tag {
-        class Donate extends Action {
+        class Donate extends Idable {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
@@ -2104,20 +2117,19 @@ declare namespace __Bigine {
         }
     }
     namespace Ev {
-        interface IPayMetas extends Util.IEventMetas<Core.IStates> {
-            amount: number;
-            id: string;
-            suc: () => void;
-            fail: () => void;
+        class PayOption extends Pay {
+            gT(): string;
         }
     }
     namespace Ev {
-        class Pay extends Event<Core.IStates> {
-            private amount;
-            private id;
-            private suc;
-            private fail;
-            constructor(metas: IPayMetas);
+        interface IAutoLoadMetas extends Util.IEventMetas<Core.IStates> {
+            valid: boolean;
+        }
+    }
+    namespace Ev {
+        class AutoLoad extends Event<Core.IStates> {
+            private valid;
+            constructor(metas: IAutoLoadMetas);
             gT(): string;
         }
     }
@@ -2161,6 +2173,17 @@ declare namespace __Bigine {
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
     }
+    namespace Ev {
+        class PayUnlock extends Pay {
+            gT(): string;
+        }
+    }
+    namespace Tag {
+        class Unlock extends Idable {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
     namespace Runtime {
         class Runtime implements Core.IRuntime {
             private _a;
@@ -2180,6 +2203,7 @@ declare namespace __Bigine {
             private _n;
             private _c;
             private _nn;
+            private _al;
             constructor(ep: Core.IRootTag);
             addEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime;
             removeEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime;
@@ -2202,11 +2226,12 @@ declare namespace __Bigine {
             user(nickname: string): Runtime;
             nickname(): string;
             plots(data: Util.IHashTable<string> | string): Runtime;
+            autoLoad(id: string): Runtime;
             s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime;
             a(action: Core.IIdableTag): Runtime;
             gH(): boolean;
             t(flow: () => Runtime | Thenable<Runtime>): Runtime;
-            l(id: string): void;
+            l(id: string, autoload: boolean): void;
             bind(viewport: HTMLElement): Runtime;
             series(value?: string): Runtime;
             pause(): Runtime;

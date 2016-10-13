@@ -63,7 +63,7 @@ namespace Runtime {
             this._t = ep.gT();
             this._l = null;
             ep.r(this);
-            Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version + Bigine.domain,
+            Util.Remote.get('//s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain,
                 (des) => {
                     this._l = des;
                     runtime.dispatchEvent(new Ev.Loading({

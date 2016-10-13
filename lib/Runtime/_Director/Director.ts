@@ -403,5 +403,9 @@ namespace Runtime {
             this._a = this._ra;
             return this;
         }
+
+        public sl(id: string, aotuload?: boolean): void {
+            //
+        }
     }
 }

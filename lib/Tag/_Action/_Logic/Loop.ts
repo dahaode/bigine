@@ -89,6 +89,8 @@ namespace Tag {
                     case 'Monolog':
                     case 'Speak':
                     case 'VoiceOver':
+                    case 'Unlock':
+                    case 'Donate':
                         ids.push((<Speak> action).gI());
                         break;
                     case 'Loop':

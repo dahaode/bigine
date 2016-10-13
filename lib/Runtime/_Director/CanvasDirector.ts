@@ -139,12 +139,18 @@ namespace Runtime {
             }
             els[0].appendChild(canvas);
             this._x = {};
+            let d1: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_bottom.png', raw),
+                d2: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_exp.png', raw),
+                d3: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_cover.png', raw);
             this._c = <G.Stage> new G.Stage(canvas.getContext('2d'))
                 .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
                 .a(new G.Sprite(bounds).i('c').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
-                .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
+                .a(new G.Sprite(0, bounds.h - 20, bounds.w, 20)
+                    .a(new G.Image(d1.o(), 0, 0, bounds.w, 20))
+                    .a(new G.Image(d2.o(), 3, 3, bounds.w - 6, 14))
+                    .a(new G.Image(d3.o(), 6, 3, bounds.w - 6, 14).i('e')).i('L').o(0));
             this.f();
             this._vo = true;
             this._ca = [undefined, undefined];
@@ -196,7 +202,7 @@ namespace Runtime {
                         this._e = [0, 0];
                         return gLoading.o(0);
                     }
-                    gElapsed.x((e[1] / e[0] - 1) * bounds.w);
+                    gElapsed.x(e[1] / e[0] * (bounds.w - 6) + 6);
                     gLoading.o(1);
                 };
             Util.each(resources, (frame: Resource.Resource<string | HTMLImageElement>[]) => {
@@ -694,18 +700,15 @@ namespace Runtime {
          */
         protected $ca(gOld: G.Element, gNew: G.Element): Promise<Core.IRuntime> {
             let gCurtain: Sprite.Curtain = this._x['c'],
-                gChars: G.Sprite = <G.Sprite> this._c.q('c')[0],
                 curtain: G.Animation;
             switch (this._ca[0]) {
                 case 'Fade':
                     return gCurtain.v(500)
                         .then(() => {
                             gOld.o(0);
-                            gChars.o(0);
                             this.lightOn();
                         }).then(() => {
                             gNew.p(new G.FadeIn(500));
-                            gChars.p(new G.FadeIn(500));
                             this._c.e(gOld);
                             return this._r;
                         });
@@ -830,7 +833,7 @@ namespace Runtime {
                                         });
                                         this._pc = undefined;
                                     };
-                                this._r.dispatchEvent(new Ev.Pay({
+                                this._r.dispatchEvent(new Ev.PayOption({
                                     target: states,
                                     amount: amount,
                                     id: id,
@@ -1126,13 +1129,14 @@ namespace Runtime {
                     this._x['sl'].h();
                     this._r.gS().e(ev.slot);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
-                    this.lightOff().then(() => {
+                    this.sl(ev.id);
+                    /*this.lightOff().then(() => {
                         this._x['sl'].h(0);
                         this._x['s'].h(0);
                         if (!this._a)
                             this._x['t'].v(0);
                         this._r.l(ev.id);
-                    });
+                    });*/
                 });
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
@@ -1148,13 +1152,14 @@ namespace Runtime {
                     this._r.gS().e('1', true);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
                     slotsFromStart = false;
-                    this.lightOff().then(() => {
+                    this.sl(ev.id);
+                    /*this.lightOff().then(() => {
                         this._x['ss'].h(0);
                         this._x['s'].h(0);
                         if (!this._a)
                             this._x['t'].v(0);
                         this._r.l(ev.id);
-                    });
+                    });*/
                 });
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
@@ -1186,6 +1191,19 @@ namespace Runtime {
 
             this.c(resources);
             return this;
+        }
+
+        public sl(id: string, aotuload: boolean = false): void {
+            if (id) {
+                this.lightOff().then(() => {
+                    if (this._x['sl']) this._x['sl'].h(0);
+                    if (this._x['ss']) this._x['ss'].h(0);
+                    this._x['s'].h(0);
+                    if (!this._a)
+                        this._x['t'].v(0);
+                    this._r.l(id, aotuload);
+                });
+            }
         }
 
         /**
@@ -1237,7 +1255,7 @@ namespace Runtime {
             this._s['s'].volume = volume * this._s['s']['scale'];
             this._s['e']['baseVolume'] = volume;
             this._s['e'].volume = volume * this._s['e']['scale'];
-            this._vo = volume == 1;
+            this._vo = volume > 0;
             let set: Sprite.Set = <Sprite.Set> this._x['st'];
             if (set.gO() > 0) set.vv(volume, volume, this._vo);
             return <CanvasDirector> super.v(volume);

@@ -40,7 +40,7 @@ namespace Runtime {
         /**
          * 付费信息。
          */
-        private _sp: Util.IHashTable<string>;
+        private _sp: Util.IHashTable<string | number>;
 
         /**
          * 是否整章购买。
@@ -197,7 +197,7 @@ namespace Runtime {
         /**
          * 查询档位存档编号。
          */
-        public q(index: string, series?: Core.IStates.Save): [string, number] {
+        public q(index: string, series?: Core.IStates.Save): [string, number | Util.IHashTable<any>] {
             let save: typeof Core.IStates.Save = Core.IStates.Save,
                 type: string = 'work';
             switch (series) {
@@ -254,10 +254,10 @@ namespace Runtime {
         /**
          * 查询是否付费。
          */
-        public qp(id: string, count: number): boolean {
-            if (this._all)
+        public qp(id: string, count: number, donate: boolean = false): boolean {
+            if (this._all && !donate)
                 return true;
-            if ((id in this._sp) && this._sp[id] == count.toString())
+            if ((id in this._sp) && donate ? this._sp[id] >= count : this._sp[id] == count.toString())
                 return true;
             return false;
         }

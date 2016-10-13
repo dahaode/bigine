@@ -98,6 +98,7 @@ var Ev;
  *     * `_ra` -  切幕动画 - Tag    // 添加切幕动画命令时所需记录的存档信息
  *     * `_rb` -  神态动画 - Tag    // 添加神态动画命令时所需记录的存档信息
  *     * `_f` -  全屏文本 - Tag    // 添加全屏文本命令时所需记录的存档信息
+ *     * `_td` -  全屏文本 - Tag    // 打赏时间
  * 2. `.` 表明为会话持久信息，不能被存档记录；
  *     * `.p<人物名>` - 人物站位 - Runtime/Tag
  *     * `.a` - 动作编号 - Runtime/Tag
@@ -106,6 +107,7 @@ var Ev;
  *     * `.c<站位>` - 人物名 - Tag
  *     * `.z` -  房间状态 - Tag
  *     * `.l` -  资源加载状态 - Tag
+ *     * `.al` -  自动读档标记 - Tag
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -824,7 +826,7 @@ var Runtime;
             this._t = ep.gT();
             this._l = null;
             ep.r(this);
-            Util.Remote.get('//s.dahao.de/theme/_/load.json?' + Bigine.version + Bigine.domain, function (des) {
+            Util.Remote.get('//s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain, function (des) {
                 _this._l = des;
                 runtime.dispatchEvent(new Ev.Loading({
                     target: _this
@@ -1290,10 +1292,11 @@ var Runtime;
         /**
          * 查询是否付费。
          */
-        States.prototype.qp = function (id, count) {
-            if (this._all)
+        States.prototype.qp = function (id, count, donate) {
+            if (donate === void 0) { donate = false; }
+            if (this._all && !donate)
                 return true;
-            if ((id in this._sp) && this._sp[id] == count.toString())
+            if ((id in this._sp) && donate ? this._sp[id] >= count : this._sp[id] == count.toString())
                 return true;
             return false;
         };
@@ -1744,6 +1747,9 @@ var Runtime;
         Director.prototype.rr = function () {
             this._a = this._ra;
             return this;
+        };
+        Director.prototype.sl = function (id, aotuload) {
+            //
         };
         return Director;
     }());
@@ -2270,6 +2276,7 @@ var Ev;
 /// <reference path="../Ev/_Sprite/WordsAnimation.ts" />
 var Sprite;
 (function (Sprite) {
+    var Util = __Bigine_Util;
     var G = __Bigine_C2D;
     var Words = (function (_super) {
         __extends(Words, _super);
@@ -2295,31 +2302,35 @@ var Sprite;
                 s: _savat
             };
             this._si = undefined;
+            this._tp = {
+                v: { x: _vtext['x'], y: _vtext['y'] },
+                m: { x: _mtext['x'], y: _mtext['y'] },
+                s: { x: _stext['x'], y: _stext['y'] },
+                c: { x: 0, y: 0 }
+            };
+            this._cb = {
+                v: Util.clone(_vtext),
+                m: Util.clone(_mtext),
+                s: Util.clone(_stext)
+            };
             this.o(0)
                 .a(this._x['v'] = new G.Sprite(_vback)
                 .a(new G.Image(this._rr[0].o(), _vback, true))
-                .a(this._x['vt'] = new G.Text(_vtext, _vtext['s'], _vtext['lh'], left, true)
-                .tc(_vtext['c'])
-                .tl(_vtext['ls'])
-                .ts(_vtext['ss'], _vtext['ss'], _vtext['ss'])).o(0)).a(this._x['m'] = new G.Sprite(_mback)
+                .a(this._x['vt'] = new G.Sprite(_vback))
+                .o(0)).a(this._x['m'] = new G.Sprite(_mback)
                 .a(new G.Image(this._rr[1].o(), _mback, true))
                 .a(this._x['ma'] = new G.Sprite(_mavat, true))
                 .a(new G.Text(_mname, _mname['s'], _mname['lh'], left, true)
                 .tc(_mname['c'])
                 .ts(_mname['ss'], _mname['ss'], _mname['ss'])
-                .a(this._x['mn'] = new G.TextPhrase())).a(this._x['mt'] = new G.Text(_mtext, _mtext['s'], _mtext['lh'], left, true)
-                .tc(_mtext['c'])
-                .tl(_mtext['ls'])
-                .ts(_mtext['ss'], _mtext['ss'], _mtext['ss'])).o(0)).a(this._x['s'] = new G.Sprite(_sback)
+                .a(this._x['mn'] = new G.TextPhrase())).a(this._x['mt'] = new G.Sprite(_mback))
+                .o(0)).a(this._x['s'] = new G.Sprite(_sback)
                 .a(new G.Image(this._rr[2].o(), _sback, true))
                 .a(this._x['sa'] = new G.Sprite(_savat, true))
                 .a(new G.Text(_sname, _sname['s'], _sname['lh'], left, true)
                 .tc(_sname['c'])
                 .ts(_sname['ss'], _sname['ss'], _sname['ss'])
-                .a(this._x['sn'] = new G.TextPhrase())).a(this._x['st'] = new G.Text(_stext, _stext['s'], _stext['lh'], left, true)
-                .tc(_stext['c'])
-                .tl(_stext['ls'])
-                .ts(_stext['ss'], _stext['ss'], _stext['ss'])).o(0));
+                .a(this._x['sn'] = new G.TextPhrase())).a(this._x['st'] = new G.Sprite(_sback)).o(0));
             if (_vcurs) {
                 var vo = rr.g(_vcurs['i'], raw);
                 this._rr.push(vo);
@@ -2366,12 +2377,8 @@ var Sprite;
         Words.prototype.vv = function (clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
-            var text = this._x['vt'], image = this._x['vc'];
-            this.$w(text.o(0), clob, this._c['v']);
             this._x['v'].o(1);
-            if (image)
-                image.o(0);
-            return this.$v(text, auto, image).then(function () {
+            return this.split(clob, 'v', auto).then(function () {
                 _this._x['v'].o(0);
                 if (_this._si) {
                     clearInterval(_this._si);
@@ -2386,16 +2393,12 @@ var Sprite;
         Words.prototype.vm = function (avatar, name, clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
-            var text = this._x['mt'], image = this._x['mc'];
-            this.$w(text.o(0), clob, this._c['m']);
             this._x['ma']
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['m'], true));
             this._x['mn'].t(name);
             this._x['m'].o(1);
-            if (image)
-                image.o(0);
-            return this.$v(text, auto, image).then(function () {
+            return this.split(clob, 'm', auto).then(function () {
                 _this._x['m'].o(0);
                 if (_this._si) {
                     clearInterval(_this._si);
@@ -2410,16 +2413,12 @@ var Sprite;
         Words.prototype.vs = function (avatar, name, clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
-            var text = this._x['st'], image = this._x['sc'];
-            this.$w(text.o(0), clob, this._c['s']);
             this._x['sa']
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['s'], true));
             this._x['sn'].t(name);
             this._x['s'].o(1);
-            if (image)
-                image.o(0);
-            return this.$v(text, auto, image).then(function () {
+            return this.split(clob, 's', auto).then(function () {
                 _this._x['s'].o(0);
                 if (_this._si) {
                     clearInterval(_this._si);
@@ -2429,9 +2428,72 @@ var Sprite;
             });
         };
         /**
+         * 文本分解。
+         */
+        Words.prototype.split = function (clob, theme, auto) {
+            var _this = this;
+            var words = clob.split('\\r'), _txt = theme + 't', funcs = [];
+            this._x[_txt].c();
+            this._cb[theme].y = this._tp[theme].y;
+            Util.each(words, function (word, index) {
+                var bufs = word.split('\\l');
+                if (bufs.length == 1) {
+                    funcs.push(function () { return _this.every(word, theme, auto, index == words.length - 1); });
+                }
+                else {
+                    Util.each(bufs, function (buffer, i) {
+                        funcs.push(function () { return _this.every(buffer, theme, auto, false, i); });
+                    });
+                }
+            });
+            return funcs.reduce(function (previous, current) {
+                return previous.then(current);
+            }, Promise.resolve());
+        };
+        /**
+         * 对于分解的话逐行进行处理。
+         */
+        Words.prototype.every = function (clob, theme, auto, wait, pause) {
+            var _this = this;
+            if (pause === void 0) { pause = -1; }
+            var _img = theme + 'c', _txt = theme + 't', eRow = 0, tBound = Util.clone(this._cb[theme]), tText, image = this._x[_img], left = G.Text.Align.Left, lHeight = Math.max(tBound['lh'], tBound['s']);
+            if (image)
+                image.o(0);
+            while (/^\\n.*/.test(clob)) {
+                eRow++;
+                clob = clob.substr(2);
+            }
+            if (eRow > 0) {
+                tBound.y += eRow * lHeight;
+                this._tp['c'].x = 0;
+            }
+            else {
+                if (pause > 0)
+                    tBound.y -= lHeight;
+            }
+            if (clob == '')
+                return Promise.resolve(this);
+            tText = new G.Text(tBound, tBound['s'], tBound['lh'], left, true)
+                .tc(tBound['c'])
+                .tl(tBound['ls'])
+                .to(pause > 0 ? this._tp['c'].x : 0)
+                .ts(tBound['ss'], tBound['ss'], tBound['ss']);
+            this._x[_txt].a(tText);
+            this.$w(tText.o(0), clob, this._c[theme]);
+            this._x[theme].o(1);
+            return this.$v(tText, auto, image, pause >= 0 ? true : wait).then(function () {
+                if (_this._h) {
+                    var pnt = tText.gCp();
+                    _this._cb[theme].y = pnt.y;
+                    _this._tp['c'].x = pnt.x - _this._tp[theme].x;
+                }
+                return _this;
+            });
+        };
+        /**
          * 显示内容文字。
          */
-        Words.prototype.$v = function (text, auto, image) {
+        Words.prototype.$v = function (text, auto, image, wait) {
             var _this = this;
             this.o(1);
             return new Promise(function (resolve) {
@@ -2463,20 +2525,26 @@ var Sprite;
                 });
             }).then(function () {
                 var animation, target;
-                if (auto) {
-                    animation = new G.TypeDelay(9);
-                    target = text;
+                if (wait) {
+                    if (auto) {
+                        animation = new G.TypeDelay(9);
+                        target = text;
+                    }
+                    else {
+                        animation = new G.WaitForClick();
+                        target = _this;
+                        if (image) {
+                            image.o(1);
+                            _this._si = setInterval(function () {
+                                var next = image.gO() == 1 ? 0 : 1;
+                                image.o(next);
+                            }, 500);
+                        }
+                    }
                 }
                 else {
-                    animation = new G.WaitForClick();
-                    target = _this;
-                    if (image) {
-                        image.o(1);
-                        _this._si = setInterval(function () {
-                            var next = image.gO() == 1 ? 0 : 1;
-                            image.o(next);
-                        }, 500);
-                    }
+                    animation = new G.TypeDelay(0.1);
+                    target = text;
                 }
                 _this._h = animation;
                 _this.dispatchEvent(new Ev.WordsAnimation({
@@ -3045,7 +3113,7 @@ var Sprite;
                 var last = 1;
                 var right = G.Text.Align.Right;
                 var button = function (index, slot) {
-                    if (index != 'auto') {
+                    if (index != 'auto' && index != 'pay') {
                         var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
                         _this.a(_this._x[index] = new G.Button(_i)
                             .b(function () {
@@ -3086,7 +3154,7 @@ var Sprite;
                 var right = G.Text.Align.Right;
                 var $a = states.q('auto'), _a = _this._c[0], _at = _a['text'];
                 var button = function (index, slot) {
-                    if (index != 'auto') {
+                    if (index != 'auto' && index != 'pay') {
                         var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
                         _this.a(_this._x[index] = new G.Button(_i)
                             .b(function () {
@@ -3895,7 +3963,8 @@ var Sprite;
                         }));
                     }
                 }
-                event.preventDefault();
+                if (event.keyCode == 38 || event.keyCode == 40)
+                    event.preventDefault();
             };
             window.addEventListener('keydown', this._ke);
         };
@@ -4577,7 +4646,7 @@ var Sprite;
             var eRow = 0, row, tBound, bBound = this._be, tText, left = G.Text.Align.Left, lHeight = Math.max(bBound['lh'], bBound['s']), sClob;
             while (/^\\n.*/.test(clob)) {
                 eRow++;
-                clob = clob.substr(2, clob.length);
+                clob = clob.substr(2);
             }
             if (eRow > 0) {
                 this._cb.y += eRow * lHeight;
@@ -4596,8 +4665,9 @@ var Sprite;
             context.textBaseline = 'middle';
             context.shadowBlur = context.shadowOffsetX = context.shadowOffsetY = bBound['ss'];
             context.shadowColor = '#000';
-            sClob = clob.replace('【', '');
-            sClob = sClob.replace('】', '');
+            sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '');
+            sClob = sClob.replace(/【/g, '');
+            sClob = sClob.replace(/】/g, '');
             row = Math.ceil(context.measureText(sClob).width / bBound.w);
             if (this._tl + row > bBound['row']) {
                 this._tl = 0;
@@ -4762,12 +4832,16 @@ var Runtime;
             }
             els[0].appendChild(canvas);
             this._x = {};
+            var d1 = Resource.Resource.g(assets + 'load_bottom.png', raw), d2 = Resource.Resource.g(assets + 'load_exp.png', raw), d3 = Resource.Resource.g(assets + 'load_cover.png', raw);
             this._c = new G.Stage(canvas.getContext('2d'))
                 .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
                 .a(new G.Sprite(bounds).i('c').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
-                .a(new G.Sprite(0, bounds.h - 3, bounds.w, 3).a(new G.Color(0, 0, bounds.w, 3, '#0cf').i('e')).i('L').o(0));
+                .a(new G.Sprite(0, bounds.h - 20, bounds.w, 20)
+                .a(new G.Image(d1.o(), 0, 0, bounds.w, 20))
+                .a(new G.Image(d2.o(), 3, 3, bounds.w - 6, 14))
+                .a(new G.Image(d3.o(), 6, 3, bounds.w - 6, 14).i('e')).i('L').o(0));
             this.f();
             this._vo = true;
             this._ca = [undefined, undefined];
@@ -4817,7 +4891,7 @@ var Runtime;
                     _this._e = [0, 0];
                     return gLoading.o(0);
                 }
-                gElapsed.x((e[1] / e[0] - 1) * bounds.w);
+                gElapsed.x(e[1] / e[0] * (bounds.w - 6) + 6);
                 gLoading.o(1);
             };
             Util.each(resources, function (frame) {
@@ -5289,17 +5363,15 @@ var Runtime;
          */
         CanvasDirector.prototype.$ca = function (gOld, gNew) {
             var _this = this;
-            var gCurtain = this._x['c'], gChars = this._c.q('c')[0], curtain;
+            var gCurtain = this._x['c'], curtain;
             switch (this._ca[0]) {
                 case 'Fade':
                     return gCurtain.v(500)
                         .then(function () {
                         gOld.o(0);
-                        gChars.o(0);
                         _this.lightOn();
                     }).then(function () {
                         gNew.p(new G.FadeIn(500));
-                        gChars.p(new G.FadeIn(500));
                         _this._c.e(gOld);
                         return _this._r;
                     });
@@ -5413,7 +5485,7 @@ var Runtime;
                                 });
                                 _this._pc = undefined;
                             };
-                            _this._r.dispatchEvent(new Ev.Pay({
+                            _this._r.dispatchEvent(new Ev.PayOption({
                                 target: states,
                                 amount: amount_1,
                                 id: id_1,
@@ -5699,13 +5771,14 @@ var Runtime;
                 _this._x['sl'].h();
                 _this._r.gS().e(ev.slot);
             }).addEventListener('slots.load', function (ev) {
-                _this.lightOff().then(function () {
-                    _this._x['sl'].h(0);
-                    _this._x['s'].h(0);
-                    if (!_this._a)
-                        _this._x['t'].v(0);
-                    _this._r.l(ev.id);
-                });
+                _this.sl(ev.id);
+                /*this.lightOff().then(() => {
+                    this._x['sl'].h(0);
+                    this._x['s'].h(0);
+                    if (!this._a)
+                        this._x['t'].v(0);
+                    this._r.l(ev.id);
+                });*/
             });
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
@@ -5721,13 +5794,14 @@ var Runtime;
                 _this._r.gS().e('1', true);
             }).addEventListener('slots.load', function (ev) {
                 slotsFromStart = false;
-                _this.lightOff().then(function () {
-                    _this._x['ss'].h(0);
-                    _this._x['s'].h(0);
-                    if (!_this._a)
-                        _this._x['t'].v(0);
-                    _this._r.l(ev.id);
-                });
+                _this.sl(ev.id);
+                /*this.lightOff().then(() => {
+                    this._x['ss'].h(0);
+                    this._x['s'].h(0);
+                    if (!this._a)
+                        this._x['t'].v(0);
+                    this._r.l(ev.id);
+                });*/
             });
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
@@ -5756,6 +5830,22 @@ var Runtime;
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
             this.c(resources);
             return this;
+        };
+        CanvasDirector.prototype.sl = function (id, aotuload) {
+            var _this = this;
+            if (aotuload === void 0) { aotuload = false; }
+            if (id) {
+                this.lightOff().then(function () {
+                    if (_this._x['sl'])
+                        _this._x['sl'].h(0);
+                    if (_this._x['ss'])
+                        _this._x['ss'].h(0);
+                    _this._x['s'].h(0);
+                    if (!_this._a)
+                        _this._x['t'].v(0);
+                    _this._r.l(id, aotuload);
+                });
+            }
         };
         /**
          * 配置状态。
@@ -5804,7 +5894,7 @@ var Runtime;
             this._s['s'].volume = volume * this._s['s']['scale'];
             this._s['e']['baseVolume'] = volume;
             this._s['e'].volume = volume * this._s['e']['scale'];
-            this._vo = volume == 1;
+            this._vo = volume > 0;
             var set = this._x['st'];
             if (set.gO() > 0)
                 set.vv(volume, volume, this._vo);
@@ -6205,6 +6295,7 @@ var Tag;
         CollPop: '删除元素',
         CollPush: '增加元素',
         Donate: '打赏',
+        Unlock: '解锁',
         DefOptions: '定义选择',
         AddOption: '添加选项',
         DropOption: '去除选项',
@@ -6369,6 +6460,7 @@ var Tag;
         107: ['FullWords', 1, -1],
         108: ['FullClean', 0, -1],
         109: ['FullHide', 0, -1],
+        110: ['Unlock', 1, -1],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
@@ -8620,6 +8712,8 @@ var Tag;
                     case 'Monolog':
                     case 'Speak':
                     case 'VoiceOver':
+                    case 'Unlock':
+                    case 'Donate':
                         ids.push(action.gI());
                         break;
                     case 'Loop':
@@ -14154,14 +14248,48 @@ var Tag;
     Tag.Expression = Expression;
 })(Tag || (Tag = {}));
 /**
- * 声明（运行时）打赏成功元信息接口规范。
+ * 声明（运行时）付款数据元信息接口规范。
  *
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Ev/_Runtime/IDonateMetas.ts
+ * @file      Ev/_Runtime/IPayMetas.ts
  */
 /// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）付费数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Pay.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IPayMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Pay = (function (_super) {
+        __extends(Pay, _super);
+        /**
+         * 构造函数。
+         */
+        function Pay(metas) {
+            _super.call(this, metas);
+            this.amount = metas.amount;
+            this.suc = metas.suc;
+            this.fail = metas.fail;
+            this.id = metas.id;
+        }
+        /**
+         * 获取类型。
+         */
+        Pay.prototype.gT = function () {
+            return 'pay';
+        };
+        return Pay;
+    }(Ev.Event));
+    Ev.Pay = Pay;
+})(Ev || (Ev = {}));
 /**
  * 定义（运行时）打赏事件。
  *
@@ -14170,20 +14298,13 @@ var Tag;
  * @license   GPL-3.0
  * @file      Ev/_Runtime/Donate.ts
  */
-/// <reference path="../Event.ts" />
-/// <reference path="IDonateMetas.ts" />
+/// <reference path="Pay.ts" />
 var Ev;
 (function (Ev) {
     var Donate = (function (_super) {
         __extends(Donate, _super);
-        /**
-         * 构造函数。
-         */
-        function Donate(metas) {
-            _super.call(this, metas);
-            this.amount = metas.amount;
-            this.suc = metas.suc;
-            this.fail = metas.fail;
+        function Donate() {
+            _super.apply(this, arguments);
         }
         /**
          * 获取类型。
@@ -14192,7 +14313,7 @@ var Ev;
             return 'donate';
         };
         return Donate;
-    }(Ev.Event));
+    }(Ev.Pay));
     Ev.Donate = Donate;
 })(Ev || (Ev = {}));
 /**
@@ -14203,9 +14324,8 @@ var Ev;
  * @license   GPL-3.0
  * @file      Tag/_Action/_Logic/Donate.ts
  */
-/// <reference path="../../Action.ts" />
+/// <reference path="../../Idable.ts" />
 /// <reference path="../../../Ev/_Runtime/Donate.ts" />
-/// <reference path="../../../Ev/_Runtime/IDonateMetas.ts" />
 var Tag;
 (function (Tag) {
     var Donate = (function (_super) {
@@ -14223,27 +14343,45 @@ var Tag;
          * 执行。
          */
         Donate.prototype.p = function (runtime) {
-            var amount = parseInt(this._p[0], 10) || 0, states = runtime.gS(), depth = states.g('$d');
-            return new Promise(function (resolve) {
-                var suc = function () {
-                    states.s('$v' + depth, true)
-                        .s('$t' + depth, false);
-                    resolve(runtime);
-                }, fail = function () {
-                    states.s('$v' + depth, false)
-                        .s('$t' + depth, false);
-                    resolve(runtime);
-                };
-                runtime.dispatchEvent(new Ev.Donate({
-                    target: states,
-                    amount: amount,
-                    suc: suc,
-                    fail: fail
-                }));
+            var _this = this;
+            return Promise.resolve(_super.prototype.p.call(this, runtime))
+                .then(function () {
+                var amount = parseInt(_this._p[0], 10) || 0, states = runtime.gS(), id = _this.gI(), ktime = '_td', td = states.g(ktime), tn = new Date().getTime(), depth = states.g('$d'), yes = function () { return states.s('$v' + depth, true).s('$t' + depth, false); }, no = function () { return states.s('$v' + depth, false).s('$t' + depth, false); };
+                if (td && states.qp(id, td, true)) {
+                    yes();
+                    states.d(ktime);
+                    return runtime;
+                }
+                else {
+                    return new Promise(function (resolve) {
+                        var suc = function () {
+                            yes();
+                            resolve(runtime);
+                        }, fail = function () {
+                            no();
+                            resolve(runtime);
+                        };
+                        states.s(ktime, tn);
+                        runtime.a(_this);
+                        states.l().then(function () {
+                            states.e('pay');
+                            runtime.dispatchEvent(new Ev.Donate({
+                                target: states,
+                                amount: amount,
+                                id: id,
+                                suc: suc,
+                                fail: fail
+                            }));
+                        }).catch(function () {
+                            no();
+                            return runtime;
+                        });
+                    });
+                }
             });
         };
         return Donate;
-    }(Tag.Action));
+    }(Tag.Idable));
     Tag.Donate = Donate;
 })(Tag || (Tag = {}));
 /**
@@ -14329,47 +14467,70 @@ var Ev;
     Ev.Rank = Rank;
 })(Ev || (Ev = {}));
 /**
- * 声明（运行时）付款数据元信息接口规范。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/IPayMetas.ts
- */
-/// <reference path="../../Core/_Runtime/IStates.ts" />
-/**
  * 定义（运行时）付费数据事件。
  *
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Ev/_Runtime/Pay.ts
+ * @file      Ev/_Runtime/PayOption.ts
  */
-/// <reference path="../Event.ts" />
-/// <reference path="IPayMetas.ts" />
+/// <reference path="Pay.ts" />
 var Ev;
 (function (Ev) {
-    var Pay = (function (_super) {
-        __extends(Pay, _super);
-        /**
-         * 构造函数。
-         */
-        function Pay(metas) {
-            _super.call(this, metas);
-            this.amount = metas.amount;
-            this.suc = metas.suc;
-            this.fail = metas.fail;
-            this.id = metas.id;
+    var PayOption = (function (_super) {
+        __extends(PayOption, _super);
+        function PayOption() {
+            _super.apply(this, arguments);
         }
         /**
          * 获取类型。
          */
-        Pay.prototype.gT = function () {
-            return 'pay';
+        PayOption.prototype.gT = function () {
+            return 'pay.option';
         };
-        return Pay;
+        return PayOption;
+    }(Ev.Pay));
+    Ev.PayOption = PayOption;
+})(Ev || (Ev = {}));
+/**
+ * 声明（运行时）自动读档数据元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IAutoLoadMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）自动读档数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/AutoLoad.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IAutoLoadMetas.ts" />
+var Ev;
+(function (Ev) {
+    var AutoLoad = (function (_super) {
+        __extends(AutoLoad, _super);
+        /**
+         * 构造函数。
+         */
+        function AutoLoad(metas) {
+            _super.call(this, metas);
+            this.valid = metas.valid;
+        }
+        /**
+         * 获取类型。
+         */
+        AutoLoad.prototype.gT = function () {
+            return 'autoload';
+        };
+        return AutoLoad;
     }(Ev.Event));
-    Ev.Pay = Pay;
+    Ev.AutoLoad = AutoLoad;
 })(Ev || (Ev = {}));
 /**
  * 定义停止环境音乐动作标签组件。
@@ -14603,6 +14764,104 @@ var Tag;
     Tag.FullHide = FullHide;
 })(Tag || (Tag = {}));
 /**
+ * 定义（运行时）解锁数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/PayUnlock.ts
+ */
+/// <reference path="Pay.ts" />
+var Ev;
+(function (Ev) {
+    var PayUnlock = (function (_super) {
+        __extends(PayUnlock, _super);
+        function PayUnlock() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取类型。
+         */
+        PayUnlock.prototype.gT = function () {
+            return 'pay.unlock';
+        };
+        return PayUnlock;
+    }(Ev.Pay));
+    Ev.PayUnlock = PayUnlock;
+})(Ev || (Ev = {}));
+/**
+ * 定义购买数据动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/Unlock.ts
+ */
+/// <reference path="../../Idable.ts" />
+/// <reference path="../../../Ev/_Runtime/PayUnlock.ts" />
+var Tag;
+(function (Tag) {
+    var Unlock = (function (_super) {
+        __extends(Unlock, _super);
+        function Unlock() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Unlock.prototype.gN = function () {
+            return 'Unlock';
+        };
+        /**
+         * 执行。
+         */
+        Unlock.prototype.p = function (runtime) {
+            var _this = this;
+            return Promise.resolve(_super.prototype.p.call(this, runtime))
+                .then(function () {
+                var amount = parseInt(_this._p[0], 10) || 0, states = runtime.gS(), kal = '.al', autoload = states.g(kal), depth = states.g('$d'), id = _this.gI(), yes = function () { return states.s('$v' + depth, true).s('$t' + depth, false); }, no = function () { return states.s('$v' + depth, false).s('$t' + depth, false); };
+                if (states.qp(id, amount)) {
+                    yes();
+                    return runtime;
+                }
+                else {
+                    if (autoload) {
+                        states.d(kal);
+                        no();
+                        return runtime;
+                    }
+                    return new Promise(function (resolve) {
+                        var suc = function () {
+                            states.ep(id, amount);
+                            yes();
+                            resolve(runtime);
+                        }, fail = function () {
+                            no();
+                            resolve(runtime);
+                        };
+                        runtime.a(_this);
+                        states.l().then(function () {
+                            states.e('pay');
+                            runtime.dispatchEvent(new Ev.PayUnlock({
+                                target: states,
+                                amount: amount,
+                                id: id,
+                                suc: suc,
+                                fail: fail
+                            }));
+                        }).catch(function () {
+                            no();
+                            return runtime;
+                        });
+                    });
+                }
+            });
+        };
+        return Unlock;
+    }(Tag.Idable));
+    Tag.Unlock = Unlock;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -14698,7 +14957,8 @@ var Tag;
 /// <reference path="_Action/_Logic/Donate.ts" />
 /// <reference path="../Ev/_Runtime/Fin.ts" />
 /// <reference path="../Ev/_Runtime/Rank.ts" />
-/// <reference path="../Ev/_Runtime/Pay.ts" />
+/// <reference path="../Ev/_Runtime/PayOption.ts" />
+/// <reference path="../Ev/_Runtime/AutoLoad.ts" />
 /// <reference path="_Action/_Director/PlayESM.ts" />
 /// <reference path="_Action/_Director/StopESM.ts" />
 /// <reference path="_Action/_Director/StopSE.ts" />
@@ -14706,6 +14966,7 @@ var Tag;
 /// <reference path="_Action/_Text/FullWords.ts" />
 /// <reference path="_Action/_Text/FullClean.ts" />
 /// <reference path="_Action/_Text/FullHide.ts" />
+/// <reference path="_Action/_Logic/Unlock.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -14748,6 +15009,7 @@ var Runtime;
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
+            this._al = [undefined, undefined];
             this.addEventListener('loading', function () {
                 _this._fl = true;
                 if (_this._fp) {
@@ -14755,11 +15017,36 @@ var Runtime;
                 }
             });
             this.addEventListener('ready', function () {
-                _this._s.l();
                 _this._d.t(_this._e.gT(), _this._e.gC())
                     .s(ep.s())
                     .p(ep.p());
                 _this._fr = true;
+                _this._s.l().then(function () {
+                    var valid = false;
+                    if (_this._al[0]) {
+                        var pay = _this._s.q('pay');
+                        if (pay && pay[1]['_a'] == _this._al[0]) {
+                            _this._al[1] = pay[1];
+                            valid = true;
+                        }
+                    }
+                    _this._fp = false;
+                    _this._d.Load(false);
+                    _this.dispatchEvent(new Ev.AutoLoad({
+                        target: _this._s,
+                        valid: valid
+                    }));
+                    if (!valid)
+                        _this._al = [undefined, undefined];
+                }).catch(function () {
+                    _this._al = [undefined, undefined];
+                    _this._d.Load(false);
+                    _this.dispatchEvent(new Ev.AutoLoad({
+                        target: _this._s,
+                        valid: false
+                    }));
+                });
+                // 在网页端，在此 this._fp === false，调试
                 if (_this._fp) {
                     _this._fp = false;
                     _this._d.Load(false);
@@ -14844,6 +15131,10 @@ var Runtime;
          * 点击开始播放、重新播放调用。
          */
         Runtime.prototype.play = function () {
+            if (this._al[0] && this._al[1]) {
+                this._d.sl(this._al[0], true);
+                return this;
+            }
             if (this._fp)
                 return this;
             this._fp = true;
@@ -14955,6 +15246,13 @@ var Runtime;
             return this;
         };
         /**
+         * 自动读档
+         */
+        Runtime.prototype.autoLoad = function (id) {
+            this._al[0] = id;
+            return this;
+        };
+        /**
          * 播报当前事件。
          */
         Runtime.prototype.s = function (scene, title, actions) {
@@ -14998,11 +15296,11 @@ var Runtime;
         /**
          * 读档继续。
          */
-        Runtime.prototype.l = function (id) {
+        Runtime.prototype.l = function (id, autoload) {
             var _this = this;
             this._fh = true; // 中止现有时序流
             var load = function (data) {
-                var fresh = !data || {} == data, episode = _this._e, states = _this._s, ks = '_s', ktn = '_rt', kcn = '_rc', kco = '$rc', kdc = '_c', krc = '.c', pos = Core.IDirector.Position, tn, cn, enter;
+                var fresh = !data || {} == data, episode = _this._e, states = _this._s, ks = '_s', ktn = '_rt', kcn = '_rc', kco = '$rc', kdc = '_c', kal = '.al', krc = '.c', pos = Core.IDirector.Position, tn, cn, enter;
                 _this._d.reset().then(function () {
                     if (!fresh)
                         states.i(data);
@@ -15022,6 +15320,8 @@ var Runtime;
                         .m(kdc + pos.CRight, krc + pos.CRight)
                         .m(kdc + pos.Right, krc + pos.Right)
                         .m(kdc + pos.RRight, krc + pos.RRight);
+                    if (autoload)
+                        states.s(kal, true);
                     _this._d.h();
                     _this.t(function () {
                         _this._fh = false;
@@ -15048,11 +15348,17 @@ var Runtime;
                     });
                 });
             };
-            this.dispatchEvent(new Ev.Load({
-                target: this._s,
-                callback: load,
-                id: id
-            }));
+            if (autoload) {
+                load(this._al[1]);
+                this._al = [undefined, undefined];
+            }
+            else {
+                this.dispatchEvent(new Ev.Load({
+                    target: this._s,
+                    callback: load,
+                    id: id
+                }));
+            }
         };
         /**
          * 绑定视图。
@@ -15311,7 +15617,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.24.1';
+    Bigine.version = '0.24.2';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

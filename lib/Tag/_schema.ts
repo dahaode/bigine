@@ -122,6 +122,7 @@ namespace Tag {
         CollPop: '删除元素',
         CollPush: '增加元素',
         Donate: '打赏',
+        Unlock: '解锁',
 
         DefOptions: '定义选择',
         AddOption: '添加选项',
@@ -151,7 +152,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 110
+    export var S: { [index: number]: any[] } = { // next 111
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -300,6 +301,7 @@ namespace Tag {
         107: ['FullWords', 1, -1],   // [开/关] 
         108: ['FullClean', 0, -1],
         109: ['FullHide', 0, -1],
+        110: ['Unlock', 1, -1], // [萝卜币]
 
         58: ['Loop', 0, -1, {
             '-1': [1]

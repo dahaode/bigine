@@ -42,6 +42,16 @@ namespace Sprite {
         private _si: number;
 
         /**
+         * 下一个文本范围集合。
+         */
+        private _cb: Util.IHashTable<G.IBounds>;
+
+        /**
+         * 文本首行偏移量集合。
+         */
+        private _tp: Util.IHashTable<any>;
+
+        /**
          * 构造函数。
          */
         constructor(id: string, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>) {
@@ -80,14 +90,22 @@ namespace Sprite {
                 s: <G.IBounds> _savat
             };
             this._si = undefined;
+            this._tp = {
+                v: {x: _vtext['x'], y: _vtext['y']},
+                m: {x: _mtext['x'], y: _mtext['y']},
+                s: {x: _stext['x'], y: _stext['y']},
+                c: {x: 0, y: 0}
+            };
+            this._cb = {
+                v: <G.IBounds> Util.clone(_vtext),
+                m: <G.IBounds> Util.clone(_mtext),
+                s: <G.IBounds> Util.clone(_stext)
+            };
             (<Words> this.o(0))
                 .a(this._x['v'] = new G.Sprite(<G.IBounds> _vback)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _vback, true))
-                    .a(this._x['vt'] = new G.Text(<G.IBounds> _vtext, _vtext['s'], _vtext['lh'], left, true)
-                        .tc(_vtext['c'])
-                        .tl(_vtext['ls'])
-                        .ts(_vtext['ss'], _vtext['ss'], _vtext['ss'])
-                    ).o(0)
+                    .a(this._x['vt'] = new G.Sprite(<G.IBounds> _vback))
+                    .o(0)
                 ).a(this._x['m'] = new G.Sprite(<G.IBounds> _mback)
                     .a(new G.Image(this._rr[1].o(), <G.IBounds> _mback, true))
                     .a(this._x['ma'] = new G.Sprite(<G.IBounds> _mavat, true))
@@ -95,11 +113,8 @@ namespace Sprite {
                         .tc(_mname['c'])
                         .ts(_mname['ss'], _mname['ss'], _mname['ss'])
                         .a(this._x['mn'] = new G.TextPhrase())
-                    ).a(this._x['mt'] = new G.Text(<G.IBounds> _mtext, _mtext['s'], _mtext['lh'], left, true)
-                        .tc(_mtext['c'])
-                        .tl(_mtext['ls'])
-                        .ts(_mtext['ss'], _mtext['ss'], _mtext['ss'])
-                    ).o(0)
+                    ).a(this._x['mt'] = new G.Sprite(<G.IBounds> _mback))
+                    .o(0)
                 ).a(this._x['s'] = new G.Sprite(<G.IBounds> _sback)
                     .a(new G.Image(this._rr[2].o(), <G.IBounds> _sback, true))
                     .a(this._x['sa'] = new G.Sprite(<G.IBounds> _savat, true))
@@ -107,10 +122,7 @@ namespace Sprite {
                         .tc(_sname['c'])
                         .ts(_sname['ss'], _sname['ss'], _sname['ss'])
                         .a(this._x['sn'] = new G.TextPhrase())
-                    ).a(this._x['st'] = new G.Text(<G.IBounds> _stext, _stext['s'], _stext['lh'], left, true)
-                        .tc(_stext['c'])
-                        .tl(_stext['ls'])
-                        .ts(_stext['ss'], _stext['ss'], _stext['ss'])
+                    ).a(this._x['st'] = new G.Sprite(<G.IBounds> _sback)
                     ).o(0)
                 );
             if (_vcurs) {
@@ -158,12 +170,8 @@ namespace Sprite {
          * 旁白。
          */
         public vv(clob: string, auto: boolean = false): Promise<Words> {
-            let text: G.Text = <G.Text> this._x['vt'],
-                image: G.Image = <G.Image> this._x['vc'];
-            this.$w(<G.Text> text.o(0), clob, this._c['v']);
             (<G.Sprite> this._x['v']).o(1);
-            if (image) image.o(0);
-            return this.$v(text, auto, image).then(() => {
+            return this.split(clob, 'v', auto).then(() => {
                 (<G.Sprite> this._x['v']).o(0);
                 if (this._si) {
                     clearInterval(this._si);
@@ -177,16 +185,12 @@ namespace Sprite {
          * 独白。
          */
         public vm(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto: boolean = false): Promise<Words> {
-            let text: G.Text = <G.Text> this._x['mt'],
-                image: G.Image = <G.Image> this._x['mc'];
-            this.$w(<G.Text> text.o(0), clob, this._c['m']);
             (<G.Sprite> this._x['ma'])
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['m'], true));
             (<G.TextPhrase> this._x['mn']).t(name);
             (<G.Sprite> this._x['m']).o(1);
-            if (image) image.o(0);
-            return this.$v(text, auto, image).then(() => {
+            return this.split(clob, 'm', auto).then(() => {
                 (<G.Sprite> this._x['m']).o(0);
                 if (this._si) {
                     clearInterval(this._si);
@@ -200,16 +204,12 @@ namespace Sprite {
          * 对白。
          */
         public vs(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto: boolean = false): Promise<Words> {
-            let text: G.Text = <G.Text> this._x['st'],
-                image: G.Image = <G.Image> this._x['sc'];
-            this.$w(<G.Text> text.o(0), clob, this._c['s']);
             (<G.Sprite> this._x['sa'])
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['s'], true));
             (<G.TextPhrase> this._x['sn']).t(name);
             (<G.Sprite> this._x['s']).o(1);
-            if (image) image.o(0);
-            return this.$v(text, auto, image).then(() => {
+            return this.split(clob, 's', auto).then(() => {
                 (<G.Sprite> this._x['s']).o(0);
                 if (this._si) {
                     clearInterval(this._si);
@@ -220,9 +220,75 @@ namespace Sprite {
         }
 
         /**
+         * 文本分解。
+         */
+        protected split(clob: string, theme: string, auto: boolean): Promise<Words> {
+            let words: Array<string> = clob.split('\\r'),
+                _txt: string = theme + 't',
+                funcs: Array<Function> = [];
+            (<G.Sprite> this._x[_txt]).c();
+            this._cb[theme].y = this._tp[theme].y;
+            Util.each(words, (word: string, index: number) => {
+                let bufs: Array<string> = word.split('\\l');
+                if (bufs.length == 1) {
+                    funcs.push(() => this.every(word, theme, auto, index == words.length - 1));
+                } else {
+                    Util.each(bufs, (buffer: string, i: number) => {
+                        funcs.push(() => this.every(buffer, theme, auto, false, i));
+                    });
+                }
+            });
+            return funcs.reduce((previous: Promise<Words>, current: (value: Words) => {} | Thenable<{}>) => {
+                return previous.then(current);
+            }, Promise.resolve());
+        }
+
+        /**
+         * 对于分解的话逐行进行处理。
+         */
+        protected every(clob: string, theme: string, auto: boolean, wait: boolean, pause: number = -1): Promise<Words> {
+            let _img: string = theme + 'c',
+                _txt: string = theme + 't',
+                eRow: number = 0,
+                tBound: G.IBounds = Util.clone(this._cb[theme]),
+                tText: G.Text,
+                image: G.Image = <G.Image> this._x[_img],
+                left: G.Text.Align = G.Text.Align.Left,
+                lHeight: number = Math.max(tBound['lh'], tBound['s']);
+            if (image) image.o(0);
+            while (/^\\n.*/.test(clob)) {   // 计算开头的空白行行数
+                eRow++;
+                clob = clob.substr(2);
+            }
+            if (eRow > 0) {
+                tBound.y += eRow * lHeight;
+                this._tp['c'].x = 0;
+            } else {
+                if (pause > 0) tBound.y -= lHeight;
+            }
+            if (clob == '') return Promise.resolve(this);
+            tText = new G.Text(<G.IBounds> tBound, tBound['s'], tBound['lh'], left, true)
+                .tc(tBound['c'])
+                .tl(tBound['ls'])
+                .to(pause > 0 ? this._tp['c'].x : 0)
+                .ts(tBound['ss'], tBound['ss'], tBound['ss']);
+            (<G.Sprite> this._x[_txt]).a(tText);
+            this.$w(<G.Text> tText.o(0), clob, this._c[theme]);
+            (<G.Sprite> this._x[theme]).o(1);
+            return this.$v(tText, auto, image, pause >= 0 ? true : wait).then(() => {
+                if (this._h) {
+                    let pnt: G.IPoint = tText.gCp();
+                    this._cb[theme].y = pnt.y;
+                    this._tp['c'].x = pnt.x - this._tp[theme].x;
+                }
+                return this;
+            });
+        }
+
+        /**
          * 显示内容文字。
          */
-        private $v(text: G.Text, auto: boolean, image: G.Image): Promise<G.Element> {
+        private $v(text: G.Text, auto: boolean, image: G.Image, wait: boolean): Promise<G.Element> {
             this.o(1);
             return new Promise<void>((resolve: () => void) => {
                 let aType: G.Type = new G.Type(1),
@@ -255,19 +321,24 @@ namespace Sprite {
             }).then(() => {
                 let animation: G.Animation,
                     target: G.Element;
-                if (auto) {
-                    animation = new G.TypeDelay(9);
-                    target = text;
-                } else {
-                    animation = new G.WaitForClick();
-                    target = this;
-                    if (image) {
+                if (wait) {
+                    if (auto) {
+                        animation = new G.TypeDelay(9);
+                        target = text;
+                    } else {
+                        animation = new G.WaitForClick();
+                        target = this;
+                        if (image) {
                         image.o(1);
                         this._si = setInterval(() => {
                             let next: number = image.gO() == 1 ? 0 : 1;
                             image.o(next);
                         }, 500);
                     }
+                    }
+                } else {
+                    animation = new G.TypeDelay(0.1);
+                    target = text;
                 }
                 this._h = animation;
                 this.dispatchEvent(new Ev.WordsAnimation({

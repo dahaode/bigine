@@ -28,6 +28,7 @@
  *     * `_ra` -  切幕动画 - Tag    // 添加切幕动画命令时所需记录的存档信息
  *     * `_rb` -  神态动画 - Tag    // 添加神态动画命令时所需记录的存档信息
  *     * `_f` -  全屏文本 - Tag    // 添加全屏文本命令时所需记录的存档信息
+ *     * `_td` -  全屏文本 - Tag    // 打赏时间
  * 2. `.` 表明为会话持久信息，不能被存档记录；
  *     * `.p<人物名>` - 人物站位 - Runtime/Tag
  *     * `.a` - 动作编号 - Runtime/Tag
@@ -36,6 +37,7 @@
  *     * `.c<站位>` - 人物名 - Tag
  *     * `.z` -  房间状态 - Tag
  *     * `.l` -  资源加载状态 - Tag
+ *     * `.al` -  自动读档标记 - Tag
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -106,7 +108,7 @@ namespace Core {
         /**
          * 查询档位信息。
          */
-        q(index: string, type?: IStates.Save): [string, number];
+        q(index: string, type?: IStates.Save): [string, number | Util.IHashTable<any>];
 
         /**
          * 查询档位信息。
@@ -121,7 +123,7 @@ namespace Core {
         /**
          * 查询是否付费。
          */
-        qp(id: string, count: number): boolean;
+        qp(id: string, count: number, donate?: boolean): boolean;
 
         /**
          * 加载付费信息。

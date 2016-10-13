@@ -132,9 +132,9 @@ namespace Sprite {
                 left: G.Text.Align = G.Text.Align.Left,
                 lHeight: number = Math.max(bBound['lh'], bBound['s']),
                 sClob: string;
-            while (/^\\n.*/.test(clob)) {   // 计算开头的换行行数
+            while (/^\\n.*/.test(clob)) {   // 计算开头的空白行行数
                 eRow++;
-                clob = clob.substr(2, clob.length);
+                clob = clob.substr(2);
             }
             if (eRow > 0) {
                 this._cb.y += eRow * lHeight;
@@ -150,8 +150,9 @@ namespace Sprite {
             context.textBaseline = 'middle';
             context.shadowBlur = context.shadowOffsetX = context.shadowOffsetY = bBound['ss'];
             context.shadowColor = '#000';
-            sClob = clob.replace('【', '');
-            sClob = sClob.replace('】', '');
+            sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '');
+            sClob = sClob.replace(/【/g, '');
+            sClob = sClob.replace(/】/g, '');
             row = Math.ceil(context.measureText(sClob).width / bBound.w);
             if (this._tl + row > bBound['row']) {        // 预计会有多少行内容，超出最大行，重起绘制
                 this._tl = 0;

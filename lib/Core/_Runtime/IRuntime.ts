@@ -123,7 +123,7 @@ namespace Core {
         /**
          * 读取存档。
          */
-        l(id?: string): void;
+        l(id?: string, autoload?: boolean): void;
 
         /**
          * 绑定视图。

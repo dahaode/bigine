@@ -163,7 +163,7 @@ namespace Sprite {
                     }
                 }
 
-                event.preventDefault();
+                if (event.keyCode == 38 || event.keyCode == 40) event.preventDefault();
             };
             window.addEventListener('keydown', this._ke);
         }

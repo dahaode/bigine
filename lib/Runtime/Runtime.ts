@@ -108,6 +108,11 @@ namespace Runtime {
         private _nn: string;
 
         /**
+         * 记录自动读档 id 和 是否验证通过。
+         */
+        private _al: [string, Util.IHashTable<any>];
+
+        /**
          * 构造函数。
          */
         constructor(ep: Core.IRootTag) {
@@ -126,6 +131,7 @@ namespace Runtime {
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
+            this._al = [undefined, undefined];
             this.addEventListener('loading', () => {
                 this._fl = true;
                 if (this._fp) {
@@ -133,11 +139,35 @@ namespace Runtime {
                 }
             });
             this.addEventListener('ready', () => {
-                this._s.l();
                 this._d.t(this._e.gT(), this._e.gC())
                     .s(ep.s())
                     .p(ep.p());
                 this._fr = true;
+                this._s.l().then(() => {
+                    let valid: boolean = false;
+                    if (this._al[0]) {
+                        let pay: [string, Util.IHashTable<any>] = <[string, Util.IHashTable<any>]> this._s.q('pay');
+                        if (pay && pay[1]['_a'] == this._al[0]) {
+                            this._al[1] = pay[1];
+                            valid = true;
+                        }
+                    }
+                    this._fp = false;
+                    this._d.Load(false);
+                    this.dispatchEvent(new Ev.AutoLoad({
+                        target: this._s,
+                        valid: valid
+                    }));
+                    if (!valid) this._al = [undefined, undefined];
+                }).catch(() => {
+                    this._al = [undefined, undefined];
+                    this._d.Load(false);
+                    this.dispatchEvent(new Ev.AutoLoad({
+                        target: this._s,
+                        valid: false
+                    }));
+                });
+                // 在网页端，在此 this._fp === false，调试
                 if (this._fp) {
                     this._fp = false;
                     this._d.Load(false);
@@ -229,6 +259,10 @@ namespace Runtime {
          * 点击开始播放、重新播放调用。
          */
         public play(): Runtime {
+            if (this._al[0] && this._al[1]) {
+                this._d.sl(this._al[0], true);
+                return this;
+            }
             if (this._fp)
                 return this;
             this._fp = true;
@@ -353,6 +387,14 @@ namespace Runtime {
         }
 
         /**
+         * 自动读档
+         */
+        public autoLoad(id: string): Runtime {
+            this._al[0] = id;
+            return this;
+        }
+
+        /**
          * 播报当前事件。
          */
         public s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime {
@@ -401,7 +443,7 @@ namespace Runtime {
         /**
          * 读档继续。
          */
-        public l(id: string): void {
+        public l(id: string, autoload: boolean): void {
             this._fh = true; // 中止现有时序流
             let load: (data: Util.IHashTable<any>) => void = (data: Util.IHashTable<any>) => {
                 let fresh: boolean = !data || {} == data,
@@ -412,6 +454,7 @@ namespace Runtime {
                     kcn: string = '_rc',
                     kco: string = '$rc',
                     kdc: string = '_c',
+                    kal: string = '.al',
                     krc: string = '.c',
                     pos: typeof Core.IDirector.Position = Core.IDirector.Position,
                     tn: string,
@@ -436,6 +479,7 @@ namespace Runtime {
                         .m(kdc + pos.CRight, krc + pos.CRight)
                         .m(kdc + pos.Right, krc + pos.Right)
                         .m(kdc + pos.RRight, krc + pos.RRight);
+                    if (autoload) states.s(kal, true);
                     this._d.h();
                     this.t(() => {
                         this._fh = false;
@@ -462,11 +506,16 @@ namespace Runtime {
                     });
                 });
             };
-            this.dispatchEvent(new Ev.Load({
-                target: this._s,
-                callback: load,
-                id: id
-            }));
+            if (autoload) {
+                load(this._al[1]);
+                this._al = [undefined, undefined];
+            } else {
+                this.dispatchEvent(new Ev.Load({
+                    target: this._s,
+                    callback: load,
+                    id: id
+                }));
+            }
         }
 
         /**
