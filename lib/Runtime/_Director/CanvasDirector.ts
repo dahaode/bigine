@@ -139,18 +139,19 @@ namespace Runtime {
             }
             els[0].appendChild(canvas);
             this._x = {};
+            /*
             let d1: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_bottom.png', raw),
                 d2: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_exp.png', raw),
                 d3: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_cover.png', raw);
+            */
             this._c = <G.Stage> new G.Stage(canvas.getContext('2d'))
                 .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
                 .a(new G.Sprite(bounds).i('c').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
-                .a(new G.Sprite(0, bounds.h - 20, bounds.w, 20)
-                    .a(new G.Image(d1.o(), 0, 0, bounds.w, 20))
-                    .a(new G.Image(d2.o(), 3, 3, bounds.w - 6, 14))
-                    .a(new G.Image(d3.o(), 6, 3, bounds.w - 6, 14).i('e')).i('L').o(0));
+                .a(new G.Sprite(0, bounds.h - 12, bounds.w, 12)
+                    .a(new G.Color(0, 0, bounds.w, 12, '#e7e7e7'))
+                    .a(new G.Color(0, 1, bounds.w, 10, '#0cf').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
             this._ca = [undefined, undefined];
@@ -202,7 +203,7 @@ namespace Runtime {
                         this._e = [0, 0];
                         return gLoading.o(0);
                     }
-                    gElapsed.x(e[1] / e[0] * (bounds.w - 6) + 6);
+                    gElapsed.x((e[1] / e[0] - 1) * bounds.w);
                     gLoading.o(1);
                 };
             Util.each(resources, (frame: Resource.Resource<string | HTMLImageElement>[]) => {
