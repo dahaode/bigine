@@ -2133,6 +2133,20 @@ declare namespace __Bigine {
             gT(): string;
         }
     }
+    namespace Ev {
+        interface IGuidMetas extends Util.IEventMetas<Core.IStates> {
+            continue: () => void;
+            pause: () => void;
+        }
+    }
+    namespace Ev {
+        class Guid extends Event<Core.IStates> {
+            private continue;
+            private pause;
+            constructor(metas: IGuidMetas);
+            gT(): string;
+        }
+    }
     namespace Tag {
         class StopESM extends Action {
             gN(): string;

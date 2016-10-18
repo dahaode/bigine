@@ -97,6 +97,7 @@
 /// <reference path="../Ev/_Runtime/Rank.ts" />
 /// <reference path="../Ev/_Runtime/PayOption.ts" />
 /// <reference path="../Ev/_Runtime/AutoLoad.ts" />
+/// <reference path="../Ev/_Runtime/Guid.ts" />
 /// <reference path="_Action/_Director/PlayESM.ts" />
 /// <reference path="_Action/_Director/StopESM.ts" />
 /// <reference path="_Action/_Director/StopSE.ts" />

@@ -30,8 +30,9 @@ namespace Tag {
             let version: string = Bigine.version,
                 domain: string = Bigine.domain,
                 src: Util.IHashTable<any> = this.path(Core.ITheme.THEME, _base);
-            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain,
-                (des) => {
+            let offline: boolean = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false,
+                uri: string = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + this._c + '/theme.json?' + version + domain;
+            Util.Remote.get(uri, (des) => {
                     des = this.path(des, this._c);
                     callback(this.extend(des, src));
                 }, (error: Error, status?: any) => {

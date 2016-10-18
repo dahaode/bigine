@@ -63,7 +63,9 @@ namespace Runtime {
             this._t = ep.gT();
             this._l = null;
             ep.r(this);
-            Util.Remote.get('//s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain,
+            let offline: boolean = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false,
+                uri: string = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + '_/load.json?0.24.2-' + Bigine.domain;
+            Util.Remote.get(uri,
                 (des) => {
                     this._l = des;
                     runtime.dispatchEvent(new Ev.Loading({

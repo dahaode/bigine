@@ -679,7 +679,7 @@ var Resource;
          */
         function Resource(uri, type) {
             var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext;
-            var offline = false;
+            var offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
             if (types.Raw == type) {
                 this._l = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + uri;
                 ext = this._l.substr(-4);
@@ -826,7 +826,8 @@ var Runtime;
             this._t = ep.gT();
             this._l = null;
             ep.r(this);
-            Util.Remote.get('//s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain, function (des) {
+            var offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false, uri = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + '_/load.json?0.24.2-' + Bigine.domain;
+            Util.Remote.get(uri, function (des) {
                 _this._l = des;
                 runtime.dispatchEvent(new Ev.Loading({
                     target: _this
@@ -4040,9 +4041,9 @@ var Sprite;
          */
         function SeriesSlots(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _desc = theme['text'], _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _desc = theme['text'], _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
             _super.call(this, 0, 0, w, h);
-            this._c = [_auto, _1];
+            this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
             this._rr = [
                 rr.g(_close['i'], raw),
@@ -4051,6 +4052,12 @@ var Sprite;
                 rr.g(_auto['ih'], raw),
                 rr.g(_1['i'], raw),
                 rr.g(_1['ih'], raw),
+                rr.g(_2['i'], raw),
+                rr.g(_2['ih'], raw),
+                rr.g(_3['i'], raw),
+                rr.g(_3['ih'], raw),
+                rr.g(_4['i'], raw),
+                rr.g(_4['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -4067,7 +4074,7 @@ var Sprite;
          */
         SeriesSlots.prototype.vs = function (states, fs, duration) {
             var _this = this;
-            var type = Core.IStates.Save.End, series = Core.IRuntime.Series.Last, $1 = states.q('1', type), _1 = this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+            var type = Core.IStates.Save.End, series = Core.IRuntime.Series.Last, right = G.Text.Align.Right;
             var succ;
             var fail;
             var loop = function () {
@@ -4077,20 +4084,43 @@ var Sprite;
             };
             fs == series ? this._de.o(0) : this._de.o(1);
             succ = function () {
-                _this.e(_this._x['1'])
-                    .a(_this._x['1'] = new G.Button(_1)
-                    .b(function () {
-                    _this.dispatchEvent(new Ev.SlotsSave({
-                        target: _this,
-                        slot: '1'
-                    }));
-                }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true))
-                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
-                    .tc(_1t['c'])
-                    .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）'))));
+                var slots = states.qa(type);
+                var last = 1;
+                var button = function (index, slot) {
+                    if (index != 'auto') {
+                        var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                        _this.e(_this._x[index])
+                            .a(_this._x[index] = new G.Button(_i)
+                            .b(function () {
+                            _this.dispatchEvent(new Ev.SlotsSave({
+                                target: _this,
+                                slot: index
+                            }));
+                        }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                            .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
+                            .tc(_it['c'])
+                            .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
+                        last++;
+                    }
+                };
+                Util.each(slots, function (slot, index) {
+                    button(index, slot);
+                });
+                if (last <= 4)
+                    button(last.toString());
+                if (last <= 4) {
+                    for (var i = last; i <= 4; i++) {
+                        var _ii = 4 + (i - 1) * 2;
+                        var _i = _this._c[i];
+                        _this.e(_this._x[i.toString()])
+                            .a(_this._x[i.toString()] = new G.Image(_this._rr[_ii].o(), _i));
+                    }
+                }
                 return _this.v(duration);
             };
             fail = function () {
+                var _1 = _this._c['1'];
+                var _1t = _1['text'];
                 _this.e(_this._x['1'])
                     .a(_this._x['1'] = new G.Button(_1)
                     .b(function () {
@@ -4109,7 +4139,34 @@ var Sprite;
         SeriesSlots.prototype.vl = function (states, duration) {
             var _this = this;
             return states.l().then(function () {
-                var type = Core.IStates.Save.Series, $a = states.q('auto', type), _a = _this._c[0], _at = _a['text'], $1 = states.q('1', type), _1 = _this._c[1], _1t = _1['text'], right = G.Text.Align.Right;
+                var type = Core.IStates.Save.Series, $a = states.q('auto', type), _a = _this._c[0], _at = _a['text'], slots = states.qa(type), right = G.Text.Align.Right;
+                var last = 1;
+                var button = function (index, slot) {
+                    if (index != 'auto' && index != 'pay') {
+                        var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                        _this.a(_this._x[index] = new G.Button(_i)
+                            .b(function () {
+                            _this.dispatchEvent(new Ev.SlotsLoad({
+                                target: _this,
+                                id: slot[0]
+                            }));
+                        }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                            .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
+                            .tc(_it['c'])
+                            .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
+                        last++;
+                    }
+                };
+                Util.each(slots, function (slot, index) {
+                    button(index, slot);
+                });
+                if (last <= 4) {
+                    for (var i = last; i <= 4; i++) {
+                        var _ii = 4 + (i - 1) * 2;
+                        var _i = _this._c[i];
+                        _this.a(_this._x[i.toString()] = new G.Image(_this._rr[_ii].o(), _i));
+                    }
+                }
                 _this.a(_this._x['a'] = $a ?
                     new G.Button(_a)
                         .b(function () {
@@ -4119,24 +4176,11 @@ var Sprite;
                         }));
                     }, new G.Image(_this._rr[3].o(), _a, true), new G.Image(_this._rr[2].o(), _a, true)) :
                     new G.Sprite(_a)
-                        .a(new G.Image(_this._rr[2].o(), _a, true))).a(_this._x['1'] = $1 ?
-                    new G.Button(_1)
-                        .b(function () {
-                        _this.dispatchEvent(new Ev.SlotsLoad({
-                            target: _this,
-                            id: $1[0]
-                        }));
-                    }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true)) :
-                    new G.Sprite(_1)
-                        .a(new G.Image(_this._rr[4].o(), _1, true)));
+                        .a(new G.Image(_this._rr[2].o(), _a, true)));
                 _this._x['a']
                     .a(new G.Text(_at, _at['s'], _at['lh'], right, true)
                     .tc(_at['c'])
                     .a(new G.TextPhrase($a ? _this.$d($a[1]) : '（无）')));
-                _this._x['1']
-                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
-                    .tc(_1t['c'])
-                    .a(new G.TextPhrase($1 ? _this.$d($1[1]) : '（无）')));
                 _this._de.o(0);
                 return _this.v(duration);
             });
@@ -4832,11 +4876,6 @@ var Runtime;
             }
             els[0].appendChild(canvas);
             this._x = {};
-            /*
-            let d1: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_bottom.png', raw),
-                d2: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_exp.png', raw),
-                d3: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_cover.png', raw);
-            */
             this._c = new G.Stage(canvas.getContext('2d'))
                 .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
@@ -4946,7 +4985,29 @@ var Runtime;
                     var gAuthor = _this._x['a'].u(author ? author : title);
                     gAuthor.v(0);
                     return _this.lightOn()
-                        .then(function () { return gAuthor.p(new G.Delay(1000)); })
+                        .then(function () {
+                        var flag = false;
+                        _this._r.dispatchEvent(new Ev.Guid({
+                            target: _this._r.gS(),
+                            continue: function () { flag = false; },
+                            pause: function () { flag = true; }
+                        }));
+                        return gAuthor.p(new G.Delay(1000)).then(function () {
+                            return new Promise(function (resolve) {
+                                if (!flag) {
+                                    resolve(_this._r);
+                                }
+                                else {
+                                    var it = setInterval(function () {
+                                        if (!flag) {
+                                            clearInterval(it);
+                                            resolve(_this._r);
+                                        }
+                                    }, 1000);
+                                }
+                            });
+                        });
+                    })
                         .then(function () { return _this.lightOff(); })
                         .then(function () { return gAuthor.o(0); });
                 }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
@@ -5775,13 +5836,6 @@ var Runtime;
                 _this._r.gS().e(ev.slot);
             }).addEventListener('slots.load', function (ev) {
                 _this.sl(ev.id);
-                /*this.lightOff().then(() => {
-                    this._x['sl'].h(0);
-                    this._x['s'].h(0);
-                    if (!this._a)
-                        this._x['t'].v(0);
-                    this._r.l(ev.id);
-                });*/
             });
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
@@ -5792,19 +5846,12 @@ var Runtime;
                     _this._r.gS().e('auto', true);
                 slotsFromStart = false;
                 _this._x['ss'].h();
-            }).addEventListener('slots.save', function () {
+            }).addEventListener('slots.save', function (ev) {
                 _this._x['ss'].h();
-                _this._r.gS().e('1', true);
+                _this._r.gS().e(ev.slot, true);
             }).addEventListener('slots.load', function (ev) {
                 slotsFromStart = false;
                 _this.sl(ev.id);
-                /*this.lightOff().then(() => {
-                    this._x['ss'].h(0);
-                    this._x['s'].h(0);
-                    if (!this._a)
-                        this._x['t'].v(0);
-                    this._r.l(ev.id);
-                });*/
             });
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
@@ -10488,7 +10535,8 @@ var Tag;
         Theme.prototype.l = function (callback) {
             var _this = this;
             var version = Bigine.version, domain = Bigine.domain, src = this.path(Core.ITheme.THEME, _base);
-            Util.Remote.get('//s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, function (des) {
+            var offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false, uri = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + this._c + '/theme.json?' + version + domain;
+            Util.Remote.get(uri, function (des) {
                 des = _this.path(des, _this._c);
                 callback(_this.extend(des, src));
             }, function (error, status) {
@@ -14377,7 +14425,7 @@ var Tag;
                             }));
                         }).catch(function () {
                             no();
-                            return runtime;
+                            resolve(runtime);
                         });
                     });
                 }
@@ -14534,6 +14582,47 @@ var Ev;
         return AutoLoad;
     }(Ev.Event));
     Ev.AutoLoad = AutoLoad;
+})(Ev || (Ev = {}));
+/**
+ * 声明（运行时）新手引导数据元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IPayMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）付费数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Guid.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IGuidMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Guid = (function (_super) {
+        __extends(Guid, _super);
+        /**
+         * 构造函数。
+         */
+        function Guid(metas) {
+            _super.call(this, metas);
+            this.continue = metas.continue;
+            this.pause = metas.pause;
+        }
+        /**
+         * 获取类型。
+         */
+        Guid.prototype.gT = function () {
+            return 'guid';
+        };
+        return Guid;
+    }(Ev.Event));
+    Ev.Guid = Guid;
 })(Ev || (Ev = {}));
 /**
  * 定义停止环境音乐动作标签组件。
@@ -14854,7 +14943,7 @@ var Tag;
                             }));
                         }).catch(function () {
                             no();
-                            return runtime;
+                            resolve(runtime);
                         });
                     });
                 }
@@ -14962,6 +15051,7 @@ var Tag;
 /// <reference path="../Ev/_Runtime/Rank.ts" />
 /// <reference path="../Ev/_Runtime/PayOption.ts" />
 /// <reference path="../Ev/_Runtime/AutoLoad.ts" />
+/// <reference path="../Ev/_Runtime/Guid.ts" />
 /// <reference path="_Action/_Director/PlayESM.ts" />
 /// <reference path="_Action/_Director/StopESM.ts" />
 /// <reference path="_Action/_Director/StopSE.ts" />
@@ -15620,7 +15710,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.24.2';
+    Bigine.version = '0.24.3';
     Bigine.domain = '';
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

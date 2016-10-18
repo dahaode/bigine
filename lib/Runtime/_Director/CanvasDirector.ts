@@ -139,11 +139,6 @@ namespace Runtime {
             }
             els[0].appendChild(canvas);
             this._x = {};
-            /*
-            let d1: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_bottom.png', raw),
-                d2: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_exp.png', raw),
-                d3: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(assets + 'load_cover.png', raw);
-            */
             this._c = <G.Stage> new G.Stage(canvas.getContext('2d'))
                 .a(new G.Color(bounds, '#000').i('b'))
                 .a(new G.Sprite(bounds).i('M').o(0))
@@ -252,7 +247,28 @@ namespace Runtime {
                             let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
                             gAuthor.v(0);
                             return this.lightOn()
-                                .then(() => gAuthor.p(new G.Delay(1000)))
+                                .then(() => {
+                                    let flag: boolean = false;
+                                    this._r.dispatchEvent(new Ev.Guid({
+                                        target: this._r.gS(),
+                                        continue: () => { flag = false; },
+                                        pause: () => { flag = true; }
+                                    }));
+                                    return gAuthor.p(new G.Delay(1000)).then(() => {
+                                        return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
+                                            if (!flag) {
+                                                resolve(this._r);
+                                            } else {
+                                                var it: number = setInterval(() => {
+                                                    if (!flag) {
+                                                        clearInterval(it);
+                                                        resolve(this._r);
+                                                    }
+                                                }, 1000);
+                                            }
+                                        });
+                                    });
+                                })
                                 .then(() => this.lightOff())
                                 .then(() => gAuthor.o(0));
                         }).then(() => super.OP(start, title, author))
@@ -1131,13 +1147,6 @@ namespace Runtime {
                     this._r.gS().e(ev.slot);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
                     this.sl(ev.id);
-                    /*this.lightOff().then(() => {
-                        this._x['sl'].h(0);
-                        this._x['s'].h(0);
-                        if (!this._a)
-                            this._x['t'].v(0);
-                        this._r.l(ev.id);
-                    });*/
                 });
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
@@ -1148,19 +1157,12 @@ namespace Runtime {
                         this._r.gS().e('auto', true);
                     slotsFromStart = false;
                     this._x['ss'].h();
-                }).addEventListener('slots.save', () => {
+                }).addEventListener('slots.save', (ev: Ev.SlotsSave) => {
                     this._x['ss'].h();
-                    this._r.gS().e('1', true);
+                    this._r.gS().e(ev.slot, true);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
                     slotsFromStart = false;
                     this.sl(ev.id);
-                    /*this.lightOff().then(() => {
-                        this._x['ss'].h(0);
-                        this._x['s'].h(0);
-                        if (!this._a)
-                            this._x['t'].v(0);
-                        this._r.l(ev.id);
-                    });*/
                 });
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);

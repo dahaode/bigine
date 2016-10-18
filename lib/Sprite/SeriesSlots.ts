@@ -45,9 +45,12 @@ namespace Sprite {
                 _close: Util.IHashTable<any> = theme['close'],
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _auto: Util.IHashTable<any> = theme['auto'],
-                _1: Util.IHashTable<any> = theme['1'];
+                _1: Util.IHashTable<any> = theme['1'],
+                _2: Util.IHashTable<any> = theme['2'],
+                _3: Util.IHashTable<any> = theme['3'],
+                _4: Util.IHashTable<any> = theme['4'];
             super(0, 0, w, h);
-            this._c = [_auto, _1];
+            this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
             this._rr = [
                 rr.g<HTMLImageElement>(_close['i'], raw),
@@ -56,6 +59,12 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_auto['ih'], raw),
                 rr.g<HTMLImageElement>(_1['i'], raw),
                 rr.g<HTMLImageElement>(_1['ih'], raw),
+                rr.g<HTMLImageElement>(_2['i'], raw),
+                rr.g<HTMLImageElement>(_2['ih'], raw),
+                rr.g<HTMLImageElement>(_3['i'], raw),
+                rr.g<HTMLImageElement>(_3['ih'], raw),
+                rr.g<HTMLImageElement>(_4['i'], raw),
+                rr.g<HTMLImageElement>(_4['ih'], raw)
             ];
             (<SeriesSlots> this.o(0))
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -76,9 +85,6 @@ namespace Sprite {
         public vs(states: Core.IStates, fs?: Core.IRuntime.Series, duration?: number): Promise<SeriesSlots> {
             let type: Core.IStates.Save = Core.IStates.Save.End,
                 series: Core.IRuntime.Series = Core.IRuntime.Series.Last,
-                $1: [string, number] = <[string, number]> states.q('1', type),
-                _1: Util.IHashTable<any> = this._c[1],
-                _1t: Util.IHashTable<any> = _1['text'],
                 right: G.Text.Align = G.Text.Align.Right;
             let succ: () => Promise<SeriesSlots>;
             let fail: () => Promise<SeriesSlots>;
@@ -89,22 +95,46 @@ namespace Sprite {
             };
             fs == series ? this._de.o(0) : this._de.o(1);
             succ = () => {
-                this.e(this._x['1'])
-                    .a(this._x['1'] = new G.Button(<G.IBounds> _1)
-                    .b(() => {
-                        this.dispatchEvent(new Ev.SlotsSave({
-                            target: this,
-                            slot: '1',
-                        }));
-                    }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
-                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
-                        .tc(_1t['c'])
-                        .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
-                    )
-                );
+                let slots: Util.IHashTable<[string, number]> = states.qa(type);
+                let last: number = 1;
+                let button: (index: string, slot?: [string, number]) => void = (index: string, slot?: [string, number]) => {
+                    if (index != 'auto') {
+                        let _ii: number = 4 + (last - 1) * 2,
+                            _i: Util.IHashTable<any> = this._c[index],
+                            _it: Util.IHashTable<any> = this._c[index]['text'];
+                        this.e(this._x[index])
+                            .a(this._x[index] = new G.Button(<G.IBounds> _i)
+                            .b(() => {
+                                this.dispatchEvent(new Ev.SlotsSave({
+                                    target: this,
+                                    slot: index,
+                                }));
+                            }, new G.Image(this._rr[_ii + 1].o(), <G.IBounds> _i, true), new G.Image(this._rr[_ii].o(), <G.IBounds> _i, true))
+                            .a(new G.Text(<G.IBounds> _it, _it['s'], _it['lh'], right, true)
+                                .tc(_it['c'])
+                                .a(new G.TextPhrase(slot ? this.$d(slot[1]) : '（无）'))
+                            )
+                        );
+                        last++;
+                    }
+                };
+                Util.each(slots, (slot: [string, number], index: string) => {
+                    button(index, slot);
+                });
+                if (last <= 4) button(last.toString());
+                if (last <= 4) {
+                    for (var i: number = last; i <= 4; i++) {
+                        let _ii: number = 4 + (i - 1) * 2;
+                        let _i: Util.IHashTable<any> = this._c[i];
+                        this.e(this._x[i.toString()])
+                            .a(this._x[i.toString()] = new G.Image(this._rr[_ii].o(), <G.IBounds> _i));
+                    }
+                }
                 return this.v(duration);
             };
             fail = () => {
+                let _1: G.IBounds = this._c['1'];
+                let _1t: Util.IHashTable<any> = _1['text'];
                 this.e(this._x['1'])
                     .a(this._x['1'] = new G.Button(<G.IBounds> _1)
                     .b(() => {
@@ -129,10 +159,39 @@ namespace Sprite {
                     $a: [string, number] = <[string, number]> states.q('auto', type),
                     _a: Util.IHashTable<any> = this._c[0],
                     _at: Util.IHashTable<any> = _a['text'],
-                    $1: [string, number] = <[string, number]> states.q('1', type),
-                    _1: Util.IHashTable<any> = this._c[1],
-                    _1t: Util.IHashTable<any> = _1['text'],
+                    slots: Util.IHashTable<[string, number]> = states.qa(type),
                     right: G.Text.Align = G.Text.Align.Right;
+                let last: number = 1;
+                let button: (index: string, slot?: [string, number]) => void = (index: string, slot?: [string, number]) => {
+                    if (index != 'auto' && index != 'pay') {
+                        let _ii: number = 4 + (last - 1) * 2,
+                            _i: Util.IHashTable<any> = this._c[index],
+                            _it: Util.IHashTable<any> = this._c[index]['text'];
+                        this.a(this._x[index] = new G.Button(<G.IBounds> _i)
+                            .b(() => {
+                                this.dispatchEvent(new Ev.SlotsLoad({
+                                    target: this,
+                                    id: slot[0]
+                                }));
+                            }, new G.Image(this._rr[_ii + 1].o(), <G.IBounds> _i, true), new G.Image(this._rr[_ii].o(), <G.IBounds> _i, true))
+                            .a(new G.Text(<G.IBounds> _it, _it['s'], _it['lh'], right, true)
+                                .tc(_it['c'])
+                                .a(new G.TextPhrase(slot ? this.$d(slot[1]) : '（无）'))
+                            )
+                        );
+                        last++;
+                    }
+                };
+                Util.each(slots, (slot: [string, number], index: string) => {
+                    button(index, slot);
+                });
+                if (last <= 4) {
+                    for (var i: number = last; i <= 4; i++) {
+                        let _ii: number = 4 + (i - 1) * 2;
+                        let _i: Util.IHashTable<any> = this._c[i];
+                        this.a(this._x[i.toString()] = new G.Image(this._rr[_ii].o(), <G.IBounds> _i));
+                    }
+                }
                 this.a(this._x['a'] = $a ?
                     new G.Button(<G.IBounds> _a)
                         .b(() => {
@@ -143,26 +202,11 @@ namespace Sprite {
                         }, new G.Image(this._rr[3].o(), <G.IBounds> _a, true), new G.Image(this._rr[2].o(), <G.IBounds> _a, true)) :
                     new G.Sprite(<G.IBounds> _a)
                         .a(new G.Image(this._rr[2].o(), <G.IBounds> _a, true))
-                ).a(this._x['1'] = $1 ?
-                    new G.Button(<G.IBounds> _1)
-                        .b(() => {
-                            this.dispatchEvent(new Ev.SlotsLoad({
-                                target: this,
-                                id: $1[0]
-                            }));
-                        }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true)) :
-                    new G.Sprite(<G.IBounds> _1)
-                        .a(new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
-                    );
+                );
                 (<G.Sprite> this._x['a'])
                     .a(new G.Text(<G.IBounds> _at, _at['s'], _at['lh'], right, true)
                         .tc(_at['c'])
                         .a(new G.TextPhrase($a ? this.$d($a[1]) : '（无）'))
-                    );
-                (<G.Sprite> this._x['1'])
-                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
-                        .tc(_1t['c'])
-                        .a(new G.TextPhrase($1 ? this.$d($1[1]) : '（无）'))
                     );
                 this._de.o(0);
                 return this.v(duration);

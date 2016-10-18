@@ -58,7 +58,7 @@ namespace Resource {
                 types: typeof Core.IResource.Type = Core.IResource.Type,
                 ie9: boolean = env.MSIE && 'undefined' == typeof URL,
                 ext: string;
-            const offline: boolean = false;
+            const offline: boolean = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
             if (types.Raw == type) {
                 this._l = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + uri;
                 ext = this._l.substr(-4);

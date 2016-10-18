@@ -64,7 +64,7 @@ namespace Tag {
                                 }));
                             }).catch(() => {
                                 no();
-                                return runtime;
+                                resolve(runtime);
                             });
                         });
                     }
