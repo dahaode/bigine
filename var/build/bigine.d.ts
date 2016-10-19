@@ -921,7 +921,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface IFull extends ISprite {
-            vh(clob: string, auto?: boolean, context?: CanvasRenderingContext2D): Promise<IFull>;
+            u(clob: string, auto?: boolean): Promise<IFull>;
         }
     }
     namespace Ev {
@@ -947,12 +947,14 @@ declare namespace __Bigine {
             private _c;
             private _tl;
             private _tx;
+            private _ct;
             constructor(id: string, full: Util.IHashTable<Util.IHashTable<any>>);
             h(duration?: number): Promise<Full>;
-            vh(clob: string, auto: boolean, context: CanvasRenderingContext2D): Promise<Full>;
-            protected every(clob: string, context: CanvasRenderingContext2D, auto: boolean, wait: boolean, pause?: number): Promise<Full>;
+            u(clob: string, auto?: boolean): Promise<Full>;
+            protected every(clob: string, auto: boolean, wait: boolean, pause?: number): Promise<Full>;
             clean(): Promise<Full>;
             $v(text: G.Text, auto: boolean, wait: boolean): Promise<G.Element>;
+            private $c();
         }
     }
     namespace Runtime {
@@ -1540,6 +1542,7 @@ declare namespace __Bigine {
         class Resources extends Unknown {
             gN(): string;
             l(callback: Util.ISuccessCallback<Util.IHashTable<Core.IEntityTag>>): void;
+            private ls(data);
             private ll(ret);
         }
     }
@@ -2282,6 +2285,7 @@ declare namespace __Bigine {
     namespace Bigine {
         var version: string;
         var domain: string;
+        var offline: boolean;
     }
 }
 

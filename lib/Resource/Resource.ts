@@ -58,9 +58,11 @@ namespace Resource {
                 types: typeof Core.IResource.Type = Core.IResource.Type,
                 ie9: boolean = env.MSIE && 'undefined' == typeof URL,
                 ext: string;
-            const offline: boolean = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
+            var offline: boolean = Bigine.offline;
             if (types.Raw == type) {
-                this._l = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + uri;
+                var path: string = 'app://res/theme' + uri.substr(uri.indexOf('\/'));
+                //var path: string = '/Users/atfacg-dev/temp/res/theme' + uri.substr(uri.indexOf('\/'));
+                this._l = offline ? path : ('http://s.dahao.de/theme/' + uri);
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
                     this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
@@ -86,13 +88,14 @@ namespace Resource {
                         filename = (env.Mobile ? 64 : 128) + '.mp3';
                         break;
                 }
+                var local: string = 'app://res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
+                //var local: string = '/Users/atfacg-dev/temp/res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 this._l = offline ?
-                    ('app://res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename) :
+                    local :
                     ('http://a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
                     this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
             }
-            //this._l = env.Protocol + this._l;
             this._w = [];
             this._r = false;
         }
@@ -117,8 +120,7 @@ namespace Resource {
                         this._l = url;
                         return resolve(<any> url);
                     }
-                    const offline: boolean = false;
-                    if (!offline) url = url + '?bigine-0.24.1' + Bigine.domain;
+                    if (!Bigine.offline) url = url + '?bigine-0.24.1' + Bigine.domain;
                     if (Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
                         xhr.open('GET', url);

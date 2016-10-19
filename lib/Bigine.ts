@@ -61,4 +61,6 @@ function Bigine(code: any, ...args: any[]): any {
 namespace Bigine {
     export var version: string = '${BIGINE_VERSION}';
     export var domain: string = '';
+    //export var offline: boolean = true;
+    export var offline: boolean = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
 }

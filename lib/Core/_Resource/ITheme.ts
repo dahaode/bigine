@@ -56,7 +56,7 @@ namespace Core {
                     "c": "#fff",
                     "ch": "#f90",
                     "row": 13
-                },
+                }
             },
             "stars": {
                 "name": {

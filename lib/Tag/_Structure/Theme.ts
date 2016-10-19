@@ -30,14 +30,26 @@ namespace Tag {
             let version: string = Bigine.version,
                 domain: string = Bigine.domain,
                 src: Util.IHashTable<any> = this.path(Core.ITheme.THEME, _base);
-            let offline: boolean = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false,
-                uri: string = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + this._c + '/theme.json?' + version + domain;
-            Util.Remote.get(uri, (des) => {
-                    des = this.path(des, this._c);
-                    callback(this.extend(des, src));
-                }, (error: Error, status?: any) => {
-                throw error;
-            });
+            if (Bigine.offline) {
+                let xhr: XMLHttpRequest = new XMLHttpRequest();
+                xhr.onload = () => {
+                    callback(this.extend(this.path(JSON.parse(xhr.responseText), this._c), src));
+                };
+                try {
+                    xhr.open('get', 'app://res/theme/theme.json', true);
+                    //xhr.open('get', '/Users/atfacg-dev/temp/res/theme/theme.json', true);
+                    xhr.send();
+                } catch (ex) {
+                    throw ex.message;
+                }
+            } else {
+                Util.Remote.get('http://s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, (des) => {
+                        des = this.path(des, this._c);
+                        callback(this.extend(des, src));
+                    }, (error: Error, status?: any) => {
+                    throw error;
+                });
+            }
         }
 
         /**

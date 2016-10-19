@@ -63,45 +63,51 @@ namespace Runtime {
             this._t = ep.gT();
             this._l = null;
             ep.r(this);
-            let offline: boolean = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false,
-                uri: string = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + '_/load.json?0.24.2-' + Bigine.domain;
+            let load: () => void = () => {
+                Promise.all([
+                    new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                        var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
+                            Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
+                                Util.each(typed, (entity: Core.IEntityTag) => {
+                                    entity.r(this);
+                                });
+                            });
+                            resolve();
+                        });
+                        if (!res)
+                            resolve();
+                    }).then(() => {
+                        ep.b(this);
+                    }),
+                    new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                        ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
+                            this._c = data;
+                            resolve();
+                        });
+                    })
+                ]).then(() => {
+                    runtime.dispatchEvent(new Ev.Ready({
+                        target: this
+                    }));
+                })['catch']((error: any) => {
+                    runtime.dispatchEvent(new Ev.Error({
+                        target: this,
+                        error: error
+                    }));
+                });
+            };
+            if (Bigine.offline) {
+                load();
+                return;
+            }
+            let uri: string = 'http://s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain;
             Util.Remote.get(uri,
                 (des) => {
                     this._l = des;
                     runtime.dispatchEvent(new Ev.Loading({
                         target: this
                     }));
-                    Promise.all([
-                        new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-                            var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
-                                Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
-                                    Util.each(typed, (entity: Core.IEntityTag) => {
-                                        entity.r(this);
-                                    });
-                                });
-                                resolve();
-                            });
-                            if (!res)
-                                resolve();
-                        }).then(() => {
-                            ep.b(this);
-                        }),
-                        new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-                            ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
-                                this._c = data;
-                                resolve();
-                            });
-                        })
-                    ]).then(() => {
-                        runtime.dispatchEvent(new Ev.Ready({
-                            target: this
-                        }));
-                    })['catch']((error: any) => {
-                        runtime.dispatchEvent(new Ev.Error({
-                            target: this,
-                            error: error
-                        }));
-                    });
+                    load();
                 }, (error: Error, status?: any) => {
                     throw error;
                 });

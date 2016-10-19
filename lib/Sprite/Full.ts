@@ -52,6 +52,11 @@ namespace Sprite {
         private _tx: number;
 
         /**
+         * 虚拟 Canvas，用于提前计算文字行数。
+         */
+        private _ct: CanvasRenderingContext2D;
+
+        /**
          * 构造函数。
          */
         constructor(id: string, full: Util.IHashTable<Util.IHashTable<any>>) {
@@ -60,7 +65,8 @@ namespace Sprite {
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _back: Util.IHashTable<any> = full['back'],
-                _text: Util.IHashTable<any> = full['text'];
+                _text: Util.IHashTable<any> = full['text'],
+                canvas: HTMLCanvasElement = document.createElement('canvas');
             super(0, 0, w, h);
             this._rr = [
                 rr.g<HTMLImageElement>(_back['i'], raw)
@@ -70,6 +76,13 @@ namespace Sprite {
             this._be = <G.IBounds> _text;
             this._c = _text['ch'];
             this._tl = this._tx = 0;
+            canvas.width = 1280;
+            canvas.height = 720;
+            this._ct = canvas.getContext('2d');
+            this._ct.canvas.style.letterSpacing = _text['ls'] + 'px';  // 设置字间距
+            this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px ' + G.TextPhrase.FONT;
+            this._ct.textBaseline = 'middle';
+            this._ct.shadowBlur = this._ct.shadowOffsetX = this._ct.shadowOffsetY = _text['ss'];
             (<Full> this.o(0))
                 .a(new G.Sprite(<G.IBounds> _back)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _back, true))
@@ -91,27 +104,28 @@ namespace Sprite {
                 }));
             }
             return super.h(duration).then(() => {
-                this._tl = 0;
-                this._cb = <G.IBounds> Util.clone(this._be);
-                (<G.Sprite> this._x['f']).c();
+                this.$c();
                 (<G.Sprite> this._x['f']).o(0);
                 return this;
             });
         }
 
         /**
-         * 横向文本。
+         * 文本。
          */
-        public vh(clob: string, auto: boolean = false, context: CanvasRenderingContext2D): Promise<Full> {
+        public u(clob: string, auto: boolean = false): Promise<Full> {
             let words: Array<string> = clob.split('\\r'),
                 funcs: Array<Function> = [];
             Util.each(words, (word: string, index: number) => {
                 let bufs: Array<string> = word.split('\\l');
                 if (bufs.length == 1) {
-                    funcs.push(() => this.every(word, context, auto, index == words.length - 1));
+                    funcs.push(() => this.every(word, auto, index == words.length - 1));
                 } else {
+                    let str: string = word.replace(/\\l/g, '');
+                    let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
+                    if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
                     Util.each(bufs, (buffer: string, i: number) => {
-                        funcs.push(() => this.every(buffer, context, auto, false, i));
+                        funcs.push(() => this.every(buffer, auto, false, i));
                     });
                 }
             });
@@ -123,7 +137,7 @@ namespace Sprite {
         /**
          * 对于分解的话进行处理。
          */
-        protected every(clob: string, context: CanvasRenderingContext2D, auto: boolean, wait: boolean, pause: number = -1): Promise<Full> {
+        protected every(clob: string, auto: boolean, wait: boolean, pause: number = -1): Promise<Full> {
             let eRow: number = 0,
                 row: number,
                 tBound: G.IBounds,
@@ -141,24 +155,15 @@ namespace Sprite {
                 this._tl += eRow;
                 this._tx = 0;
             } else {
-                if (pause > 0) this._cb.y -= lHeight;
+                if (pause > 0 && clob != '') this._cb.y -= lHeight;
             }
             if (clob == '') return Promise.resolve(this);
-            context.canvas.style.letterSpacing = bBound['ls'] + 'px';  // 设置字间距
-            context.save();
-            context.font = bBound['s'] + 'px/' + lHeight + 'px ' + G.TextPhrase.FONT;
-            context.textBaseline = 'middle';
-            context.shadowBlur = context.shadowOffsetX = context.shadowOffsetY = bBound['ss'];
-            context.shadowColor = '#000';
             sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '');
             sClob = sClob.replace(/【/g, '');
             sClob = sClob.replace(/】/g, '');
-            row = Math.ceil(context.measureText(sClob).width / bBound.w);
-            if (this._tl + row > bBound['row']) {        // 预计会有多少行内容，超出最大行，重起绘制
-                this._tl = 0;
-                this._cb = <G.IBounds> Util.clone(bBound);
-                (<G.Sprite> this._x['f']).c();
-            }
+            this._ct.save();
+            row = Math.ceil(this._ct.measureText(sClob).width / bBound.w);
+            if (this._tl + row > bBound['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
             tBound = Util.clone(this._cb);
             tText = new G.Text(<G.IBounds> tBound, tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
@@ -184,10 +189,7 @@ namespace Sprite {
          * 清除文本内容。
          */
         public clean(): Promise<Full> {
-            this._tl = 0;
-            this._cb = <G.IBounds> Util.clone(this._be);
-            (<G.Sprite> this._x['f']).c();
-            return Promise.resolve(this);
+            return Promise.resolve(this.$c());
         }
 
         /**
@@ -248,6 +250,13 @@ namespace Sprite {
                 }));
                 return target.p(animation);
             });
+        }
+
+        private $c(): Full {
+            this._tl = 0;
+            this._cb = <G.IBounds> Util.clone(this._be);
+            (<G.Sprite> this._x['f']).c();
+            return this;
         }
     }
 }

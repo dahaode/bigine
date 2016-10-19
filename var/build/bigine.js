@@ -679,9 +679,11 @@ var Resource;
          */
         function Resource(uri, type) {
             var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext;
-            var offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
+            var offline = Bigine.offline;
             if (types.Raw == type) {
-                this._l = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + uri;
+                var path = 'app://res/theme' + uri.substr(uri.indexOf('\/'));
+                //var path: string = '/Users/atfacg-dev/temp/res/theme' + uri.substr(uri.indexOf('\/'));
+                this._l = offline ? path : ('http://s.dahao.de/theme/' + uri);
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
                     this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
@@ -707,13 +709,14 @@ var Resource;
                         filename = (env.Mobile ? 64 : 128) + '.mp3';
                         break;
                 }
+                var local = 'app://res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
+                //var local: string = '/Users/atfacg-dev/temp/res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 this._l = offline ?
-                    ('app://res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename) :
+                    local :
                     ('http://a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
                     this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
             }
-            //this._l = env.Protocol + this._l;
             this._w = [];
             this._r = false;
         }
@@ -745,8 +748,7 @@ var Resource;
                         _this._l = url;
                         return resolve(url);
                     }
-                    var offline = false;
-                    if (!offline)
+                    if (!Bigine.offline)
                         url = url + '?bigine-0.24.1' + Bigine.domain;
                     if (Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
@@ -826,12 +828,7 @@ var Runtime;
             this._t = ep.gT();
             this._l = null;
             ep.r(this);
-            var offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false, uri = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + '_/load.json?0.24.2-' + Bigine.domain;
-            Util.Remote.get(uri, function (des) {
-                _this._l = des;
-                runtime.dispatchEvent(new Ev.Loading({
-                    target: _this
-                }));
+            var load = function () {
                 Promise.all([
                     new Promise(function (resolve) {
                         var res = ep.l(function (entities) {
@@ -863,6 +860,18 @@ var Runtime;
                         error: error
                     }));
                 });
+            };
+            if (Bigine.offline) {
+                load();
+                return;
+            }
+            var uri = 'http://s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain;
+            Util.Remote.get(uri, function (des) {
+                _this._l = des;
+                runtime.dispatchEvent(new Ev.Loading({
+                    target: _this
+                }));
+                load();
             }, function (error, status) {
                 throw error;
             });
@@ -4622,7 +4631,7 @@ var Sprite;
          * 构造函数。
          */
         function Full(id, full) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _back = full['back'], _text = full['text'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _back = full['back'], _text = full['text'], canvas = document.createElement('canvas');
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(_back['i'], raw)
@@ -4632,6 +4641,13 @@ var Sprite;
             this._be = _text;
             this._c = _text['ch'];
             this._tl = this._tx = 0;
+            canvas.width = 1280;
+            canvas.height = 720;
+            this._ct = canvas.getContext('2d');
+            this._ct.canvas.style.letterSpacing = _text['ls'] + 'px'; // 设置字间距
+            this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px ' + G.TextPhrase.FONT;
+            this._ct.textBaseline = 'middle';
+            this._ct.shadowBlur = this._ct.shadowOffsetX = this._ct.shadowOffsetY = _text['ss'];
             this.o(0)
                 .a(new G.Sprite(_back)
                 .a(new G.Image(this._rr[0].o(), _back, true))
@@ -4652,28 +4668,30 @@ var Sprite;
                 }));
             }
             return _super.prototype.h.call(this, duration).then(function () {
-                _this._tl = 0;
-                _this._cb = Util.clone(_this._be);
-                _this._x['f'].c();
+                _this.$c();
                 _this._x['f'].o(0);
                 return _this;
             });
         };
         /**
-         * 横向文本。
+         * 文本。
          */
-        Full.prototype.vh = function (clob, auto, context) {
+        Full.prototype.u = function (clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
             var words = clob.split('\\r'), funcs = [];
             Util.each(words, function (word, index) {
                 var bufs = word.split('\\l');
                 if (bufs.length == 1) {
-                    funcs.push(function () { return _this.every(word, context, auto, index == words.length - 1); });
+                    funcs.push(function () { return _this.every(word, auto, index == words.length - 1); });
                 }
                 else {
+                    var str = word.replace(/\\l/g, '');
+                    var row = Math.ceil(_this._ct.measureText(str).width / _this._be.w);
+                    if (_this._tl + row > _this._be['row'])
+                        _this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
                     Util.each(bufs, function (buffer, i) {
-                        funcs.push(function () { return _this.every(buffer, context, auto, false, i); });
+                        funcs.push(function () { return _this.every(buffer, auto, false, i); });
                     });
                 }
             });
@@ -4684,7 +4702,7 @@ var Sprite;
         /**
          * 对于分解的话进行处理。
          */
-        Full.prototype.every = function (clob, context, auto, wait, pause) {
+        Full.prototype.every = function (clob, auto, wait, pause) {
             var _this = this;
             if (pause === void 0) { pause = -1; }
             var eRow = 0, row, tBound, bBound = this._be, tText, left = G.Text.Align.Left, lHeight = Math.max(bBound['lh'], bBound['s']), sClob;
@@ -4698,26 +4716,18 @@ var Sprite;
                 this._tx = 0;
             }
             else {
-                if (pause > 0)
+                if (pause > 0 && clob != '')
                     this._cb.y -= lHeight;
             }
             if (clob == '')
                 return Promise.resolve(this);
-            context.canvas.style.letterSpacing = bBound['ls'] + 'px'; // 设置字间距
-            context.save();
-            context.font = bBound['s'] + 'px/' + lHeight + 'px ' + G.TextPhrase.FONT;
-            context.textBaseline = 'middle';
-            context.shadowBlur = context.shadowOffsetX = context.shadowOffsetY = bBound['ss'];
-            context.shadowColor = '#000';
             sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '');
             sClob = sClob.replace(/【/g, '');
             sClob = sClob.replace(/】/g, '');
-            row = Math.ceil(context.measureText(sClob).width / bBound.w);
-            if (this._tl + row > bBound['row']) {
-                this._tl = 0;
-                this._cb = Util.clone(bBound);
-                this._x['f'].c();
-            }
+            this._ct.save();
+            row = Math.ceil(this._ct.measureText(sClob).width / bBound.w);
+            if (this._tl + row > bBound['row'])
+                this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
             tBound = Util.clone(this._cb);
             tText = new G.Text(tBound, tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
@@ -4741,10 +4751,7 @@ var Sprite;
          * 清除文本内容。
          */
         Full.prototype.clean = function () {
-            this._tl = 0;
-            this._cb = Util.clone(this._be);
-            this._x['f'].c();
-            return Promise.resolve(this);
+            return Promise.resolve(this.$c());
         };
         /**
          * 显示内容文字。
@@ -4805,6 +4812,12 @@ var Sprite;
                 }));
                 return target.p(animation);
             });
+        };
+        Full.prototype.$c = function () {
+            this._tl = 0;
+            this._cb = Util.clone(this._be);
+            this._x['f'].c();
+            return this;
         };
         return Full;
     }(Sprite.Sprite));
@@ -4985,29 +4998,7 @@ var Runtime;
                     var gAuthor = _this._x['a'].u(author ? author : title);
                     gAuthor.v(0);
                     return _this.lightOn()
-                        .then(function () {
-                        var flag = false;
-                        _this._r.dispatchEvent(new Ev.Guid({
-                            target: _this._r.gS(),
-                            continue: function () { flag = false; },
-                            pause: function () { flag = true; }
-                        }));
-                        return gAuthor.p(new G.Delay(1000)).then(function () {
-                            return new Promise(function (resolve) {
-                                if (!flag) {
-                                    resolve(_this._r);
-                                }
-                                else {
-                                    var it = setInterval(function () {
-                                        if (!flag) {
-                                            clearInterval(it);
-                                            resolve(_this._r);
-                                        }
-                                    }, 1000);
-                                }
-                            });
-                        });
-                    })
+                        .then(function () { return gAuthor.p(new G.Delay(1000)); })
                         .then(function () { return _this.lightOff(); })
                         .then(function () { return gAuthor.o(0); });
                 }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
@@ -5218,9 +5209,8 @@ var Runtime;
          */
         CanvasDirector.prototype.full = function (words) {
             var _this = this;
-            var work = document.querySelectorAll('.bg-work')[0], canvas = work.firstChild, full = this._x['F'];
             return this.lightOn().then(function () {
-                return full.vh(words, _this._a, canvas.getContext('2d'));
+                return _this._x['F'].u(words, _this._a);
             }).then(function () { return _this._r; });
         };
         /**
@@ -5697,10 +5687,9 @@ var Runtime;
          * 抖动镜头。
          */
         CanvasDirector.prototype.cameraShake = function () {
-            var _this = this;
             var gRoom = this._c.q('b')[0];
-            return gRoom.p(new G.Shake(500))
-                .then(function () { return _super.prototype.cameraShake.call(_this); });
+            gRoom.p(new G.Shake(500));
+            return _super.prototype.cameraShake.call(this);
         };
         /**
          * 状态栏开/关。
@@ -10535,13 +10524,28 @@ var Tag;
         Theme.prototype.l = function (callback) {
             var _this = this;
             var version = Bigine.version, domain = Bigine.domain, src = this.path(Core.ITheme.THEME, _base);
-            var offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false, uri = (offline ? 'app://theme/' : 'http://s.dahao.de/theme/') + this._c + '/theme.json?' + version + domain;
-            Util.Remote.get(uri, function (des) {
-                des = _this.path(des, _this._c);
-                callback(_this.extend(des, src));
-            }, function (error, status) {
-                throw error;
-            });
+            if (Bigine.offline) {
+                var xhr_1 = new XMLHttpRequest();
+                xhr_1.onload = function () {
+                    callback(_this.extend(_this.path(JSON.parse(xhr_1.responseText), _this._c), src));
+                };
+                try {
+                    xhr_1.open('get', 'app://res/theme/theme.json', true);
+                    //xhr.open('get', '/Users/atfacg-dev/temp/res/theme/theme.json', true);
+                    xhr_1.send();
+                }
+                catch (ex) {
+                    throw ex.message;
+                }
+            }
+            else {
+                Util.Remote.get('http://s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, function (des) {
+                    des = _this.path(des, _this._c);
+                    callback(_this.extend(des, src));
+                }, function (error, status) {
+                    throw error;
+                });
+            }
         };
         /**
          * 主题中有缺省元素，使用默认主题替换。
@@ -10611,80 +10615,99 @@ var Tag;
          */
         Resources.prototype.l = function (callback) {
             var _this = this;
-            Util.Remote.post('//api.dahao.de/resource/' + this._c + '/', {}, function (data) {
-                var ret = {};
-                ret['rooms'] = {};
-                Util.each(data['rooms'] || {}, function (room, index) {
-                    var times = [];
-                    Util.each(room['snaps'] || {}, function (id, title) {
-                        times.push(new Tag.Unknown([title], id, [], -1));
-                    });
-                    if (times.length == 0) {
-                        times.push(new Tag.Unknown(['默认'], '00000000-0000-0000-0000-000000000000', [], -1));
-                    }
-                    ret['rooms'][index] = new Tag.DefRoom([], room['title'], [
-                        new Tag.Times([], '', times, -1)
-                    ], -1);
+            if (Bigine.offline) {
+                var xhr_2 = new XMLHttpRequest();
+                xhr_2.onload = function () {
+                    callback(_this.ls(JSON.parse(xhr_2.responseText)));
+                };
+                try {
+                    xhr_2.open('get', 'app://res/res.json', true);
+                    //xhr.open('get', '/Users/atfacg-dev/temp/res/res.json', true);
+                    xhr_2.send();
+                }
+                catch (ex) {
+                    throw ex.message;
+                }
+            }
+            else {
+                Util.Remote.post('//api.dahao.de/resource/' + this._c + '/', {}, function (data) {
+                    callback(_this.ls(data));
+                }, function (error, status) {
+                    throw error;
                 });
-                ret['chars'] = {};
-                Util.each(data['chars'] || {}, function (chr, index) {
-                    var poses = [];
-                    Util.each(chr['poses'] || {}, function (id, title) {
-                        poses.push(new Tag.Unknown([title], id, [], -1));
-                    });
-                    if (poses.length == 0) {
-                        poses.push(new Tag.Unknown(['默认'], '00000000-0000-0000-0000-000000000002', [], -1));
-                    }
-                    ret['chars'][index] = new Tag.DefChar([], chr['title'], [
-                        new Tag.Avatar([], (chr['avatar'] || '00000000-0000-0000-0000-000000000001'), [], -1),
-                        new Tag.Poses([], '', poses, -1)
-                    ], -1);
+            }
+        };
+        Resources.prototype.ls = function (data) {
+            var ret = {};
+            ret['rooms'] = {};
+            Util.each(data['rooms'] || {}, function (room, index) {
+                var times = [];
+                Util.each(room['snaps'] || {}, function (id, title) {
+                    times.push(new Tag.Unknown([title], id, [], -1));
                 });
-                ret['maps'] = {};
-                Util.each(data['maps'] || {}, function (map, index) {
-                    var children = [
-                        new Tag.BGImage([], map['base'], [], -1)
-                    ];
-                    Util.each(map['points'] || {}, function (point) {
-                        var region = point['region'], regstr = region.top + '，' + region.right + '，' + region.bottom + '，' + region.left;
-                        if ('priority' in point)
-                            regstr += '，' + point['priority'];
-                        children.push(new Tag.Point([], point['title'], [
-                            new Tag.HLImage([], point['hilite'], [], -1),
-                            new Tag.Region([], regstr, [], -1)
-                        ], -1));
-                    });
-                    if (children.length == 1) {
-                        children.push(new Tag.Point([], '默认', [
-                            new Tag.HLImage([], '00000000-0000-0000-0000-000000000003', [], -1),
-                            new Tag.Region([], '0，0，1080，1920，0', [], -1)
-                        ], -1));
-                    }
-                    ret['maps'][index] = new Tag.DefMap([], map['title'], children, -1);
-                });
-                ret['bgms'] = {};
-                Util.each(data['bgms'] || {}, function (bgm, index) {
-                    ret['bgms'][index] = new Tag.DefBGM([], bgm['title'], [
-                        new Tag.Audio([], bgm['audio'], [], -1)
-                    ], -1);
-                });
-                ret['cgs'] = {};
-                Util.each(data['cgs'] || {}, function (cg, index) {
-                    ret['cgs'][index] = new Tag.DefCG([], cg['title'], [
-                        new Tag.Image([], cg['image'], [], -1)
-                    ], -1);
-                });
-                ret['ses'] = {};
-                Util.each(data['ses'] || {}, function (se, index) {
-                    ret['ses'][index] = new Tag.DefSE([], se['title'], [
-                        new Tag.Audio([], se['audio'], [], -1)
-                    ], -1);
-                });
-                ret = _this.ll(ret);
-                callback(ret);
-            }, function (error, status) {
-                throw error;
+                if (times.length == 0) {
+                    times.push(new Tag.Unknown(['默认'], '00000000-0000-0000-0000-000000000000', [], -1));
+                }
+                ret['rooms'][index] = new Tag.DefRoom([], room['title'], [
+                    new Tag.Times([], '', times, -1)
+                ], -1);
             });
+            ret['chars'] = {};
+            Util.each(data['chars'] || {}, function (chr, index) {
+                var poses = [];
+                Util.each(chr['poses'] || {}, function (id, title) {
+                    poses.push(new Tag.Unknown([title], id, [], -1));
+                });
+                if (poses.length == 0) {
+                    poses.push(new Tag.Unknown(['默认'], '00000000-0000-0000-0000-000000000002', [], -1));
+                }
+                ret['chars'][index] = new Tag.DefChar([], chr['title'], [
+                    new Tag.Avatar([], (chr['avatar'] || '00000000-0000-0000-0000-000000000001'), [], -1),
+                    new Tag.Poses([], '', poses, -1)
+                ], -1);
+            });
+            ret['maps'] = {};
+            Util.each(data['maps'] || {}, function (map, index) {
+                var children = [
+                    new Tag.BGImage([], map['base'], [], -1)
+                ];
+                Util.each(map['points'] || {}, function (point) {
+                    var region = point['region'], regstr = region.top + '，' + region.right + '，' + region.bottom + '，' + region.left;
+                    if ('priority' in point)
+                        regstr += '，' + point['priority'];
+                    children.push(new Tag.Point([], point['title'], [
+                        new Tag.HLImage([], point['hilite'], [], -1),
+                        new Tag.Region([], regstr, [], -1)
+                    ], -1));
+                });
+                if (children.length == 1) {
+                    children.push(new Tag.Point([], '默认', [
+                        new Tag.HLImage([], '00000000-0000-0000-0000-000000000003', [], -1),
+                        new Tag.Region([], '0，0，1080，1920，0', [], -1)
+                    ], -1));
+                }
+                ret['maps'][index] = new Tag.DefMap([], map['title'], children, -1);
+            });
+            ret['bgms'] = {};
+            Util.each(data['bgms'] || {}, function (bgm, index) {
+                ret['bgms'][index] = new Tag.DefBGM([], bgm['title'], [
+                    new Tag.Audio([], bgm['audio'], [], -1)
+                ], -1);
+            });
+            ret['cgs'] = {};
+            Util.each(data['cgs'] || {}, function (cg, index) {
+                ret['cgs'][index] = new Tag.DefCG([], cg['title'], [
+                    new Tag.Image([], cg['image'], [], -1)
+                ], -1);
+            });
+            ret['ses'] = {};
+            Util.each(data['ses'] || {}, function (se, index) {
+                ret['ses'][index] = new Tag.DefSE([], se['title'], [
+                    new Tag.Audio([], se['audio'], [], -1)
+                ], -1);
+            });
+            ret = this.ll(ret);
+            return ret;
         };
         /**
          * 加载默认数据。
@@ -15712,6 +15735,8 @@ var Bigine;
 (function (Bigine) {
     Bigine.version = '0.24.3';
     Bigine.domain = '';
+    //export var offline: boolean = true;
+    Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;
 //# sourceMappingURL=bigine.js.map

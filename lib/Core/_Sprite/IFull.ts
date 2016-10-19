@@ -13,8 +13,8 @@
 namespace Core {
     export interface IFull extends ISprite {
         /**
-         * 横版显示文本内容。
+         * 显示文本内容。
          */
-        vh(clob: string, auto?: boolean, context?: CanvasRenderingContext2D): Promise<IFull>;
+        u(clob: string, auto?: boolean): Promise<IFull>;
     }
 }

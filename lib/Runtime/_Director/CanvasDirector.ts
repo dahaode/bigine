@@ -247,28 +247,7 @@ namespace Runtime {
                             let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
                             gAuthor.v(0);
                             return this.lightOn()
-                                .then(() => {
-                                    let flag: boolean = false;
-                                    this._r.dispatchEvent(new Ev.Guid({
-                                        target: this._r.gS(),
-                                        continue: () => { flag = false; },
-                                        pause: () => { flag = true; }
-                                    }));
-                                    return gAuthor.p(new G.Delay(1000)).then(() => {
-                                        return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
-                                            if (!flag) {
-                                                resolve(this._r);
-                                            } else {
-                                                var it: number = setInterval(() => {
-                                                    if (!flag) {
-                                                        clearInterval(it);
-                                                        resolve(this._r);
-                                                    }
-                                                }, 1000);
-                                            }
-                                        });
-                                    });
-                                })
+                                .then(() => gAuthor.p(new G.Delay(1000)))
                                 .then(() => this.lightOff())
                                 .then(() => gAuthor.o(0));
                         }).then(() => super.OP(start, title, author))
@@ -497,11 +476,8 @@ namespace Runtime {
          * 某白在全屏中显示。
          */
         protected full(words: string): Promise<Core.IRuntime> {
-            let work: HTMLElement = <HTMLElement> document.querySelectorAll('.bg-work')[0],
-                canvas: HTMLCanvasElement = <HTMLCanvasElement> work.firstChild,
-                full: Sprite.Full = <Sprite.Full> this._x['F'];
             return this.lightOn().then(() => {
-                return full.vh(words, this._a, canvas.getContext('2d'));
+                return (<Sprite.Full> this._x['F']).u(words, this._a);
             }).then(() => this._r);
         }
 
@@ -1005,8 +981,8 @@ namespace Runtime {
          */
         public cameraShake(): Promise<Core.IRuntime> {
             var gRoom: G.Image = <G.Image> this._c.q('b')[0];
-            return gRoom.p(new G.Shake(500))
-                .then(() => super.cameraShake());
+            gRoom.p(new G.Shake(500));
+            return super.cameraShake();
         }
 
         /**
