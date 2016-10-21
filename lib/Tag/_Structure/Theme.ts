@@ -36,7 +36,7 @@ namespace Tag {
                     callback(this.extend(this.path(JSON.parse(xhr.responseText), this._c), src));
                 };
                 try {
-                    xhr.open('get', 'app://res/theme/theme.json', true);
+                    xhr.open('get', 'res/theme/theme.json', true);
                     //xhr.open('get', '/Users/atfacg-dev/temp/res/theme/theme.json', true);
                     xhr.send();
                 } catch (ex) {

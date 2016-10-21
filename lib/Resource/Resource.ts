@@ -60,7 +60,7 @@ namespace Resource {
                 ext: string;
             var offline: boolean = Bigine.offline;
             if (types.Raw == type) {
-                var path: string = 'app://res/theme' + uri.substr(uri.indexOf('\/'));
+                var path: string = 'res/theme' + uri.substr(uri.indexOf('\/'));
                 //var path: string = '/Users/atfacg-dev/temp/res/theme' + uri.substr(uri.indexOf('\/'));
                 this._l = offline ? path : ('http://s.dahao.de/theme/' + uri);
                 ext = this._l.substr(-4);
@@ -88,7 +88,7 @@ namespace Resource {
                         filename = (env.Mobile ? 64 : 128) + '.mp3';
                         break;
                 }
-                var local: string = 'app://res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
+                var local: string = 'res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 //var local: string = '/Users/atfacg-dev/temp/res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 this._l = offline ?
                     local :

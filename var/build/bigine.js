@@ -681,7 +681,7 @@ var Resource;
             var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext;
             var offline = Bigine.offline;
             if (types.Raw == type) {
-                var path = 'app://res/theme' + uri.substr(uri.indexOf('\/'));
+                var path = 'res/theme' + uri.substr(uri.indexOf('\/'));
                 //var path: string = '/Users/atfacg-dev/temp/res/theme' + uri.substr(uri.indexOf('\/'));
                 this._l = offline ? path : ('http://s.dahao.de/theme/' + uri);
                 ext = this._l.substr(-4);
@@ -709,7 +709,7 @@ var Resource;
                         filename = (env.Mobile ? 64 : 128) + '.mp3';
                         break;
                 }
-                var local = 'app://res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
+                var local = 'res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 //var local: string = '/Users/atfacg-dev/temp/res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 this._l = offline ?
                     local :
@@ -4686,7 +4686,11 @@ var Sprite;
                     funcs.push(function () { return _this.every(word, auto, index == words.length - 1); });
                 }
                 else {
-                    var str = word.replace(/\\l/g, '');
+                    var str = word.replace(/\\l/g, '')
+                        .replace(/\\n/g, '')
+                        .replace(/【#[0-9a-fA-F]{6}/g, '')
+                        .replace(/【/g, '')
+                        .replace(/】/g, '');
                     var row = Math.ceil(_this._ct.measureText(str).width / _this._be.w);
                     if (_this._tl + row > _this._be['row'])
                         _this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
@@ -4721,12 +4725,12 @@ var Sprite;
             }
             if (clob == '')
                 return Promise.resolve(this);
-            sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '');
-            sClob = sClob.replace(/【/g, '');
-            sClob = sClob.replace(/】/g, '');
+            sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '')
+                .replace(/【/g, '')
+                .replace(/】/g, '');
             this._ct.save();
             row = Math.ceil(this._ct.measureText(sClob).width / bBound.w);
-            if (this._tl + row > bBound['row'])
+            if (this._tl + row > bBound['row'] && pause < 1)
                 this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
             tBound = Util.clone(this._cb);
             tText = new G.Text(tBound, tBound['s'], tBound['lh'], left, true)
@@ -4739,10 +4743,10 @@ var Sprite;
             this._x['f'].o(1);
             return this.$v(tText, auto, pause >= 0 ? true : wait).then(function () {
                 if (_this._h) {
-                    var pnt = tText.gCp(), line = tText.gTl();
+                    var pnt = tText.gCp();
                     _this._cb.y = pnt.y;
                     _this._tx = pnt.x - bBound.x;
-                    _this._tl = _this._tl + line - (pause > 0 ? 1 : 0);
+                    _this._tl = (pnt.y - bBound.y) / lHeight;
                 }
                 return _this;
             });
@@ -10530,7 +10534,7 @@ var Tag;
                     callback(_this.extend(_this.path(JSON.parse(xhr_1.responseText), _this._c), src));
                 };
                 try {
-                    xhr_1.open('get', 'app://res/theme/theme.json', true);
+                    xhr_1.open('get', 'res/theme/theme.json', true);
                     //xhr.open('get', '/Users/atfacg-dev/temp/res/theme/theme.json', true);
                     xhr_1.send();
                 }
@@ -10621,7 +10625,7 @@ var Tag;
                     callback(_this.ls(JSON.parse(xhr_2.responseText)));
                 };
                 try {
-                    xhr_2.open('get', 'app://res/res.json', true);
+                    xhr_2.open('get', 'res/res.json', true);
                     //xhr.open('get', '/Users/atfacg-dev/temp/res/res.json', true);
                     xhr_2.send();
                 }
@@ -15137,6 +15141,7 @@ var Runtime;
                     .s(ep.s())
                     .p(ep.p());
                 _this._fr = true;
+                _this._d.Load(false);
                 _this._s.l().then(function () {
                     var valid = false;
                     if (_this._al[0]) {
@@ -15147,7 +15152,6 @@ var Runtime;
                         }
                     }
                     _this._fp = false;
-                    _this._d.Load(false);
                     _this.dispatchEvent(new Ev.AutoLoad({
                         target: _this._s,
                         valid: valid
@@ -15156,7 +15160,6 @@ var Runtime;
                         _this._al = [undefined, undefined];
                 }).catch(function () {
                     _this._al = [undefined, undefined];
-                    _this._d.Load(false);
                     _this.dispatchEvent(new Ev.AutoLoad({
                         target: _this._s,
                         valid: false
@@ -15165,7 +15168,6 @@ var Runtime;
                 // 在网页端，在此 this._fp === false，调试
                 if (_this._fp) {
                     _this._fp = false;
-                    _this._d.Load(false);
                     _this.play();
                 }
             });
@@ -15263,6 +15265,7 @@ var Runtime;
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
+            this._d.Load(false);
             this._d.OP(!this._e.gA(), this._n, this._c);
             return this;
         };

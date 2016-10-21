@@ -121,7 +121,11 @@ namespace Sprite {
                 if (bufs.length == 1) {
                     funcs.push(() => this.every(word, auto, index == words.length - 1));
                 } else {
-                    let str: string = word.replace(/\\l/g, '');
+                    let str: string = word.replace(/\\l/g, '')
+                        .replace(/\\n/g, '')
+                        .replace(/【#[0-9a-fA-F]{6}/g, '')
+                        .replace(/【/g, '')
+                        .replace(/】/g, '');
                     let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
                     if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
                     Util.each(bufs, (buffer: string, i: number) => {
@@ -158,12 +162,12 @@ namespace Sprite {
                 if (pause > 0 && clob != '') this._cb.y -= lHeight;
             }
             if (clob == '') return Promise.resolve(this);
-            sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '');
-            sClob = sClob.replace(/【/g, '');
-            sClob = sClob.replace(/】/g, '');
+            sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '')
+                .replace(/【/g, '')
+                .replace(/】/g, '');
             this._ct.save();
             row = Math.ceil(this._ct.measureText(sClob).width / bBound.w);
-            if (this._tl + row > bBound['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
+            if (this._tl + row > bBound['row'] && pause < 1) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
             tBound = Util.clone(this._cb);
             tText = new G.Text(<G.IBounds> tBound, tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
@@ -175,11 +179,10 @@ namespace Sprite {
             (<G.Sprite> this._x['f']).o(1);
             return this.$v(tText, auto, pause >= 0 ? true : wait).then(() => {
                 if (this._h) {
-                    let pnt: G.IPoint = tText.gCp(),
-                        line: number = tText.gTl();
+                    let pnt: G.IPoint = tText.gCp();
                     this._cb.y = pnt.y;
                     this._tx = pnt.x - bBound.x;
-                    this._tl = this._tl + line - (pause > 0 ? 1 : 0);
+                    this._tl = (pnt.y - bBound.y) / lHeight;
                 }
                 return this;
             });

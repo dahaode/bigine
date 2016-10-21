@@ -143,6 +143,7 @@ namespace Runtime {
                     .s(ep.s())
                     .p(ep.p());
                 this._fr = true;
+                this._d.Load(false);
                 this._s.l().then(() => {
                     let valid: boolean = false;
                     if (this._al[0]) {
@@ -153,7 +154,6 @@ namespace Runtime {
                         }
                     }
                     this._fp = false;
-                    this._d.Load(false);
                     this.dispatchEvent(new Ev.AutoLoad({
                         target: this._s,
                         valid: valid
@@ -161,7 +161,6 @@ namespace Runtime {
                     if (!valid) this._al = [undefined, undefined];
                 }).catch(() => {
                     this._al = [undefined, undefined];
-                    this._d.Load(false);
                     this.dispatchEvent(new Ev.AutoLoad({
                         target: this._s,
                         valid: false
@@ -170,7 +169,6 @@ namespace Runtime {
                 // 在网页端，在此 this._fp === false，调试
                 if (this._fp) {
                     this._fp = false;
-                    this._d.Load(false);
                     this.play();
                 }
             });
@@ -275,6 +273,7 @@ namespace Runtime {
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
+            this._d.Load(false);
             this._d.OP(!this._e.gA(), this._n, this._c);
             return this;
         }

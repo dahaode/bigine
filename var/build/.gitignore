@@ -6,3 +6,9 @@
 !bigine.js*
 !*.png
 !*.mp3
+!*.json
+!choose/
+!menu/
+!panel/
+!rank/
+!start/
