@@ -11,5 +11,9 @@
 
 namespace Core {
     export interface IMenu extends ISprite {
+		/**
+		 * 显示菜单。
+		 */
+        u(series: boolean): IMenu;
     }
 }

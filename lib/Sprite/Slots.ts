@@ -72,7 +72,8 @@ namespace Sprite {
         /**
          * 显示存档位。
          */
-        public vs(states: Core.IStates, duration?: number): Promise<Slots> {
+        public vs(runtime: Core.IRuntime, duration?: number): Promise<Slots> {
+            let states: Core.IStates = runtime.gS();
             return states.l().then(() => {
                 let slots: Util.IHashTable<[string, number]> = states.qa();
                 let last: number = 1;
@@ -115,7 +116,13 @@ namespace Sprite {
         /**
          * 显示读档位。
          */
-        public vl(states: Core.IStates, duration?: number): Promise<Slots> {
+        public vl(runtime: Core.IRuntime, duration?: number): Promise<Slots> {
+            let states: Core.IStates = runtime.gS();
+            runtime.dispatchEvent(new Ev.ScreenLoad({
+                target: states,
+                type: 'open'
+            }));
+            states.s('.oc', true);
             return states.l().then(() => {
                 let slots: Util.IHashTable<[string, number]> = states.qa();
                 let last: number = 1;

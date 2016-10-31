@@ -159,11 +159,12 @@ namespace Runtime {
          *
          * 此方法应触发 Save 事件。
          */
-        public e(manual: string, series?: boolean): Util.IHashTable<any> {
+        public e(manual: string, series?: boolean, callback?: () => void): Util.IHashTable<any> {
             if (!this._p)
                 return {};
             let save: (id: string) => void = (id: string) => {
                     this._s[series ? 'end' : 'work'][manual] = [id, + new Date()];
+                    if (callback) callback();
                 },
                 data: Util.IHashTable<any> = this._p;
             if (series) {

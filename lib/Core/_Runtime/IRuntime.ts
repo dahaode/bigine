@@ -101,6 +101,11 @@ namespace Core {
         title(title: string): IRuntime;
 
         /**
+         * 获取作品标题。
+         */
+        gTitle(): string;
+
+        /**
          * 设置作者。
          */
         author(title: string): IRuntime;
@@ -144,6 +149,11 @@ namespace Core {
          * 恢复播放。
          */
         resume(): IRuntime;
+
+        /**
+         * 停止播放。
+         */
+        stop(): IRuntime;
     }
 
     export namespace IRuntime {

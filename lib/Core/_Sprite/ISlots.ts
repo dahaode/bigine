@@ -15,11 +15,11 @@ namespace Core {
         /**
          * 显示存档档位。
          */
-        vs(states: IStates): Promise<ISlots>;
+        vs(runtime: Core.IRuntime): Promise<ISlots>;
 
         /**
          * 显示读档档位。
          */
-        vl(states: IStates): Promise<ISlots>;
+        vl(runtime: Core.IRuntime): Promise<ISlots>;
     }
 }

@@ -7,10 +7,10 @@
  * @file      Tag/_Action/_Text/Tip.ts
  */
 
-/// <reference path="../../Action.ts" />
+/// <reference path="../../Idable.ts" />
 
 namespace Tag {
-    export class Tip extends Action {
+    export class Tip extends Idable {
         /**
          * 获取标签名称。
          */
@@ -22,7 +22,11 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            return runtime.gD().tip(runtime.gS().t(this._c));
+            //return runtime.gD().tip(runtime.gS().t(this._c));
+            return Promise.resolve(super.p(runtime))
+                .then(() => runtime.a(this).gD()
+                    .tip(runtime.gS().t(this._c))
+                );
         }
     }
 }

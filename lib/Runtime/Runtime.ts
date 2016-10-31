@@ -83,11 +83,6 @@ namespace Runtime {
         private _fb: boolean;
 
         /**
-         * 是否连载。
-         */
-        private _fs: Core.IRuntime.Series;
-
-        /**
          * 当前时序流。
          */
         private _t: Promise<Runtime>;
@@ -108,9 +103,9 @@ namespace Runtime {
         private _nn: string;
 
         /**
-         * 记录自动读档 id 和 是否验证通过。
+         * 记录自动读档 id、读档数据、标识（验证 pay / manual）。
          */
-        private _al: [string, Util.IHashTable<any>];
+        private _al: [string, Util.IHashTable<any>, string];
 
         /**
          * 构造函数。
@@ -127,11 +122,10 @@ namespace Runtime {
             this._fp = this._d.gD();
             this._fv = 1;
             this._fa = this._e.gA();
-            this._fs = Core.IRuntime.Series.Alone;
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
-            this._al = [undefined, undefined];
+            this._al = [undefined, undefined, undefined];
             this.addEventListener('loading', () => {
                 this._fl = true;
                 if (this._fp) {
@@ -146,10 +140,17 @@ namespace Runtime {
                 this._d.Load(false);
                 this._s.l().then(() => {
                     let valid: boolean = false;
-                    if (this._al[0]) {
+                    if (this._al[0] && this._al[2] == 'pay') {
                         let pay: [string, Util.IHashTable<any>] = <[string, Util.IHashTable<any>]> this._s.q('pay');
                         if (pay && pay[1]['_a'] == this._al[0]) {
                             this._al[1] = pay[1];
+                            valid = true;
+                        }
+                    }
+                    if (this._al[0] && this._al[2] == 'manual') {
+                        let manual: [string, Util.IHashTable<any>] = <[string, Util.IHashTable<any>]> this._s.q('auto', Core.IStates.Save.Series);
+                        if (manual && this._al[0] == manual[0] && manual[1]['data']) {
+                            this._al[1] = manual[1]['data'];
                             valid = true;
                         }
                     }
@@ -158,9 +159,9 @@ namespace Runtime {
                         target: this._s,
                         valid: valid
                     }));
-                    if (!valid) this._al = [undefined, undefined];
+                    if (!valid) this._al = [undefined, undefined, undefined];
                 }).catch(() => {
-                    this._al = [undefined, undefined];
+                    this._al = [undefined, undefined, undefined];
                     this.dispatchEvent(new Ev.AutoLoad({
                         target: this._s,
                         valid: false
@@ -174,6 +175,7 @@ namespace Runtime {
             });
             this.addEventListener('begin', () => {
                 this._fb = true;
+                this._fh = false;
                 this._s.d(' ');
                 this.t(() => this._e.p(Core.ISceneTag.Type.Begin, this));
             });
@@ -268,8 +270,6 @@ namespace Runtime {
             if (!this._fr)
                 return this;
             this._s.i({});
-            if (Core.IRuntime.Series.Alone != this._fs)
-                this._d.e(this._fs);
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
@@ -347,6 +347,13 @@ namespace Runtime {
         }
 
         /**
+         * 获取作品标题。
+         */
+        public gTitle(): string {
+            return this._n;
+        }
+
+        /**
          * 设置作者/logo。
          */
         public author(title: string): Runtime {
@@ -388,8 +395,9 @@ namespace Runtime {
         /**
          * 自动读档
          */
-        public autoLoad(id: string): Runtime {
+        public autoLoad(id: string, type?: string): Runtime {
             this._al[0] = id;
+            this._al[2] = type;
             return this;
         }
 
@@ -507,7 +515,7 @@ namespace Runtime {
             };
             if (autoload) {
                 load(this._al[1]);
-                this._al = [undefined, undefined];
+                this._al = [undefined, undefined, undefined];
             } else {
                 this.dispatchEvent(new Ev.Load({
                     target: this._s,
@@ -529,18 +537,20 @@ namespace Runtime {
          * 连载模式。
          */
         public series(value?: string): Runtime {
-            let series: typeof Core.IRuntime.Series = Core.IRuntime.Series;
+            let series: typeof Core.IRuntime.Series = Core.IRuntime.Series,
+                fs: Core.IRuntime.Series;
             switch (value) {
                 case 'f':
-                    this._fs = series.First;
+                    fs = series.First;
                     break;
                 case 'l':
-                    this._fs = series.Last;
+                    fs = series.Last;
                     break;
                 default:
-                    this._fs = series.Rest;
+                    fs = series.Rest;
                     break;
             }
+            this._d.e(fs);
             return this;
         }
 
@@ -557,6 +567,18 @@ namespace Runtime {
          */
         public resume(): Runtime {
             this._d.rr();
+            return this;
+        }
+
+        /**
+         * 停止播放。
+         */
+        public stop(): Runtime {
+            this._fh = true;
+            this._d.reset().then(() => {
+                this._s.i({});
+                this._d.h();
+            });
             return this;
         }
     }

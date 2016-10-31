@@ -38,6 +38,7 @@
  *     * `.z` -  房间状态 - Tag
  *     * `.l` -  资源加载状态 - Tag
  *     * `.al` -  自动读档标记 - Tag
+ *     * `.oc` -  screen 的 open 事件标记 - Tag
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -98,7 +99,7 @@ namespace Core {
          *
          * 此方法应触发 Save 事件。
          */
-        e(manual: string, series?: boolean): Util.IHashTable<any>;
+        e(manual: string, series?: boolean, callback?: () => void): Util.IHashTable<any>;
 
         /**
          * 导入数据。

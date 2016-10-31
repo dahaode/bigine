@@ -156,7 +156,10 @@ namespace Sprite {
          * 隐藏。
          */
         public h(duration?: number): Promise<Sprite> {
-            window.removeEventListener('keydown', this._ke);
+            if (this._ke) {
+                window.removeEventListener('keydown', this._ke);
+                this._ke = undefined;
+            }
             this._bn = undefined;
             return super.h(duration);
         }

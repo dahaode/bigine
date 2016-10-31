@@ -52,7 +52,7 @@ declare namespace __Bigine {
             m(src: string, dest: string): IStates;
             t(text: string): string;
             p(): IStates;
-            e(manual: string, series?: boolean): Util.IHashTable<any>;
+            e(manual: string, series?: boolean, callback?: () => void): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): IStates;
             q(index: string, type?: IStates.Save): [string, number | Util.IHashTable<any>];
             qa(type?: IStates.Save): Util.IHashTable<[string, number]>;
@@ -200,6 +200,7 @@ declare namespace __Bigine {
             gH(): boolean;
             t(flow: () => IRuntime | Thenable<IRuntime>): IRuntime;
             title(title: string): IRuntime;
+            gTitle(): string;
             author(title: string): IRuntime;
             user(nickname: string): IRuntime;
             nickname(): string;
@@ -209,6 +210,7 @@ declare namespace __Bigine {
             series(value?: string): IRuntime;
             pause(): IRuntime;
             resume(): IRuntime;
+            stop(): IRuntime;
         }
         namespace IRuntime {
             enum Series {
@@ -405,7 +407,7 @@ declare namespace __Bigine {
             m(src: string, dest: string): States;
             t(text: string): string;
             p(): States;
-            e(manual: string, series?: boolean): Util.IHashTable<any>;
+            e(manual: string, series?: boolean, callback?: () => void): Util.IHashTable<any>;
             i(data: Util.IHashTable<any>): States;
             q(index: string, series?: Core.IStates.Save): [string, number | Util.IHashTable<any>];
             qa(series?: Core.IStates.Save): Util.IHashTable<[string, number]>;
@@ -647,6 +649,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface IMenu extends ISprite {
+            u(series: boolean): IMenu;
         }
     }
     namespace Ev {
@@ -689,15 +692,27 @@ declare namespace __Bigine {
             gT(): string;
         }
     }
+    namespace Ev {
+        interface IMenuReplayMetas extends Util.IEventMetas<Core.IMenu> {
+        }
+    }
+    namespace Ev {
+        class MenuReplay extends Event<Core.IMenu> {
+            constructor(metas: IMenuReplayMetas);
+            gT(): string;
+        }
+    }
     namespace Sprite {
         class Menu extends Sprite implements Core.IMenu {
+            private _x;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            u(series: boolean): Menu;
         }
     }
     namespace Core {
         interface ISlots extends ISprite {
-            vs(states: IStates): Promise<ISlots>;
-            vl(states: IStates): Promise<ISlots>;
+            vs(runtime: Core.IRuntime): Promise<ISlots>;
+            vl(runtime: Core.IRuntime): Promise<ISlots>;
         }
     }
     namespace Ev {
@@ -739,8 +754,8 @@ declare namespace __Bigine {
             private _c;
             private _x;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
-            vs(states: Core.IStates, duration?: number): Promise<Slots>;
-            vl(states: Core.IStates, duration?: number): Promise<Slots>;
+            vs(runtime: Core.IRuntime, duration?: number): Promise<Slots>;
+            vl(runtime: Core.IRuntime, duration?: number): Promise<Slots>;
             h(duration?: number): Promise<Slots>;
             private $d(stamp);
         }
@@ -849,8 +864,8 @@ declare namespace __Bigine {
             private _x;
             private _de;
             constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
-            vs(states: Core.IStates, fs?: Core.IRuntime.Series, duration?: number): Promise<SeriesSlots>;
-            vl(states: Core.IStates, duration?: number): Promise<SeriesSlots>;
+            vs(runtime: Core.IRuntime, fs?: Core.IRuntime.Series, duration?: number): Promise<SeriesSlots>;
+            vl(runtime: Core.IRuntime, duration?: number): Promise<SeriesSlots>;
             h(duration?: number): Promise<SeriesSlots>;
             private $d(stamp);
         }
@@ -1786,7 +1801,7 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
-        class Tip extends Action {
+        class Tip extends Idable {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
@@ -2137,16 +2152,26 @@ declare namespace __Bigine {
         }
     }
     namespace Ev {
-        interface IGuidMetas extends Util.IEventMetas<Core.IStates> {
-            continue: () => void;
-            pause: () => void;
+        interface IScreenLoadMetas extends Util.IEventMetas<Core.IStates> {
+            type: string;
         }
     }
     namespace Ev {
-        class Guid extends Event<Core.IStates> {
-            private continue;
-            private pause;
-            constructor(metas: IGuidMetas);
+        class ScreenLoad extends Event<Core.IStates> {
+            private type;
+            constructor(metas: IScreenLoadMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IScreenSaveMetas extends Util.IEventMetas<Core.IStates> {
+            type: string;
+        }
+    }
+    namespace Ev {
+        class ScreenSave extends Event<Core.IStates> {
+            private type;
+            constructor(metas: IScreenSaveMetas);
             gT(): string;
         }
     }
@@ -2215,7 +2240,6 @@ declare namespace __Bigine {
             private _fa;
             private _fh;
             private _fb;
-            private _fs;
             private _t;
             private _n;
             private _c;
@@ -2238,12 +2262,13 @@ declare namespace __Bigine {
             isPlaying(): boolean;
             isReady(): boolean;
             title(title: string): Runtime;
+            gTitle(): string;
             author(title: string): Runtime;
             domain(text: string): Runtime;
             user(nickname: string): Runtime;
             nickname(): string;
             plots(data: Util.IHashTable<string> | string): Runtime;
-            autoLoad(id: string): Runtime;
+            autoLoad(id: string, type?: string): Runtime;
             s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime;
             a(action: Core.IIdableTag): Runtime;
             gH(): boolean;
@@ -2253,6 +2278,7 @@ declare namespace __Bigine {
             series(value?: string): Runtime;
             pause(): Runtime;
             resume(): Runtime;
+            stop(): Runtime;
         }
     }
     namespace Lex {

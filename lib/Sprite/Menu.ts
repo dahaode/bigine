@@ -13,12 +13,15 @@
 /// <reference path="../Ev/_Sprite/MenuSave.ts" />
 /// <reference path="../Ev/_Sprite/MenuLoad.ts" />
 /// <reference path="../Ev/_Sprite/MenuSet.ts" />
+/// <reference path="../Ev/_Sprite/MenuReplay.ts" />
 
 namespace Sprite {
     import Util = __Bigine_Util;
     import G = __Bigine_C2D;
 
     export class Menu extends Sprite implements Core.IMenu {
+
+        private _x: G.Button;
         /**
          * 构造函数。
          */
@@ -31,7 +34,8 @@ namespace Sprite {
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _save: Util.IHashTable<any> = theme['save'],
                 _load: Util.IHashTable<any> = theme['load'],
-                _set: Util.IHashTable<any> = theme['set'];
+                _set: Util.IHashTable<any> = theme['set'],
+                _replay: Util.IHashTable<any> = theme['replay'];
             super(0, 0, w, h);
             this._rr = [
                 rr.g<HTMLImageElement>(_close['i'], raw),
@@ -41,7 +45,9 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_load['i'], raw),
                 rr.g<HTMLImageElement>(_load['ih'], raw),
                 rr.g<HTMLImageElement>(_set['i'], raw),
-                rr.g<HTMLImageElement>(_set['ih'], raw)
+                rr.g<HTMLImageElement>(_set['ih'], raw),
+                rr.g<HTMLImageElement>(_replay['i'], raw),
+                rr.g<HTMLImageElement>(_replay['ih'], raw)
             ];
             (<Menu> this.o(0))
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -61,7 +67,16 @@ namespace Sprite {
                     .b(() => {
                         this.dispatchEvent(new Ev.MenuSet({ target: this }));
                     }, new G.Image(this._rr[7].o(), <G.IBounds> _set, true), new G.Image(this._rr[6].o(), <G.IBounds> _set, true))
+                ).a(this._x = new G.Button(<G.IBounds> _replay)
+                    .b(() => {
+                        this.dispatchEvent(new Ev.MenuReplay({ target: this }));
+                    }, new G.Image(this._rr[9].o(), <G.IBounds> _replay, true), new G.Image(this._rr[8].o(), <G.IBounds> _replay, true))
                 );
+        }
+
+        public u(series: boolean): Menu {
+            series ? this._x.o(1) : this._x.o(0);
+            return this;
         }
     }
 }

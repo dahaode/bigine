@@ -300,7 +300,7 @@
         },
         "save": {
             "x": 466,
-            "y": 122,
+            "y": 100,
             "w": 0,
             "h": 0,
             "i": "menu/save.png",
@@ -308,7 +308,7 @@
         },
         "load": {
             "x": 466,
-            "y": 260,
+            "y": 240,
             "w": 0,
             "h": 0,
             "i": "menu/load.png",
@@ -316,11 +316,19 @@
         },
         "set": {
             "x": 466,
-            "y": 394,
+            "y": 380,
             "w": 0,
             "h": 0,
             "i": "menu/setup.png",
             "ih": "menu/setup~hover.png"
+        },
+        "replay": {
+            "x": 466,
+            "y": 520,
+            "w": 0,
+            "h": 0,
+            "i": "menu/replay.png",
+            "ih": "menu/replay~hover.png"
         }
     },
     "set": {
@@ -534,15 +542,14 @@
             "ih": "menu/back~hover.png"
         },
         "text": {
-            "x": 0,
-            "y": 30,
+            "x": 20,
+            "y": 690,
             "w": 1280,
-            "h": 42,
-            "s": 30,
-            "lh": 30,
-            "a": "right",
+            "h": 24,
+            "s": 24,
+            "lh": 24,
             "c": "#fff",
-            "desc": "本集已完结，请存档后方可进入下一集"
+            "desc": "本集已完结。"
         },
         "auto": {
             "x": 416,
@@ -601,7 +608,7 @@
             "w": 484,
             "h": 120,
             "i": "menu/3.png",
-            "ih": "menu/1~hover.png",
+            "ih": "menu/3~hover.png",
             "text": {
                 "x": 300,
                 "y": 334,
@@ -618,7 +625,7 @@
             "w": 484,
             "h": 120,
             "i": "menu/4.png",
-            "ih": "menu/1~hover.png",
+            "ih": "menu/4~hover.png",
             "text": {
                 "x": 822,
                 "y": 334,

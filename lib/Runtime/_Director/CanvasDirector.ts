@@ -232,6 +232,7 @@ namespace Runtime {
         public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
             let series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
             (<Sprite.Start> this._x['s']).u(title, series, this._c);
+            (<Sprite.Menu> this._x['m']).u(series);
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
@@ -301,10 +302,13 @@ namespace Runtime {
                     resolve(this._r);
                 };
                 this.lightOn().then(() => {
-                    (<Sprite.SeriesSlots> this._x['ss']
-                        .addEventListener($c, close)
-                        .addEventListener($s, save)
-                    ).vs(this._r.gS(), this._fs);
+                    let callback: () => void = () => {
+                        (<Sprite.SeriesSlots> this._x['ss']
+                            .addEventListener($c, close)
+                            .addEventListener($s, save)
+                        ).vs(this._r, this._fs);
+                    };
+                    this._r.gS().e('auto', true, callback);
                 });
             }).then(() => this.lightOff());
         }
@@ -1008,7 +1012,8 @@ namespace Runtime {
         public t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector {
             let resources: Resource.Resource<string | HTMLImageElement>[][] = [],
                 gCurtain: Sprite.Curtain = this._x['c'],
-                slotsFromStart: boolean = false;
+                slotsFromStart: boolean = false,
+                states: Core.IStates = this._r.gS();
             this._pt = theme;
             // 特写。
             this._c.a(this._x['G'] = <Sprite.CG> new Sprite.CG(theme['cg']), gCurtain);
@@ -1065,28 +1070,32 @@ namespace Runtime {
                     this._x['m'].h();
                 }).addEventListener('menu.save', () => {
                     slotsFromStart = false;
-                    (<Sprite.Slots> this._x['sl']).vs(this._r.gS())
+                    (<Sprite.Slots> this._x['sl']).vs(this._r)
                         .then(() => {
-                            this._x['m'].h();
+                            this._x['m'].h(0);
                         })['catch'](() => {
                             return;
                         });
                 }).addEventListener('menu.load', () => {
                     slotsFromStart = false;
-                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS())
+                    (<Sprite.Slots> this._x['sl']).vl(this._r)
                         .then(() => {
-                            this._x['m'].h();
+                            this._x['m'].h(0);
                         })['catch'](() => {
                             return;
                         });
                 }).addEventListener('menu.set', () => {
-                    slotsFromStart = false;
                     (<Sprite.Set> this._x['st']).vv(this._s['b']['baseVolume'], this._s['e']['baseVolume'], this._vo)
                         .then(() => {
-                            this._x['m'].h();
+                            this._x['m'].h(0);
                         })['catch'](() => {
                             return;
                         });
+                }).addEventListener('menu.replay', () => {
+                    this._x['m'].h();
+                    this._t = this._h = undefined;
+                    this._r.stop();
+                    (<Sprite.Start> this._x['s']).u(this._r.gTitle(), true, this._c).v(0);
                 });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
@@ -1101,11 +1110,11 @@ namespace Runtime {
                 }).addEventListener('start.series', (event: Ev.StartSeries) => {
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
-                    (<Sprite.SeriesSlots> this._x['ss']).vl(this._r.gS());
+                    (<Sprite.SeriesSlots> this._x['ss']).vl(this._r);
                 }).addEventListener('start.load', (event: Ev.StartLoad) => {
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
-                    (<Sprite.Slots> this._x['sl']).vl(this._r.gS())
+                    (<Sprite.Slots> this._x['sl']).vl(this._r)
                         ['catch'](() => {
                             return;
                         });
@@ -1115,6 +1124,13 @@ namespace Runtime {
             // 档位菜单。
             this._x['sl'] = <Sprite.Slots> new Sprite.Slots(id, theme['slots'])
                 .addEventListener('slots.close', () => {
+                    if (states.g('.oc')) {
+                        this._r.dispatchEvent(new Ev.ScreenLoad({
+                            target: this._r.gS(),
+                            type: 'close'
+                        }));
+                        states.d('.oc');
+                    }
                     this._x[slotsFromStart ? 's' : 'm'].v();
                     this._x['sl'].h();
                 }).addEventListener('slots.save', (ev: Ev.SlotsSave) => {
@@ -1122,6 +1138,10 @@ namespace Runtime {
                     this._x['sl'].h();
                     this._r.gS().e(ev.slot);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
+                    this._r.dispatchEvent(new Ev.ScreenLoad({
+                        target: this._r.gS(),
+                        type: 'close'
+                    }));
                     this.sl(ev.id);
                 });
             resources.push(this._x['sl'].l());
@@ -1129,11 +1149,21 @@ namespace Runtime {
             // 连载档位菜单。
             this._x['ss'] = <Sprite.SeriesSlots> new Sprite.SeriesSlots(id, theme['series'])
                 .addEventListener('slots.close', () => {
-                    if (!slotsFromStart)
-                        this._r.gS().e('auto', true);
+                    if (!slotsFromStart && states.g('.oc')) {
+                        this._r.dispatchEvent(new Ev.ScreenSave({
+                            target: this._r.gS(),
+                            type: 'close'
+                        }));
+                        states.d('.oc');
+                        //this._r.gS().e('auto', true);
+                    }
                     slotsFromStart = false;
                     this._x['ss'].h();
                 }).addEventListener('slots.save', (ev: Ev.SlotsSave) => {
+                    this._r.dispatchEvent(new Ev.ScreenSave({
+                        target: this._r.gS(),
+                        type: 'close'
+                    }));
                     this._x['ss'].h();
                     this._r.gS().e(ev.slot, true);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
@@ -1316,16 +1346,18 @@ namespace Runtime {
          * 暂停播放。
          */
         public rp(): CanvasDirector {
-            (<CanvasDirector> super.rp())._s['b'].pause();
-            return this;
+            this._s['b'].pause();
+            this._s['s'].pause();
+            return <CanvasDirector> super.rp();
         }
 
         /**
          * 恢复播放。
          */
         public rr(): CanvasDirector {
-            (<CanvasDirector> super.rp())._s['b'].play();
-            return this;
+            this._s['b'].play();
+            this._s['s'].play();
+            return <CanvasDirector> super.rp();
         }
     }
 }

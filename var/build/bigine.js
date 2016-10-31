@@ -108,6 +108,7 @@ var Ev;
  *     * `.z` -  房间状态 - Tag
  *     * `.l` -  资源加载状态 - Tag
  *     * `.al` -  自动读档标记 - Tag
+ *     * `.oc` -  screen 的 open 事件标记 - Tag
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -1213,12 +1214,14 @@ var Runtime;
          *
          * 此方法应触发 Save 事件。
          */
-        States.prototype.e = function (manual, series) {
+        States.prototype.e = function (manual, series, callback) {
             var _this = this;
             if (!this._p)
                 return {};
             var save = function (id) {
                 _this._s[series ? 'end' : 'work'][manual] = [id, +new Date()];
+                if (callback)
+                    callback();
             }, data = this._p;
             if (series) {
                 data = {
@@ -2214,7 +2217,10 @@ var Sprite;
          * 隐藏。
          */
         Start.prototype.h = function (duration) {
-            window.removeEventListener('keydown', this._ke);
+            if (this._ke) {
+                window.removeEventListener('keydown', this._ke);
+                this._ke = undefined;
+            }
             this._bn = undefined;
             return _super.prototype.h.call(this, duration);
         };
@@ -2877,6 +2883,46 @@ var Ev;
     Ev.MenuSet = MenuSet;
 })(Ev || (Ev = {}));
 /**
+ * 声明（画面调度）功能菜单重新开始事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IMenuReplayMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Sprite/IMenu.ts" />
+/**
+ * 定义（画面调度）功能菜单重新开始事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/MenuReplay.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IMenuReplayMetas.ts" />
+var Ev;
+(function (Ev) {
+    var MenuReplay = (function (_super) {
+        __extends(MenuReplay, _super);
+        /**
+         * 构造函数。
+         */
+        function MenuReplay(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        MenuReplay.prototype.gT = function () {
+            return 'menu.replay';
+        };
+        return MenuReplay;
+    }(Ev.Event));
+    Ev.MenuReplay = MenuReplay;
+})(Ev || (Ev = {}));
+/**
  * 定义画面调度功能菜单组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2890,6 +2936,7 @@ var Ev;
 /// <reference path="../Ev/_Sprite/MenuSave.ts" />
 /// <reference path="../Ev/_Sprite/MenuLoad.ts" />
 /// <reference path="../Ev/_Sprite/MenuSet.ts" />
+/// <reference path="../Ev/_Sprite/MenuReplay.ts" />
 var Sprite;
 (function (Sprite) {
     var G = __Bigine_C2D;
@@ -2900,7 +2947,7 @@ var Sprite;
          */
         function Menu(id, theme) {
             var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _mask = theme['mask'], _save = theme['save'], _load = theme['load'], _set = theme['set'];
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _mask = theme['mask'], _save = theme['save'], _load = theme['load'], _set = theme['set'], _replay = theme['replay'];
             _super.call(this, 0, 0, w, h);
             this._rr = [
                 rr.g(_close['i'], raw),
@@ -2910,7 +2957,9 @@ var Sprite;
                 rr.g(_load['i'], raw),
                 rr.g(_load['ih'], raw),
                 rr.g(_set['i'], raw),
-                rr.g(_set['ih'], raw)
+                rr.g(_set['ih'], raw),
+                rr.g(_replay['i'], raw),
+                rr.g(_replay['ih'], raw)
             ];
             this.o(0)
                 .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
@@ -2926,8 +2975,15 @@ var Sprite;
             }, new G.Image(this._rr[5].o(), _load, true), new G.Image(this._rr[4].o(), _load, true))).a(new G.Button(_set)
                 .b(function () {
                 _this.dispatchEvent(new Ev.MenuSet({ target: _this }));
-            }, new G.Image(this._rr[7].o(), _set, true), new G.Image(this._rr[6].o(), _set, true)));
+            }, new G.Image(this._rr[7].o(), _set, true), new G.Image(this._rr[6].o(), _set, true))).a(this._x = new G.Button(_replay)
+                .b(function () {
+                _this.dispatchEvent(new Ev.MenuReplay({ target: _this }));
+            }, new G.Image(this._rr[9].o(), _replay, true), new G.Image(this._rr[8].o(), _replay, true)));
         }
+        Menu.prototype.u = function (series) {
+            series ? this._x.o(1) : this._x.o(0);
+            return this;
+        };
         return Menu;
     }(Sprite.Sprite));
     Sprite.Menu = Menu;
@@ -3116,8 +3172,9 @@ var Sprite;
         /**
          * 显示存档位。
          */
-        Slots.prototype.vs = function (states, duration) {
+        Slots.prototype.vs = function (runtime, duration) {
             var _this = this;
+            var states = runtime.gS();
             return states.l().then(function () {
                 var slots = states.qa();
                 var last = 1;
@@ -3156,8 +3213,14 @@ var Sprite;
         /**
          * 显示读档位。
          */
-        Slots.prototype.vl = function (states, duration) {
+        Slots.prototype.vl = function (runtime, duration) {
             var _this = this;
+            var states = runtime.gS();
+            runtime.dispatchEvent(new Ev.ScreenLoad({
+                target: states,
+                type: 'open'
+            }));
+            states.s('.oc', true);
             return states.l().then(function () {
                 var slots = states.qa();
                 var last = 1;
@@ -4081,18 +4144,18 @@ var Sprite;
         /**
          * 显示存档位。
          */
-        SeriesSlots.prototype.vs = function (states, fs, duration) {
+        SeriesSlots.prototype.vs = function (runtime, fs, duration) {
             var _this = this;
-            var type = Core.IStates.Save.End, series = Core.IRuntime.Series.Last, right = G.Text.Align.Right;
-            var succ;
-            var fail;
-            var loop = function () {
-                return states.l()
-                    .then(function () { return succ(); })
-                    .catch(function () { return fail(); });
-            };
-            fs == series ? this._de.o(0) : this._de.o(1);
-            succ = function () {
+            var states = runtime.gS();
+            runtime.dispatchEvent(new Ev.ScreenSave({
+                target: states,
+                type: 'open'
+            }));
+            states.s('.oc', true);
+            return states.l().then(function () {
+                var type = Core.IStates.Save.End;
+                var series = Core.IRuntime.Series.Last;
+                var right = G.Text.Align.Right;
                 var slots = states.qa(type);
                 var last = 1;
                 var button = function (index, slot) {
@@ -4112,6 +4175,7 @@ var Sprite;
                         last++;
                     }
                 };
+                fs == series ? _this._de.o(0) : _this._de.o(1);
                 Util.each(slots, function (slot, index) {
                     button(index, slot);
                 });
@@ -4126,27 +4190,79 @@ var Sprite;
                     }
                 }
                 return _this.v(duration);
+            });
+            /*let type: Core.IStates.Save = Core.IStates.Save.End,
+                series: Core.IRuntime.Series = Core.IRuntime.Series.Last,
+                right: G.Text.Align = G.Text.Align.Right;
+            let succ: () => Promise<SeriesSlots>;
+            let fail: () => Promise<SeriesSlots>;
+            let loop: () => Promise<SeriesSlots> = () => {
+                return states.l()
+                    .then(() => succ())
+                    .catch(() => fail());
             };
-            fail = function () {
-                var _1 = _this._c['1'];
-                var _1t = _1['text'];
-                _this.e(_this._x['1'])
-                    .a(_this._x['1'] = new G.Button(_1)
-                    .b(function () {
-                    loop();
-                }, new G.Image(_this._rr[5].o(), _1, true), new G.Image(_this._rr[4].o(), _1, true))
-                    .a(new G.Text(_1t, _1t['s'], _1t['lh'], right, true)
-                    .tc(_1t['c'])
-                    .a(new G.TextPhrase('（未登录）'))));
-                return _this.v(duration);
+            fs == series ? this._de.o(0) : this._de.o(1);
+            succ = () => {
+                let slots: Util.IHashTable<[string, number]> = states.qa(type);
+                let last: number = 1;
+                let button: (index: string, slot?: [string, number]) => void = (index: string, slot?: [string, number]) => {
+                    if (index != 'auto') {
+                        let _ii: number = 4 + (last - 1) * 2,
+                            _i: Util.IHashTable<any> = this._c[index],
+                            _it: Util.IHashTable<any> = this._c[index]['text'];
+                        this.e(this._x[index])
+                            .a(this._x[index] = new G.Button(<G.IBounds> _i)
+                            .b(() => {
+                                this.dispatchEvent(new Ev.SlotsSave({
+                                    target: this,
+                                    slot: index,
+                                }));
+                            }, new G.Image(this._rr[_ii + 1].o(), <G.IBounds> _i, true), new G.Image(this._rr[_ii].o(), <G.IBounds> _i, true))
+                            .a(new G.Text(<G.IBounds> _it, _it['s'], _it['lh'], right, true)
+                                .tc(_it['c'])
+                                .a(new G.TextPhrase(slot ? this.$d(slot[1]) : '（无）'))
+                            )
+                        );
+                        last++;
+                    }
+                };
+                Util.each(slots, (slot: [string, number], index: string) => {
+                    button(index, slot);
+                });
+                if (last <= 4) button(last.toString());
+                if (last <= 4) {
+                    for (var i: number = last; i <= 4; i++) {
+                        let _ii: number = 4 + (i - 1) * 2;
+                        let _i: Util.IHashTable<any> = this._c[i];
+                        this.e(this._x[i.toString()])
+                            .a(this._x[i.toString()] = new G.Image(this._rr[_ii].o(), <G.IBounds> _i));
+                    }
+                }
+                return this.v(duration);
             };
-            return loop();
+            fail = () => {
+                let _1: G.IBounds = this._c['1'];
+                let _1t: Util.IHashTable<any> = _1['text'];
+                this.e(this._x['1'])
+                    .a(this._x['1'] = new G.Button(<G.IBounds> _1)
+                    .b(() => {
+                        loop();
+                    }, new G.Image(this._rr[5].o(), <G.IBounds> _1, true), new G.Image(this._rr[4].o(), <G.IBounds> _1, true))
+                    .a(new G.Text(<G.IBounds> _1t, _1t['s'], _1t['lh'], right, true)
+                        .tc(_1t['c'])
+                        .a(new G.TextPhrase('（未登录）'))
+                    )
+                );
+                return this.v(duration);
+            };
+            return loop();*/
         };
         /**
          * 显示读档位。
          */
-        SeriesSlots.prototype.vl = function (states, duration) {
+        SeriesSlots.prototype.vl = function (runtime, duration) {
             var _this = this;
+            var states = runtime.gS();
             return states.l().then(function () {
                 var type = Core.IStates.Save.Series, $a = states.q('auto', type), _a = _this._c[0], _at = _a['text'], slots = states.qa(type), right = G.Text.Align.Right;
                 var last = 1;
@@ -4189,7 +4305,7 @@ var Sprite;
                 _this._x['a']
                     .a(new G.Text(_at, _at['s'], _at['lh'], right, true)
                     .tc(_at['c'])
-                    .a(new G.TextPhrase($a ? _this.$d($a[1]) : '（无）')));
+                    .a(new G.TextPhrase($a ? _this.$d($a[1]['date']) : '（无）')));
                 _this._de.o(0);
                 return _this.v(duration);
             });
@@ -4986,6 +5102,7 @@ var Runtime;
             var _this = this;
             var series = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
             this._x['s'].u(title, series, this._c);
+            this._x['m'].u(series);
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
@@ -5053,9 +5170,12 @@ var Runtime;
                     resolve(_this._r);
                 };
                 _this.lightOn().then(function () {
-                    _this._x['ss']
-                        .addEventListener($c, close)
-                        .addEventListener($s, save).vs(_this._r.gS(), _this._fs);
+                    var callback = function () {
+                        _this._x['ss']
+                            .addEventListener($c, close)
+                            .addEventListener($s, save).vs(_this._r, _this._fs);
+                    };
+                    _this._r.gS().e('auto', true, callback);
                 });
             }).then(function () { return _this.lightOff(); });
         };
@@ -5715,7 +5835,7 @@ var Runtime;
          */
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
-            var resources = [], gCurtain = this._x['c'], slotsFromStart = false;
+            var resources = [], gCurtain = this._x['c'], slotsFromStart = false, states = this._r.gS();
             this._pt = theme;
             // 特写。
             this._c.a(this._x['G'] = new Sprite.CG(theme['cg']), gCurtain);
@@ -5772,28 +5892,32 @@ var Runtime;
                 _this._x['m'].h();
             }).addEventListener('menu.save', function () {
                 slotsFromStart = false;
-                _this._x['sl'].vs(_this._r.gS())
+                _this._x['sl'].vs(_this._r)
                     .then(function () {
-                    _this._x['m'].h();
+                    _this._x['m'].h(0);
                 })['catch'](function () {
                     return;
                 });
             }).addEventListener('menu.load', function () {
                 slotsFromStart = false;
-                _this._x['sl'].vl(_this._r.gS())
+                _this._x['sl'].vl(_this._r)
                     .then(function () {
-                    _this._x['m'].h();
+                    _this._x['m'].h(0);
                 })['catch'](function () {
                     return;
                 });
             }).addEventListener('menu.set', function () {
-                slotsFromStart = false;
                 _this._x['st'].vv(_this._s['b']['baseVolume'], _this._s['e']['baseVolume'], _this._vo)
                     .then(function () {
-                    _this._x['m'].h();
+                    _this._x['m'].h(0);
                 })['catch'](function () {
                     return;
                 });
+            }).addEventListener('menu.replay', function () {
+                _this._x['m'].h();
+                _this._t = _this._h = undefined;
+                _this._r.stop();
+                _this._x['s'].u(_this._r.gTitle(), true, _this._c).v(0);
             });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
@@ -5808,11 +5932,11 @@ var Runtime;
             }).addEventListener('start.series', function (event) {
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
-                _this._x['ss'].vl(_this._r.gS());
+                _this._x['ss'].vl(_this._r);
             }).addEventListener('start.load', function (event) {
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
-                _this._x['sl'].vl(_this._r.gS())['catch'](function () {
+                _this._x['sl'].vl(_this._r)['catch'](function () {
                     return;
                 });
             });
@@ -5821,6 +5945,13 @@ var Runtime;
             // 档位菜单。
             this._x['sl'] = new Sprite.Slots(id, theme['slots'])
                 .addEventListener('slots.close', function () {
+                if (states.g('.oc')) {
+                    _this._r.dispatchEvent(new Ev.ScreenLoad({
+                        target: _this._r.gS(),
+                        type: 'close'
+                    }));
+                    states.d('.oc');
+                }
                 _this._x[slotsFromStart ? 's' : 'm'].v();
                 _this._x['sl'].h();
             }).addEventListener('slots.save', function (ev) {
@@ -5828,6 +5959,10 @@ var Runtime;
                 _this._x['sl'].h();
                 _this._r.gS().e(ev.slot);
             }).addEventListener('slots.load', function (ev) {
+                _this._r.dispatchEvent(new Ev.ScreenLoad({
+                    target: _this._r.gS(),
+                    type: 'close'
+                }));
                 _this.sl(ev.id);
             });
             resources.push(this._x['sl'].l());
@@ -5835,11 +5970,20 @@ var Runtime;
             // 连载档位菜单。
             this._x['ss'] = new Sprite.SeriesSlots(id, theme['series'])
                 .addEventListener('slots.close', function () {
-                if (!slotsFromStart)
-                    _this._r.gS().e('auto', true);
+                if (!slotsFromStart && states.g('.oc')) {
+                    _this._r.dispatchEvent(new Ev.ScreenSave({
+                        target: _this._r.gS(),
+                        type: 'close'
+                    }));
+                    states.d('.oc');
+                }
                 slotsFromStart = false;
                 _this._x['ss'].h();
             }).addEventListener('slots.save', function (ev) {
+                _this._r.dispatchEvent(new Ev.ScreenSave({
+                    target: _this._r.gS(),
+                    type: 'close'
+                }));
                 _this._x['ss'].h();
                 _this._r.gS().e(ev.slot, true);
             }).addEventListener('slots.load', function (ev) {
@@ -6008,15 +6152,17 @@ var Runtime;
          * 暂停播放。
          */
         CanvasDirector.prototype.rp = function () {
-            _super.prototype.rp.call(this)._s['b'].pause();
-            return this;
+            this._s['b'].pause();
+            this._s['s'].pause();
+            return _super.prototype.rp.call(this);
         };
         /**
          * 恢复播放。
          */
         CanvasDirector.prototype.rr = function () {
-            _super.prototype.rp.call(this)._s['b'].play();
-            return this;
+            this._s['b'].play();
+            this._s['s'].play();
+            return _super.prototype.rp.call(this);
         };
         /**
          * 尺寸。
@@ -8755,6 +8901,7 @@ var Tag;
                     case 'Monolog':
                     case 'Speak':
                     case 'VoiceOver':
+                    case 'Tip':
                     case 'Unlock':
                     case 'Donate':
                         ids.push(action.gI());
@@ -9471,7 +9618,7 @@ var Core;
                 },
                 "save": {
                     "x": 466,
-                    "y": 122,
+                    "y": 100,
                     "w": 0,
                     "h": 0,
                     "i": "menu/save.png",
@@ -9479,7 +9626,7 @@ var Core;
                 },
                 "load": {
                     "x": 466,
-                    "y": 260,
+                    "y": 240,
                     "w": 0,
                     "h": 0,
                     "i": "menu/load.png",
@@ -9487,11 +9634,19 @@ var Core;
                 },
                 "set": {
                     "x": 466,
-                    "y": 394,
+                    "y": 380,
                     "w": 0,
                     "h": 0,
                     "i": "menu/setup.png",
                     "ih": "menu/setup~hover.png"
+                },
+                "replay": {
+                    "x": 466,
+                    "y": 520,
+                    "w": 0,
+                    "h": 0,
+                    "i": "menu/replay.png",
+                    "ih": "menu/replay~hover.png"
                 }
             },
             "set": {
@@ -9705,15 +9860,14 @@ var Core;
                     "ih": "menu/back~hover.png"
                 },
                 "text": {
-                    "x": 0,
-                    "y": 30,
+                    "x": 20,
+                    "y": 690,
                     "w": 1280,
-                    "h": 42,
-                    "s": 30,
-                    "lh": 30,
-                    "a": "right",
+                    "h": 24,
+                    "s": 24,
+                    "lh": 24,
                     "c": "#fff",
-                    "desc": "本集已完结，请存档后方可进入下一集"
+                    "desc": "本集已完结。"
                 },
                 "auto": {
                     "x": 416,
@@ -9772,7 +9926,7 @@ var Core;
                     "w": 484,
                     "h": 120,
                     "i": "menu/3.png",
-                    "ih": "menu/1~hover.png",
+                    "ih": "menu/3~hover.png",
                     "text": {
                         "x": 300,
                         "y": 334,
@@ -9789,7 +9943,7 @@ var Core;
                     "w": 484,
                     "h": 120,
                     "i": "menu/4.png",
-                    "ih": "menu/1~hover.png",
+                    "ih": "menu/4~hover.png",
                     "text": {
                         "x": 822,
                         "y": 334,
@@ -12423,7 +12577,7 @@ var Tag;
  * @license   GPL-3.0
  * @file      Tag/_Action/_Text/Tip.ts
  */
-/// <reference path="../../Action.ts" />
+/// <reference path="../../Idable.ts" />
 var Tag;
 (function (Tag) {
     var Tip = (function (_super) {
@@ -12441,10 +12595,14 @@ var Tag;
          * 执行。
          */
         Tip.prototype.p = function (runtime) {
-            return runtime.gD().tip(runtime.gS().t(this._c));
+            var _this = this;
+            //return runtime.gD().tip(runtime.gS().t(this._c));
+            return Promise.resolve(_super.prototype.p.call(this, runtime))
+                .then(function () { return runtime.a(_this).gD()
+                .tip(runtime.gS().t(_this._c)); });
         };
         return Tip;
-    }(Tag.Action));
+    }(Tag.Idable));
     Tag.Tip = Tip;
 })(Tag || (Tag = {}));
 /**
@@ -14611,45 +14769,84 @@ var Ev;
     Ev.AutoLoad = AutoLoad;
 })(Ev || (Ev = {}));
 /**
- * 声明（运行时）新手引导数据元信息接口规范。
+ * 声明（运行时）弹出 / 关闭读档提示 数据元信息接口规范。
  *
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Ev/_Runtime/IPayMetas.ts
+ * @file      Ev/_Runtime/IScreenLoadMetas.ts
  */
 /// <reference path="../../Core/_Runtime/IStates.ts" />
 /**
- * 定义（运行时）付费数据事件。
+ * 定义（运行时）弹出 / 关闭读档提示 数据事件。
  *
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Ev/_Runtime/Guid.ts
+ * @file      Ev/_Runtime/ScreenLoad.ts
  */
 /// <reference path="../Event.ts" />
-/// <reference path="IGuidMetas.ts" />
+/// <reference path="IScreenLoadMetas.ts" />
 var Ev;
 (function (Ev) {
-    var Guid = (function (_super) {
-        __extends(Guid, _super);
+    var ScreenLoad = (function (_super) {
+        __extends(ScreenLoad, _super);
         /**
          * 构造函数。
          */
-        function Guid(metas) {
+        function ScreenLoad(metas) {
             _super.call(this, metas);
-            this.continue = metas.continue;
-            this.pause = metas.pause;
+            this.type = metas.type;
         }
         /**
          * 获取类型。
          */
-        Guid.prototype.gT = function () {
-            return 'guid';
+        ScreenLoad.prototype.gT = function () {
+            return 'screen.load';
         };
-        return Guid;
+        return ScreenLoad;
     }(Ev.Event));
-    Ev.Guid = Guid;
+    Ev.ScreenLoad = ScreenLoad;
+})(Ev || (Ev = {}));
+/**
+ * 声明（运行时）弹出 / 关闭快速进入下一集提示 数据元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IScreenSaveMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）弹出 / 关闭快速进入下一集提示 数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/ScreenSave.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IScreenSaveMetas.ts" />
+var Ev;
+(function (Ev) {
+    var ScreenSave = (function (_super) {
+        __extends(ScreenSave, _super);
+        /**
+         * 构造函数。
+         */
+        function ScreenSave(metas) {
+            _super.call(this, metas);
+            this.type = metas.type;
+        }
+        /**
+         * 获取类型。
+         */
+        ScreenSave.prototype.gT = function () {
+            return 'screen.save';
+        };
+        return ScreenSave;
+    }(Ev.Event));
+    Ev.ScreenSave = ScreenSave;
 })(Ev || (Ev = {}));
 /**
  * 定义停止环境音乐动作标签组件。
@@ -15078,7 +15275,8 @@ var Tag;
 /// <reference path="../Ev/_Runtime/Rank.ts" />
 /// <reference path="../Ev/_Runtime/PayOption.ts" />
 /// <reference path="../Ev/_Runtime/AutoLoad.ts" />
-/// <reference path="../Ev/_Runtime/Guid.ts" />
+/// <reference path="../Ev/_Runtime/ScreenLoad.ts" />
+/// <reference path="../Ev/_Runtime/ScreenSave.ts" />
 /// <reference path="_Action/_Director/PlayESM.ts" />
 /// <reference path="_Action/_Director/StopESM.ts" />
 /// <reference path="_Action/_Director/StopSE.ts" />
@@ -15125,11 +15323,10 @@ var Runtime;
             this._fp = this._d.gD();
             this._fv = 1;
             this._fa = this._e.gA();
-            this._fs = Core.IRuntime.Series.Alone;
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
-            this._al = [undefined, undefined];
+            this._al = [undefined, undefined, undefined];
             this.addEventListener('loading', function () {
                 _this._fl = true;
                 if (_this._fp) {
@@ -15144,10 +15341,17 @@ var Runtime;
                 _this._d.Load(false);
                 _this._s.l().then(function () {
                     var valid = false;
-                    if (_this._al[0]) {
+                    if (_this._al[0] && _this._al[2] == 'pay') {
                         var pay = _this._s.q('pay');
                         if (pay && pay[1]['_a'] == _this._al[0]) {
                             _this._al[1] = pay[1];
+                            valid = true;
+                        }
+                    }
+                    if (_this._al[0] && _this._al[2] == 'manual') {
+                        var manual = _this._s.q('auto', Core.IStates.Save.Series);
+                        if (manual && _this._al[0] == manual[0] && manual[1]['data']) {
+                            _this._al[1] = manual[1]['data'];
                             valid = true;
                         }
                     }
@@ -15157,9 +15361,9 @@ var Runtime;
                         valid: valid
                     }));
                     if (!valid)
-                        _this._al = [undefined, undefined];
+                        _this._al = [undefined, undefined, undefined];
                 }).catch(function () {
-                    _this._al = [undefined, undefined];
+                    _this._al = [undefined, undefined, undefined];
                     _this.dispatchEvent(new Ev.AutoLoad({
                         target: _this._s,
                         valid: false
@@ -15173,6 +15377,7 @@ var Runtime;
             });
             this.addEventListener('begin', function () {
                 _this._fb = true;
+                _this._fh = false;
                 _this._s.d(' ');
                 _this.t(function () { return _this._e.p(Core.ISceneTag.Type.Begin, _this); });
             });
@@ -15260,8 +15465,6 @@ var Runtime;
             if (!this._fr)
                 return this;
             this._s.i({});
-            if (Core.IRuntime.Series.Alone != this._fs)
-                this._d.e(this._fs);
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
@@ -15331,6 +15534,12 @@ var Runtime;
             return this;
         };
         /**
+         * 获取作品标题。
+         */
+        Runtime.prototype.gTitle = function () {
+            return this._n;
+        };
+        /**
          * 设置作者/logo。
          */
         Runtime.prototype.author = function (title) {
@@ -15367,8 +15576,9 @@ var Runtime;
         /**
          * 自动读档
          */
-        Runtime.prototype.autoLoad = function (id) {
+        Runtime.prototype.autoLoad = function (id, type) {
             this._al[0] = id;
+            this._al[2] = type;
             return this;
         };
         /**
@@ -15469,7 +15679,7 @@ var Runtime;
             };
             if (autoload) {
                 load(this._al[1]);
-                this._al = [undefined, undefined];
+                this._al = [undefined, undefined, undefined];
             }
             else {
                 this.dispatchEvent(new Ev.Load({
@@ -15490,18 +15700,19 @@ var Runtime;
          * 连载模式。
          */
         Runtime.prototype.series = function (value) {
-            var series = Core.IRuntime.Series;
+            var series = Core.IRuntime.Series, fs;
             switch (value) {
                 case 'f':
-                    this._fs = series.First;
+                    fs = series.First;
                     break;
                 case 'l':
-                    this._fs = series.Last;
+                    fs = series.Last;
                     break;
                 default:
-                    this._fs = series.Rest;
+                    fs = series.Rest;
                     break;
             }
+            this._d.e(fs);
             return this;
         };
         /**
@@ -15516,6 +15727,18 @@ var Runtime;
          */
         Runtime.prototype.resume = function () {
             this._d.rr();
+            return this;
+        };
+        /**
+         * 停止播放。
+         */
+        Runtime.prototype.stop = function () {
+            var _this = this;
+            this._fh = true;
+            this._d.reset().then(function () {
+                _this._s.i({});
+                _this._d.h();
+            });
             return this;
         };
         return Runtime;
@@ -15736,7 +15959,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.24.3';
+    Bigine.version = '0.25.0';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
