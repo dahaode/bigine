@@ -15156,8 +15156,7 @@ var Tag;
                             resolve(runtime);
                         };
                         runtime.a(_this);
-                        states.l().then(function () {
-                            states.e('pay');
+                        states.e('pay', false, function () {
                             runtime.dispatchEvent(new Ev.PayUnlock({
                                 target: states,
                                 amount: amount,
@@ -15165,9 +15164,6 @@ var Tag;
                                 suc: suc,
                                 fail: fail
                             }));
-                        }).catch(function () {
-                            no();
-                            resolve(runtime);
                         });
                     });
                 }
@@ -15959,7 +15955,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.0';
+    Bigine.version = '0.25.1';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

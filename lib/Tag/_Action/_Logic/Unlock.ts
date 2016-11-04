@@ -53,8 +53,7 @@ namespace Tag {
                                     resolve(runtime);
                                 };
                             runtime.a(this);
-                            states.l().then(() => {
-                                states.e('pay');
+                            states.e('pay', false, () => {
                                 runtime.dispatchEvent(new Ev.PayUnlock({
                                     target: states,
                                     amount: amount,
@@ -62,9 +61,6 @@ namespace Tag {
                                     suc: suc,
                                     fail: fail
                                 }));
-                            }).catch(() => {
-                                no();
-                                resolve(runtime);
                             });
                         });
                     }
