@@ -5152,14 +5152,13 @@ var Runtime;
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
-                var gLogo = new G.Component().a(new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
-                _this._c.z()
-                    .a(gLogo, _this._x['c']);
+                //let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
+                _this._c.z();
+                //.a(gLogo, this._x['c']);
                 return _this.lightOn()
-                    .then(function () { return gLogo.p(new G.Delay(1000)); })
                     .then(function () { return _this.lightOff(); })
                     .then(function () {
-                    _this._c.e(gLogo);
+                    //this._c.e(gLogo);
                     if (!author && !title)
                         return;
                     var gAuthor = _this._x['a'].u(author ? author : title);
@@ -16136,7 +16135,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.2';
+    Bigine.version = '0.25.2-p1';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

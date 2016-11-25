@@ -239,14 +239,14 @@ namespace Runtime {
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
-                    let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
-                    this._c.z()
-                        .a(gLogo, this._x['c']);
+                    //let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
+                    this._c.z();
+                        //.a(gLogo, this._x['c']);
                     return this.lightOn()
-                        .then(() => gLogo.p(new G.Delay(1000)))
+                        //.then(() => gLogo.p(new G.Delay(1000)))
                         .then(() => this.lightOff())
                         .then(() => {
-                            this._c.e(gLogo);
+                            //this._c.e(gLogo);
                             if (!author && !title) return;
                             let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
                             gAuthor.v(0);
