@@ -36,20 +36,16 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+            let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                _desc: Util.IHashTable<any> = theme['text'],
                 _close: Util.IHashTable<any> = theme['close'],
-                _mask: Util.IHashTable<any> = theme['mask'],
                 _auto: Util.IHashTable<any> = theme['auto'],
                 _1: Util.IHashTable<any> = theme['1'],
                 _2: Util.IHashTable<any> = theme['2'],
                 _3: Util.IHashTable<any> = theme['3'],
                 _4: Util.IHashTable<any> = theme['4'];
-            super(0, 0, w, h);
+            super(theme);
             this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
             this._rr = [
@@ -66,23 +62,32 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_4['i'], raw),
                 rr.g<HTMLImageElement>(_4['ih'], raw)
             ];
+        }
+
+        protected pI(): SeriesSlots {
+            if (this._pi) return this;
+            let _desc: Util.IHashTable<any> = this._tm['text'],
+                _close: Util.IHashTable<any> = this._tm['close'],
+                _mask: Util.IHashTable<any> = this._tm['mask'];
             (<SeriesSlots> this.o(0))
-                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(<G.IBounds> _close)
                     .b(() => {
                         this.dispatchEvent(new Ev.SlotsClose({ target: this }));
                     }, new G.Image(this._rr[1].o(), <G.IBounds> _close, true), new G.Image(this._rr[0].o(), <G.IBounds> _close, true))
                 )
-                .a(this._de = new G.Text(<G.IBounds> _desc, _desc['s'], _desc['lh'], this.$a(_desc['a']), true)
+                .a(this._de = new G.Text(<G.IBounds> _desc, _desc['ff'], _desc['s'], _desc['lh'], this.$a(_desc['a']), true)
                     .tc(_desc['c'])
                     .a(new G.TextPhrase(_desc['desc']))
                 );
+            return <SeriesSlots> super.pI();
         }
 
         /**
          * 显示存档位。
          */
         public vs(runtime: Core.IRuntime, fs?: Core.IRuntime.Series, duration?: number): Promise<SeriesSlots> {
+            this.pI();
             let states: Core.IStates = runtime.gS();
             runtime.dispatchEvent(new Ev.ScreenSave({
                 target: states,
@@ -94,40 +99,25 @@ namespace Sprite {
                 let series: Core.IRuntime.Series = Core.IRuntime.Series.Last;
                 let right: G.Text.Align = G.Text.Align.Right;
                 let slots: Util.IHashTable<[string, number]> = states.qa(type);
-                let last: number = 1;
-                let button: (index: string, slot?: [string, number]) => void = (index: string, slot?: [string, number]) => {
-                    if (index != 'auto') {
-                        let _ii: number = 4 + (last - 1) * 2,
-                            _i: Util.IHashTable<any> = this._c[index],
-                            _it: Util.IHashTable<any> = this._c[index]['text'];
-                        this.e(this._x[index])
-                            .a(this._x[index] = new G.Button(<G.IBounds> _i)
-                            .b(() => {
-                                this.dispatchEvent(new Ev.SlotsSave({
-                                    target: this,
-                                    slot: index,
-                                }));
-                            }, new G.Image(this._rr[_ii + 1].o(), <G.IBounds> _i, true), new G.Image(this._rr[_ii].o(), <G.IBounds> _i, true))
-                            .a(new G.Text(<G.IBounds> _it, _it['s'], _it['lh'], right, true)
-                                .tc(_it['c'])
-                                .a(new G.TextPhrase(slot ? this.$d(slot[1]) : '（无）'))
-                            )
-                        );
-                        last++;
-                    }
-                };
                 fs == series ? this._de.o(0) : this._de.o(1);
-                Util.each(slots, (slot: [string, number], index: string) => {
-                    button(index, slot);
-                });
-                if (last <= 4) button(last.toString());
-                if (last <= 4) {
-                    for (var i: number = last; i <= 4; i++) {
-                        let _ii: number = 4 + (i - 1) * 2;
-                        let _i: Util.IHashTable<any> = this._c[i];
-                        this.e(this._x[i.toString()])
-                            .a(this._x[i.toString()] = new G.Image(this._rr[_ii].o(), <G.IBounds> _i));
-                    }
+                for (var i: number = 1; i <= 4; i++) {
+                    let index: string = i.toString(),
+                        _ii: number = 4 + (i - 1) * 2,
+                        _i: Util.IHashTable<any> = this._c[index],
+                        _it: Util.IHashTable<any> = this._c[index]['text'];
+                    this.e(this._x[index])
+                        .a(this._x[index] = new G.Button(<G.IBounds> _i)
+                        .b(() => {
+                            this.dispatchEvent(new Ev.SlotsSave({
+                                target: this,
+                                slot: index,
+                            }));
+                        }, new G.Image(this._rr[_ii + 1].o(), <G.IBounds> _i, true), new G.Image(this._rr[_ii].o(), <G.IBounds> _i, true))
+                        .a(new G.Text(<G.IBounds> _it, _it['ff'], _it['s'], _it['lh'], right, true)
+                            .tc(_it['c'])
+                            .a(new G.TextPhrase(slots[index] ? this.$d(slots[index][1]) : '（无）'))
+                        )
+                    );
                 }
                 return this.v(duration);
             });
@@ -202,6 +192,7 @@ namespace Sprite {
          * 显示读档位。
          */
         public vl(runtime: Core.IRuntime, duration?: number): Promise<SeriesSlots> {
+            this.pI();
             let states: Core.IStates = runtime.gS();
             return states.l().then(() => {
                 let type: Core.IStates.Save = Core.IStates.Save.Series,
@@ -210,36 +201,24 @@ namespace Sprite {
                     _at: Util.IHashTable<any> = _a['text'],
                     slots: Util.IHashTable<[string, number]> = states.qa(type),
                     right: G.Text.Align = G.Text.Align.Right;
-                let last: number = 1;
-                let button: (index: string, slot?: [string, number]) => void = (index: string, slot?: [string, number]) => {
-                    if (index != 'auto' && index != 'pay') {
-                        let _ii: number = 4 + (last - 1) * 2,
-                            _i: Util.IHashTable<any> = this._c[index],
-                            _it: Util.IHashTable<any> = this._c[index]['text'];
-                        this.a(this._x[index] = new G.Button(<G.IBounds> _i)
-                            .b(() => {
-                                this.dispatchEvent(new Ev.SlotsLoad({
-                                    target: this,
-                                    id: slot[0]
-                                }));
-                            }, new G.Image(this._rr[_ii + 1].o(), <G.IBounds> _i, true), new G.Image(this._rr[_ii].o(), <G.IBounds> _i, true))
-                            .a(new G.Text(<G.IBounds> _it, _it['s'], _it['lh'], right, true)
-                                .tc(_it['c'])
-                                .a(new G.TextPhrase(slot ? this.$d(slot[1]) : '（无）'))
-                            )
-                        );
-                        last++;
-                    }
-                };
-                Util.each(slots, (slot: [string, number], index: string) => {
-                    button(index, slot);
-                });
-                if (last <= 4) {
-                    for (var i: number = last; i <= 4; i++) {
-                        let _ii: number = 4 + (i - 1) * 2;
-                        let _i: Util.IHashTable<any> = this._c[i];
-                        this.a(this._x[i.toString()] = new G.Image(this._rr[_ii].o(), <G.IBounds> _i));
-                    }
+                for (var i: number = 1; i <= 4; i++) {
+                    let index: string = i.toString(),
+                        slot: Util.IHashTable<any> = slots[index],
+                        _ii: number = 4 + (i - 1) * 2,
+                        _i: Util.IHashTable<any> = this._c[index],
+                        _it: Util.IHashTable<any> = this._c[index]['text'];
+                    slot ? this.a(this._x[index] = new G.Button(<G.IBounds> _i)
+                        .b(() => {
+                            this.dispatchEvent(new Ev.SlotsLoad({
+                                target: this,
+                                id: slot[0]
+                            }));
+                        }, new G.Image(this._rr[_ii + 1].o(), <G.IBounds> _i, true), new G.Image(this._rr[_ii].o(), <G.IBounds> _i, true))
+                        .a(new G.Text(<G.IBounds> _it, _it['ff'], _it['s'], _it['lh'], right, true)
+                            .tc(_it['c'])
+                            .a(new G.TextPhrase(this.$d(slot[1])))
+                        )
+                    ) : this.a(this._x[index] = new G.Image(this._rr[_ii].o(), <G.IBounds> _i));
                 }
                 this.a(this._x['a'] = $a ?
                     new G.Button(<G.IBounds> _a)
@@ -253,7 +232,7 @@ namespace Sprite {
                         .a(new G.Image(this._rr[2].o(), <G.IBounds> _a, true))
                 );
                 (<G.Sprite> this._x['a'])
-                    .a(new G.Text(<G.IBounds> _at, _at['s'], _at['lh'], right, true)
+                    .a(new G.Text(<G.IBounds> _at, _at['ff'], _at['s'], _at['lh'], right, true)
                         .tc(_at['c'])
                         .a(new G.TextPhrase($a ? this.$d($a[1]['date']) : '（无）'))
                     );

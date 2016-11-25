@@ -109,6 +109,7 @@ var Ev;
  *     * `.l` -  资源加载状态 - Tag
  *     * `.al` -  自动读档标记 - Tag
  *     * `.oc` -  screen 的 open 事件标记 - Tag
+ *     * `.ld` -  正在读档标记 - Tag
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -1139,8 +1140,9 @@ var Runtime;
         /**
          * 获取值。
          */
-        States.prototype.g = function (key) {
-            return this._d[key];
+        States.prototype.g = function (key, local) {
+            if (local === void 0) { local = false; }
+            return local ? this._p[key] : this._d[key];
         };
         /**
          * 删除值。
@@ -1231,6 +1233,12 @@ var Runtime;
                     if ('_' != key[0])
                         data[key] = value;
                 });
+            }
+            else {
+                if (!data['_a']) {
+                    console.log('当前没有关键帧，存档不成功！');
+                    return this._p;
+                }
             }
             this._r.dispatchEvent(new Ev.Save({
                 target: this,
@@ -1888,7 +1896,7 @@ var Sprite;
             return this;
         };
         return Sprite;
-    }(G.Sprite));
+    }(G.Component));
     Sprite_1.Sprite = Sprite;
 })(Sprite || (Sprite = {}));
 /**
@@ -1910,9 +1918,8 @@ var Sprite;
          */
         function Curtain(color) {
             if (color === void 0) { color = '#000'; }
-            var w = 1280, h = 720;
-            _super.call(this, 0, 0, w, h);
-            this.a(new G.Color(0, 0, w, h, color));
+            _super.call(this, {});
+            this.a(new G.Color(0, 0, 1280, 720, color));
         }
         return Curtain;
     }(Sprite.Sprite));
@@ -1936,20 +1943,26 @@ var Sprite;
          * 构造函数。
          */
         function Author(theme) {
-            var w = 1280, h = 720, _director = theme['director'], _title = theme['title'];
-            _super.call(this, 0, 0, w, h);
+            _super.call(this, theme);
+        }
+        Author.prototype.pI = function () {
+            if (this._pi)
+                return this;
+            var _director = this._tm['director'], _title = this._tm['title'];
             this.o(0)
-                .a(new G.Color(0, 0, w, h, '#000'))
-                .a(new G.Text(_director, _director['s'], _director['h'], this.$a(_director['a']))
+                .a(new G.Color(0, 0, 1280, 720, '#000'))
+                .a(new G.Text(_director, _director['ff'], _director['s'], _director['h'], this.$a(_director['a']))
                 .tc(_director['c'])
-                .a(new G.TextPhrase('作品'))).a(new G.Text(_title, _title['s'], _title['h'], this.$a(_title['a']))
+                .a(new G.TextPhrase('作品'))).a(new G.Text(_title, _title['ff'], _title['s'], _title['h'], this.$a(_title['a']))
                 .tc(_title['c'])
                 .a(this._x = new G.TextPhrase()));
-        }
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 设置名称。
          */
         Author.prototype.u = function (title) {
+            this.pI();
             if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(title)) {
                 this._x.t(title);
             }
@@ -2113,10 +2126,9 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Start(id, theme) {
-            var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _new = theme['new'], _series = theme['series'], _load = theme['load'], _title = theme['title'];
-            _super.call(this, 0, 0, w, h);
+        function Start(theme) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _new = theme['new'], _series = theme['series'], _load = theme['load'];
+            _super.call(this, theme);
             this._rr = [
                 rr.g(theme['i'], raw),
                 rr.g(_new['i'], raw),
@@ -2129,8 +2141,14 @@ var Sprite;
             this._y = {};
             this._bn =
                 this._ke = undefined;
+        }
+        Start.prototype.pI = function () {
+            var _this = this;
+            if (this._pi)
+                return this;
+            var _new = this._tm['new'], _series = this._tm['series'], _load = this._tm['load'], _title = this._tm['title'];
             this.o(0)
-                .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
+                .a(new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
                 .a(this._y['n'] = new G.Button(_new)
                 .b(function () {
                 _this.dispatchEvent(new Ev.StartNew({ target: _this }));
@@ -2141,14 +2159,16 @@ var Sprite;
                 .o(0)).a(this._y['l'] = new G.Button(_load)
                 .b(function () {
                 _this.dispatchEvent(new Ev.StartLoad({ target: _this }));
-            }, new G.Image(this._rr[6].o(), _load, true), new G.Image(this._rr[5].o(), _load, true))).a(new G.Text(_title, _title['s'], _title['lh'], this.$a(_title['a']))
+            }, new G.Image(this._rr[6].o(), _load, true), new G.Image(this._rr[5].o(), _load, true))).a(new G.Text(_title, _title['ff'], _title['s'], _title['lh'], this.$a(_title['a']))
                 .tc(_title['c'])
                 .a(this._x = new G.TextPhrase()));
-        }
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 设置名称。
          */
         Start.prototype.u = function (title, series, stage) {
+            this.pI();
             if (title)
                 this._x.t(title);
             if (series) {
@@ -2299,9 +2319,9 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Words(id, voiceover, monolog, speak) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _vback = voiceover['back'], _vtext = voiceover['text'], _vcurs = voiceover['cursor'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mtext = monolog['text'], _mcurs = monolog['cursor'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _stext = speak['text'], _scurs = speak['cursor'], left = G.Text.Align.Left;
-            _super.call(this, 0, 0, w, h);
+        function Words(voiceover, monolog, speak) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _vback = voiceover['back'], _vtext = voiceover['text'], _vcurs = voiceover['cursor'], _mback = monolog['back'], _mavat = monolog['avatar'], _mtext = monolog['text'], _mcurs = monolog['cursor'], _sback = speak['back'], _savat = speak['avatar'], _stext = speak['text'], _scurs = speak['cursor'], theme = { voiceover: voiceover, monolog: monolog, speak: speak };
+            _super.call(this, theme);
             this._rr = [
                 rr.g(_vback['i'], raw),
                 rr.g(_mback['i'], raw),
@@ -2329,6 +2349,17 @@ var Sprite;
                 m: Util.clone(_mtext),
                 s: Util.clone(_stext)
             };
+            if (_vcurs)
+                this._rr.push(rr.g(_vcurs['i'], raw));
+            if (_mcurs)
+                this._rr.push(rr.g(_mcurs['i'], raw));
+            if (_scurs)
+                this._rr.push(rr.g(_scurs['i'], raw));
+        }
+        Words.prototype.pI = function () {
+            if (this._pi)
+                return this;
+            var voiceover = this._tm['voiceover'], monolog = this._tm['monolog'], speak = this._tm['speak'], _vback = voiceover['back'], _vcurs = voiceover['cursor'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mcurs = monolog['cursor'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _scurs = speak['cursor'], left = G.Text.Align.Left;
             this.o(0)
                 .a(this._x['v'] = new G.Sprite(_vback)
                 .a(new G.Image(this._rr[0].o(), _vback, true))
@@ -2336,38 +2367,32 @@ var Sprite;
                 .o(0)).a(this._x['m'] = new G.Sprite(_mback)
                 .a(new G.Image(this._rr[1].o(), _mback, true))
                 .a(this._x['ma'] = new G.Sprite(_mavat, true))
-                .a(new G.Text(_mname, _mname['s'], _mname['lh'], left, true)
+                .a(new G.Text(_mname, _mname['ff'], _mname['s'], _mname['lh'], left, true)
                 .tc(_mname['c'])
                 .ts(_mname['ss'], _mname['ss'], _mname['ss'])
                 .a(this._x['mn'] = new G.TextPhrase())).a(this._x['mt'] = new G.Sprite(_mback))
                 .o(0)).a(this._x['s'] = new G.Sprite(_sback)
                 .a(new G.Image(this._rr[2].o(), _sback, true))
                 .a(this._x['sa'] = new G.Sprite(_savat, true))
-                .a(new G.Text(_sname, _sname['s'], _sname['lh'], left, true)
+                .a(new G.Text(_sname, _sname['ff'], _sname['s'], _sname['lh'], left, true)
                 .tc(_sname['c'])
                 .ts(_sname['ss'], _sname['ss'], _sname['ss'])
                 .a(this._x['sn'] = new G.TextPhrase())).a(this._x['st'] = new G.Sprite(_sback)).o(0));
-            if (_vcurs) {
-                var vo = rr.g(_vcurs['i'], raw);
-                this._rr.push(vo);
-                this._x['v'].a(this._x['vc'] = new G.Image(vo.o(), _vcurs, true));
-            }
-            if (_mcurs) {
-                var mo = rr.g(_mcurs['i'], raw);
-                this._rr.push(mo);
-                this._x['m'].a(this._x['mc'] = new G.Image(mo.o(), _mcurs, true));
-            }
-            if (_scurs) {
-                var so = rr.g(_scurs['i'], raw);
-                this._rr.push(so);
-                this._x['s'].a(this._x['sc'] = new G.Image(so.o(), _scurs, true));
-            }
-        }
+            if (_vcurs)
+                this._x['v'].a(this._x['vc'] = new G.Image(this._rr[3].o(), _vcurs, true));
+            if (_mcurs)
+                this._x['m'].a(this._x['mc'] = new G.Image(this._rr[4].o(), _mcurs, true));
+            if (_scurs)
+                this._x['s'].a(this._x['sc'] = new G.Image(this._rr[5].o(), _scurs, true));
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 隐藏。
          */
         Words.prototype.h = function (duration) {
             var _this = this;
+            if (!this._pi)
+                return _super.prototype.h.call(this, duration);
             if (this._h) {
                 this._h.h();
                 this._h = undefined;
@@ -2393,7 +2418,7 @@ var Sprite;
         Words.prototype.vv = function (clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
-            this._x['v'].o(1);
+            this.pI()._x['v'].o(1);
             return this.split(clob, 'v', auto).then(function () {
                 _this._x['v'].o(0);
                 if (_this._si) {
@@ -2409,7 +2434,7 @@ var Sprite;
         Words.prototype.vm = function (avatar, name, clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
-            this._x['ma']
+            this.pI()._x['ma']
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['m'], true));
             this._x['mn'].t(name);
@@ -2429,7 +2454,7 @@ var Sprite;
         Words.prototype.vs = function (avatar, name, clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
-            this._x['sa']
+            this.pI()._x['sa']
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['s'], true));
             this._x['sn'].t(name);
@@ -2489,7 +2514,7 @@ var Sprite;
             }
             if (clob == '')
                 return Promise.resolve(this);
-            tText = new G.Text(tBound, tBound['s'], tBound['lh'], left, true)
+            tText = new G.Text(tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
                 .tl(tBound['ls'])
                 .to(pause > 0 ? this._tp['c'].x : 0)
@@ -2683,16 +2708,21 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Tray(id, theme) {
-            var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _menu = theme['menu'], _panel = theme['panel'];
-            _super.call(this, 0, 0, w, h, true);
+        function Tray(theme) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _menu = theme['menu'], _panel = theme['panel'];
+            _super.call(this, theme, true);
             this._rr = [
                 rr.g(_menu['i'], raw),
                 rr.g(_menu['ih'], raw),
                 rr.g(_panel['i'], raw),
                 rr.g(_panel['ih'], raw)
             ];
+        }
+        Tray.prototype.pI = function () {
+            var _this = this;
+            if (this._pi)
+                return this;
+            var _menu = this._tm['menu'], _panel = this._tm['panel'];
             this.o(0)
                 .a(new G.Button(_menu)
                 .b(function () {
@@ -2701,12 +2731,13 @@ var Sprite;
                 .b(function () {
                 _this.dispatchEvent(new Ev.TrayPanel({ target: _this }));
             }, new G.Image(this._rr[3].o(), _panel, true), new G.Image(this._rr[2].o(), _panel, true)));
-        }
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 配置面板。
          */
         Tray.prototype.u = function (panel) {
-            this._x.o(0 + panel);
+            this.pI()._x.o(0 + panel);
             return this;
         };
         return Tray;
@@ -2945,10 +2976,9 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Menu(id, theme) {
-            var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _mask = theme['mask'], _save = theme['save'], _load = theme['load'], _set = theme['set'], _replay = theme['replay'];
-            _super.call(this, 0, 0, w, h);
+        function Menu(theme) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _save = theme['save'], _load = theme['load'], _set = theme['set'], _replay = theme['replay'];
+            _super.call(this, theme);
             this._rr = [
                 rr.g(_close['i'], raw),
                 rr.g(_close['ih'], raw),
@@ -2961,8 +2991,14 @@ var Sprite;
                 rr.g(_replay['i'], raw),
                 rr.g(_replay['ih'], raw)
             ];
+        }
+        Menu.prototype.pI = function () {
+            var _this = this;
+            if (this._pi)
+                return this;
+            var _close = this._tm['close'], _mask = this._tm['mask'], _save = this._tm['save'], _load = this._tm['load'], _set = this._tm['set'], _replay = this._tm['replay'];
             this.o(0)
-                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.MenuClose({ target: _this }));
@@ -2979,8 +3015,10 @@ var Sprite;
                 .b(function () {
                 _this.dispatchEvent(new Ev.MenuReplay({ target: _this }));
             }, new G.Image(this._rr[9].o(), _replay, true), new G.Image(this._rr[8].o(), _replay, true)));
-        }
+            return _super.prototype.pI.call(this);
+        };
         Menu.prototype.u = function (series) {
+            this.pI();
             series ? this._x.o(1) : this._x.o(0);
             return this;
         };
@@ -3142,10 +3180,9 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Slots(id, theme) {
-            var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
-            _super.call(this, 0, 0, w, h);
+        function Slots(theme) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
+            _super.call(this, theme);
             this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
             this._rr = [
@@ -3162,50 +3199,45 @@ var Sprite;
                 rr.g(_4['i'], raw),
                 rr.g(_4['ih'], raw)
             ];
+        }
+        Slots.prototype.pI = function () {
+            var _this = this;
+            if (this._pi)
+                return this;
+            var _close = this._tm['close'], _mask = this._tm['mask'];
             this.o(0)
-                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
             }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true)));
-        }
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 显示存档位。
          */
         Slots.prototype.vs = function (runtime, duration) {
             var _this = this;
+            this.pI();
             var states = runtime.gS();
             return states.l().then(function () {
                 var slots = states.qa();
-                var last = 1;
                 var right = G.Text.Align.Right;
-                var button = function (index, slot) {
-                    if (index != 'auto' && index != 'pay') {
-                        var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
-                        _this.a(_this._x[index] = new G.Button(_i)
-                            .b(function () {
-                            _this.dispatchEvent(new Ev.SlotsSave({
-                                target: _this,
-                                slot: index
-                            }));
-                        }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
-                            .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
-                            .tc(_it['c'])
-                            .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
-                        last++;
-                    }
+                var _loop_1 = function() {
+                    var index = i.toString(), _ii = 4 + (i - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                    _this.a(_this._x[index] = new G.Button(_i)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsSave({
+                            target: _this,
+                            slot: index
+                        }));
+                    }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                        .a(new G.Text(_it, _it['ff'], _it['s'], _it['lh'], right, true)
+                        .tc(_it['c'])
+                        .a(new G.TextPhrase(slots[index] ? _this.$d(slots[index][1]) : '（无）'))));
                 };
-                Util.each(slots, function (slot, index) {
-                    button(index, slot);
-                });
-                if (last <= 4)
-                    button(last.toString());
-                if (last <= 4) {
-                    for (var i = last; i <= 4; i++) {
-                        var _ii = 4 + (i - 1) * 2;
-                        var _i = _this._c[i];
-                        _this.a(_this._x[i.toString()] = new G.Image(_this._rr[_ii].o(), _i));
-                    }
+                for (var i = 1; i <= 4; i++) {
+                    _loop_1();
                 }
                 return _this.v(duration);
             });
@@ -3215,6 +3247,7 @@ var Sprite;
          */
         Slots.prototype.vl = function (runtime, duration) {
             var _this = this;
+            this.pI();
             var states = runtime.gS();
             runtime.dispatchEvent(new Ev.ScreenLoad({
                 target: states,
@@ -3223,34 +3256,23 @@ var Sprite;
             states.s('.oc', true);
             return states.l().then(function () {
                 var slots = states.qa();
-                var last = 1;
                 var right = G.Text.Align.Right;
                 var $a = states.q('auto'), _a = _this._c[0], _at = _a['text'];
-                var button = function (index, slot) {
-                    if (index != 'auto' && index != 'pay') {
-                        var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
-                        _this.a(_this._x[index] = new G.Button(_i)
-                            .b(function () {
-                            _this.dispatchEvent(new Ev.SlotsLoad({
-                                target: _this,
-                                id: slot[0]
-                            }));
-                        }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
-                            .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
-                            .tc(_it['c'])
-                            .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
-                        last++;
-                    }
+                var _loop_2 = function() {
+                    var index = i.toString(), slot = slots[index], _ii = 4 + (i - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                    slot ? _this.a(_this._x[index] = new G.Button(_i)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsLoad({
+                            target: _this,
+                            id: slot[0]
+                        }));
+                    }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                        .a(new G.Text(_it, _it['ff'], _it['s'], _it['lh'], right, true)
+                        .tc(_it['c'])
+                        .a(new G.TextPhrase(_this.$d(slot[1]))))) : _this.a(_this._x[index] = new G.Image(_this._rr[_ii].o(), _i));
                 };
-                Util.each(slots, function (slot, index) {
-                    button(index, slot);
-                });
-                if (last <= 4) {
-                    for (var i = last; i <= 4; i++) {
-                        var _ii = 4 + (i - 1) * 2;
-                        var _i = _this._c[i];
-                        _this.a(_this._x[i.toString()] = new G.Image(_this._rr[_ii].o(), _i));
-                    }
+                for (var i = 1; i <= 4; i++) {
+                    _loop_2();
                 }
                 _this.a(_this._x['a'] = $a ?
                     new G.Button(_a)
@@ -3263,7 +3285,7 @@ var Sprite;
                     new G.Sprite(_a)
                         .a(new G.Image(_this._rr[2].o(), _a, true)));
                 _this._x['a']
-                    .a(new G.Text(_at, _at['s'], _at['lh'], right, true)
+                    .a(new G.Text(_at, _at['ff'], _at['s'], _at['lh'], right, true)
                     .tc(_at['c'])
                     .a(new G.TextPhrase($a ? _this.$d($a[1]) : '（无）')));
                 return _this.v(duration);
@@ -3316,30 +3338,37 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Status(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, left = G.Text.Align.Left, right = G.Text.Align.Right, _back = theme['back'], i = 1, j;
-            _super.call(this, 0, 0, w, h, true);
+        function Status(theme) {
+            var _back = theme['back'];
+            _super.call(this, theme, true);
             this._rr = [
-                rr.g(_back['i'], raw)
+                Resource.Resource.g(_back['i'], Core.IResource.Type.Raw)
             ];
-            this.o(0)
-                .a(new G.Image(this._rr[0].o(), _back));
             this._x = {};
             this._y = {};
+        }
+        Status.prototype.pI = function () {
+            if (this._pi)
+                return this;
+            var left = G.Text.Align.Left, right = G.Text.Align.Right, _back = this._tm['back'], i = 1, j;
+            this.o(0)
+                .a(new G.Image(this._rr[0].o(), _back));
             for (; i < 7; i++) {
-                j = theme[i];
-                this.a(this._x[i + 't'] = new G.Text(j['title'], j['title']['s'], j['title']['lh'], left)
+                j = this._tm[i];
+                this.a(this._x[i + 't'] = new G.Text(j['title'], j['title']['ff'], j['title']['s'], j['title']['lh'], left)
                     .tc(j['title']['c'])
-                    .o(0)).a(this._x[i + 'v'] = new G.Text(j['value'], j['value']['s'], j['value']['lh'], right)
+                    .o(0)).a(this._x[i + 'v'] = new G.Text(j['value'], j['value']['ff'], j['value']['s'], j['value']['lh'], right)
                     .tc(j['value']['c'])
                     .o(0));
             }
-        }
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 配置。
          */
         Status.prototype.u = function (sheet, runtime) {
             var _this = this;
+            this.pI();
             Util.each(sheet, function (item, index) {
                 if (!item[0])
                     return;
@@ -3441,10 +3470,9 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Panel(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'];
-            _super.call(this, 0, 0, w, h);
-            this._pt = theme;
+        function Panel(theme) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'];
+            _super.call(this, theme);
             this._pi = false;
             this._ti = 0;
             this._tai = {};
@@ -3496,7 +3524,7 @@ var Sprite;
             if (sheet.length == 0)
                 return this;
             // 集合面板翻页上一页按钮
-            var pBounds = this._pt['coll']['arrow']['p'];
+            var pBounds = this._tm['coll']['arrow']['p'];
             this.pI()
                 .a(this._ca['p'] = new G.Button(pBounds)
                 .b(function () {
@@ -3505,7 +3533,7 @@ var Sprite;
             }, new G.Image(this._rr[8].o(), pBounds, true), new G.Image(this._rr[7].o(), pBounds, true)));
             this._ca['p'].o(0);
             // 集合面板翻页下一页按钮
-            var nBounds = this._pt['coll']['arrow']['n'];
+            var nBounds = this._tm['coll']['arrow']['n'];
             this.a(this._ca['n'] = new G.Button(nBounds)
                 .b(function () {
                 _this._cp = (_this._cp == _this._cc.length - 1) ? 0 : (_this._cp + 1);
@@ -3529,7 +3557,7 @@ var Sprite;
             var _this = this;
             if (this._pi)
                 return this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, theme = this._pt, _mask = theme['mask'], _back = theme['back'], _close = theme['close'], _simp = theme['simp'], _coll = theme['coll'], _type = theme['type'], i = 1, left = G.Text.Align.Left;
+            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, theme = this._tm, _mask = theme['mask'], _back = theme['back'], _close = theme['close'], _simp = theme['simp'], _coll = theme['coll'], _type = theme['type'], i = 1, left = G.Text.Align.Left;
             // 渲染面板初始样式
             this.a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
                 .a(new G.Image(this._rr[0].o(), _back))
@@ -3545,7 +3573,7 @@ var Sprite;
             this._pb['c'].o(0);
             // 构造简单面板中渲染数据名的容器
             for (; i < 13; i++) {
-                var titleTxt = new G.Text(_simp[i]['title'], _simp[i]['title']['s'], _simp[i]['title']['lh'], left);
+                var titleTxt = new G.Text(_simp[i]['title'], _simp[i]['title']['ff'], _simp[i]['title']['s'], _simp[i]['title']['lh'], left);
                 this._st[i + 't'] = titleTxt;
                 this.a(this._st[i + 't']).o(0);
             }
@@ -3567,7 +3595,7 @@ var Sprite;
                 else if (name == 'name') {
                     // 初始化集合面板数据值显示元素
                     var align = _this.align(config['a']);
-                    _this._cv[name] = new G.Text(config, config['s'], config['lh'], align, true);
+                    _this._cv[name] = new G.Text(config, config['ff'], config['s'], config['lh'], align, true);
                     _this.a(_this._cv[name]);
                     _this._cv[name].o(0);
                 }
@@ -3575,7 +3603,7 @@ var Sprite;
                     var tBounds = config['title'];
                     var vBounds = config['value'];
                     // 初始化集合面板数据标题元素
-                    _this._ct[name + 't'] = new G.Text(tBounds, tBounds['s'], tBounds['lh']);
+                    _this._ct[name + 't'] = new G.Text(tBounds, tBounds['ff'], tBounds['s'], tBounds['lh']);
                     _this.a(_this._ct[name + 't']);
                     _this._ct[name + 't'].o(0);
                     // 初始化集合面板数据值显示元素
@@ -3584,22 +3612,22 @@ var Sprite;
                     _this._cv[name + 'v'].o(0);
                 }
             });
-            return this;
+            return _super.prototype.pI.call(this);
         };
         /**
          * 绘制面板标签
          */
         Panel.prototype.uT = function (sheet) {
             var _this = this;
-            var align = this.align(this._pt['tab']['title']['a']);
+            var align = this.align(this._tm['tab']['title']['a']);
             var activeImage;
             // 渲染面板切换标签
             Util.each(sheet, function (data, index) {
                 var tabBtn = _this._tai[data['n']];
                 if (!tabBtn) {
-                    var tabPosi = _this._pt['tab'][index + 1 + ''];
-                    var titleBounds = Util.clone(_this._pt['tab']['title']);
-                    var tabText = new G.Text(titleBounds, titleBounds['s'], titleBounds['lh'], align);
+                    var tabPosi = _this._tm['tab'][index + 1 + ''];
+                    var titleBounds = Util.clone(_this._tm['tab']['title']);
+                    var tabText = new G.Text(titleBounds, titleBounds['ff'], titleBounds['s'], titleBounds['lh'], align);
                     _this._tai[index + 't'] = tabText;
                     var tabBounds = Util.clone(titleBounds);
                     tabBounds['x'] = tabPosi['x'];
@@ -3658,7 +3686,7 @@ var Sprite;
             var simpData = sheet['c'];
             if (!simpData || simpData.length == 0)
                 return this;
-            var simpTheme = this._pt['simp'], left = G.Text.Align.Left;
+            var simpTheme = this._tm['simp'], left = G.Text.Align.Left;
             Util.each(simpData, function (simpField, index) {
                 // 画出简单面板中显示的数据名
                 _this._st[index + 1 + 't'].c().a(new G.TextPhrase(simpField['alias'])).o(1);
@@ -3678,7 +3706,7 @@ var Sprite;
                         _this.a(_this._sv[simpField['name']] = new G.Sprite(simpTheme[i]['value'], false, true));
                     }
                     else {
-                        _this.a(_this._sv[simpField['name']] = new G.Text(simpTheme[i]['value'], simpTheme[i]['value']['s'], simpTheme[i]['value']['lh'], left));
+                        _this.a(_this._sv[simpField['name']] = new G.Text(simpTheme[i]['value'], simpTheme[i]['value']['ff'], simpTheme[i]['value']['s'], simpTheme[i]['value']['lh'], left));
                     }
                 }
                 // 如果数据类型是图片类型
@@ -3686,9 +3714,9 @@ var Sprite;
                     _this._sv[simpField['name']].c();
                     var rValue = value ? parseInt(value, 10) : 0;
                     for (var j = 0; j < rValue; j++) {
-                        var typeBound = Util.clone(_this._pt['type'][type]);
-                        typeBound['x'] = j * (_this._pt['type'][type]['m'] + _this._pt['type'][type]['w']);
-                        typeBound['y'] = (simpTheme[index + 1 + '']['value']['lh'] - _this._pt['type'][type]['h']) / 2;
+                        var typeBound = Util.clone(_this._tm['type'][type]);
+                        typeBound['x'] = j * (_this._tm['type'][type]['m'] + _this._tm['type'][type]['w']);
+                        typeBound['y'] = (simpTheme[index + 1 + '']['value']['lh'] - _this._tm['type'][type]['h']) / 2;
                         var image = new G.Image(_this._tResource[type]['ei'].o(), typeBound, false);
                         _this._sv[simpField['name']].a(image);
                     }
@@ -3722,7 +3750,7 @@ var Sprite;
                     var fieldName = field.$c(), fieldValue = collData[fieldName], fieldType = field.gT();
                     // 渲染头像
                     if (field.iE()) {
-                        var hBounds = _this._pt['coll']['head'];
+                        var hBounds = _this._tm['coll']['head'];
                         var iBounds = { x: 0, y: 0, w: hBounds['w'], h: hBounds['h'] };
                         var entity = field.gIE(fieldValue);
                         _this._cv['head'].c().a(new G.Image(entity.o().o(), iBounds)).o(1);
@@ -3741,19 +3769,19 @@ var Sprite;
                         if (Util.indexOf(_this._sTypes, field.gT()) > -1) {
                             var lValue = field.gL(), rValue = fieldValue;
                             for (var j = 0; j < lValue; j++) {
-                                var tTheme = _this._pt['type'][field.gT()], typeBound = Util.clone(tTheme), res = j < rValue ? _this._tResource[fieldType]['ei'] : _this._tResource[fieldType]['fi'], image = new G.Image(res.o(), typeBound, false);
-                                typeBound['x'] = j * (_this._pt['type'][fieldType]['m'] + _this._pt['type'][fieldType]['w']);
-                                typeBound['y'] = (_this._pt['coll'][i + '']['value']['lh'] - _this._pt['type'][fieldType]['h']) / 2;
+                                var tTheme = _this._tm['type'][field.gT()], typeBound = Util.clone(tTheme), res = j < rValue ? _this._tResource[fieldType]['ei'] : _this._tResource[fieldType]['fi'], image = new G.Image(res.o(), typeBound, false);
+                                typeBound['x'] = j * (_this._tm['type'][fieldType]['m'] + _this._tm['type'][fieldType]['w']);
+                                typeBound['y'] = (_this._tm['coll'][i + '']['value']['lh'] - _this._tm['type'][fieldType]['h']) / 2;
                                 _this._cv[i + 'v'].a(image);
                             }
                             _this._cv[i + 'v'].o(1);
                         }
                         else {
                             // 普通字段
-                            var tValue = _this._pt['coll'][i + '']['value'], iBound = Util.clone(tValue), align = G.Text.Align.Left;
+                            var tValue = _this._tm['coll'][i + '']['value'], iBound = Util.clone(tValue), align = G.Text.Align.Left;
                             iBound['x'] = 0;
                             iBound['y'] = 0;
-                            _this._cv[i + 'v'].a(new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(new G.TextPhrase(fieldValue + ''))).o(1);
+                            _this._cv[i + 'v'].a(new G.Text(iBound, iBound['ff'], iBound['s'], iBound['lh'], align, false).c().a(new G.TextPhrase(fieldValue + ''))).o(1);
                         }
                         i++;
                     }
@@ -3832,24 +3860,28 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Tip(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _back = theme['back'], _text = theme['text'];
-            _super.call(this, 0, 0, w, h);
+        function Tip(theme) {
+            _super.call(this, theme);
             this._rr = [
-                rr.g(_back['i'], raw)
+                Resource.Resource.g(theme['back']['i'], Core.IResource.Type.Raw)
             ];
-            this._c = _text['ch'];
+        }
+        Tip.prototype.pI = function () {
+            if (this._pi)
+                return this;
+            var _back = this._tm['back'], _text = this._tm['text'];
             this.o(0)
                 .a(new G.Image(this._rr[0].o(), _back))
-                .a(this._x = new G.Text(_text, _text['s'], _text['lh'], G.Text.Align.Center)
+                .a(this._x = new G.Text(_text, _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
                 .tc(_text['c'])
                 .ts(_text['ss']));
-        }
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 更新文本。
          */
         Tip.prototype.u = function (clob) {
-            return this.$w(this._x, clob, this._c);
+            return this.pI().$w(this._x, clob, this._tm['text']['ch']);
         };
         return Tip;
     }(Sprite.Sprite));
@@ -3926,15 +3958,14 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Choose(id, theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource;
-            _super.call(this, 0, 0, w, h);
+        function Choose(theme) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource;
+            _super.call(this, theme);
             this._rr = [
                 rr.g(theme['back']['i'], raw),
                 rr.g(theme['back']['ih'], raw),
                 rr.g(theme['radish']['i'], raw)
             ];
-            this._c = theme;
             this._bn = [];
             this._bi =
                 this._ke = undefined;
@@ -3945,12 +3976,12 @@ var Sprite;
          */
         Choose.prototype.u = function (options, stage) {
             var _this = this;
-            var margin = this._c['m'], _back = this._c['back'], _text = this._c['text'], _count = this._c['count'], _radish = this._c['radish'], opts = options.slice(0, 6), x = 0 | (1280 - _back['w']) / 2, y = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
+            var margin = this._tm['m'], _back = this._tm['back'], _text = this._tm['text'], _count = this._tm['count'], _radish = this._tm['radish'], opts = options.slice(0, 6), x = 0 | (1280 - _back['w']) / 2, y = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
             this.c();
             this._bn = [];
             this._bi = undefined;
             Util.each(options.slice(0, 6), function (option) {
-                var text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['s'], _text['lh'], G.Text.Align.Center)
+                var text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
                     .tc(_text['c'])
                     .ts(_text['ss']);
                 var money = option.gA() ? 0 : option.gM();
@@ -3965,7 +3996,7 @@ var Sprite;
                 _this.$w(text, option.gT(), _text['ch']);
                 _this.a(btn).a(text);
                 if (money) {
-                    var xC = x + _text['x'] + _text['w'] - _count['w'], yC = y + _text['y'] + 0.5 * _back['h'], xR = x + _text['x'] + _text['w'] - _count['w'] - _radish['w'] - 10, yR = y + _text['y'] + 0.5 * (_back['h'] - _radish['h']), count = new G.Text(xC, yC, _count['w'], _count['h'], _count['s'], _count['lh'], G.Text.Align.Left)
+                    var xC = x + _text['x'] + _text['w'] - _count['w'], yC = y + _text['y'] + 0.5 * _back['h'], xR = x + _text['x'] + _text['w'] - _count['w'] - _radish['w'] - 10, yR = y + _text['y'] + 0.5 * (_back['h'] - _radish['h']), count = new G.Text(xC, yC, _count['w'], _count['h'], _count['ff'], _count['s'], _count['lh'], G.Text.Align.Left)
                         .tc(_count['c'])
                         .ts(_count['ss']);
                     _this.$w(count, money.toString(), _count['ch']);
@@ -4045,7 +4076,10 @@ var Sprite;
          * 隐藏。
          */
         Choose.prototype.h = function (duration) {
-            window.removeEventListener('keydown', this._ke);
+            if (this._ke) {
+                window.removeEventListener('keydown', this._ke);
+                this._ke = undefined;
+            }
             this._bn = [];
             this._bi = undefined;
             return _super.prototype.h.call(this, duration);
@@ -4072,18 +4106,16 @@ var Sprite;
          * 构造函数。
          */
         function CG(theme) {
-            _super.call(this, 0, 0, 1280, 720);
-            this._c = theme;
-            this.o(0);
+            _super.call(this, theme);
         }
         /**
          * 更新图片。
          */
         CG.prototype.u = function (image) {
             return image ? this.c()
-                .a(new G.Image(image.o(), this._c)) :
+                .a(new G.Image(image.o(), this._tm)) :
                 this.c()
-                    .a(new G.Color(this._c, '#000'));
+                    .a(new G.Color(this._tm, '#000'));
         };
         return CG;
     }(Sprite.Sprite));
@@ -4111,10 +4143,9 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function SeriesSlots(id, theme) {
-            var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _desc = theme['text'], _close = theme['close'], _mask = theme['mask'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
-            _super.call(this, 0, 0, w, h);
+        function SeriesSlots(theme) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
+            _super.call(this, theme);
             this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
             this._rr = [
@@ -4131,21 +4162,29 @@ var Sprite;
                 rr.g(_4['i'], raw),
                 rr.g(_4['ih'], raw)
             ];
+        }
+        SeriesSlots.prototype.pI = function () {
+            var _this = this;
+            if (this._pi)
+                return this;
+            var _desc = this._tm['text'], _close = this._tm['close'], _mask = this._tm['mask'];
             this.o(0)
-                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
             }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true)))
-                .a(this._de = new G.Text(_desc, _desc['s'], _desc['lh'], this.$a(_desc['a']), true)
+                .a(this._de = new G.Text(_desc, _desc['ff'], _desc['s'], _desc['lh'], this.$a(_desc['a']), true)
                 .tc(_desc['c'])
                 .a(new G.TextPhrase(_desc['desc'])));
-        }
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 显示存档位。
          */
         SeriesSlots.prototype.vs = function (runtime, fs, duration) {
             var _this = this;
+            this.pI();
             var states = runtime.gS();
             runtime.dispatchEvent(new Ev.ScreenSave({
                 target: states,
@@ -4157,37 +4196,23 @@ var Sprite;
                 var series = Core.IRuntime.Series.Last;
                 var right = G.Text.Align.Right;
                 var slots = states.qa(type);
-                var last = 1;
-                var button = function (index, slot) {
-                    if (index != 'auto') {
-                        var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
-                        _this.e(_this._x[index])
-                            .a(_this._x[index] = new G.Button(_i)
-                            .b(function () {
-                            _this.dispatchEvent(new Ev.SlotsSave({
-                                target: _this,
-                                slot: index
-                            }));
-                        }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
-                            .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
-                            .tc(_it['c'])
-                            .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
-                        last++;
-                    }
-                };
                 fs == series ? _this._de.o(0) : _this._de.o(1);
-                Util.each(slots, function (slot, index) {
-                    button(index, slot);
-                });
-                if (last <= 4)
-                    button(last.toString());
-                if (last <= 4) {
-                    for (var i = last; i <= 4; i++) {
-                        var _ii = 4 + (i - 1) * 2;
-                        var _i = _this._c[i];
-                        _this.e(_this._x[i.toString()])
-                            .a(_this._x[i.toString()] = new G.Image(_this._rr[_ii].o(), _i));
-                    }
+                var _loop_3 = function() {
+                    var index = i.toString(), _ii = 4 + (i - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                    _this.e(_this._x[index])
+                        .a(_this._x[index] = new G.Button(_i)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsSave({
+                            target: _this,
+                            slot: index
+                        }));
+                    }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                        .a(new G.Text(_it, _it['ff'], _it['s'], _it['lh'], right, true)
+                        .tc(_it['c'])
+                        .a(new G.TextPhrase(slots[index] ? _this.$d(slots[index][1]) : '（无）'))));
+                };
+                for (var i = 1; i <= 4; i++) {
+                    _loop_3();
                 }
                 return _this.v(duration);
             });
@@ -4262,35 +4287,25 @@ var Sprite;
          */
         SeriesSlots.prototype.vl = function (runtime, duration) {
             var _this = this;
+            this.pI();
             var states = runtime.gS();
             return states.l().then(function () {
                 var type = Core.IStates.Save.Series, $a = states.q('auto', type), _a = _this._c[0], _at = _a['text'], slots = states.qa(type), right = G.Text.Align.Right;
-                var last = 1;
-                var button = function (index, slot) {
-                    if (index != 'auto' && index != 'pay') {
-                        var _ii = 4 + (last - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
-                        _this.a(_this._x[index] = new G.Button(_i)
-                            .b(function () {
-                            _this.dispatchEvent(new Ev.SlotsLoad({
-                                target: _this,
-                                id: slot[0]
-                            }));
-                        }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
-                            .a(new G.Text(_it, _it['s'], _it['lh'], right, true)
-                            .tc(_it['c'])
-                            .a(new G.TextPhrase(slot ? _this.$d(slot[1]) : '（无）'))));
-                        last++;
-                    }
+                var _loop_4 = function() {
+                    var index = i.toString(), slot = slots[index], _ii = 4 + (i - 1) * 2, _i = _this._c[index], _it = _this._c[index]['text'];
+                    slot ? _this.a(_this._x[index] = new G.Button(_i)
+                        .b(function () {
+                        _this.dispatchEvent(new Ev.SlotsLoad({
+                            target: _this,
+                            id: slot[0]
+                        }));
+                    }, new G.Image(_this._rr[_ii + 1].o(), _i, true), new G.Image(_this._rr[_ii].o(), _i, true))
+                        .a(new G.Text(_it, _it['ff'], _it['s'], _it['lh'], right, true)
+                        .tc(_it['c'])
+                        .a(new G.TextPhrase(_this.$d(slot[1]))))) : _this.a(_this._x[index] = new G.Image(_this._rr[_ii].o(), _i));
                 };
-                Util.each(slots, function (slot, index) {
-                    button(index, slot);
-                });
-                if (last <= 4) {
-                    for (var i = last; i <= 4; i++) {
-                        var _ii = 4 + (i - 1) * 2;
-                        var _i = _this._c[i];
-                        _this.a(_this._x[i.toString()] = new G.Image(_this._rr[_ii].o(), _i));
-                    }
+                for (var i = 1; i <= 4; i++) {
+                    _loop_4();
                 }
                 _this.a(_this._x['a'] = $a ?
                     new G.Button(_a)
@@ -4303,7 +4318,7 @@ var Sprite;
                     new G.Sprite(_a)
                         .a(new G.Image(_this._rr[2].o(), _a, true)));
                 _this._x['a']
-                    .a(new G.Text(_at, _at['s'], _at['lh'], right, true)
+                    .a(new G.Text(_at, _at['ff'], _at['s'], _at['lh'], right, true)
                     .tc(_at['c'])
                     .a(new G.TextPhrase($a ? _this.$d($a[1]['date']) : '（无）')));
                 _this._de.o(0);
@@ -4449,11 +4464,9 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Set(id, theme) {
-            var _this = this;
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _mask = theme['mask'], _title = theme['title'], _bgm = theme['bgm'], _se = theme['se'];
-            _super.call(this, 0, 0, w, h);
-            this._pt = theme;
+        function Set(theme) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _bgm = theme['bgm'];
+            _super.call(this, theme);
             this._vo = true;
             this._rr = [
                 rr.g(_close['i'], raw),
@@ -4462,34 +4475,41 @@ var Sprite;
                 rr.g(_bgm['bg']['i'], raw),
                 rr.g(_bgm['bar']['ih'], raw)
             ];
+        }
+        Set.prototype.pI = function () {
+            var _this = this;
+            if (this._pi)
+                return this;
+            var _close = this._tm['close'], _mask = this._tm['mask'], _title = this._tm['title'], _bgm = this._tm['bgm'], _se = this._tm['se'];
             this.o(0)
-                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SetClose({ target: _this }));
-            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true))).a(new G.Text(_title, _title['s'], _title['lh'], this.$a(_title['a']), true)
+            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true))).a(new G.Text(_title, _title['ff'], _title['s'], _title['lh'], this.$a(_title['a']), true)
                 .tc(_title['c'])
-                .a(new G.TextPhrase('声音设定'))).a(new G.Text(_bgm['name'], _bgm['name']['s'], _bgm['name']['lh'], this.$a(_bgm['name']['a']), true)
+                .a(new G.TextPhrase('声音设定'))).a(new G.Text(_bgm['name'], _bgm['name']['ff'], _bgm['name']['s'], _bgm['name']['lh'], this.$a(_bgm['name']['a']), true)
                 .tc(_bgm['name']['c'])
                 .a(new G.TextPhrase('音乐'))).a(new G.Button(_bgm['bar'])
                 .b(function (event) {
                 _this.sv(event['x'], 'bgm');
             }, new G.Image(this._rr[2].o(), _bgm['bar'], true), new G.Image(this._rr[2].o(), _bgm['bar'], true))).a(new G.Image(this._rr[3].o(), _bgm['bg'], true))
-                .a(this._xb = new G.Text(_bgm['volume'], _bgm['volume']['s'], _bgm['volume']['lh'], this.$a(_bgm['volume']['a']), true)).a(new G.Text(_se['name'], _se['name']['s'], _se['name']['lh'], this.$a(_se['name']['a']), true)
+                .a(this._xb = new G.Text(_bgm['volume'], _bgm['volume']['ff'], _bgm['volume']['s'], _bgm['volume']['lh'], this.$a(_bgm['volume']['a']), true)).a(new G.Text(_se['name'], _se['name']['ff'], _se['name']['s'], _se['name']['lh'], this.$a(_se['name']['a']), true)
                 .tc(_se['name']['c'])
                 .a(new G.TextPhrase('音效'))).a(new G.Button(_se['bar'])
                 .b(function (event) {
                 _this.sv(event['x'], 'se');
             }, new G.Image(this._rr[2].o(), _se['bar'], true), new G.Image(this._rr[2].o(), _se['bar'], true))).a(new G.Image(this._rr[3].o(), _se['bg'], true))
-                .a(this._xe = new G.Text(_se['volume'], _se['volume']['s'], _se['volume']['lh'], this.$a(_se['volume']['a']), true));
-        }
+                .a(this._xe = new G.Text(_se['volume'], _se['volume']['ff'], _se['volume']['s'], _se['volume']['lh'], this.$a(_se['volume']['a']), true));
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 调节音乐/音效。
          */
         Set.prototype.sv = function (x, voice) {
             if (!this._vo)
                 return;
-            var gBound = Util.clone(this._pt[voice]['bar']), width = Math.max(gBound['x'], Math.min(x, gBound['w'] + gBound['x'])) - gBound['x'], count = Math.round(width / this._pt[voice]['bar']['w'] * 100);
+            var gBound = Util.clone(this._tm[voice]['bar']), width = Math.max(gBound['x'], Math.min(x, gBound['w'] + gBound['x'])) - gBound['x'], count = Math.round(width / this._tm[voice]['bar']['w'] * 100);
             if (count <= 2) {
                 count = gBound['w'] = 0;
             }
@@ -4527,6 +4547,7 @@ var Sprite;
          * 显示音乐/音效调节。
          */
         Set.prototype.vv = function (bVolume, eVolume, on, duration) {
+            this.pI();
             this._vo = on;
             if (!this._vo)
                 bVolume = eVolume = 0;
@@ -4534,7 +4555,7 @@ var Sprite;
             this._ve = Math.round(eVolume * 100);
             this._xb.c().a(new G.TextPhrase(this._vb.toString()));
             this._xe.c().a(new G.TextPhrase(this._ve.toString()));
-            var bBound = Util.clone(this._pt['bgm']['bar']), eBound = Util.clone(this._pt['se']['bar']);
+            var bBound = Util.clone(this._tm['bgm']['bar']), eBound = Util.clone(this._tm['se']['bar']);
             bBound['w'] = Math.round(bVolume * bBound['w']);
             eBound['w'] = Math.round(eVolume * eBound['w']);
             if (this._ib) {
@@ -4573,8 +4594,8 @@ var Sprite;
          * 构造函数。
          */
         function Stars(theme) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _name = theme['name'], _value = theme['value'], _pic = theme['pic'], center = G.Text.Align.Center;
-            _super.call(this, 0, 0, w, h);
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _pic = theme['pic'];
+            _super.call(this, theme);
             this._rr = [
                 rr.g(_pic['1'], raw),
                 rr.g(_pic['2'], raw),
@@ -4582,16 +4603,23 @@ var Sprite;
                 rr.g(_pic['4'], raw),
                 rr.g(_pic['5'], raw)
             ];
+        }
+        Stars.prototype.pI = function () {
+            if (this._pi)
+                return this;
+            var _name = this._tm['name'], _value = this._tm['value'], center = G.Text.Align.Center;
             // 渲染评分初始样式
             this.o(0)
-                .a(this._xs = new G.Sprite({ x: 0, y: 0, w: w, h: h }))
-                .a(this._nt = new G.Text(_name, _name['s'], _name['lh'], center))
-                .a(this._vt = new G.Text(_value, _value['s'], _value['lh'], center));
-        }
+                .a(this._xs = new G.Sprite(0, 0, 1280, 720))
+                .a(this._nt = new G.Text(_name, _name['ff'], _name['s'], _name['lh'], center))
+                .a(this._vt = new G.Text(_value, _value['ff'], _value['s'], _value['lh'], center));
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 设置名称、数据值。
          */
         Stars.prototype.u = function (key, name, value) {
+            this.pI();
             this._xs.c().a(new G.Image(this._rr[key].o(), { x: 0, y: 0, w: 1280, h: 720 }));
             this._nt.c().a(new G.TextPhrase(name));
             this._vt.c().a(new G.TextPhrase(value));
@@ -4620,24 +4648,30 @@ var Sprite;
          * 构造函数。
          */
         function Loading(theme) {
-            var w = 1280, h = 720, _text = theme['text'];
-            _super.call(this, 0, 0, w, h);
+            _super.call(this, theme);
             this._rr = [
                 Resource.Resource.g('_/loading.png', Core.IResource.Type.Raw)
             ];
             this._ws = theme['words'] || {};
             this._si = undefined;
+        }
+        Loading.prototype.pI = function () {
+            if (this._pi)
+                return this;
+            var _text = this._tm['text'];
             this.o(0)
-                .a(this._gi = new G.Image(this._rr[0].o(), 0, 0, w, h))
-                .a(new G.Text(_text, _text['s'], _text['h'], this.$a(_text['a']))
+                .a(this._gi = new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
+                .a(new G.Text(_text, _text['ff'], _text['s'], _text['h'], this.$a(_text['a']))
                 .tc(_text['c'])
                 .a(this._x = new G.TextPhrase('')));
-        }
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 设置底层信息。
          */
         Loading.prototype.u = function () {
             var _this = this;
+            this.pI();
             var speed = 0.05, time = 30, index = 1, max = 0;
             Util.each(this._ws, function (word) {
                 max++;
@@ -4746,11 +4780,11 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Full(id, full) {
-            var w = 1280, h = 720, raw = Core.IResource.Type.Raw, rr = Resource.Resource, _back = full['back'], _text = full['text'], canvas = document.createElement('canvas');
-            _super.call(this, 0, 0, w, h);
+        function Full(theme) {
+            var _back = theme['back'], _text = theme['text'], canvas = document.createElement('canvas');
+            _super.call(this, theme);
             this._rr = [
-                rr.g(_back['i'], raw)
+                Resource.Resource.g(_back['i'], Core.IResource.Type.Raw)
             ];
             this._x = {};
             this._cb = Util.clone(_text);
@@ -4764,16 +4798,24 @@ var Sprite;
             this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px ' + G.TextPhrase.FONT;
             this._ct.textBaseline = 'middle';
             this._ct.shadowBlur = this._ct.shadowOffsetX = this._ct.shadowOffsetY = _text['ss'];
+        }
+        Full.prototype.pI = function () {
+            if (this._pi)
+                return this;
+            var _back = this._tm['back'];
             this.o(0)
                 .a(new G.Sprite(_back)
                 .a(new G.Image(this._rr[0].o(), _back, true))
                 .a(this._x['f'] = new G.Sprite(_back))).o(0);
-        }
+            return _super.prototype.pI.call(this);
+        };
         /**
          * 隐藏。
          */
         Full.prototype.h = function (duration) {
             var _this = this;
+            if (!this._pi)
+                return _super.prototype.h.call(this, duration);
             if (this._h) {
                 this._h.h();
                 this._h = undefined;
@@ -4795,6 +4837,7 @@ var Sprite;
         Full.prototype.u = function (clob, auto) {
             var _this = this;
             if (auto === void 0) { auto = false; }
+            this.pI();
             var words = clob.split('\\r'), funcs = [];
             Util.each(words, function (word, index) {
                 var bufs = word.split('\\l');
@@ -4849,7 +4892,7 @@ var Sprite;
             if (this._tl + row > bBound['row'] && pause < 1)
                 this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
             tBound = Util.clone(this._cb);
-            tText = new G.Text(tBound, tBound['s'], tBound['lh'], left, true)
+            tText = new G.Text(tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
                 .tl(tBound['ls'])
                 .to(pause > 0 ? this._tx : 0)
@@ -5010,13 +5053,16 @@ var Runtime;
             els[0].appendChild(canvas);
             this._x = {};
             this._c = new G.Stage(canvas.getContext('2d'))
-                .a(new G.Color(bounds, '#000').i('b'))
-                .a(new G.Sprite(bounds).i('M').o(0))
-                .a(new G.Sprite(bounds).i('c').o(0))
+                .a(new G.Component()
+                .a(new G.Color(bounds, '#000')).i('b'))
+                .a(new G.Component()
+                .a(new G.Sprite(bounds)).i('M').o(0))
+                .a(new G.Component()
+                .a(new G.Sprite(bounds)).i('c').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
-                .a(new G.Sprite(0, bounds.h - 12, bounds.w, 12)
-                .a(new G.Color(0, 0, bounds.w, 12, '#e7e7e7'))
-                .a(new G.Color(0, 1, bounds.w, 10, '#0cf').i('e')).i('L').o(0));
+                .a(new G.Component()
+                .a(new G.Color(0, bounds.h - 12, bounds.w, 12, '#e7e7e7'))
+                .a(new G.Color(0, bounds.h - 11, bounds.w, 10, '#00ccff').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
             this._ca = [undefined, undefined];
@@ -5106,7 +5152,7 @@ var Runtime;
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
-                var gLogo = new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS);
+                var gLogo = new G.Component().a(new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
                 _this._c.z()
                     .a(gLogo, _this._x['c']);
                 return _this.lightOn()
@@ -5382,7 +5428,7 @@ var Runtime;
             var gTip = this._x['T'];
             return this.lightOn()
                 .then(function () { return gTip.u(words).v(); })
-                .then(function () { return gTip.p(new G.WaitForClick()); })
+                .then(function () { return gTip.p(_this._t = new G.WaitForClick()); })
                 .then(function () { return gTip.h(); })
                 .then(function () { return _this._r; });
         };
@@ -5418,8 +5464,18 @@ var Runtime;
             var oops = this._i['s'].l(), url = resource ? resource.l() : oops, music = type == Core.IResource.Type.BGM ? this._s['b'] : this._s['s'], volume = music['baseVolume'] * (vol || 1), change = function () {
                 music['scale'] = vol || 1;
                 music.volume = volume;
-                if (music.src != url)
+                if (music.src != url) {
                     music.src = url;
+                    // APP 需要使用
+                    if (Util.ENV.Mobile && Bigine.offline && music.src != oops) {
+                        _this._r.dispatchEvent(new Ev.Video({
+                            target: null,
+                            type: type == Core.IResource.Type.BGM ? 'bgm' : 'esm',
+                            uri: url,
+                            volume: volume
+                        }));
+                    }
+                }
                 return _super.prototype.playMusic.call(_this, type, resource, vol);
             };
             if (!resource)
@@ -5441,6 +5497,15 @@ var Runtime;
             se.addEventListener(type, resume);
             se.volume = se['baseVolume'] * (vol || 1);
             se.src = url;
+            // APP 需要使用
+            if (Util.ENV.Mobile && Bigine.offline) {
+                this._r.dispatchEvent(new Ev.Video({
+                    target: null,
+                    type: 'se',
+                    uri: url,
+                    volume: se.volume
+                }));
+            }
             if (!resource)
                 this._s['e'].play();
             return _super.prototype.playSE.call(this, resource, vol);
@@ -5516,8 +5581,9 @@ var Runtime;
                     runtime.gS().d('.z');
                     runtime.gS().d('_z');
                 }
-                var gNew = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
-                    .o(0);
+                var gNew = new G.Component()
+                    .a(new G.Image(resource.o(), CanvasDirector.BOUNDS).i('n'))
+                    .i('b').o(0);
                 _this._c.a(gNew, 'M');
                 if (time) {
                     return gNew.p(new G.FadeIn(500)).then(function () {
@@ -5593,7 +5659,7 @@ var Runtime;
                     _this.playSE(_this._i['c']);
                     point.p(_this._r);
                 }, new G.Image(point.o().o(), bounds, true))
-                    .addEventListener('$focus', function () {
+                    .addEventListener('focus', function () {
                     _this.playSE(_this._i['f']);
                 });
                 added = Util.some(gPoints, function (item, index) {
@@ -5684,10 +5750,10 @@ var Runtime;
         CanvasDirector.prototype.reset = function () {
             var _this = this;
             return _super.prototype.reset.call(this).then(function (runtime) {
-                var gBack = _this._c.q('b')[0], gColor = new G.Color(CanvasDirector.BOUNDS, '#000');
+                var gBack = _this._c.q('b')[0], gColor = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000'));
                 // 需要先删除旧选择再添加新选择，否则在选择处读档时，时序流中断(因为未删除监听事件)
                 _this._c.e(_this._x['C']);
-                _this._x['C'] = new Sprite.Choose('', _this._pt['choose'])
+                _this._x['C'] = new Sprite.Choose(_this._pt['choose'])
                     .addEventListener('choose', function (ev) {
                     _this._pc = ev.choice;
                 });
@@ -5724,13 +5790,13 @@ var Runtime;
         CanvasDirector.prototype.pause = function (milsec) {
             var _this = this;
             if (milsec) {
-                return this._c.p(new G.Delay(milsec)).then(function () {
+                return this._c.p(this._h = new G.Delay(milsec)).then(function () {
                     return _super.prototype.pause.call(_this, milsec);
                 });
             }
             else {
                 // 建立临时透明层，使得可以响应WaitForClick事件。
-                var sPause_1 = new G.Sprite(CanvasDirector.BOUNDS, false);
+                var sPause_1 = new G.Component({}, false);
                 this._c.a(sPause_1.i('P').o(1));
                 return sPause_1.p(new G.WaitForClick()).then(function () {
                     _this._c.e(sPause_1);
@@ -5753,7 +5819,7 @@ var Runtime;
             var gRoom = this._c.q('b')[0], x = Math.round(mx * (1 - 5 / 3) * 1280), y = Math.round(my * (1 - 5 / 3) * 720);
             if (!gRoom)
                 return this._p;
-            var sClick = new G.Sprite(CanvasDirector.BOUNDS, false); // 建立临时透明层，使得可以响应WaitForClick事件。
+            var sClick = new G.Component({}, false); // 建立临时透明层，使得可以响应WaitForClick事件。
             this._c.a(sClick.i('P').o(1));
             return new Promise(function (resolve) {
                 var aMove = new G.Move(ms, { x: x, y: y }), aWFC = new G.WaitForClick(function () {
@@ -5782,7 +5848,7 @@ var Runtime;
             var gRoom = this._c.q('b')[0], bound = gRoom.gB();
             if (!gRoom)
                 return this._p;
-            var sClick = new G.Sprite(CanvasDirector.BOUNDS, false); // 建立临时透明层，使得可以响应WaitForClick事件。
+            var sClick = new G.Component({}, false); // 建立临时透明层，使得可以响应WaitForClick事件。
             this._c.a(sClick.i('P').o(1));
             return new Promise(function (resolve) {
                 var aZoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale }), aWFC = new G.WaitForClick(function () {
@@ -5840,18 +5906,18 @@ var Runtime;
             // 特写。
             this._c.a(this._x['G'] = new Sprite.CG(theme['cg']), gCurtain);
             // 状态。
-            this._x['S'] = new Sprite.Status(id, theme['status']);
+            this._x['S'] = new Sprite.Status(theme['status']);
             resources.unshift(this._x['S'].l());
             this._c.a(this._x['S'], gCurtain);
             // 某白。
-            this._x['W'] = new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak'])
+            this._x['W'] = new Sprite.Words(theme['voiceover'], theme['monolog'], theme['speak'])
                 .addEventListener('words.animation', function (ev) {
                 _this._t = _this._h = ev.animation;
             });
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 全屏文本。
-            this._x['F'] = new Sprite.Full(id, theme['full'])
+            this._x['F'] = new Sprite.Full(theme['full'])
                 .addEventListener('full.animation', function (ev) {
                 _this._t = _this._h = ev.animation;
                 _this._ft = ev.type;
@@ -5859,12 +5925,18 @@ var Runtime;
             resources.unshift(this._x['F'].l());
             this._c.a(this._x['F'], gCurtain);
             // 选择。
-            this._x['C'] = new Sprite.Choose(id, theme['choose']);
+            this._x['C'] = new Sprite.Choose(theme['choose']);
             resources.unshift(this._x['C'].l());
             this._c.a(this._x['C'], gCurtain);
+            // 提示。
+            this._x['T'] = new Sprite.Tip(theme['tip']);
+            resources.unshift(this._x['T'].l());
+            this._c.a(this._x['T'], gCurtain);
             // 常驻按钮。
-            this._x['t'] = new Sprite.Tray(id, theme['tray'])
+            this._x['t'] = new Sprite.Tray(theme['tray'])
                 .addEventListener('tray.menu', function () {
+                if (_this._h)
+                    _this._h.w();
                 _this._x['m'].v();
                 _this._x['t'].h();
             }).addEventListener('tray.panel', function () {
@@ -5873,12 +5945,8 @@ var Runtime;
             });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
-            // 提示。
-            this._x['T'] = new Sprite.Tip(id, theme['tip']);
-            resources.unshift(this._x['T'].l());
-            this._c.a(this._x['T'], gCurtain);
             // 面板。
-            this._x['P'] = new Sprite.Panel(id, theme['panel'])
+            this._x['P'] = new Sprite.Panel(theme['panel'])
                 .addEventListener('panel.close', function () {
                 _this._x['t'].v();
                 _this._x['P'].h();
@@ -5886,8 +5954,10 @@ var Runtime;
             resources.unshift(this._x['P'].l());
             this._c.a(this._x['P'], gCurtain);
             // 功能菜单。
-            this._x['m'] = new Sprite.Menu(id, theme['menu'])
+            this._x['m'] = new Sprite.Menu(theme['menu'])
                 .addEventListener('menu.close', function () {
+                if (_this._h)
+                    _this._h.r();
                 _this._x['t'].v();
                 _this._x['m'].h();
             }).addEventListener('menu.save', function () {
@@ -5914,7 +5984,7 @@ var Runtime;
                     return;
                 });
             }).addEventListener('menu.replay', function () {
-                _this._x['m'].h();
+                _this._x['m'].h(0);
                 _this._t = _this._h = undefined;
                 _this._r.stop();
                 _this._x['s'].u(_this._r.gTitle(), true, _this._c).v(0);
@@ -5922,7 +5992,7 @@ var Runtime;
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
             // 开始菜单。
-            this._x['s'] = new Sprite.Start(id, theme['start'])
+            this._x['s'] = new Sprite.Start(theme['start'])
                 .addEventListener('start.new', function (event) {
                 _this.playSE(_this._i['c']);
                 _this.lightOff().then(function () {
@@ -5943,7 +6013,7 @@ var Runtime;
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
             // 档位菜单。
-            this._x['sl'] = new Sprite.Slots(id, theme['slots'])
+            this._x['sl'] = new Sprite.Slots(theme['slots'])
                 .addEventListener('slots.close', function () {
                 if (states.g('.oc')) {
                     _this._r.dispatchEvent(new Ev.ScreenLoad({
@@ -5955,8 +6025,8 @@ var Runtime;
                 _this._x[slotsFromStart ? 's' : 'm'].v();
                 _this._x['sl'].h();
             }).addEventListener('slots.save', function (ev) {
-                _this._x[slotsFromStart ? 's' : 'm'].v();
-                _this._x['sl'].h();
+                _this._x[slotsFromStart ? 's' : 'm'].v(0);
+                _this._x['sl'].h(0);
                 _this._r.gS().e(ev.slot);
             }).addEventListener('slots.load', function (ev) {
                 _this._r.dispatchEvent(new Ev.ScreenLoad({
@@ -5968,7 +6038,7 @@ var Runtime;
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
             // 连载档位菜单。
-            this._x['ss'] = new Sprite.SeriesSlots(id, theme['series'])
+            this._x['ss'] = new Sprite.SeriesSlots(theme['series'])
                 .addEventListener('slots.close', function () {
                 if (!slotsFromStart && states.g('.oc')) {
                     _this._r.dispatchEvent(new Ev.ScreenSave({
@@ -5993,9 +6063,9 @@ var Runtime;
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
             // 设置菜单。
-            this._x['st'] = new Sprite.Set(id, theme['set'])
+            this._x['st'] = new Sprite.Set(theme['set'])
                 .addEventListener('set.close', function () {
-                _this._x[slotsFromStart ? 's' : 'm'].v();
+                _this._x['m'].v();
                 _this._x['st'].h();
             }).addEventListener('set.volume', function (ev) {
                 var bgm = _this._s['b'];
@@ -6048,6 +6118,7 @@ var Runtime;
         CanvasDirector.prototype.p = function (sheet) {
             if (sheet && sheet.length > 0) {
                 this._x['P'].u(sheet, this._r);
+                this._x['t'].u(true);
             }
             else
                 this._x['t'].u(false);
@@ -7824,6 +7895,12 @@ var Tag;
                     return director.asMap(map ? map.gP() : {});
                 })
                     .then(function () {
+                    var kld = '.ld';
+                    if (states.g(kld)) {
+                        states.s(kdn, states.g(kdn, true))
+                            .d(kdo)
+                            .d(kld);
+                    }
                     return _this._mo.p(type.PostEnter, runtime, _this._p[0]);
                 });
             }); });
@@ -8993,10 +9070,10 @@ var Tag;
          */
         Content.prototype.p = function (runtime) {
             var _this = this;
-            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', id = states.g(kid);
+            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', id = states.g(kid), offline = Bigine.offline;
             logger.o(title);
             states.s('$d', 1);
-            return director.c(Tag.Loop.prototype.c.call(this))
+            return director.c(offline ? [[]] : Tag.Loop.prototype.c.call(this))
                 .then(function () { return Util.Q.every(_this._s, function (action) {
                 if (runtime.gH())
                     return E.doHalt();
@@ -12632,9 +12709,13 @@ var Tag;
          * （执行）检查。
          */
         Maximum.prototype.t = function (states) {
-            var max = 0, depth = states.g('$d'), value;
+            var max = 0, first = true, depth = states.g('$d'), value;
             Util.each(this._s, function (tag) {
                 value = states.g(tag.$p(0)) - 0 || 0;
+                if (first) {
+                    max = value;
+                    first = false;
+                }
                 if (value > max)
                     max = value;
             });
@@ -12654,6 +12735,60 @@ var Tag;
         return Maximum;
     }(Tag.Action));
     Tag.Maximum = Maximum;
+})(Tag || (Tag = {}));
+/**
+ * 定义最小数据动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Logic/Minimum.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Minimum = (function (_super) {
+        __extends(Minimum, _super);
+        function Minimum() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Minimum.prototype.gN = function () {
+            return 'Minimum';
+        };
+        /**
+         * （执行）检查。
+         */
+        Minimum.prototype.t = function (states) {
+            var min = 0, first = true, depth = states.g('$d'), value;
+            Util.each(this._s, function (tag) {
+                value = states.g(tag.$p(0)) - 0 || 0;
+                if (first) {
+                    min = value;
+                    first = false;
+                }
+                if (value < min)
+                    min = value;
+            });
+            states.s('$v' + depth, min)
+                .s('$t' + depth, false);
+            if (this._p[0])
+                states.s(this._p[0], min);
+            return true;
+        };
+        /**
+         * 执行。
+         */
+        Minimum.prototype.p = function (runtime) {
+            this.t(runtime.gS());
+            return runtime;
+        };
+        return Minimum;
+    }(Tag.Action));
+    Tag.Minimum = Minimum;
 })(Tag || (Tag = {}));
 /**
  * 定义人物移动动作标签组件。
@@ -14849,6 +14984,49 @@ var Ev;
     Ev.ScreenSave = ScreenSave;
 })(Ev || (Ev = {}));
 /**
+ * 声明评分事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IVideoMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
+/**
+ * 定义评分事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Video.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IVideoMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Video = (function (_super) {
+        __extends(Video, _super);
+        /**
+         * 构造函数。
+         */
+        function Video(metas) {
+            _super.call(this, metas);
+            this.type = metas.type;
+            this.uri = metas.uri;
+            this.volume = metas.volume;
+        }
+        /**
+         * 获取类型。
+         */
+        Video.prototype.gT = function () {
+            return 'video';
+        };
+        return Video;
+    }(Ev.Event));
+    Ev.Video = Video;
+})(Ev || (Ev = {}));
+/**
  * 定义停止环境音乐动作标签组件。
  *
  * @author    李倩 <qli@atfacg.com>
@@ -15227,6 +15405,7 @@ var Tag;
 /// <reference path="_Action/_Flow/Choose.ts" />
 /// <reference path="_Action/_Text/Tip.ts" />
 /// <reference path="_Action/_Logic/Maximum.ts" />
+/// <reference path="_Action/_Logic/Minimum.ts" />
 /// <reference path="_Action/_Director/CharMove.ts" />
 /// <reference path="_Action/_Logic/WhenVar.ts" />
 /// <reference path="_Action/_Director/StopBGM.ts" />
@@ -15273,6 +15452,7 @@ var Tag;
 /// <reference path="../Ev/_Runtime/AutoLoad.ts" />
 /// <reference path="../Ev/_Runtime/ScreenLoad.ts" />
 /// <reference path="../Ev/_Runtime/ScreenSave.ts" />
+/// <reference path="../Ev/_Runtime/Video.ts" />
 /// <reference path="_Action/_Director/PlayESM.ts" />
 /// <reference path="_Action/_Director/StopESM.ts" />
 /// <reference path="_Action/_Director/StopSE.ts" />
@@ -15667,6 +15847,7 @@ var Runtime;
                             }
                             enter = new Tag.Enter([tn || cn], '', [], -1);
                             enter.b(episode);
+                            states.s('.ld', true);
                             return enter.p(_this)['catch'](E.ignoreHalt);
                         }
                         return episode.p(states.g('_p'), _this);
@@ -15955,7 +16136,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.1';
+    Bigine.version = '0.25.2';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

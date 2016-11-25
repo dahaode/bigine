@@ -41,16 +41,13 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(id: string, theme: Util.IHashTable<any>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+        constructor(theme: Util.IHashTable<any>) {
+            let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _new: Util.IHashTable<any> = theme['new'],
                 _series: Util.IHashTable<any> = theme['series'],
-                _load: Util.IHashTable<any> = theme['load'],
-                _title: Util.IHashTable<any> = theme['title'];
-            super(0, 0, w, h);
+                _load: Util.IHashTable<any> = theme['load'];
+            super(theme);
             this._rr = [
                 rr.g<HTMLImageElement>(theme['i'], raw),
                 rr.g<HTMLImageElement>(_new['i'], raw),
@@ -63,8 +60,16 @@ namespace Sprite {
             this._y = {};
             this._bn =
             this._ke = undefined;
+        }
+
+        protected pI(): Start {
+            if (this._pi) return this;
+            let _new: Util.IHashTable<any> = this._tm['new'],
+                _series: Util.IHashTable<any> = this._tm['series'],
+                _load: Util.IHashTable<any> = this._tm['load'],
+                _title: Util.IHashTable<any> = this._tm['title'];
             (<Start> this.o(0))
-                .a(new G.Image(this._rr[0].o(), 0, 0, w, h))
+                .a(new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
                 .a(this._y['n'] = new G.Button(<G.IBounds> _new)
                     .b(() => {
                         this.dispatchEvent(new Ev.StartNew({ target: this }));
@@ -78,16 +83,18 @@ namespace Sprite {
                     .b(() => {
                         this.dispatchEvent(new Ev.StartLoad({ target: this }));
                     }, new G.Image(this._rr[6].o(), <G.IBounds> _load, true), new G.Image(this._rr[5].o(), <G.IBounds> _load, true))
-                ).a(new G.Text(<G.IBounds> _title, _title['s'], _title['lh'], this.$a(_title['a']))
+                ).a(new G.Text(<G.IBounds> _title, _title['ff'], _title['s'], _title['lh'], this.$a(_title['a']))
                     .tc(_title['c'])
                     .a(this._x = new G.TextPhrase())
                 );
+            return <Start> super.pI();
         }
 
         /**
          * 设置名称。
          */
         public u(title: string, series: boolean, stage: G.Stage): Start {
+            this.pI();
             if (title)
                 this._x.t(title);
             if (series) {

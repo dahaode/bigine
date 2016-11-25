@@ -39,6 +39,7 @@
  *     * `.l` -  资源加载状态 - Tag
  *     * `.al` -  自动读档标记 - Tag
  *     * `.oc` -  screen 的 open 事件标记 - Tag
+ *     * `.ld` -  正在读档标记 - Tag
  * 3. `$` 表明为注册对象，不能被存档记录；
  *     * `$c` - 人物数量 - Runtime
  *     * `$d` - 事件逻辑层深度 - Tag
@@ -62,7 +63,7 @@ namespace Core {
         /**
          * 获取值。
          */
-        g(key: string): any;
+        g(key: string, local?: boolean): any;
 
         /**
          * 删除值。

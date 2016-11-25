@@ -17,10 +17,8 @@ namespace Sprite {
          * 构造函数。
          */
         constructor(color: string = '#000') {
-            let w: number = 1280,
-                h: number = 720;
-            super(0, 0, w, h);
-            this.a(new G.Color(0, 0, w, h, color));
+            super({});
+            this.a(new G.Color(0, 0, 1280, 720, color));
         }
     }
 }

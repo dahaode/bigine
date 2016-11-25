@@ -23,26 +23,30 @@ namespace Sprite {
          * 构造函数。
          */
         constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                _director: Util.IHashTable<any> = theme['director'],
-                _title: Util.IHashTable<any> = theme['title'];
-            super(0, 0, w, h);
+            super(theme);
+        }
+
+        protected pI(): Author {
+            if (this._pi) return this;
+            let _director: Util.IHashTable<any> = this._tm['director'],
+                _title: Util.IHashTable<any> = this._tm['title'];
             (<Author> this.o(0))
-                .a(new G.Color(0, 0, w, h, '#000'))
-                .a(new G.Text(<G.IBounds> _director, _director['s'], _director['h'], this.$a(_director['a']))
+                .a(new G.Color(0, 0, 1280, 720, '#000'))
+                .a(new G.Text(<G.IBounds> _director, _director['ff'], _director['s'], _director['h'], this.$a(_director['a']))
                     .tc(_director['c'])
                     .a(new G.TextPhrase('作品'))
-                ).a(new G.Text(<G.IBounds> _title, _title['s'], _title['h'], this.$a(_title['a']))
+                ).a(new G.Text(<G.IBounds> _title, _title['ff'], _title['s'], _title['h'], this.$a(_title['a']))
                     .tc(_title['c'])
                     .a(this._x = new G.TextPhrase())
                 );
+            return <Author> super.pI();
         }
 
         /**
          * 设置名称。
          */
         public u(title: string): Author {
+            this.pI();
             if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(title)) {
                 this._x.t(title);
             } else {

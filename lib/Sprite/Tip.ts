@@ -21,38 +21,33 @@ namespace Sprite {
         private _x: G.Text;
 
         /**
-         * 文字高亮色。
-         */
-        private _c: string;
-
-        /**
          * 构造函数。
          */
-        constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
-                rr: typeof Resource.Resource = Resource.Resource,
-                _back: Util.IHashTable<any> = theme['back'],
-                _text: Util.IHashTable<any> = theme['text'];
-            super(0, 0, w, h);
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+            super(theme);
             this._rr = [
-                rr.g<HTMLImageElement>(_back['i'], raw)
+                Resource.Resource.g<HTMLImageElement>(theme['back']['i'], Core.IResource.Type.Raw)
             ];
-            this._c = _text['ch'];
+        }
+
+        protected pI(): Tip {
+            if (this._pi) return this;
+            let _back: Util.IHashTable<any> = this._tm['back'],
+                _text: Util.IHashTable<any> = this._tm['text'];
             (<Tip> this.o(0))
                 .a(new G.Image(this._rr[0].o(), <G.IBounds> _back))
-                .a(this._x = new G.Text(<G.IBounds> _text, _text['s'], _text['lh'], G.Text.Align.Center)
+                .a(this._x = new G.Text(<G.IBounds> _text, _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
                     .tc(_text['c'])
                     .ts(_text['ss'])
                 );
+            return <Tip> super.pI();
         }
 
         /**
          * 更新文本。
          */
         public u(clob: string): Tip {
-            return <Tip> this.$w(this._x, clob, this._c);
+            return <Tip> this.pI().$w(this._x, clob, this._tm['text']['ch']);
         }
     }
 }

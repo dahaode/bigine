@@ -31,15 +31,10 @@ namespace Sprite {
          * 构造函数。
          */
         constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+            let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                _name: Util.IHashTable<any> = theme['name'],
-                _value: Util.IHashTable<any> = theme['value'],
-                _pic: Util.IHashTable<any> = theme['pic'],
-                center: G.Text.Align = G.Text.Align.Center;
-            super(0, 0, w, h);
+                _pic: Util.IHashTable<any> = theme['pic'];
+            super(theme);
             this._rr = [
                 rr.g<HTMLImageElement>(_pic['1'], raw),
                 rr.g<HTMLImageElement>(_pic['2'], raw),
@@ -47,17 +42,26 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_pic['4'], raw),
                 rr.g<HTMLImageElement>(_pic['5'], raw)
             ];
+        }
+
+        protected pI(): Stars {
+            if (this._pi) return this;
+            let _name: Util.IHashTable<any> = this._tm['name'],
+                _value: Util.IHashTable<any> = this._tm['value'],
+                center: G.Text.Align = G.Text.Align.Center;
             // 渲染评分初始样式
             (<Stars> this.o(0))
-                .a(this._xs = new G.Sprite(<G.IBounds> { x: 0, y: 0, w: w, h: h }))
-                .a(this._nt = new G.Text(<G.IBounds> _name, _name['s'], _name['lh'], center))
-                .a(this._vt = new G.Text(<G.IBounds> _value, _value['s'], _value['lh'], center));
+                .a(this._xs = new G.Sprite(0, 0, 1280, 720))
+                .a(this._nt = new G.Text(<G.IBounds> _name, _name['ff'], _name['s'], _name['lh'], center))
+                .a(this._vt = new G.Text(<G.IBounds> _value, _value['ff'], _value['s'], _value['lh'], center));
+            return <Stars> super.pI();
         }
 
         /**
          * 设置名称、数据值。
          */
         public u(key: number, name: string, value: string): Stars {
+            this.pI();
             this._xs.c().a(new G.Image(this._rr[key].o(), { x: 0, y: 0, w: 1280, h: 720 }));
             this._nt.c().a(new G.TextPhrase(name));
             this._vt.c().a(new G.TextPhrase(value));

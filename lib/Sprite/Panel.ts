@@ -42,10 +42,6 @@ namespace Sprite {
          */
         private _ca: Util.IHashTable<G.Button>;
         /**
-         * 面板主题配置集合。
-         */
-        private _pt: Util.IHashTable<Util.IHashTable<any>>;
-        /**
          * 面板背景集合。
          */
         private _pb: Util.IHashTable<G.Image>;
@@ -87,24 +83,16 @@ namespace Sprite {
         private _dr: Util.IHashTable<any>;
 
         /**
-         * 主题是否已渲染
-         */
-        private _pi: boolean;
-
-        /**
          * 构造函数。
          */
-        constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+            let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _close: Util.IHashTable<any> = theme['close'],
                 _tab: Util.IHashTable<any> = theme['tab'],
                 _simp: Util.IHashTable<any> = theme['simp'],
                 _coll: Util.IHashTable<any> = theme['coll'];
-            super(0, 0, w, h);
-            this._pt = theme;
+            super(theme);
             this._pi = false;
             this._ti = 0;
             this._tai = {};
@@ -155,7 +143,7 @@ namespace Sprite {
             this._ep = runtime.gE();
             if (sheet.length == 0) return this;
             // 集合面板翻页上一页按钮
-            let pBounds: G.IBounds = <G.IBounds> this._pt['coll']['arrow']['p'];
+            let pBounds: G.IBounds = <G.IBounds> this._tm['coll']['arrow']['p'];
             this.pI()
                 .a(this._ca['p'] = new G.Button(pBounds)
                 .b(() => {
@@ -166,7 +154,7 @@ namespace Sprite {
                 new G.Image(this._rr[7].o(), pBounds, true)));
             this._ca['p'].o(0);
             // 集合面板翻页下一页按钮
-            let nBounds: G.IBounds = <G.IBounds> this._pt['coll']['arrow']['n'];
+            let nBounds: G.IBounds = <G.IBounds> this._tm['coll']['arrow']['n'];
             this.a(this._ca['n'] = new G.Button(nBounds)
                 .b(() => {
                     this._cp = (this._cp == this._cc.length - 1) ? 0 : (this._cp + 1);
@@ -190,13 +178,13 @@ namespace Sprite {
         /**
          * 初始化渲染。
          */
-        private pI(): Panel {
+        protected pI(): Panel {
             if (this._pi) return this;
             let w: number = 1280,
                 h: number = 720,
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
-                theme: Util.IHashTable<Util.IHashTable<any>> = this._pt,
+                theme: Util.IHashTable<Util.IHashTable<any>> = this._tm,
                 _mask: Util.IHashTable<any> = theme['mask'],
                 _back: Util.IHashTable<any> = theme['back'],
                 _close: Util.IHashTable<any> = theme['close'],
@@ -222,7 +210,7 @@ namespace Sprite {
 
             // 构造简单面板中渲染数据名的容器
             for (; i < 13; i++) {
-                let titleTxt: G.Text = new G.Text(<G.IBounds> _simp[i]['title'], _simp[i]['title']['s'], _simp[i]['title']['lh'], left);
+                let titleTxt: G.Text = new G.Text(<G.IBounds> _simp[i]['title'], _simp[i]['title']['ff'], _simp[i]['title']['s'], _simp[i]['title']['lh'], left);
                 this._st[i + 't'] = titleTxt;
                 this.a(this._st[i + 't']).o(0);
             }
@@ -244,14 +232,14 @@ namespace Sprite {
                 }  else if (name == 'name') {
                     // 初始化集合面板数据值显示元素
                     let align: G.Text.Align = this.align(config['a']);
-                    this._cv[name] = new G.Text(<G.IBounds> config, config['s'], config['lh'], align, true);
+                    this._cv[name] = new G.Text(<G.IBounds> config, config['ff'], config['s'], config['lh'], align, true);
                     this.a(this._cv[name]);
                     this._cv[name].o(0);
                 } else {
                     let tBounds: G.IBounds = <G.IBounds> config['title'];
                     let vBounds: G.IBounds = <G.IBounds> config['value'];
                     // 初始化集合面板数据标题元素
-                    this._ct[name + 't'] = new G.Text(tBounds, tBounds['s'], tBounds['lh']);
+                    this._ct[name + 't'] = new G.Text(tBounds, tBounds['ff'], tBounds['s'], tBounds['lh']);
                     this.a(this._ct[name + 't']);
                     this._ct[name + 't'].o(0);
                     // 初始化集合面板数据值显示元素
@@ -260,23 +248,22 @@ namespace Sprite {
                     this._cv[name + 'v'].o(0);
                 }
             });
-
-            return this;
+            return <Panel> super.pI();
         }
 
         /**
          * 绘制面板标签
          */
         private uT(sheet: Array<Util.IHashTable<any>>): Panel {
-            let align: G.Text.Align = this.align(this._pt['tab']['title']['a']);
+            let align: G.Text.Align = this.align(this._tm['tab']['title']['a']);
             let activeImage: G.Image;
             // 渲染面板切换标签
             Util.each(sheet, (data: Util.IHashTable<string>, index: number) => {
                 let tabBtn: G.Button = <G.Button> this._tai[data['n']];
                 if (!tabBtn) {
-                    let tabPosi: Util.IHashTable<any> = this._pt['tab'][index + 1 + ''];
-                    let titleBounds: G.IBounds = Util.clone(this._pt['tab']['title']);
-                    let tabText: G.Text = new G.Text(titleBounds, titleBounds['s'], titleBounds['lh'], align);
+                    let tabPosi: Util.IHashTable<any> = this._tm['tab'][index + 1 + ''];
+                    let titleBounds: G.IBounds = Util.clone(this._tm['tab']['title']);
+                    let tabText: G.Text = new G.Text(titleBounds, titleBounds['ff'], titleBounds['s'], titleBounds['lh'], align);
                     this._tai[index + 't'] = tabText;
                     let tabBounds: G.IBounds = Util.clone(titleBounds);
                     tabBounds['x'] = tabPosi['x'];
@@ -331,7 +318,7 @@ namespace Sprite {
             this._pb['s'].o(1);
             let simpData: Array<Util.IHashTable<any>> = sheet['c'];
             if (!simpData || simpData.length == 0) return this;
-            let simpTheme: Util.IHashTable<any> = this._pt['simp'],
+            let simpTheme: Util.IHashTable<any> = this._tm['simp'],
                 left: G.Text.Align = G.Text.Align.Left;
             Util.each(simpData, (simpField: Util.IHashTable<any>, index: number) => {
                 // 画出简单面板中显示的数据名
@@ -351,7 +338,7 @@ namespace Sprite {
                     if (type && Util.indexOf(this._sTypes, type) > -1) {
                         this.a(this._sv[simpField['name']] = new G.Sprite(<G.IBounds> simpTheme[i]['value'], false, true));
                     } else {
-                        this.a(this._sv[simpField['name']] = new G.Text(<G.IBounds> simpTheme[i]['value'], simpTheme[i]['value']['s'], simpTheme[i]['value']['lh'], left));
+                        this.a(this._sv[simpField['name']] = new G.Text(<G.IBounds> simpTheme[i]['value'], simpTheme[i]['value']['ff'], simpTheme[i]['value']['s'], simpTheme[i]['value']['lh'], left));
                     }
                 }
                 // 如果数据类型是图片类型
@@ -359,9 +346,9 @@ namespace Sprite {
                     (<G.Sprite> this._sv[simpField['name']]).c();
                     let rValue: number = value ? parseInt(value, 10) : 0;
                     for (let j: number = 0; j < rValue; j++) {
-                        let typeBound: G.IBounds = <G.IBounds> Util.clone(this._pt['type'][type]);
-                        typeBound['x'] = j * (this._pt['type'][type]['m'] + this._pt['type'][type]['w']);
-                        typeBound['y'] = (simpTheme[index + 1 + '']['value']['lh'] - this._pt['type'][type]['h']) / 2;
+                        let typeBound: G.IBounds = <G.IBounds> Util.clone(this._tm['type'][type]);
+                        typeBound['x'] = j * (this._tm['type'][type]['m'] + this._tm['type'][type]['w']);
+                        typeBound['y'] = (simpTheme[index + 1 + '']['value']['lh'] - this._tm['type'][type]['h']) / 2;
                         let image: G.Image = new G.Image(this._tResource[type]['ei'].o(), <G.IBounds> typeBound, false);
                         (<G.Sprite> this._sv[simpField['name']]).a(image);
                     }
@@ -395,7 +382,7 @@ namespace Sprite {
                         fieldType: string = field.gT();
                     // 渲染头像
                     if (field.iE()) {
-                        let hBounds: G.IBounds = <G.IBounds> this._pt['coll']['head'];
+                        let hBounds: G.IBounds = <G.IBounds> this._tm['coll']['head'];
                         let iBounds: G.IBounds = <G.IBounds> {x: 0, y: 0, w: hBounds['w'], h: hBounds['h']};
                         let entity: Tag.Entity = field.gIE(<string> fieldValue);
                         (<G.Sprite> this._cv['head']).c().a(
@@ -419,24 +406,24 @@ namespace Sprite {
                             let lValue: number = <number> field.gL(),
                                 rValue: number = <number> fieldValue;
                             for (let j: number = 0; j < lValue; j++) {
-                                let tTheme: Util.IHashTable<any> = this._pt['type'][field.gT()],
+                                let tTheme: Util.IHashTable<any> = this._tm['type'][field.gT()],
                                     typeBound: G.IBounds = <G.IBounds> Util.clone(tTheme),
                                     res: Resource.Resource<HTMLImageElement> = j < rValue ? this._tResource[fieldType]['ei'] : this._tResource[fieldType]['fi'],
                                     image: G.Image = new G.Image(res.o(), <G.IBounds> typeBound, false);
-                                typeBound['x'] = j * (this._pt['type'][fieldType]['m'] + this._pt['type'][fieldType]['w']);
-                                typeBound['y'] = (this._pt['coll'][i + '']['value']['lh'] - this._pt['type'][fieldType]['h']) / 2;
+                                typeBound['x'] = j * (this._tm['type'][fieldType]['m'] + this._tm['type'][fieldType]['w']);
+                                typeBound['y'] = (this._tm['coll'][i + '']['value']['lh'] - this._tm['type'][fieldType]['h']) / 2;
                                 (<G.Sprite> this._cv[i + 'v']).a(image);
                             }
                             this._cv[i + 'v'].o(1);
                         } else {
                             // 普通字段
-                            let tValue: Util.IHashTable<any> = this._pt['coll'][i + '']['value'],
+                            let tValue: Util.IHashTable<any> = this._tm['coll'][i + '']['value'],
                                 iBound: G.IBounds = <G.IBounds> Util.clone(tValue),
                                 align: G.Text.Align = G.Text.Align.Left;
                             iBound['x'] = 0;
                             iBound['y'] = 0;
                             (<G.Sprite> this._cv[i + 'v']).a(
-                                new G.Text(iBound, iBound['s'], iBound['lh'], align, false).c().a(
+                                new G.Text(iBound, iBound['ff'], iBound['s'], iBound['lh'], align, false).c().a(
                                     new G.TextPhrase(fieldValue + '')
                                     )
                                 ).o(1);

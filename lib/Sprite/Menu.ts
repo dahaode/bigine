@@ -25,18 +25,15 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+            let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _close: Util.IHashTable<any> = theme['close'],
-                _mask: Util.IHashTable<any> = theme['mask'],
                 _save: Util.IHashTable<any> = theme['save'],
                 _load: Util.IHashTable<any> = theme['load'],
                 _set: Util.IHashTable<any> = theme['set'],
                 _replay: Util.IHashTable<any> = theme['replay'];
-            super(0, 0, w, h);
+            super(theme);
             this._rr = [
                 rr.g<HTMLImageElement>(_close['i'], raw),
                 rr.g<HTMLImageElement>(_close['ih'], raw),
@@ -49,8 +46,18 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_replay['i'], raw),
                 rr.g<HTMLImageElement>(_replay['ih'], raw)
             ];
+        }
+
+        protected pI(): Menu {
+            if (this._pi) return this;
+            let _close: Util.IHashTable<any> = this._tm['close'],
+                _mask: Util.IHashTable<any> = this._tm['mask'],
+                _save: Util.IHashTable<any> = this._tm['save'],
+                _load: Util.IHashTable<any> = this._tm['load'],
+                _set: Util.IHashTable<any> = this._tm['set'],
+                _replay: Util.IHashTable<any> = this._tm['replay'];
             (<Menu> this.o(0))
-                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(<G.IBounds> _close)
                     .b(() => {
                         this.dispatchEvent(new Ev.MenuClose({ target: this }));
@@ -72,9 +79,11 @@ namespace Sprite {
                         this.dispatchEvent(new Ev.MenuReplay({ target: this }));
                     }, new G.Image(this._rr[9].o(), <G.IBounds> _replay, true), new G.Image(this._rr[8].o(), <G.IBounds> _replay, true))
                 );
+            return <Menu> super.pI();
         }
 
         public u(series: boolean): Menu {
+            this.pI();
             series ? this._x.o(1) : this._x.o(0);
             return this;
         }

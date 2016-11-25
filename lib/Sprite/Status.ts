@@ -30,40 +30,43 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
-                rr: typeof Resource.Resource = Resource.Resource,
-                left: G.Text.Align = G.Text.Align.Left,
-                right: G.Text.Align = G.Text.Align.Right,
-                _back: Util.IHashTable<any> = theme['back'],
-                i: number = 1,
-                j: Util.IHashTable<any>;
-            super(0, 0, w, h, true);
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+            let _back: Util.IHashTable<any> = theme['back'];
+            super(theme, true);
             this._rr = [
-                rr.g<HTMLImageElement>(_back['i'], raw)
+                Resource.Resource.g<HTMLImageElement>(_back['i'], Core.IResource.Type.Raw)
             ];
-            (<Status> this.o(0))
-                .a(new G.Image(this._rr[0].o(), <G.IBounds> _back));
             this._x = {};
             this._y = {};
+        }
+
+        protected pI(): Status {
+            if (this._pi) return this;
+            let left: G.Text.Align = G.Text.Align.Left,
+                right: G.Text.Align = G.Text.Align.Right,
+                _back: Util.IHashTable<any> = this._tm['back'],
+                i: number = 1,
+                j: Util.IHashTable<any>;
+            (<Status> this.o(0))
+                .a(new G.Image(this._rr[0].o(), <G.IBounds> _back));
             for (; i < 7; i++) {
-                j = theme[i];
-                this.a(this._x[i + 't'] = <G.Text> new G.Text(<G.IBounds> j['title'], j['title']['s'], j['title']['lh'], left)
+                j = this._tm[i];
+                this.a(this._x[i + 't'] = <G.Text> new G.Text(<G.IBounds> j['title'], j['title']['ff'], j['title']['s'], j['title']['lh'], left)
                     .tc(j['title']['c'])
                     .o(0)
-                ).a(this._x[i + 'v'] = <G.Text> new G.Text(<G.IBounds> j['value'], j['value']['s'], j['value']['lh'], right)
+                ).a(this._x[i + 'v'] = <G.Text> new G.Text(<G.IBounds> j['value'], j['value']['ff'], j['value']['s'], j['value']['lh'], right)
                     .tc(j['value']['c'])
                     .o(0)
                 );
             }
+            return <Status> super.pI();
         }
 
         /**
          * 配置。
          */
         public u(sheet: [string, string][], runtime: Core.IRuntime): Status {
+            this.pI();
             Util.each(sheet, (item: [string, string], index: number) => {
                 if (!item[0]) return;
                 (<G.Text> this._x[++index + 't'].o(1))

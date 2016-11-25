@@ -54,26 +54,22 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(id: string, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+        constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>) {
+            let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _vback: Util.IHashTable<any> = voiceover['back'],
                 _vtext: Util.IHashTable<any> = voiceover['text'],
                 _vcurs: Util.IHashTable<any> = voiceover['cursor'],
                 _mback: Util.IHashTable<any> = monolog['back'],
                 _mavat: Util.IHashTable<any> = monolog['avatar'],
-                _mname: Util.IHashTable<any> = monolog['name'],
                 _mtext: Util.IHashTable<any> = monolog['text'],
                 _mcurs: Util.IHashTable<any> = monolog['cursor'],
                 _sback: Util.IHashTable<any> = speak['back'],
                 _savat: Util.IHashTable<any> = speak['avatar'],
-                _sname: Util.IHashTable<any> = speak['name'],
                 _stext: Util.IHashTable<any> = speak['text'],
                 _scurs: Util.IHashTable<any> = speak['cursor'],
-                left: G.Text.Align = G.Text.Align.Left;
-            super(0, 0, w, h);
+                theme: Util.IHashTable<any> = {voiceover, monolog, speak};
+            super(theme);
             this._rr = [
                 rr.g<HTMLImageElement>(_vback['i'], raw),
                 rr.g<HTMLImageElement>(_mback['i'], raw),
@@ -101,6 +97,27 @@ namespace Sprite {
                 m: <G.IBounds> Util.clone(_mtext),
                 s: <G.IBounds> Util.clone(_stext)
             };
+            if (_vcurs) this._rr.push(rr.g<HTMLImageElement>(_vcurs['i'], raw));
+            if (_mcurs) this._rr.push(rr.g<HTMLImageElement>(_mcurs['i'], raw));
+            if (_scurs) this._rr.push(rr.g<HTMLImageElement>(_scurs['i'], raw));
+        }
+
+        protected pI(): Words {
+            if (this._pi) return this;
+            let voiceover: Util.IHashTable<any> = this._tm['voiceover'],
+                monolog: Util.IHashTable<any> = this._tm['monolog'],
+                speak: Util.IHashTable<any> = this._tm['speak'],
+                _vback: Util.IHashTable<any> = voiceover['back'],
+                _vcurs: Util.IHashTable<any> = voiceover['cursor'],
+                _mback: Util.IHashTable<any> = monolog['back'],
+                _mavat: Util.IHashTable<any> = monolog['avatar'],
+                _mname: Util.IHashTable<any> = monolog['name'],
+                _mcurs: Util.IHashTable<any> = monolog['cursor'],
+                _sback: Util.IHashTable<any> = speak['back'],
+                _savat: Util.IHashTable<any> = speak['avatar'],
+                _sname: Util.IHashTable<any> = speak['name'],
+                _scurs: Util.IHashTable<any> = speak['cursor'],
+                left: G.Text.Align = G.Text.Align.Left;
             (<Words> this.o(0))
                 .a(this._x['v'] = new G.Sprite(<G.IBounds> _vback)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _vback, true))
@@ -109,7 +126,7 @@ namespace Sprite {
                 ).a(this._x['m'] = new G.Sprite(<G.IBounds> _mback)
                     .a(new G.Image(this._rr[1].o(), <G.IBounds> _mback, true))
                     .a(this._x['ma'] = new G.Sprite(<G.IBounds> _mavat, true))
-                    .a(new G.Text(<G.IBounds> _mname, _mname['s'], _mname['lh'], left, true)
+                    .a(new G.Text(<G.IBounds> _mname, _mname['ff'], _mname['s'], _mname['lh'], left, true)
                         .tc(_mname['c'])
                         .ts(_mname['ss'], _mname['ss'], _mname['ss'])
                         .a(this._x['mn'] = new G.TextPhrase())
@@ -118,34 +135,24 @@ namespace Sprite {
                 ).a(this._x['s'] = new G.Sprite(<G.IBounds> _sback)
                     .a(new G.Image(this._rr[2].o(), <G.IBounds> _sback, true))
                     .a(this._x['sa'] = new G.Sprite(<G.IBounds> _savat, true))
-                    .a(new G.Text(<G.IBounds> _sname, _sname['s'], _sname['lh'], left, true)
+                    .a(new G.Text(<G.IBounds> _sname, _sname['ff'], _sname['s'], _sname['lh'], left, true)
                         .tc(_sname['c'])
                         .ts(_sname['ss'], _sname['ss'], _sname['ss'])
                         .a(this._x['sn'] = new G.TextPhrase())
                     ).a(this._x['st'] = new G.Sprite(<G.IBounds> _sback)
                     ).o(0)
                 );
-            if (_vcurs) {
-                let vo: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(_vcurs['i'], raw);
-                this._rr.push(vo);
-                (<G.Sprite> this._x['v']).a(this._x['vc'] = new G.Image(vo.o(), <G.IBounds> _vcurs, true));
-            }
-            if (_mcurs) {
-                let mo: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(_mcurs['i'], raw);
-                this._rr.push(mo);
-                (<G.Sprite> this._x['m']).a(this._x['mc'] = new G.Image(mo.o(), <G.IBounds> _mcurs, true));
-            }
-            if (_scurs) {
-                let so: Resource.Resource<HTMLImageElement> = rr.g<HTMLImageElement>(_scurs['i'], raw);
-                this._rr.push(so);
-                (<G.Sprite> this._x['s']).a(this._x['sc'] = new G.Image(so.o(), <G.IBounds> _scurs, true));
-            }
+            if (_vcurs) (<G.Sprite> this._x['v']).a(this._x['vc'] = new G.Image(this._rr[3].o(), <G.IBounds> _vcurs, true));
+            if (_mcurs) (<G.Sprite> this._x['m']).a(this._x['mc'] = new G.Image(this._rr[4].o(), <G.IBounds> _mcurs, true));
+            if (_scurs) (<G.Sprite> this._x['s']).a(this._x['sc'] = new G.Image(this._rr[5].o(), <G.IBounds> _scurs, true));
+            return <Words> super.pI();
         }
 
         /**
          * 隐藏。
          */
         public h(duration?: number): Promise<Words> {
+            if (!this._pi) return super.h(duration);
             if (this._h) {
                 this._h.h();
                 this._h = undefined;
@@ -170,7 +177,7 @@ namespace Sprite {
          * 旁白。
          */
         public vv(clob: string, auto: boolean = false): Promise<Words> {
-            (<G.Sprite> this._x['v']).o(1);
+            (<G.Sprite> this.pI()._x['v']).o(1);
             return this.split(clob, 'v', auto).then(() => {
                 (<G.Sprite> this._x['v']).o(0);
                 if (this._si) {
@@ -185,7 +192,7 @@ namespace Sprite {
          * 独白。
          */
         public vm(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto: boolean = false): Promise<Words> {
-            (<G.Sprite> this._x['ma'])
+            (<G.Sprite> this.pI()._x['ma'])
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['m'], true));
             (<G.TextPhrase> this._x['mn']).t(name);
@@ -204,7 +211,7 @@ namespace Sprite {
          * 对白。
          */
         public vs(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto: boolean = false): Promise<Words> {
-            (<G.Sprite> this._x['sa'])
+            (<G.Sprite> this.pI()._x['sa'])
                 .c()
                 .a(new G.Image(avatar.o(), this._bs['s'], true));
             (<G.TextPhrase> this._x['sn']).t(name);
@@ -267,7 +274,7 @@ namespace Sprite {
                 if (pause > 0) tBound.y -= lHeight;
             }
             if (clob == '') return Promise.resolve(this);
-            tText = new G.Text(<G.IBounds> tBound, tBound['s'], tBound['lh'], left, true)
+            tText = new G.Text(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
                 .tl(tBound['ls'])
                 .to(pause > 0 ? this._tp['c'].x : 0)

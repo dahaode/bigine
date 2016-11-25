@@ -98,8 +98,15 @@ namespace Tag {
                             director.asRoom(this._mo.o(states.g(kt)), false, map ? true : false))
                         .then(() =>
                             director.asMap(map ? map.gP() : {}))
-                        .then(() =>
-                            this._mo.p(type.PostEnter, runtime, this._p[0]));
+                        .then(() => {
+                            var kld: string = '.ld';
+                            if (states.g(kld)) {
+                                states.s(kdn, states.g(kdn, true))
+                                    .d(kdo)
+                                    .d(kld);
+                            }
+                            return this._mo.p(type.PostEnter, runtime, this._p[0]);
+                        });
                 })
             );
             return E.doHalt<Core.IRuntime>(); // 中断原有时序流。

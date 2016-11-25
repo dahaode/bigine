@@ -13,7 +13,7 @@
 namespace Sprite {
     import G = __Bigine_C2D;
 
-    export abstract class Sprite extends G.Sprite implements Core.ISprite {
+    export abstract class Sprite extends G.Component implements Core.ISprite {
         /**
          * 远端资源列表。
          */

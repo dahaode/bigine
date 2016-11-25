@@ -506,6 +506,7 @@ namespace Runtime {
                             }
                             enter = new Tag.Enter([tn || cn], '', [], -1);
                             enter.b(episode);
+                            states.s('.ld', true);
                             return <Runtime | Thenable<Runtime>> enter.p(this)
                                 ['catch'](E.ignoreHalt);
                         }

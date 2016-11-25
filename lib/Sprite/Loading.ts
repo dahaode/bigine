@@ -38,27 +38,31 @@ namespace Sprite {
          * 构造函数。
          */
         constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                _text: Util.IHashTable<any> = theme['text'];
-            super(0, 0, w, h);
+            super(theme);
             this._rr = [
                 Resource.Resource.g<HTMLImageElement>('_/loading.png', Core.IResource.Type.Raw)
             ];
             this._ws = theme['words'] || {};
             this._si = undefined;
+        }
+
+        protected pI(): Loading {
+            if (this._pi) return this;
+            let _text: Util.IHashTable<any> = this._tm['text'];
             (<Loading> this.o(0))
-                .a(this._gi = new G.Image(this._rr[0].o(), 0, 0, w, h))
-                .a(new G.Text(<G.IBounds> _text, _text['s'], _text['h'], this.$a(_text['a']))
+                .a(this._gi = new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
+                .a(new G.Text(<G.IBounds> _text, _text['ff'], _text['s'], _text['h'], this.$a(_text['a']))
                     .tc(_text['c'])
                     .a(this._x = new G.TextPhrase(''))
                 );
+            return <Loading> super.pI();
         }
 
         /**
          * 设置底层信息。
          */
         public u(): Loading {
+            this.pI();
             let speed: number = 0.05,
                 time: number = 30,
                 index: number = 1,

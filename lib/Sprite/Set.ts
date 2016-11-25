@@ -48,11 +48,6 @@ namespace Sprite {
         private _ib: G.Image;
 
         /**
-         * 设置主题配置集合。
-         */
-        private _pt: Util.IHashTable<Util.IHashTable<any>>;
-
-        /**
          * 面板声音开关。
          */
         private _vo: boolean;
@@ -60,18 +55,12 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+            let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _close: Util.IHashTable<any> = theme['close'],
-                _mask: Util.IHashTable<any> = theme['mask'],
-                _title: Util.IHashTable<any> = theme['title'],
-                _bgm: Util.IHashTable<any> = theme['bgm'],
-                _se: Util.IHashTable<any> = theme['se'];
-            super(0, 0, w, h);
-            this._pt = theme;
+                _bgm: Util.IHashTable<any> = theme['bgm'];
+            super(theme);
             this._vo = true;
             this._rr = [
                 rr.g<HTMLImageElement>(_close['i'], raw),
@@ -80,16 +69,25 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_bgm['bg']['i'], raw),
                 rr.g<HTMLImageElement>(_bgm['bar']['ih'], raw)
             ];
+        }
+
+        protected pI(): Set {
+            if (this._pi) return this;
+            let _close: Util.IHashTable<any> = this._tm['close'],
+                _mask: Util.IHashTable<any> = this._tm['mask'],
+                _title: Util.IHashTable<any> = this._tm['title'],
+                _bgm: Util.IHashTable<any> = this._tm['bgm'],
+                _se: Util.IHashTable<any> = this._tm['se'];
             (<Set> this.o(0))
-                .a(new G.Color(0, 0, w, h, _mask['cb']).o(_mask['o']))
+                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(<G.IBounds> _close)
                     .b(() => {
                         this.dispatchEvent(new Ev.SetClose({ target: this }));
                     }, new G.Image(this._rr[1].o(), <G.IBounds> _close, true), new G.Image(this._rr[0].o(), <G.IBounds> _close, true))
-                ).a(new G.Text(<G.IBounds> _title, _title['s'], _title['lh'], this.$a(_title['a']), true)
+                ).a(new G.Text(<G.IBounds> _title, _title['ff'], _title['s'], _title['lh'], this.$a(_title['a']), true)
                     .tc(_title['c'])
                     .a(new G.TextPhrase('声音设定'))
-                ).a(new G.Text(<G.IBounds> _bgm['name'], _bgm['name']['s'], _bgm['name']['lh'], this.$a(_bgm['name']['a']), true)
+                ).a(new G.Text(<G.IBounds> _bgm['name'], _bgm['name']['ff'], _bgm['name']['s'], _bgm['name']['lh'], this.$a(_bgm['name']['a']), true)
                     .tc(_bgm['name']['c'])
                     .a(new G.TextPhrase('音乐'))
                 ).a(new G.Button(<G.IBounds> _bgm['bar'])
@@ -97,8 +95,8 @@ namespace Sprite {
                         this.sv(event['x'], 'bgm');
                     }, new G.Image(this._rr[2].o(), <G.IBounds> _bgm['bar'], true), new G.Image(this._rr[2].o(), <G.IBounds> _bgm['bar'], true))
                 ).a(new G.Image(this._rr[3].o(), <G.IBounds> _bgm['bg'], true))
-                .a(this._xb = new G.Text(<G.IBounds> _bgm['volume'], _bgm['volume']['s'], _bgm['volume']['lh'], this.$a(_bgm['volume']['a']), true)
-                ).a(new G.Text(<G.IBounds> _se['name'], _se['name']['s'], _se['name']['lh'], this.$a(_se['name']['a']), true)
+                .a(this._xb = new G.Text(<G.IBounds> _bgm['volume'], _bgm['volume']['ff'], _bgm['volume']['s'], _bgm['volume']['lh'], this.$a(_bgm['volume']['a']), true)
+                ).a(new G.Text(<G.IBounds> _se['name'], _se['name']['ff'], _se['name']['s'], _se['name']['lh'], this.$a(_se['name']['a']), true)
                     .tc(_se['name']['c'])
                     .a(new G.TextPhrase('音效'))
                 ).a(new G.Button(<G.IBounds> _se['bar'])
@@ -106,7 +104,8 @@ namespace Sprite {
                         this.sv(event['x'], 'se');
                     }, new G.Image(this._rr[2].o(), <G.IBounds> _se['bar'], true), new G.Image(this._rr[2].o(), <G.IBounds> _se['bar'], true))
                 ).a(new G.Image(this._rr[3].o(), <G.IBounds> _se['bg'], true))
-                .a(this._xe = new G.Text(<G.IBounds> _se['volume'], _se['volume']['s'], _se['volume']['lh'], this.$a(_se['volume']['a']), true));
+                .a(this._xe = new G.Text(<G.IBounds> _se['volume'], _se['volume']['ff'], _se['volume']['s'], _se['volume']['lh'], this.$a(_se['volume']['a']), true));
+            return <Set> super.pI();
         }
 
         /**
@@ -114,9 +113,9 @@ namespace Sprite {
          */
         protected sv(x: number, voice: string): void {
             if (!this._vo) return;
-            let gBound: G.IBounds = <G.IBounds> Util.clone(this._pt[voice]['bar']),
+            let gBound: G.IBounds = <G.IBounds> Util.clone(this._tm[voice]['bar']),
                 width: number = Math.max(gBound['x'], Math.min(x, gBound['w'] + gBound['x'])) - gBound['x'],
-                count: number = Math.round(width / this._pt[voice]['bar']['w'] * 100);
+                count: number = Math.round(width / this._tm[voice]['bar']['w'] * 100);
             if (count <= 2) {
                 count = gBound['w'] = 0;
             } else if (count >= 98) {
@@ -150,14 +149,15 @@ namespace Sprite {
          * 显示音乐/音效调节。
          */
         public vv(bVolume: number, eVolume: number, on: boolean, duration?: number): Promise<Set> {
+            this.pI();
             this._vo = on;
             if (!this._vo) bVolume = eVolume = 0;
             this._vb = Math.round(bVolume * 100);
             this._ve = Math.round(eVolume * 100);
             (<G.Text> this._xb).c().a(new G.TextPhrase(this._vb.toString()));
             (<G.Text> this._xe).c().a(new G.TextPhrase(this._ve.toString()));
-            let bBound: G.IBounds = <G.IBounds> Util.clone(this._pt['bgm']['bar']),
-                eBound: G.IBounds = <G.IBounds> Util.clone(this._pt['se']['bar']);
+            let bBound: G.IBounds = <G.IBounds> Util.clone(this._tm['bgm']['bar']),
+                eBound: G.IBounds = <G.IBounds> Util.clone(this._tm['se']['bar']);
             bBound['w'] = Math.round(bVolume * bBound['w']);
             eBound['w'] = Math.round(eVolume * eBound['w']);
             if (this._ib) {

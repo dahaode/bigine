@@ -14,18 +14,12 @@ namespace Sprite {
     import G = __Bigine_C2D;
 
     export class CG extends Sprite {
-        /**
-         * 配置。
-         */
-        private _c: G.IBounds;
 
         /**
          * 构造函数。
          */
         constructor(theme: Util.IHashTable<any>) {
-            super(0, 0, 1280, 720);
-            this._c = <G.IBounds> theme;
-            this.o(0);
+            super(theme);
         }
 
         /**
@@ -33,9 +27,9 @@ namespace Sprite {
          */
         public u(image: Resource.Resource<HTMLImageElement>): CG {
             return image ? (<CG> this.c()
-                    .a(new G.Image(image.o(), this._c))) :
+                    .a(new G.Image(image.o(), <G.IBounds> this._tm))) :
                 (<CG> this.c()
-                    .a(new G.Color(<G.IBounds> this._c, '#000')));
+                    .a(new G.Color(<G.IBounds> this._tm, '#000')));
         }
     }
 }

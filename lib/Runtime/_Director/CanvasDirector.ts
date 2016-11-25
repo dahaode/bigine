@@ -108,7 +108,7 @@ namespace Runtime {
         private _pc: Tag.Option;
 
         /**
-         * 全屏文本排版。
+         * 全屏文本开 / 关。
          */
         private _fd: boolean;
 
@@ -140,13 +140,16 @@ namespace Runtime {
             els[0].appendChild(canvas);
             this._x = {};
             this._c = <G.Stage> new G.Stage(canvas.getContext('2d'))
-                .a(new G.Color(bounds, '#000').i('b'))
-                .a(new G.Sprite(bounds).i('M').o(0))
-                .a(new G.Sprite(bounds).i('c').o(0))
+                .a(new G.Component()
+                    .a(new G.Color(bounds, '#000')).i('b'))
+                .a(new G.Component()
+                    .a(new G.Sprite(bounds)).i('M').o(0))
+                .a(new G.Component()
+                    .a(new G.Sprite(bounds)).i('c').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
-                .a(new G.Sprite(0, bounds.h - 12, bounds.w, 12)
-                    .a(new G.Color(0, 0, bounds.w, 12, '#e7e7e7'))
-                    .a(new G.Color(0, 1, bounds.w, 10, '#0cf').i('e')).i('L').o(0));
+                .a(new G.Component()
+                    .a(new G.Color(0, bounds.h - 12, bounds.w, 12, '#e7e7e7'))
+                    .a(new G.Color(0, bounds.h - 11, bounds.w, 10, '#00ccff').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
             this._ca = [undefined, undefined];
@@ -188,7 +191,7 @@ namespace Runtime {
          * @param resources 一个（作品）事件所包含地所有资源
          */
         public c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void> {
-            var gLoading: G.Sprite = <G.Sprite> this._c.q('L')[0],
+            var gLoading: G.Component = <G.Component> this._c.q('L')[0],
                 gElapsed: G.Element = gLoading.q('e')[0],
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
                 progress: (done: boolean) => void = (done: boolean) => {
@@ -236,7 +239,7 @@ namespace Runtime {
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
-                    let gLogo: G.Image = new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS);
+                    let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
                     this._c.z()
                         .a(gLogo, this._x['c']);
                     return this.lightOn()
@@ -528,7 +531,7 @@ namespace Runtime {
             let gTip: Sprite.Tip = <Sprite.Tip> this._x['T'];
             return this.lightOn()
                 .then(() => gTip.u(words).v())
-                .then(() => gTip.p(new G.WaitForClick()))
+                .then(() => gTip.p(this._t = new G.WaitForClick()))
                 .then(() => gTip.h())
                 .then(() => this._r);
         };
@@ -569,8 +572,18 @@ namespace Runtime {
                 change: () => Promise<Core.IRuntime> = () => {
                     music['scale'] = vol || 1;
                     music.volume = volume;
-                    if (music.src != url)
+                    if (music.src != url) {
                         music.src = url;
+                        // APP 需要使用
+                        if (Util.ENV.Mobile && Bigine.offline && music.src != oops) {
+                            this._r.dispatchEvent(new Ev.Video({
+                                target: null,
+                                type: type == Core.IResource.Type.BGM ? 'bgm' : 'esm',
+                                uri: url,
+                                volume: volume
+                            }));
+                        }
+                    }
                     return super.playMusic(type, resource, vol);
                 };
             if (!resource)
@@ -595,6 +608,15 @@ namespace Runtime {
             se.addEventListener(type, resume);
             se.volume = se['baseVolume'] * (vol || 1);
             se.src = url;
+            // APP 需要使用
+            if (Util.ENV.Mobile && Bigine.offline) {
+                this._r.dispatchEvent(new Ev.Video({
+                    target: null,
+                    type: 'se',
+                    uri: url,
+                    volume: se.volume
+                }));
+            }
             if (!resource)
                 this._s['e'].play();
             return super.playSE(resource, vol);
@@ -671,8 +693,9 @@ namespace Runtime {
                         runtime.gS().d('.z');
                         runtime.gS().d('_z');
                     }
-                    var gNew: G.Element = new G.Image(resource.o(), CanvasDirector.BOUNDS).i('b')
-                            .o(0);
+                    var gNew: G.Element = new G.Component()
+                        .a(new G.Image(resource.o(), CanvasDirector.BOUNDS).i('n'))
+                        .i('b').o(0);
                     this._c.a(gNew, 'M');
                     if (time) {
                         return gNew.p(new G.FadeIn(500)).then(() => {
@@ -741,7 +764,7 @@ namespace Runtime {
          * 设置地图。
          */
         public asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime> {
-            var gMap: G.Sprite = <G.Sprite> this._c.q('M')[0],
+            var gMap: G.Component = <G.Component> this._c.q('M')[0],
                 gPoints: [number, G.Button][] = [],
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
                 gPoint: G.Button,
@@ -754,7 +777,7 @@ namespace Runtime {
                         this.playSE(this._i['c']);
                         point.p(this._r);
                     }, new G.Image(point.o().o(), bounds, true))
-                    .addEventListener('$focus', () => {
+                    .addEventListener('focus', () => {
                         this.playSE(this._i['f']);
                     });
                 added = Util.some(gPoints, (item: [number, G.Button], index: number) => {
@@ -852,10 +875,10 @@ namespace Runtime {
         public reset(): Promise<Core.IRuntime> {
             return super.reset().then((runtime: Core.IRuntime) => {
                 var gBack: G.Element = this._c.q('b')[0],
-                    gColor: G.Color = new G.Color(CanvasDirector.BOUNDS, '#000');
+                    gColor: G.Element = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000'));
                 // 需要先删除旧选择再添加新选择，否则在选择处读档时，时序流中断(因为未删除监听事件)
                 this._c.e(this._x['C']);
-                this._x['C'] = <Sprite.Choose> new Sprite.Choose('', this._pt['choose'])
+                this._x['C'] = <Sprite.Choose> new Sprite.Choose(this._pt['choose'])
                     .addEventListener('choose', (ev: Ev.Choose) => {
                         this._pc = <Tag.Option> ev.choice;
                     });
@@ -863,8 +886,8 @@ namespace Runtime {
                 this._c.a(gColor, gBack)
                     .e(gBack);
                 gColor.i('b');
-                (<G.Sprite> this._c.q('M')[0]).c();
-                (<G.Sprite> this._c.q('c')[0]).c()
+                (<G.Component> this._c.q('M')[0]).c();
+                (<G.Component> this._c.q('c')[0]).c()
                     .o(0);
                 this._pc = undefined;
                 this._fd = false;
@@ -892,12 +915,12 @@ namespace Runtime {
          */
         public pause(milsec: number): Promise<Core.IRuntime> {
             if (milsec) {
-                return this._c.p(new G.Delay(milsec)).then(() => {
-                    return super.pause(milsec);
-                });
+                return this._c.p(this._h = new G.Delay(milsec)).then(() =>
+                    super.pause(milsec)
+                );
             } else {
                 // 建立临时透明层，使得可以响应WaitForClick事件。
-                let sPause: G.Sprite = new G.Sprite(CanvasDirector.BOUNDS, false);
+                let sPause: G.Component = new G.Component({}, false);
                 this._c.a(sPause.i('P').o(1));
                 return sPause.p(new G.WaitForClick()).then(() => {
                     this._c.e(sPause);
@@ -922,7 +945,7 @@ namespace Runtime {
                 x: number = Math.round(mx * (1 - 5 / 3) * 1280),
                 y: number = Math.round(my * (1 - 5 / 3) * 720);
             if (!gRoom) return this._p;
-            let sClick: G.Sprite = new G.Sprite(CanvasDirector.BOUNDS, false);  // 建立临时透明层，使得可以响应WaitForClick事件。
+            let sClick: G.Component = new G.Component({}, false);  // 建立临时透明层，使得可以响应WaitForClick事件。
             this._c.a(sClick.i('P').o(1));
             return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                 let aMove: G.Move = new G.Move(ms, { x: x, y: y }),
@@ -952,7 +975,7 @@ namespace Runtime {
             var gRoom: G.Image = <G.Image> this._c.q('b')[0],
                 bound: G.IBounds = gRoom.gB();
             if (!gRoom) return this._p;
-            let sClick: G.Sprite = new G.Sprite(CanvasDirector.BOUNDS, false);  // 建立临时透明层，使得可以响应WaitForClick事件。
+            let sClick: G.Component = new G.Component({}, false);  // 建立临时透明层，使得可以响应WaitForClick事件。
             this._c.a(sClick.i('P').o(1));
             return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                 let aZoom: G.Zoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale }),
@@ -1018,18 +1041,18 @@ namespace Runtime {
             // 特写。
             this._c.a(this._x['G'] = <Sprite.CG> new Sprite.CG(theme['cg']), gCurtain);
             // 状态。
-            this._x['S'] = <Sprite.Status> new Sprite.Status(id, theme['status']);
+            this._x['S'] = <Sprite.Status> new Sprite.Status(theme['status']);
             resources.unshift(this._x['S'].l());
             this._c.a(this._x['S'], gCurtain);
             // 某白。
-            this._x['W'] = <Sprite.Words> new Sprite.Words(id, theme['voiceover'], theme['monolog'], theme['speak'])
+            this._x['W'] = <Sprite.Words> new Sprite.Words(theme['voiceover'], theme['monolog'], theme['speak'])
                 .addEventListener('words.animation', (ev: Ev.WordsAnimation) => {
                     this._t = this._h = ev.animation;
                 });
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 全屏文本。
-            this._x['F'] = <Sprite.Full> new Sprite.Full(id, theme['full'])
+            this._x['F'] = <Sprite.Full> new Sprite.Full(theme['full'])
                 .addEventListener('full.animation', (ev: Ev.FullAnimation) => {
                     this._t = this._h = ev.animation;
                     this._ft = ev.type;
@@ -1037,12 +1060,17 @@ namespace Runtime {
             resources.unshift(this._x['F'].l());
             this._c.a(this._x['F'], gCurtain);
             // 选择。
-            this._x['C'] = <Sprite.Choose> new Sprite.Choose(id, theme['choose']);
+            this._x['C'] = <Sprite.Choose> new Sprite.Choose(theme['choose']);
             resources.unshift(this._x['C'].l());
             this._c.a(this._x['C'], gCurtain);
+            // 提示。
+            this._x['T'] = <Sprite.Tip> new Sprite.Tip(theme['tip']);
+            resources.unshift(this._x['T'].l());
+            this._c.a(this._x['T'], gCurtain);
             // 常驻按钮。
-            this._x['t'] = <Sprite.Tray> new Sprite.Tray(id, theme['tray'])
+            this._x['t'] = <Sprite.Tray> new Sprite.Tray(theme['tray'])
                 .addEventListener('tray.menu', () => {
+                    if (this._h) this._h.w();
                     this._x['m'].v();
                     this._x['t'].h();
                 }).addEventListener('tray.panel', () => {
@@ -1051,12 +1079,8 @@ namespace Runtime {
                 });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
-            // 提示。
-            this._x['T'] = <Sprite.Tip> new Sprite.Tip(id, theme['tip']);
-            resources.unshift(this._x['T'].l());
-            this._c.a(this._x['T'], gCurtain);
             // 面板。
-            this._x['P'] = <Sprite.Panel> new Sprite.Panel(id, theme['panel'])
+            this._x['P'] = <Sprite.Panel> new Sprite.Panel(theme['panel'])
                 .addEventListener('panel.close', () => {
                     this._x['t'].v();
                     this._x['P'].h();
@@ -1064,8 +1088,9 @@ namespace Runtime {
             resources.unshift(this._x['P'].l());
             this._c.a(this._x['P'], gCurtain);
             // 功能菜单。
-            this._x['m'] = <Sprite.Menu> new Sprite.Menu(id, theme['menu'])
+            this._x['m'] = <Sprite.Menu> new Sprite.Menu(theme['menu'])
                 .addEventListener('menu.close', () => {
+                    if (this._h) this._h.r();
                     this._x['t'].v();
                     this._x['m'].h();
                 }).addEventListener('menu.save', () => {
@@ -1092,7 +1117,7 @@ namespace Runtime {
                             return;
                         });
                 }).addEventListener('menu.replay', () => {
-                    this._x['m'].h();
+                    this._x['m'].h(0);
                     this._t = this._h = undefined;
                     this._r.stop();
                     (<Sprite.Start> this._x['s']).u(this._r.gTitle(), true, this._c).v(0);
@@ -1100,7 +1125,7 @@ namespace Runtime {
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
             // 开始菜单。
-            this._x['s'] = <Sprite.Start> new Sprite.Start(id, theme['start'])
+            this._x['s'] = <Sprite.Start> new Sprite.Start(theme['start'])
                 .addEventListener('start.new', (event: Ev.StartNew) => {
                     this.playSE(this._i['c']);
                     this.lightOff().then(() => {
@@ -1122,7 +1147,7 @@ namespace Runtime {
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
             // 档位菜单。
-            this._x['sl'] = <Sprite.Slots> new Sprite.Slots(id, theme['slots'])
+            this._x['sl'] = <Sprite.Slots> new Sprite.Slots(theme['slots'])
                 .addEventListener('slots.close', () => {
                     if (states.g('.oc')) {
                         this._r.dispatchEvent(new Ev.ScreenLoad({
@@ -1134,8 +1159,8 @@ namespace Runtime {
                     this._x[slotsFromStart ? 's' : 'm'].v();
                     this._x['sl'].h();
                 }).addEventListener('slots.save', (ev: Ev.SlotsSave) => {
-                    this._x[slotsFromStart ? 's' : 'm'].v();
-                    this._x['sl'].h();
+                    this._x[slotsFromStart ? 's' : 'm'].v(0);
+                    this._x['sl'].h(0);
                     this._r.gS().e(ev.slot);
                 }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
                     this._r.dispatchEvent(new Ev.ScreenLoad({
@@ -1147,7 +1172,7 @@ namespace Runtime {
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
             // 连载档位菜单。
-            this._x['ss'] = <Sprite.SeriesSlots> new Sprite.SeriesSlots(id, theme['series'])
+            this._x['ss'] = <Sprite.SeriesSlots> new Sprite.SeriesSlots(theme['series'])
                 .addEventListener('slots.close', () => {
                     if (!slotsFromStart && states.g('.oc')) {
                         this._r.dispatchEvent(new Ev.ScreenSave({
@@ -1173,9 +1198,9 @@ namespace Runtime {
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
             // 设置菜单。
-            this._x['st'] = <Sprite.Set> new Sprite.Set(id, theme['set'])
+            this._x['st'] = <Sprite.Set> new Sprite.Set(theme['set'])
                 .addEventListener('set.close', () => {
-                    this._x[slotsFromStart ? 's' : 'm'].v();
+                    this._x['m'].v();
                     this._x['st'].h();
                 }).addEventListener('set.volume', (ev: Ev.SetVolume) => {
                     var bgm: HTMLAudioElement = this._s['b'];
@@ -1230,6 +1255,7 @@ namespace Runtime {
         public p(sheet: Array<Util.IHashTable<any>>): CanvasDirector {
             if (sheet && sheet.length > 0) {
                 (<Sprite.Panel> this._x['P']).u(sheet, this._r);
+                (<Sprite.Tray> this._x['t']).u(true);
             } else
                 (<Sprite.Tray> this._x['t']).u(false);
             return this;

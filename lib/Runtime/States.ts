@@ -80,8 +80,8 @@ namespace Runtime {
         /**
          * 获取值。
          */
-        public g(key: string): any {
-            return this._d[key];
+        public g(key: string, local: boolean = false): any {
+            return local ? this._p[key] : this._d[key];
         }
 
         /**
@@ -175,6 +175,11 @@ namespace Runtime {
                     if ('_' != key[0])
                         data[key] = value;
                 });
+            } else {
+                if (!data['_a']) {
+                    console.log('当前没有关键帧，存档不成功！');
+                    return this._p;
+                }
             }
             this._r.dispatchEvent(new Ev.Save({
                 target: this,

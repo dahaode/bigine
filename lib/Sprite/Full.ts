@@ -59,17 +59,13 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(id: string, full: Util.IHashTable<Util.IHashTable<any>>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
-                rr: typeof Resource.Resource = Resource.Resource,
-                _back: Util.IHashTable<any> = full['back'],
-                _text: Util.IHashTable<any> = full['text'],
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+            let _back: Util.IHashTable<any> = theme['back'],
+                _text: Util.IHashTable<any> = theme['text'],
                 canvas: HTMLCanvasElement = document.createElement('canvas');
-            super(0, 0, w, h);
+            super(theme);
             this._rr = [
-                rr.g<HTMLImageElement>(_back['i'], raw)
+                Resource.Resource.g<HTMLImageElement>(_back['i'], Core.IResource.Type.Raw)
             ];
             this._x = {};
             this._cb = <G.IBounds> Util.clone(_text);
@@ -83,17 +79,24 @@ namespace Sprite {
             this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px ' + G.TextPhrase.FONT;
             this._ct.textBaseline = 'middle';
             this._ct.shadowBlur = this._ct.shadowOffsetX = this._ct.shadowOffsetY = _text['ss'];
+        }
+
+        protected pI(): Full {
+            if (this._pi) return this;
+            let _back: Util.IHashTable<any> = this._tm['back'];
             (<Full> this.o(0))
                 .a(new G.Sprite(<G.IBounds> _back)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _back, true))
                     .a(this._x['f'] = new G.Sprite(<G.IBounds> _back))
                 ).o(0);
+            return <Full> super.pI();
         }
 
         /**
          * 隐藏。
          */
         public h(duration?: number): Promise<Full> {
+            if (!this._pi) return super.h(duration);
             if (this._h) {
                 this._h.h();
                 this._h = undefined;
@@ -114,6 +117,7 @@ namespace Sprite {
          * 文本。
          */
         public u(clob: string, auto: boolean = false): Promise<Full> {
+            this.pI();
             let words: Array<string> = clob.split('\\r'),
                 funcs: Array<Function> = [];
             Util.each(words, (word: string, index: number) => {
@@ -169,7 +173,7 @@ namespace Sprite {
             row = Math.ceil(this._ct.measureText(sClob).width / bBound.w);
             if (this._tl + row > bBound['row'] && pause < 1) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
             tBound = Util.clone(this._cb);
-            tText = new G.Text(<G.IBounds> tBound, tBound['s'], tBound['lh'], left, true)
+            tText = new G.Text(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
                 .tl(tBound['ls'])
                 .to(pause > 0 ? this._tx : 0)

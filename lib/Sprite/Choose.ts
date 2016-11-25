@@ -17,11 +17,6 @@ namespace Sprite {
 
     export class Choose extends Sprite implements Core.IChoose {
         /**
-         * 配置。
-         */
-        private _c: Util.IHashTable<any>;
-
-        /**
          * 选择Button。
          */
         private _bn: G.Button[];
@@ -39,18 +34,15 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(id: string, theme: Util.IHashTable<any>) {
-            let w: number = 1280,
-                h: number = 720,
-                raw: Core.IResource.Type = Core.IResource.Type.Raw,
+        constructor(theme: Util.IHashTable<any>) {
+            let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource;
-            super(0, 0, w, h);
+            super(theme);
             this._rr = [
                 rr.g<HTMLImageElement>(theme['back']['i'], raw),
                 rr.g<HTMLImageElement>(theme['back']['ih'], raw),
                 rr.g<HTMLImageElement>(theme['radish']['i'], raw)
             ];
-            this._c = theme;
             this._bn = [];
             this._bi =
             this._ke = undefined;
@@ -61,11 +53,11 @@ namespace Sprite {
          * 配置。
          */
         public u(options: Core.IOptionTag[], stage: G.Stage): Choose {
-            let margin: number = this._c['m'],
-                _back: Util.IHashTable<any> = this._c['back'],
-                _text: Util.IHashTable<any> = this._c['text'],
-                _count: Util.IHashTable<any> = this._c['count'],
-                _radish: Util.IHashTable<any> = this._c['radish'],
+            let margin: number = this._tm['m'],
+                _back: Util.IHashTable<any> = this._tm['back'],
+                _text: Util.IHashTable<any> = this._tm['text'],
+                _count: Util.IHashTable<any> = this._tm['count'],
+                _radish: Util.IHashTable<any> = this._tm['radish'],
                 opts: Core.IOptionTag[] = options.slice(0, 6),
                 x: number = 0 | (1280 - _back['w']) / 2,
                 y: number = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
@@ -73,7 +65,7 @@ namespace Sprite {
             this._bn = [];
             this._bi = undefined;
             Util.each(options.slice(0, 6), (option: Core.IOptionTag) => {
-                let text: G.Text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['s'], _text['lh'], G.Text.Align.Center)
+                let text: G.Text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
                     .tc(_text['c'])
                     .ts(_text['ss']);
                 let money: number = option.gA() ? 0 : option.gM();
@@ -92,7 +84,7 @@ namespace Sprite {
                         yC: number = y + _text['y'] + 0.5 * _back['h'],
                         xR: number = x + _text['x'] + _text['w'] - _count['w'] - _radish['w'] - 10,
                         yR: number = y + _text['y'] + 0.5 * (_back['h'] - _radish['h']),
-                        count: G.Text = new G.Text(xC, yC, _count['w'], _count['h'], _count['s'], _count['lh'], G.Text.Align.Left)
+                        count: G.Text = new G.Text(xC, yC, _count['w'], _count['h'], _count['ff'], _count['s'], _count['lh'], G.Text.Align.Left)
                             .tc(_count['c'])
                             .ts(_count['ss']);
                     this.$w(count, money.toString(), _count['ch']);
@@ -172,7 +164,10 @@ namespace Sprite {
          * 隐藏。
          */
         public h(duration?: number): Promise<Sprite> {
-            window.removeEventListener('keydown', this._ke);
+            if (this._ke) {
+                window.removeEventListener('keydown', this._ke);
+                this._ke = undefined;
+            }
             this._bn = [];
             this._bi = undefined;
             return super.h(duration);

@@ -25,10 +25,15 @@ namespace Tag {
          */
         public t(states: Core.IStates): boolean {
             var min: number = 0,
+                first: boolean = true,
                 depth: number = states.g('$d'),
                 value: number;
             Util.each(this._s, (tag: Unknown) => {
                 value = states.g(tag.$p(0)) - 0 || 0;
+                if (first) {
+                    min = value;
+                    first = false;
+                }
                 if (value < min)
                     min = value;
             });

@@ -45,7 +45,7 @@ declare namespace __Bigine {
     namespace Core {
         interface IStates {
             s(key: string, value: any): IStates;
-            g(key: string): any;
+            g(key: string, local?: boolean): any;
             d(key: string): IStates;
             a(key1: string, key2: string): boolean;
             c(src: string, dest: string): IStates;
@@ -400,7 +400,7 @@ declare namespace __Bigine {
             private _p;
             constructor(runtime: Core.IRuntime);
             s(key: string, value: any): States;
-            g(key: string): any;
+            g(key: string, local?: boolean): any;
             d(key: string): States;
             a(key1: string, key2: string): boolean;
             c(src: string, dest: string): States;
@@ -507,7 +507,7 @@ declare namespace __Bigine {
         }
     }
     namespace Sprite {
-        abstract class Sprite extends G.Sprite implements Core.ISprite {
+        abstract class Sprite extends G.Component implements Core.ISprite {
             protected _rr: Resource.Resource<string | HTMLImageElement>[];
             protected _dv: number;
             protected _dh: number;
@@ -527,6 +527,7 @@ declare namespace __Bigine {
         class Author extends Sprite {
             private _x;
             constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Author;
             u(title: string): Author;
         }
     }
@@ -571,7 +572,8 @@ declare namespace __Bigine {
             private _y;
             private _ke;
             private _bn;
-            constructor(id: string, theme: Util.IHashTable<any>);
+            constructor(theme: Util.IHashTable<any>);
+            protected pI(): Start;
             u(title: string, series: boolean, stage: G.Stage): Start;
             protected ev(series: boolean, stage: G.Stage): void;
             h(duration?: number): Promise<Sprite>;
@@ -605,7 +607,8 @@ declare namespace __Bigine {
             private _si;
             private _cb;
             private _tp;
-            constructor(id: string, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Words;
             h(duration?: number): Promise<Words>;
             vv(clob: string, auto?: boolean): Promise<Words>;
             vm(avatar: Resource.Resource<HTMLImageElement>, name: string, clob: string, auto?: boolean): Promise<Words>;
@@ -643,7 +646,8 @@ declare namespace __Bigine {
     namespace Sprite {
         class Tray extends Sprite implements Core.ITray {
             private _x;
-            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Tray;
             u(panel: boolean): Tray;
         }
     }
@@ -705,7 +709,8 @@ declare namespace __Bigine {
     namespace Sprite {
         class Menu extends Sprite implements Core.IMenu {
             private _x;
-            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Menu;
             u(series: boolean): Menu;
         }
     }
@@ -753,7 +758,8 @@ declare namespace __Bigine {
         class Slots extends Sprite implements Core.ISlots {
             private _c;
             private _x;
-            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Slots;
             vs(runtime: Core.IRuntime, duration?: number): Promise<Slots>;
             vl(runtime: Core.IRuntime, duration?: number): Promise<Slots>;
             h(duration?: number): Promise<Slots>;
@@ -764,7 +770,8 @@ declare namespace __Bigine {
         class Status extends Sprite {
             private _x;
             private _y;
-            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Status;
             u(sheet: [string, string][], runtime: Core.IRuntime): Status;
         }
     }
@@ -791,7 +798,6 @@ declare namespace __Bigine {
             private _ct;
             private _cv;
             private _ca;
-            private _pt;
             private _pb;
             private _ti;
             private _tai;
@@ -802,10 +808,9 @@ declare namespace __Bigine {
             private _cp;
             private _ep;
             private _dr;
-            private _pi;
-            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
             u(sheet: Array<Util.IHashTable<any>>, runtime: Core.IRuntime): Panel;
-            private pI();
+            protected pI(): Panel;
             private uT(sheet);
             private uContent(sheet, data);
             private uS(sheet, data);
@@ -817,8 +822,8 @@ declare namespace __Bigine {
     namespace Sprite {
         class Tip extends Sprite {
             private _x;
-            private _c;
-            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Tip;
             u(clob: string): Tip;
         }
     }
@@ -841,11 +846,10 @@ declare namespace __Bigine {
     }
     namespace Sprite {
         class Choose extends Sprite implements Core.IChoose {
-            private _c;
             private _bn;
             private _bi;
             private _ke;
-            constructor(id: string, theme: Util.IHashTable<any>);
+            constructor(theme: Util.IHashTable<any>);
             u(options: Core.IOptionTag[], stage: G.Stage): Choose;
             protected ev(options: Core.IOptionTag[], stage: G.Stage): void;
             h(duration?: number): Promise<Sprite>;
@@ -853,7 +857,6 @@ declare namespace __Bigine {
     }
     namespace Sprite {
         class CG extends Sprite {
-            private _c;
             constructor(theme: Util.IHashTable<any>);
             u(image: Resource.Resource<HTMLImageElement>): CG;
         }
@@ -863,7 +866,8 @@ declare namespace __Bigine {
             private _c;
             private _x;
             private _de;
-            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): SeriesSlots;
             vs(runtime: Core.IRuntime, fs?: Core.IRuntime.Series, duration?: number): Promise<SeriesSlots>;
             vl(runtime: Core.IRuntime, duration?: number): Promise<SeriesSlots>;
             h(duration?: number): Promise<SeriesSlots>;
@@ -907,9 +911,9 @@ declare namespace __Bigine {
             private _vb;
             private _xb;
             private _ib;
-            private _pt;
             private _vo;
-            constructor(id: string, theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Set;
             protected sv(x: number, voice: string): void;
             vv(bVolume: number, eVolume: number, on: boolean, duration?: number): Promise<Set>;
         }
@@ -920,6 +924,7 @@ declare namespace __Bigine {
             private _vt;
             private _xs;
             constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Stars;
             u(key: number, name: string, value: string): Stars;
         }
     }
@@ -930,6 +935,7 @@ declare namespace __Bigine {
             private _gi;
             private _si;
             constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Loading;
             u(): Loading;
             h(duration?: number): Promise<Sprite>;
         }
@@ -963,7 +969,8 @@ declare namespace __Bigine {
             private _tl;
             private _tx;
             private _ct;
-            constructor(id: string, full: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            protected pI(): Full;
             h(duration?: number): Promise<Full>;
             u(clob: string, auto?: boolean): Promise<Full>;
             protected every(clob: string, auto: boolean, wait: boolean, pause?: number): Promise<Full>;
@@ -1814,6 +1821,13 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
+        class Minimum extends Action {
+            gN(): string;
+            t(states: Core.IStates): boolean;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
         class CharMove extends Action {
             private _mc;
             private _mp;
@@ -2172,6 +2186,22 @@ declare namespace __Bigine {
         class ScreenSave extends Event<Core.IStates> {
             private type;
             constructor(metas: IScreenSaveMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IVideoMetas extends Util.IEventMetas<Core.IEpisode> {
+            type: string;
+            uri: string;
+            volume: number;
+        }
+    }
+    namespace Ev {
+        class Video extends Event<Core.IEpisode> {
+            private type;
+            private uri;
+            private volume;
+            constructor(metas: IVideoMetas);
             gT(): string;
         }
     }
