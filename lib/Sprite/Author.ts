@@ -19,13 +19,6 @@ namespace Sprite {
          */
         private _x: G.TextPhrase;
 
-        /**
-         * 构造函数。
-         */
-        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
-            super(theme);
-        }
-
         protected pI(): Author {
             if (this._pi) return this;
             let _director: Util.IHashTable<any> = this._tm['director'],

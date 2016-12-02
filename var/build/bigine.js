@@ -1203,12 +1203,10 @@ var Runtime;
                 if ('.' != key[0] && '$' != key[0] && undefined != value)
                     _this._p[key] = value;
             });
-            //start:生成快照的时候，向外暴露
             this._r.dispatchEvent(new Ev.State({
                 target: this,
                 data: this._p
             }));
-            //ended:生成快照的时候，向外暴露
             return this;
         };
         /**
@@ -1491,7 +1489,7 @@ var Runtime;
         /**
          * 开始动画。
          */
-        Director.prototype.OP = function (start, title, author) {
+        Director.prototype.OP = function (start, title, author, isWx) {
             if (!start)
                 this._r.dispatchEvent(new Ev.Begin({
                     target: this._r.gE()
@@ -1672,7 +1670,7 @@ var Runtime;
         /**
          * 全屏文本 开 / 关。
          */
-        Director.prototype.fullWords = function (on) {
+        Director.prototype.fullWords = function (onoff) {
             return this._p;
         };
         /**
@@ -1939,11 +1937,8 @@ var Sprite;
     var G = __Bigine_C2D;
     var Author = (function (_super) {
         __extends(Author, _super);
-        /**
-         * 构造函数。
-         */
-        function Author(theme) {
-            _super.call(this, theme);
+        function Author() {
+            _super.apply(this, arguments);
         }
         Author.prototype.pI = function () {
             if (this._pi)
@@ -2126,7 +2121,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Start(theme) {
+        function Start(theme, lnew, series, load) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _new = theme['new'], _series = theme['series'], _load = theme['load'];
             _super.call(this, theme);
             this._rr = [
@@ -2141,6 +2136,9 @@ var Sprite;
             this._y = {};
             this._bn =
                 this._ke = undefined;
+            this.addEventListener('start.new', lnew)
+                .addEventListener('start.series', series)
+                .addEventListener('start.load', load);
         }
         Start.prototype.pI = function () {
             var _this = this;
@@ -2319,7 +2317,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Words(voiceover, monolog, speak) {
+        function Words(voiceover, monolog, speak, listen) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _vback = voiceover['back'], _vtext = voiceover['text'], _vcurs = voiceover['cursor'], _mback = monolog['back'], _mavat = monolog['avatar'], _mtext = monolog['text'], _mcurs = monolog['cursor'], _sback = speak['back'], _savat = speak['avatar'], _stext = speak['text'], _scurs = speak['cursor'], theme = { voiceover: voiceover, monolog: monolog, speak: speak };
             _super.call(this, theme);
             this._rr = [
@@ -2355,6 +2353,7 @@ var Sprite;
                 this._rr.push(rr.g(_mcurs['i'], raw));
             if (_scurs)
                 this._rr.push(rr.g(_scurs['i'], raw));
+            this.addEventListener('words.animation', listen);
         }
         Words.prototype.pI = function () {
             if (this._pi)
@@ -2708,7 +2707,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Tray(theme) {
+        function Tray(theme, menu, panel) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _menu = theme['menu'], _panel = theme['panel'];
             _super.call(this, theme, true);
             this._rr = [
@@ -2717,6 +2716,8 @@ var Sprite;
                 rr.g(_panel['i'], raw),
                 rr.g(_panel['ih'], raw)
             ];
+            this.addEventListener('tray.menu', menu)
+                .addEventListener('tray.panel', panel);
         }
         Tray.prototype.pI = function () {
             var _this = this;
@@ -2976,7 +2977,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Menu(theme) {
+        function Menu(theme, close, save, load, set, replay) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _save = theme['save'], _load = theme['load'], _set = theme['set'], _replay = theme['replay'];
             _super.call(this, theme);
             this._rr = [
@@ -2991,6 +2992,11 @@ var Sprite;
                 rr.g(_replay['i'], raw),
                 rr.g(_replay['ih'], raw)
             ];
+            this.addEventListener('menu.close', close)
+                .addEventListener('menu.save', save)
+                .addEventListener('menu.load', load)
+                .addEventListener('menu.set', set)
+                .addEventListener('menu.replay', replay);
         }
         Menu.prototype.pI = function () {
             var _this = this;
@@ -3180,7 +3186,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Slots(theme) {
+        function Slots(theme, close, save, load) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
             _super.call(this, theme);
             this._c = [_auto, _1, _2, _3, _4];
@@ -3199,6 +3205,9 @@ var Sprite;
                 rr.g(_4['i'], raw),
                 rr.g(_4['ih'], raw)
             ];
+            this.addEventListener('slots.close', close)
+                .addEventListener('slots.save', save)
+                .addEventListener('slots.load', load);
         }
         Slots.prototype.pI = function () {
             var _this = this;
@@ -3392,8 +3401,14 @@ var Sprite;
                     _this._x[conf[0]].c().a(new G.TextPhrase(value));
                 });
             });
-            this.o(1);
+            //this.o(1);
             return this;
+        };
+        /**
+         * 显示。
+         */
+        Status.prototype.v = function (duration) {
+            return this._pi ? _super.prototype.v.call(this, duration) : _super.prototype.h.call(this, duration);
         };
         return Status;
     }(Sprite.Sprite));
@@ -3470,7 +3485,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Panel(theme) {
+        function Panel(theme, listen) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _tab = theme['tab'], _simp = theme['simp'], _coll = theme['coll'];
             _super.call(this, theme);
             this._pi = false;
@@ -3513,7 +3528,7 @@ var Sprite;
             this._cc = [];
             this._cp = 0;
             this._dr = {};
-            this.o(0);
+            this.addEventListener('panel.close', listen);
         }
         /**
          * 配置。
@@ -3958,7 +3973,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Choose(theme) {
+        function Choose(theme, listen) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource;
             _super.call(this, theme);
             this._rr = [
@@ -3969,7 +3984,7 @@ var Sprite;
             this._bn = [];
             this._bi =
                 this._ke = undefined;
-            this.o(0);
+            this.addEventListener('choose', listen);
         }
         /**
          * 配置。
@@ -4102,11 +4117,8 @@ var Sprite;
     var G = __Bigine_C2D;
     var CG = (function (_super) {
         __extends(CG, _super);
-        /**
-         * 构造函数。
-         */
-        function CG(theme) {
-            _super.call(this, theme);
+        function CG() {
+            _super.apply(this, arguments);
         }
         /**
          * 更新图片。
@@ -4143,7 +4155,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function SeriesSlots(theme) {
+        function SeriesSlots(theme, close, save, load) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
             _super.call(this, theme);
             this._c = [_auto, _1, _2, _3, _4];
@@ -4162,6 +4174,9 @@ var Sprite;
                 rr.g(_4['i'], raw),
                 rr.g(_4['ih'], raw)
             ];
+            this.addEventListener('slots.close', close)
+                .addEventListener('slots.save', save)
+                .addEventListener('slots.load', load);
         }
         SeriesSlots.prototype.pI = function () {
             var _this = this;
@@ -4464,7 +4479,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Set(theme) {
+        function Set(theme, close, volume) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _bgm = theme['bgm'];
             _super.call(this, theme);
             this._vo = true;
@@ -4475,6 +4490,8 @@ var Sprite;
                 rr.g(_bgm['bg']['i'], raw),
                 rr.g(_bgm['bar']['ih'], raw)
             ];
+            this.addEventListener('set.close', close)
+                .addEventListener('set.volume', volume);
         }
         Set.prototype.pI = function () {
             var _this = this;
@@ -4780,7 +4797,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Full(theme) {
+        function Full(theme, listen) {
             var _back = theme['back'], _text = theme['text'], canvas = document.createElement('canvas');
             _super.call(this, theme);
             this._rr = [
@@ -4795,9 +4812,10 @@ var Sprite;
             canvas.height = 720;
             this._ct = canvas.getContext('2d');
             this._ct.canvas.style.letterSpacing = _text['ls'] + 'px'; // 设置字间距
-            this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px ' + G.TextPhrase.FONT;
+            this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px "' + (_text['ff'] || '') + '", ' + G.TextPhrase.FONT;
             this._ct.textBaseline = 'middle';
             this._ct.shadowBlur = this._ct.shadowOffsetX = this._ct.shadowOffsetY = _text['ss'];
+            this.addEventListener('full.animation', listen);
         }
         Full.prototype.pI = function () {
             if (this._pi)
@@ -5065,10 +5083,13 @@ var Runtime;
                 .a(new G.Color(0, bounds.h - 11, bounds.w, 10, '#00ccff').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
-            this._ca = [undefined, undefined];
-            this._pc = undefined;
             this._fd = false;
-            this._ft = undefined;
+            this._pc =
+                this._ft = undefined;
+            this._f =
+                this._pt = {};
+            this._ca = [undefined, undefined];
+            this._e = [0, 0];
             this._i = {
                 o: Resource.Resource.g(assets + 'logo.png', raw),
                 s: Resource.Resource.g(assets + 'oops.mp3', raw),
@@ -5086,8 +5107,6 @@ var Runtime;
             this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
             this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
             this._s['e']['cd'] = -1;
-            this._f = {};
-            this._e = [0, 0];
             this._l = function (event) {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc) {
                     if (_this._ft)
@@ -5144,21 +5163,25 @@ var Runtime;
         /**
          * 开始动画。
          */
-        CanvasDirector.prototype.OP = function (start, title, author) {
+        CanvasDirector.prototype.OP = function (start, title, author, isWx) {
             var _this = this;
             var series = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
             this._x['s'].u(title, series, this._c);
-            this._x['m'].u(series);
             return this.c([[this._i['o']]])
                 .then(function () { return _this.reset(); })
                 .then(function () {
-                //let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
                 _this._c.z();
-                //.a(gLogo, this._x['c']);
-                return _this.lightOn()
-                    .then(function () { return _this.lightOff(); })
-                    .then(function () {
-                    //this._c.e(gLogo);
+                var q = _this.lightOn();
+                if (!isWx) {
+                    var gLogo_1 = new G.Component().a(new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
+                    _this._c.a(gLogo_1, _this._x['c']);
+                    q = q.then(function () { return gLogo_1.p(new G.Delay(1000)); })
+                        .then(function () {
+                        _this._c.e(gLogo_1);
+                        return _this.lightOff();
+                    });
+                }
+                return q.then(function () {
                     if (!author && !title)
                         return;
                     var gAuthor = _this._x['a'].u(author ? author : title);
@@ -5167,7 +5190,7 @@ var Runtime;
                         .then(function () { return gAuthor.p(new G.Delay(1000)); })
                         .then(function () { return _this.lightOff(); })
                         .then(function () { return gAuthor.o(0); });
-                }).then(function () { return _super.prototype.OP.call(_this, start, title, author); })
+                }).then(function () { return _super.prototype.OP.call(_this, start, title, author, isWx); })
                     .then(function (runtime) {
                     if (!_this._a)
                         _this._x['t'].v(0);
@@ -5203,25 +5226,16 @@ var Runtime;
             if (Core.IRuntime.Series.Alone == this._fs)
                 return Promise.resolve(this._r);
             return new Promise(function (resolve) {
-                var $c = 'slots.close', $s = 'slots.save', close, save;
-                close = function () {
-                    _this._x['ss'].removeEventListener($s, save);
-                    _this._x['ss'].removeEventListener($c, close);
+                var $c = 'slots.close', $s = 'slots.save', done = function () {
+                    _this._x['ss'].removeEventListener($s, done);
+                    _this._x['ss'].removeEventListener($c, done);
                     resolve(_this._r);
+                }, callback = function () {
+                    _this._x['ss']
+                        .addEventListener($c, done)
+                        .addEventListener($s, done).vs(_this._r, _this._fs);
                 };
-                save = function () {
-                    _this._x['ss'].removeEventListener($s, save);
-                    _this._x['ss'].removeEventListener($c, close);
-                    resolve(_this._r);
-                };
-                _this.lightOn().then(function () {
-                    var callback = function () {
-                        _this._x['ss']
-                            .addEventListener($c, close)
-                            .addEventListener($s, save).vs(_this._r, _this._fs);
-                    };
-                    _this._r.gS().e('auto', true, callback);
-                });
+                _this.lightOn().then(function () { return _this._r.gS().e('auto', true, callback); });
             }).then(function () { return _this.lightOff(); });
         };
         /**
@@ -5314,11 +5328,7 @@ var Runtime;
          * 创建立绘。
          */
         CanvasDirector.prototype.$c = function (resource, position) {
-            // 为防止立绘随着镜头的缩放而缩放，这里的立绘显示暂设定为固定IBounds{ x: 0, y: 0, w: 1280, h: 720 }
-            //var bounds: G.IBounds = CanvasDirector.BOUNDS,
-            var bounds = { x: 0, y: 0, w: 1280, h: 720 }, x = this.$x(position);
-            // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
-            return new G.Image(resource.o(), x, 0, bounds.w, bounds.h, true)
+            return new G.Image(resource.o(), this.$x(position), 0, 1280, 720, true)
                 .i(position)
                 .o(0);
         };
@@ -5326,31 +5336,7 @@ var Runtime;
          * 计算立绘位置 x 坐标。
          */
         CanvasDirector.prototype.$x = function (position) {
-            var pos = Core.IDirector.Position, x = 0;
-            switch (position) {
-                case pos.LLeft:
-                    x = -600;
-                    break;
-                case pos.Left:
-                    x = -400;
-                    break;
-                case pos.CLeft:
-                    x = -200;
-                    break;
-                case pos.Center:
-                    x = 0;
-                    break;
-                case pos.CRight:
-                    x = 200;
-                    break;
-                case pos.Right:
-                    x = 400;
-                    break;
-                case pos.RRight:
-                    x = 600;
-                    break;
-            }
-            return x;
+            return position * 200 - 800;
         };
         /**
          * 某白。
@@ -5374,50 +5360,40 @@ var Runtime;
             }
         };
         /**
-         * 某白在全屏中显示。
+         * 旁白在全屏中显示。
          */
         CanvasDirector.prototype.full = function (words) {
             var _this = this;
-            return this.lightOn().then(function () {
-                return _this._x['F'].u(words, _this._a);
-            }).then(function () { return _this._r; });
+            return this.lightOn()
+                .then(function () { return _this._x['F'].u(words, _this._a); })
+                .then(function () { return _this._r; });
         };
         /**
          * 全屏文本 开 / 关。
          */
-        CanvasDirector.prototype.fullWords = function (on) {
-            var _this = this;
-            if (on) {
-                this._fd = true;
-                return _super.prototype.fullWords.call(this, on);
-            }
-            else {
-                return _super.prototype.fullWords.call(this, on).then(function (runtime) {
-                    _this._fd = false;
-                    _this._x['F'].h();
-                    return _this._r;
-                });
-            }
+        CanvasDirector.prototype.fullWords = function (onoff) {
+            this._fd = onoff;
+            if (!onoff)
+                this._x['F'].h();
+            return _super.prototype.fullWords.call(this, onoff);
         };
         /**
          * 清除全屏文本。
          */
         CanvasDirector.prototype.fullClean = function () {
             var _this = this;
-            return _super.prototype.fullClean.call(this).then(function (runtime) {
-                _this._x['F'].clean();
-                return _this._r;
-            });
+            return _super.prototype.fullClean.call(this)
+                .then(function () { return _this._x['F'].clean(); })
+                .then(function () { return _this._r; });
         };
         /**
          * 隐藏全屏文本。
          */
         CanvasDirector.prototype.fullHide = function () {
             var _this = this;
-            return _super.prototype.fullHide.call(this).then(function (runtime) {
-                _this._x['F'].o(0);
-                return _this._r;
-            });
+            return _super.prototype.fullHide.call(this)
+                .then(function () { return _this._x['F'].o(0); })
+                .then(function () { return _this._r; });
         };
         /**
          * 提示。
@@ -5577,8 +5553,8 @@ var Runtime;
                 var gOld = _this._c.q('b')[0];
                 if (camera) {
                     gOld.x(0).y(0).sW(1280).sH(720);
-                    runtime.gS().d('.z');
-                    runtime.gS().d('_z');
+                    runtime.gS().d('.z')
+                        .d('_z');
                 }
                 var gNew = new G.Component()
                     .a(new G.Image(resource.o(), CanvasDirector.BOUNDS).i('n'))
@@ -5670,8 +5646,7 @@ var Runtime;
                 if (!added)
                     gPoints.push([z, gPoint]);
             });
-            gMap.c()
-                .o(1);
+            gMap.c().o(1);
             Util.each(gPoints, function (item) {
                 gMap.a(item[1]);
             });
@@ -5704,29 +5679,26 @@ var Runtime;
                 };
                 var gChoose = _this._x['C'], event = 'choose', states = _this._r.gS(), handler = function () {
                     if (_this._pc) {
-                        var option_1 = _this._pc, isPay = void 0, amount_1;
-                        if (option_1.gI()) {
-                            isPay = states.qp(option_1.gI(), option_1.gM());
-                            option_1.sA(isPay);
-                        }
-                        amount_1 = option_1.gA() ? 0 : option_1.gM();
-                        if (!amount_1) {
+                        var option_1 = _this._pc, id_1 = option_1.gI(), isPay = void 0, amount_1, done_1 = function () {
                             option_1.p(_this._r);
                             gChoose.removeEventListener(event, handler);
                             gChoose.h().then(function () {
                                 resolve(_this._r);
                             });
                             _this._pc = undefined;
+                        };
+                        if (id_1) {
+                            isPay = states.qp(id_1, option_1.gM());
+                            option_1.sA(isPay);
+                        }
+                        amount_1 = option_1.gA() ? 0 : option_1.gM();
+                        if (!amount_1) {
+                            done_1();
                         }
                         else {
-                            var id_1 = option_1.gI(), fail = function () { return; }, suc = function () {
-                                option_1.p(_this._r);
+                            var fail = function () { return; }, suc = function () {
                                 states.ep(id_1, amount_1);
-                                gChoose.removeEventListener(event, handler);
-                                gChoose.h().then(function () {
-                                    resolve(_this._r);
-                                });
-                                _this._pc = undefined;
+                                done_1();
                             };
                             _this._r.dispatchEvent(new Ev.PayOption({
                                 target: states,
@@ -5749,20 +5721,20 @@ var Runtime;
         CanvasDirector.prototype.reset = function () {
             var _this = this;
             return _super.prototype.reset.call(this).then(function (runtime) {
-                var gBack = _this._c.q('b')[0], gColor = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000'));
+                var gBack = _this._c.q('b')[0], gColor = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000')), series = Core.IRuntime.Series.Rest == _this._fs || Core.IRuntime.Series.Last == _this._fs;
                 // 需要先删除旧选择再添加新选择，否则在选择处读档时，时序流中断(因为未删除监听事件)
                 _this._c.e(_this._x['C']);
-                _this._x['C'] = new Sprite.Choose(_this._pt['choose'])
-                    .addEventListener('choose', function (ev) {
+                _this._x['C'] = new Sprite.Choose(_this._pt, function (ev) {
                     _this._pc = ev.choice;
                 });
-                _this._c.a(_this._x['C'], _this._x['t']);
-                _this._c.a(gColor, gBack)
+                _this._c.a(_this._x['C'], _this._x['t'])
+                    .a(gColor, gBack)
                     .e(gBack);
                 gColor.i('b');
+                _this._x['S'].v();
+                _this._x['m'].u(series);
                 _this._c.q('M')[0].c();
-                _this._c.q('c')[0].c()
-                    .o(0);
+                _this._c.q('c')[0].c().o(0);
                 _this._pc = undefined;
                 _this._fd = false;
                 _this._x['G'].h(0);
@@ -5901,65 +5873,60 @@ var Runtime;
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
             var resources = [], gCurtain = this._x['c'], slotsFromStart = false, states = this._r.gS();
-            this._pt = theme;
+            this._pt = theme['choose'];
             // 特写。
             this._c.a(this._x['G'] = new Sprite.CG(theme['cg']), gCurtain);
-            // 状态。
-            this._x['S'] = new Sprite.Status(theme['status']);
-            resources.unshift(this._x['S'].l());
-            this._c.a(this._x['S'], gCurtain);
             // 某白。
-            this._x['W'] = new Sprite.Words(theme['voiceover'], theme['monolog'], theme['speak'])
-                .addEventListener('words.animation', function (ev) {
+            this._x['W'] = new Sprite.Words(theme['voiceover'], theme['monolog'], theme['speak'], function (ev) {
                 _this._t = _this._h = ev.animation;
             });
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 全屏文本。
-            this._x['F'] = new Sprite.Full(theme['full'])
-                .addEventListener('full.animation', function (ev) {
+            this._x['F'] = new Sprite.Full(theme['full'], function (ev) {
                 _this._t = _this._h = ev.animation;
                 _this._ft = ev.type;
             });
             resources.unshift(this._x['F'].l());
             this._c.a(this._x['F'], gCurtain);
+            // 状态。
+            this._x['S'] = new Sprite.Status(theme['status']);
+            resources.unshift(this._x['S'].l());
+            this._c.a(this._x['S'], gCurtain);
             // 选择。
-            this._x['C'] = new Sprite.Choose(theme['choose']);
-            resources.unshift(this._x['C'].l());
-            this._c.a(this._x['C'], gCurtain);
+            // this._x['C'] = <Sprite.Choose> new Sprite.Choose(theme['choose']);
+            // resources.unshift(this._x['C'].l());
+            // this._c.a(this._x['C'], gCurtain);
             // 提示。
             this._x['T'] = new Sprite.Tip(theme['tip']);
             resources.unshift(this._x['T'].l());
             this._c.a(this._x['T'], gCurtain);
             // 常驻按钮。
-            this._x['t'] = new Sprite.Tray(theme['tray'])
-                .addEventListener('tray.menu', function () {
+            this._x['t'] = new Sprite.Tray(theme['tray'], function () {
                 if (_this._h)
                     _this._h.w();
                 _this._x['m'].v();
                 _this._x['t'].h();
-            }).addEventListener('tray.panel', function () {
+            }, function () {
                 _this._x['P'].v();
                 _this._x['t'].h();
             });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
             // 面板。
-            this._x['P'] = new Sprite.Panel(theme['panel'])
-                .addEventListener('panel.close', function () {
+            this._x['P'] = new Sprite.Panel(theme['panel'], function () {
                 _this._x['t'].v();
                 _this._x['P'].h();
             });
             resources.unshift(this._x['P'].l());
             this._c.a(this._x['P'], gCurtain);
             // 功能菜单。
-            this._x['m'] = new Sprite.Menu(theme['menu'])
-                .addEventListener('menu.close', function () {
+            this._x['m'] = new Sprite.Menu(theme['menu'], function () {
                 if (_this._h)
                     _this._h.r();
                 _this._x['t'].v();
                 _this._x['m'].h();
-            }).addEventListener('menu.save', function () {
+            }, function () {
                 slotsFromStart = false;
                 _this._x['sl'].vs(_this._r)
                     .then(function () {
@@ -5967,7 +5934,7 @@ var Runtime;
                 })['catch'](function () {
                     return;
                 });
-            }).addEventListener('menu.load', function () {
+            }, function () {
                 slotsFromStart = false;
                 _this._x['sl'].vl(_this._r)
                     .then(function () {
@@ -5975,14 +5942,14 @@ var Runtime;
                 })['catch'](function () {
                     return;
                 });
-            }).addEventListener('menu.set', function () {
+            }, function () {
                 _this._x['st'].vv(_this._s['b']['baseVolume'], _this._s['e']['baseVolume'], _this._vo)
                     .then(function () {
                     _this._x['m'].h(0);
                 })['catch'](function () {
                     return;
                 });
-            }).addEventListener('menu.replay', function () {
+            }, function () {
                 _this._x['m'].h(0);
                 _this._t = _this._h = undefined;
                 _this._r.stop();
@@ -5991,18 +5958,17 @@ var Runtime;
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
             // 开始菜单。
-            this._x['s'] = new Sprite.Start(theme['start'])
-                .addEventListener('start.new', function (event) {
+            this._x['s'] = new Sprite.Start(theme['start'], function (event) {
                 _this.playSE(_this._i['c']);
                 _this.lightOff().then(function () {
                     event.target.h(0);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
-            }).addEventListener('start.series', function (event) {
+            }, function () {
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
                 _this._x['ss'].vl(_this._r);
-            }).addEventListener('start.load', function (event) {
+            }, function () {
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
                 _this._x['sl'].vl(_this._r)['catch'](function () {
@@ -6012,8 +5978,7 @@ var Runtime;
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
             // 档位菜单。
-            this._x['sl'] = new Sprite.Slots(theme['slots'])
-                .addEventListener('slots.close', function () {
+            this._x['sl'] = new Sprite.Slots(theme['slots'], function () {
                 if (states.g('.oc')) {
                     _this._r.dispatchEvent(new Ev.ScreenLoad({
                         target: _this._r.gS(),
@@ -6023,11 +5988,11 @@ var Runtime;
                 }
                 _this._x[slotsFromStart ? 's' : 'm'].v();
                 _this._x['sl'].h();
-            }).addEventListener('slots.save', function (ev) {
+            }, function (ev) {
                 _this._x[slotsFromStart ? 's' : 'm'].v(0);
                 _this._x['sl'].h(0);
                 _this._r.gS().e(ev.slot);
-            }).addEventListener('slots.load', function (ev) {
+            }, function (ev) {
                 _this._r.dispatchEvent(new Ev.ScreenLoad({
                     target: _this._r.gS(),
                     type: 'close'
@@ -6037,8 +6002,7 @@ var Runtime;
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
             // 连载档位菜单。
-            this._x['ss'] = new Sprite.SeriesSlots(theme['series'])
-                .addEventListener('slots.close', function () {
+            this._x['ss'] = new Sprite.SeriesSlots(theme['series'], function () {
                 if (!slotsFromStart && states.g('.oc')) {
                     _this._r.dispatchEvent(new Ev.ScreenSave({
                         target: _this._r.gS(),
@@ -6048,25 +6012,24 @@ var Runtime;
                 }
                 slotsFromStart = false;
                 _this._x['ss'].h();
-            }).addEventListener('slots.save', function (ev) {
+            }, function (ev) {
                 _this._r.dispatchEvent(new Ev.ScreenSave({
                     target: _this._r.gS(),
                     type: 'close'
                 }));
                 _this._x['ss'].h();
                 _this._r.gS().e(ev.slot, true);
-            }).addEventListener('slots.load', function (ev) {
+            }, function (ev) {
                 slotsFromStart = false;
                 _this.sl(ev.id);
             });
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
             // 设置菜单。
-            this._x['st'] = new Sprite.Set(theme['set'])
-                .addEventListener('set.close', function () {
+            this._x['st'] = new Sprite.Set(theme['set'], function () {
                 _this._x['m'].v();
                 _this._x['st'].h();
-            }).addEventListener('set.volume', function (ev) {
+            }, function (ev) {
                 var bgm = _this._s['b'];
                 var esm = _this._s['s'];
                 var se = _this._s['e'];
@@ -6439,6 +6402,320 @@ var Ev;
         return Action;
     }(Ev.Event));
     Ev.Action = Action;
+})(Ev || (Ev = {}));
+/**
+ * 声明剧情结束事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IFinMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
+/**
+ * 定义剧情结束事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Fin.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IFinMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Fin = (function (_super) {
+        __extends(Fin, _super);
+        /**
+         * 构造函数。
+         */
+        function Fin(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        Fin.prototype.gT = function () {
+            return 'fin';
+        };
+        return Fin;
+    }(Ev.Event));
+    Ev.Fin = Fin;
+})(Ev || (Ev = {}));
+/**
+ * 声明评分事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IRankMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
+/**
+ * 定义评分事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Rank.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IRankMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Rank = (function (_super) {
+        __extends(Rank, _super);
+        /**
+         * 构造函数。
+         */
+        function Rank(metas) {
+            _super.call(this, metas);
+            this.grade = metas.grade;
+            this.score = metas.score;
+        }
+        /**
+         * 获取类型。
+         */
+        Rank.prototype.gT = function () {
+            return 'rank';
+        };
+        return Rank;
+    }(Ev.Event));
+    Ev.Rank = Rank;
+})(Ev || (Ev = {}));
+/**
+ * 声明（运行时）付款数据元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IPayMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）付费数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Pay.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IPayMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Pay = (function (_super) {
+        __extends(Pay, _super);
+        /**
+         * 构造函数。
+         */
+        function Pay(metas) {
+            _super.call(this, metas);
+            this.amount = metas.amount;
+            this.suc = metas.suc;
+            this.fail = metas.fail;
+            this.id = metas.id;
+        }
+        /**
+         * 获取类型。
+         */
+        Pay.prototype.gT = function () {
+            return 'pay';
+        };
+        return Pay;
+    }(Ev.Event));
+    Ev.Pay = Pay;
+})(Ev || (Ev = {}));
+/**
+ * 定义（运行时）付费数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/PayOption.ts
+ */
+/// <reference path="Pay.ts" />
+var Ev;
+(function (Ev) {
+    var PayOption = (function (_super) {
+        __extends(PayOption, _super);
+        function PayOption() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取类型。
+         */
+        PayOption.prototype.gT = function () {
+            return 'pay.option';
+        };
+        return PayOption;
+    }(Ev.Pay));
+    Ev.PayOption = PayOption;
+})(Ev || (Ev = {}));
+/**
+ * 声明（运行时）自动读档数据元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IAutoLoadMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）自动读档数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/AutoLoad.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IAutoLoadMetas.ts" />
+var Ev;
+(function (Ev) {
+    var AutoLoad = (function (_super) {
+        __extends(AutoLoad, _super);
+        /**
+         * 构造函数。
+         */
+        function AutoLoad(metas) {
+            _super.call(this, metas);
+            this.valid = metas.valid;
+        }
+        /**
+         * 获取类型。
+         */
+        AutoLoad.prototype.gT = function () {
+            return 'autoload';
+        };
+        return AutoLoad;
+    }(Ev.Event));
+    Ev.AutoLoad = AutoLoad;
+})(Ev || (Ev = {}));
+/**
+ * 声明（运行时）弹出 / 关闭读档提示 数据元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IScreenLoadMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）弹出 / 关闭读档提示 数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/ScreenLoad.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IScreenLoadMetas.ts" />
+var Ev;
+(function (Ev) {
+    var ScreenLoad = (function (_super) {
+        __extends(ScreenLoad, _super);
+        /**
+         * 构造函数。
+         */
+        function ScreenLoad(metas) {
+            _super.call(this, metas);
+            this.type = metas.type;
+        }
+        /**
+         * 获取类型。
+         */
+        ScreenLoad.prototype.gT = function () {
+            return 'screen.load';
+        };
+        return ScreenLoad;
+    }(Ev.Event));
+    Ev.ScreenLoad = ScreenLoad;
+})(Ev || (Ev = {}));
+/**
+ * 声明（运行时）弹出 / 关闭快速进入下一集提示 数据元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IScreenSaveMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）弹出 / 关闭快速进入下一集提示 数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/ScreenSave.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IScreenSaveMetas.ts" />
+var Ev;
+(function (Ev) {
+    var ScreenSave = (function (_super) {
+        __extends(ScreenSave, _super);
+        /**
+         * 构造函数。
+         */
+        function ScreenSave(metas) {
+            _super.call(this, metas);
+            this.type = metas.type;
+        }
+        /**
+         * 获取类型。
+         */
+        ScreenSave.prototype.gT = function () {
+            return 'screen.save';
+        };
+        return ScreenSave;
+    }(Ev.Event));
+    Ev.ScreenSave = ScreenSave;
+})(Ev || (Ev = {}));
+/**
+ * 声明评分事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IVideoMetas.ts
+ */
+/// <reference path="../../../include/tsd.d.ts" />
+/// <reference path="../../Core/_Runtime/IEpisode.ts" />
+/**
+ * 定义评分事件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Video.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IVideoMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Video = (function (_super) {
+        __extends(Video, _super);
+        /**
+         * 构造函数。
+         */
+        function Video(metas) {
+            _super.call(this, metas);
+            this.type = metas.type;
+            this.uri = metas.uri;
+            this.volume = metas.volume;
+        }
+        /**
+         * 获取类型。
+         */
+        Video.prototype.gT = function () {
+            return 'video';
+        };
+        return Video;
+    }(Ev.Event));
+    Ev.Video = Video;
 })(Ev || (Ev = {}));
 /**
  * 定义语法规约。
@@ -7083,7 +7360,6 @@ var Tag;
          * 转化为运行时（Javascript）代码。
          */
         Unknown.prototype.toJsrn = function () {
-            var _this = this;
             if (-1 == this._l)
                 return '';
             var parts = [this.$i()], params = [], children = [], clob;
@@ -7091,7 +7367,8 @@ var Tag;
                 parts.push(this.$v(this._c));
             if (this._p.length) {
                 Util.each(this._p, function (param) {
-                    params.push(_this.$v(param));
+                    params.push(param);
+                    //params.push(this.$v(param));
                 });
                 parts.push(params);
             }
@@ -7209,6 +7486,85 @@ var Tag;
     Tag.Entity = Entity;
 })(Tag || (Tag = {}));
 /**
+ * 定义音源标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Definition/Audio.ts
+ */
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Audio = (function (_super) {
+        __extends(Audio, _super);
+        function Audio() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Audio.prototype.gN = function () {
+            return 'Audio';
+        };
+        /**
+         * 注册（自身实体）至（运行时）作品。
+         */
+        Audio.prototype.$r = function (ep) {
+            this._o = ep.r(this._c, Core.IResource.Type.BGM);
+        };
+        /**
+         * 获取资源。
+         */
+        Audio.prototype.o = function () {
+            if (!this._r)
+                throw new E(E.DEF_EPISODE_NOT_REGISTERED, this._l);
+            return this._o;
+        };
+        return Audio;
+    }(Tag.Unknown));
+    Tag.Audio = Audio;
+})(Tag || (Tag = {}));
+/**
+ * 定义背景音乐（定义）标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Definition/DefBGM.ts
+ */
+/// <reference path="../Entity.ts" />
+/// <reference path="Audio.ts" />
+var Tag;
+(function (Tag) {
+    var DefBGM = (function (_super) {
+        __extends(DefBGM, _super);
+        function DefBGM() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        DefBGM.prototype.gN = function () {
+            return 'DefBGM';
+        };
+        /**
+         * 获取类型。
+         */
+        DefBGM.prototype.gT = function () {
+            return Core.IEpisode.Entity.BGM;
+        };
+        /**
+         * 获取资源。
+         */
+        DefBGM.prototype.o = function () {
+            return this.$q('Audio')[0].o();
+        };
+        return DefBGM;
+    }(Tag.Entity));
+    Tag.DefBGM = DefBGM;
+})(Tag || (Tag = {}));
+/**
  * 定义画面标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -7247,6 +7603,78 @@ var Tag;
         return Image;
     }(Tag.Unknown));
     Tag.Image = Image;
+})(Tag || (Tag = {}));
+/**
+ * 定义特写（定义）标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Definition/DefCG.ts
+ */
+/// <reference path="../Entity.ts" />
+/// <reference path="Image.ts" />
+var Tag;
+(function (Tag) {
+    var DefCG = (function (_super) {
+        __extends(DefCG, _super);
+        function DefCG() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        DefCG.prototype.gN = function () {
+            return 'DefCG';
+        };
+        /**
+         * 获取资源。
+         */
+        DefCG.prototype.o = function () {
+            return this.$q('Image')[0].o();
+        };
+        return DefCG;
+    }(Tag.Entity));
+    Tag.DefCG = DefCG;
+})(Tag || (Tag = {}));
+/**
+ * 定义音效（定义）标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Definition/DefSE.ts
+ */
+/// <reference path="../Entity.ts" />
+/// <reference path="Audio.ts" />
+var Tag;
+(function (Tag) {
+    var DefSE = (function (_super) {
+        __extends(DefSE, _super);
+        function DefSE() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        DefSE.prototype.gN = function () {
+            return 'DefSE';
+        };
+        /**
+         * 获取类型。
+         */
+        DefSE.prototype.gT = function () {
+            return Core.IEpisode.Entity.SE;
+        };
+        /**
+         * 获取资源。
+         */
+        DefSE.prototype.o = function () {
+            return this.$q('Audio')[0].o();
+        };
+        return DefSE;
+    }(Tag.Entity));
+    Tag.DefSE = DefSE;
 })(Tag || (Tag = {}));
 /**
  * 定义（人物）头像标签组件。
@@ -7434,157 +7862,6 @@ var Tag;
         return DefChar;
     }(Tag.Entity));
     Tag.DefChar = DefChar;
-})(Tag || (Tag = {}));
-/**
- * 定义音源标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Definition/Audio.ts
- */
-/// <reference path="../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var Audio = (function (_super) {
-        __extends(Audio, _super);
-        function Audio() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        Audio.prototype.gN = function () {
-            return 'Audio';
-        };
-        /**
-         * 注册（自身实体）至（运行时）作品。
-         */
-        Audio.prototype.$r = function (ep) {
-            this._o = ep.r(this._c, Core.IResource.Type.BGM);
-        };
-        /**
-         * 获取资源。
-         */
-        Audio.prototype.o = function () {
-            if (!this._r)
-                throw new E(E.DEF_EPISODE_NOT_REGISTERED, this._l);
-            return this._o;
-        };
-        return Audio;
-    }(Tag.Unknown));
-    Tag.Audio = Audio;
-})(Tag || (Tag = {}));
-/**
- * 定义背景音乐（定义）标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Definition/DefBGM.ts
- */
-/// <reference path="../Entity.ts" />
-/// <reference path="Audio.ts" />
-var Tag;
-(function (Tag) {
-    var DefBGM = (function (_super) {
-        __extends(DefBGM, _super);
-        function DefBGM() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        DefBGM.prototype.gN = function () {
-            return 'DefBGM';
-        };
-        /**
-         * 获取类型。
-         */
-        DefBGM.prototype.gT = function () {
-            return Core.IEpisode.Entity.BGM;
-        };
-        /**
-         * 获取资源。
-         */
-        DefBGM.prototype.o = function () {
-            return this.$q('Audio')[0].o();
-        };
-        return DefBGM;
-    }(Tag.Entity));
-    Tag.DefBGM = DefBGM;
-})(Tag || (Tag = {}));
-/**
- * 定义特写（定义）标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Definition/DefCG.ts
- */
-/// <reference path="../Entity.ts" />
-/// <reference path="Image.ts" />
-var Tag;
-(function (Tag) {
-    var DefCG = (function (_super) {
-        __extends(DefCG, _super);
-        function DefCG() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        DefCG.prototype.gN = function () {
-            return 'DefCG';
-        };
-        /**
-         * 获取资源。
-         */
-        DefCG.prototype.o = function () {
-            return this.$q('Image')[0].o();
-        };
-        return DefCG;
-    }(Tag.Entity));
-    Tag.DefCG = DefCG;
-})(Tag || (Tag = {}));
-/**
- * 定义音效（定义）标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Definition/DefSE.ts
- */
-/// <reference path="../Entity.ts" />
-/// <reference path="Audio.ts" />
-var Tag;
-(function (Tag) {
-    var DefSE = (function (_super) {
-        __extends(DefSE, _super);
-        function DefSE() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        DefSE.prototype.gN = function () {
-            return 'DefSE';
-        };
-        /**
-         * 获取类型。
-         */
-        DefSE.prototype.gT = function () {
-            return Core.IEpisode.Entity.SE;
-        };
-        /**
-         * 获取资源。
-         */
-        DefSE.prototype.o = function () {
-            return this.$q('Audio')[0].o();
-        };
-        return DefSE;
-    }(Tag.Entity));
-    Tag.DefSE = DefSE;
 })(Tag || (Tag = {}));
 /**
  * 定义（地图）底图标签组件。
@@ -9300,32 +9577,6 @@ var Tag;
     Tag.DefRoom = DefRoom;
 })(Tag || (Tag = {}));
 /**
- * 定义自动播放标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/Auto.ts
- */
-/// <reference path="../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var Auto = (function (_super) {
-        __extends(Auto, _super);
-        function Auto() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        Auto.prototype.gN = function () {
-            return 'Auto';
-        };
-        return Auto;
-    }(Tag.Unknown));
-    Tag.Auto = Auto;
-})(Tag || (Tag = {}));
-/**
  * 定义主角标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -9378,6 +9629,32 @@ var Tag;
         return Player;
     }(Tag.Unknown));
     Tag.Player = Player;
+})(Tag || (Tag = {}));
+/**
+ * 定义自动播放标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/Auto.ts
+ */
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Auto = (function (_super) {
+        __extends(Auto, _super);
+        function Auto() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Auto.prototype.gN = function () {
+            return 'Auto';
+        };
+        return Auto;
+    }(Tag.Unknown));
+    Tag.Auto = Auto;
 })(Tag || (Tag = {}));
 /**
  * 声明默认主题对象组件。
@@ -10949,10 +11226,7 @@ var Tag;
         Resources.prototype.ll = function (ret) {
             ret['rooms']['00000000-0000-0000-0000-000000000000'] = new Tag.DefRoom([], ' ', [
                 new Tag.Times([], '', [
-                    new Tag.Unknown(['晨'], '00000000-0000-0000-0000-000000000000', [], -1),
-                    new Tag.Unknown(['午'], '00000000-0000-0000-0000-000000000000', [], -1),
-                    new Tag.Unknown(['晚'], '00000000-0000-0000-0000-000000000000', [], -1),
-                    new Tag.Unknown(['夜'], '00000000-0000-0000-0000-000000000000', [], -1)
+                    new Tag.Unknown(['默认'], '00000000-0000-0000-0000-000000000000', [], -1)
                 ], -1)], -1);
             ret['chars']['00000000-0000-0000-0000-000000000001'] = new Tag.DefChar([], ' ', [
                 new Tag.Avatar([], '00000000-0000-0000-0000-000000000001', [], -1),
@@ -11243,6 +11517,538 @@ var Tag;
         return Root;
     }(Tag.Unknown));
     Tag.Root = Root;
+})(Tag || (Tag = {}));
+/**
+ * 定义集合面板标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/CollPanel.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var CollPanel = (function (_super) {
+        __extends(CollPanel, _super);
+        function CollPanel() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CollPanel.prototype.gN = function () {
+            return 'CollPanel';
+        };
+        /**
+         * 根据标签结构生成数据结构。
+         */
+        CollPanel.prototype.g = function () {
+            var result = {};
+            var colls = [];
+            var strutc = '';
+            Util.each(this._s, function (child) {
+                if ('CollSource' == child.gN()) {
+                    colls.push(child.$c());
+                }
+                else if ('CollStruct' == child.gN()) {
+                    strutc = child.$c();
+                }
+            });
+            result["cn"] = colls;
+            result["s"] = strutc;
+            result["："] = "coll";
+            result["n"] = this._c;
+            return result;
+        };
+        return CollPanel;
+    }(Tag.Unknown));
+    Tag.CollPanel = CollPanel;
+})(Tag || (Tag = {}));
+/**
+ * 定义使用集合标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/CollSource.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    // import Util = __Bigine_Util;
+    var CollSource = (function (_super) {
+        __extends(CollSource, _super);
+        function CollSource() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CollSource.prototype.gN = function () {
+            return 'CollSource';
+        };
+        return CollSource;
+    }(Tag.Unknown));
+    Tag.CollSource = CollSource;
+})(Tag || (Tag = {}));
+/**
+ * 定义集合结构标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/CollStruct.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    // import Util = __Bigine_Util;
+    var CollStruct = (function (_super) {
+        __extends(CollStruct, _super);
+        function CollStruct() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        CollStruct.prototype.gN = function () {
+            return 'CollStruct';
+        };
+        return CollStruct;
+    }(Tag.Unknown));
+    Tag.CollStruct = CollStruct;
+})(Tag || (Tag = {}));
+/**
+ * 定义简单面板标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/SimpPanel.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var SimpPanel = (function (_super) {
+        __extends(SimpPanel, _super);
+        function SimpPanel() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        SimpPanel.prototype.gN = function () {
+            return 'SimpPanel';
+        };
+        /**
+         * 根据标签结构生成数据结构。
+         */
+        SimpPanel.prototype.g = function () {
+            var result = {};
+            result['c'] = [];
+            Util.each(this._s, function (ele) {
+                result['c'].push(ele.g());
+            });
+            result['n'] = this._c;
+            result['：'] = 'simp';
+            return result;
+        };
+        return SimpPanel;
+    }(Tag.Unknown));
+    Tag.SimpPanel = SimpPanel;
+})(Tag || (Tag = {}));
+/**
+ * 定义条目标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/SimpEle.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var SimpEle = (function (_super) {
+        __extends(SimpEle, _super);
+        function SimpEle() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        SimpEle.prototype.gN = function () {
+            return 'SimpEle';
+        };
+        /**
+         * 根据标签结构生成数据结构。
+         */
+        SimpEle.prototype.g = function () {
+            var result = {};
+            result['alias'] = this._c;
+            Util.each(this._s, function (child) {
+                if ('EleName' == child.gN()) {
+                    result['name'] = child.$c();
+                }
+                else if ('EleType' == child.gN()) {
+                    result['type'] = child.$c();
+                }
+            });
+            return result;
+        };
+        return SimpEle;
+    }(Tag.Unknown));
+    Tag.SimpEle = SimpEle;
+})(Tag || (Tag = {}));
+/**
+ * 定义数据名标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/EleName.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    // import Util = __Bigine_Util;
+    var EleName = (function (_super) {
+        __extends(EleName, _super);
+        function EleName() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        EleName.prototype.gN = function () {
+            return 'EleName';
+        };
+        return EleName;
+    }(Tag.Unknown));
+    Tag.EleName = EleName;
+})(Tag || (Tag = {}));
+/**
+ * 定义数据类别标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Structure/_Panel/EleType.ts
+ */
+/// <reference path="../../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    // import Util = __Bigine_Util;
+    var EleType = (function (_super) {
+        __extends(EleType, _super);
+        function EleType() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        EleType.prototype.gN = function () {
+            return 'EleType';
+        };
+        return EleType;
+    }(Tag.Unknown));
+    Tag.EleType = EleType;
+})(Tag || (Tag = {}));
+/**
+ * 定义结构标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_State/Struct.ts
+ */
+/// <reference path="../Entity.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Struct = (function (_super) {
+        __extends(Struct, _super);
+        /**
+         * 构造函数。
+         */
+        function Struct(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            var entCount = 0;
+            var nameCount = 0;
+            Util.each(children, function (child) {
+                if (child.iE()) {
+                    entCount++;
+                }
+                if (child.iN()) {
+                    nameCount++;
+                }
+            });
+            if (entCount > 1 || nameCount > 1)
+                throw new E(E.STRUCT_FIELD_TYPE_TOO_MANY, this._l);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Struct.prototype.gN = function () {
+            return 'Struct';
+        };
+        /**
+         * 获取类型。
+         */
+        Struct.prototype.gT = function () {
+            return Core.IEpisode.Entity.Struct;
+        };
+        /**
+         * 获取类型。
+         */
+        Struct.prototype.gS = function () {
+            return this._s;
+        };
+        /**
+         * 获取实体字段的实体类型。
+         */
+        Struct.prototype.gET = function (fieldName) {
+            var entityType;
+            Util.every(this._s, function (field) {
+                if (field.$c() == fieldName && field.iE()) {
+                    entityType = field.gET();
+                    return false;
+                }
+                return true;
+            });
+            return entityType;
+        };
+        /**
+         * 根据字段名判断是否实体类型的字段。
+         */
+        Struct.prototype.iE = function (fieldName) {
+            var isEntity = false;
+            Util.every(this._s, function (field) {
+                if (field.$c() == fieldName && field.iE()) {
+                    isEntity = true;
+                    return false;
+                }
+                return true;
+            });
+            return isEntity;
+        };
+        /**
+         * 获取结构体对象。
+         */
+        Struct.prototype.g = function (data) {
+            var result = { '：': this._c };
+            Util.each(this._s, function (child) {
+                var fieldVal = data[child.$c()];
+                result[child.$c()] = child.g(fieldVal ? fieldVal : null);
+            });
+            return result;
+        };
+        return Struct;
+    }(Tag.Entity));
+    Tag.Struct = Struct;
+})(Tag || (Tag = {}));
+/**
+ * 定义字段标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_State/Field.ts
+ */
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Field = (function (_super) {
+        __extends(Field, _super);
+        /**
+         * 构造函数。
+         */
+        function Field(params, content, children, lineNo) {
+            _super.call(this, params, content, children, lineNo);
+            this.numberTypes = ['心', '星'];
+            this.nameTypes = ['名称'];
+            this.entityTypes = {
+                '人物': Core.IEpisode.Entity.Chr,
+                '房间': Core.IEpisode.Entity.Room,
+                '特写': Core.IEpisode.Entity.CG
+            };
+        }
+        /**
+         * 绑定（运行时）作品（实体）。
+         */
+        Field.prototype.$b = function (ep) {
+            this._ep = ep;
+        };
+        /**
+         * 获取标签名称。
+         */
+        Field.prototype.gN = function () {
+            return 'Field';
+        };
+        /**
+         * 是否实体类型。
+         */
+        Field.prototype.iE = function () {
+            var fieldType;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            return this.entityTypes[fieldType] != null && this.entityTypes[fieldType] != undefined;
+        };
+        /**
+         * 获取实体类型值。
+         */
+        Field.prototype.gIE = function (val) {
+            if (this._s.length == 0)
+                return undefined;
+            var fieldType = null;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            if (this.entityTypes[fieldType]) {
+                if (!val)
+                    throw new E(E.STRUCT_FIELD_MISSING, this._l);
+                var obj = this._ep.q(val, this.entityTypes[fieldType], this._l);
+                return obj;
+            }
+            return undefined;
+        };
+        /**
+         * 是否名称类型。
+         */
+        Field.prototype.iN = function () {
+            var fieldType;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            return Util.indexOf(this.nameTypes, fieldType) > -1;
+        };
+        /**
+         * 获取字段类型。
+         */
+        Field.prototype.gT = function () {
+            var fieldType;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+            });
+            return fieldType;
+        };
+        /**
+         * 获取字段类型。
+         */
+        Field.prototype.gET = function () {
+            var entity = this.entityTypes[this.gT()];
+            return entity;
+        };
+        /**
+         * 获取上限。
+         */
+        Field.prototype.gL = function () {
+            if (this._s.length == 0)
+                return 0;
+            var fieldLimit = 0;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldLimit') {
+                    fieldLimit = parseInt(child.$c(), 10) || 0;
+                }
+            });
+            return fieldLimit;
+        };
+        /**
+         * 获取字段的值。
+         */
+        Field.prototype.g = function (val) {
+            if (this._s.length == 0)
+                return val ? val : '';
+            var fieldType = null;
+            var fieldLimit = null;
+            Util.each(this._s, function (child) {
+                if (child.gN() == 'FieldType') {
+                    fieldType = child.$c();
+                }
+                if (child.gN() == 'FieldLimit') {
+                    fieldLimit = child.$c();
+                }
+            });
+            if (Util.indexOf(this.numberTypes, fieldType) > -1) {
+                var limit = parseInt(fieldLimit, 10);
+                var value = (val != null && val != undefined) ? parseInt(val, 10) : 0;
+                return value > limit ? limit : value;
+            }
+            else if (this.entityTypes[fieldType]) {
+                if (!val)
+                    throw new E(E.STRUCT_FIELD_MISSING, this._l);
+                return val;
+            }
+            return val ? val : '';
+        };
+        return Field;
+    }(Tag.Unknown));
+    Tag.Field = Field;
+})(Tag || (Tag = {}));
+/**
+ * 定义类别标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_State/FieldType.ts
+ */
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var FieldType = (function (_super) {
+        __extends(FieldType, _super);
+        function FieldType() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        FieldType.prototype.gN = function () {
+            return 'FieldType';
+        };
+        return FieldType;
+    }(Tag.Unknown));
+    Tag.FieldType = FieldType;
+})(Tag || (Tag = {}));
+/**
+ * 定义上限标签组件。
+ *
+ * @author    姚尧 <yyao@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_State/FieldLimit.ts
+ */
+/// <reference path="../Unknown.ts" />
+var Tag;
+(function (Tag) {
+    var FieldLimit = (function (_super) {
+        __extends(FieldLimit, _super);
+        function FieldLimit() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        FieldLimit.prototype.gN = function () {
+            return 'FieldLimit';
+        };
+        return FieldLimit;
+    }(Tag.Unknown));
+    Tag.FieldLimit = FieldLimit;
 })(Tag || (Tag = {}));
 /**
  * 定义人物离场动作标签组件。
@@ -13585,538 +14391,6 @@ var Tag;
     Tag.CollPop = CollPop;
 })(Tag || (Tag = {}));
 /**
- * 定义结构标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_State/Struct.ts
- */
-/// <reference path="../Entity.ts" />
-var Tag;
-(function (Tag) {
-    var Util = __Bigine_Util;
-    var Struct = (function (_super) {
-        __extends(Struct, _super);
-        /**
-         * 构造函数。
-         */
-        function Struct(params, content, children, lineNo) {
-            _super.call(this, params, content, children, lineNo);
-            var entCount = 0;
-            var nameCount = 0;
-            Util.each(children, function (child) {
-                if (child.iE()) {
-                    entCount++;
-                }
-                if (child.iN()) {
-                    nameCount++;
-                }
-            });
-            if (entCount > 1 || nameCount > 1)
-                throw new E(E.STRUCT_FIELD_TYPE_TOO_MANY, this._l);
-        }
-        /**
-         * 获取标签名称。
-         */
-        Struct.prototype.gN = function () {
-            return 'Struct';
-        };
-        /**
-         * 获取类型。
-         */
-        Struct.prototype.gT = function () {
-            return Core.IEpisode.Entity.Struct;
-        };
-        /**
-         * 获取类型。
-         */
-        Struct.prototype.gS = function () {
-            return this._s;
-        };
-        /**
-         * 获取实体字段的实体类型。
-         */
-        Struct.prototype.gET = function (fieldName) {
-            var entityType;
-            Util.every(this._s, function (field) {
-                if (field.$c() == fieldName && field.iE()) {
-                    entityType = field.gET();
-                    return false;
-                }
-                return true;
-            });
-            return entityType;
-        };
-        /**
-         * 根据字段名判断是否实体类型的字段。
-         */
-        Struct.prototype.iE = function (fieldName) {
-            var isEntity = false;
-            Util.every(this._s, function (field) {
-                if (field.$c() == fieldName && field.iE()) {
-                    isEntity = true;
-                    return false;
-                }
-                return true;
-            });
-            return isEntity;
-        };
-        /**
-         * 获取结构体对象。
-         */
-        Struct.prototype.g = function (data) {
-            var result = { '：': this._c };
-            Util.each(this._s, function (child) {
-                var fieldVal = data[child.$c()];
-                result[child.$c()] = child.g(fieldVal ? fieldVal : null);
-            });
-            return result;
-        };
-        return Struct;
-    }(Tag.Entity));
-    Tag.Struct = Struct;
-})(Tag || (Tag = {}));
-/**
- * 定义字段标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_State/Field.ts
- */
-/// <reference path="../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var Util = __Bigine_Util;
-    var Field = (function (_super) {
-        __extends(Field, _super);
-        /**
-         * 构造函数。
-         */
-        function Field(params, content, children, lineNo) {
-            _super.call(this, params, content, children, lineNo);
-            this.numberTypes = ['心', '星'];
-            this.nameTypes = ['名称'];
-            this.entityTypes = {
-                '人物': Core.IEpisode.Entity.Chr,
-                '房间': Core.IEpisode.Entity.Room,
-                '特写': Core.IEpisode.Entity.CG
-            };
-        }
-        /**
-         * 绑定（运行时）作品（实体）。
-         */
-        Field.prototype.$b = function (ep) {
-            this._ep = ep;
-        };
-        /**
-         * 获取标签名称。
-         */
-        Field.prototype.gN = function () {
-            return 'Field';
-        };
-        /**
-         * 是否实体类型。
-         */
-        Field.prototype.iE = function () {
-            var fieldType;
-            Util.each(this._s, function (child) {
-                if (child.gN() == 'FieldType') {
-                    fieldType = child.$c();
-                }
-            });
-            return this.entityTypes[fieldType] != null && this.entityTypes[fieldType] != undefined;
-        };
-        /**
-         * 获取实体类型值。
-         */
-        Field.prototype.gIE = function (val) {
-            if (this._s.length == 0)
-                return undefined;
-            var fieldType = null;
-            Util.each(this._s, function (child) {
-                if (child.gN() == 'FieldType') {
-                    fieldType = child.$c();
-                }
-            });
-            if (this.entityTypes[fieldType]) {
-                if (!val)
-                    throw new E(E.STRUCT_FIELD_MISSING, this._l);
-                var obj = this._ep.q(val, this.entityTypes[fieldType], this._l);
-                return obj;
-            }
-            return undefined;
-        };
-        /**
-         * 是否名称类型。
-         */
-        Field.prototype.iN = function () {
-            var fieldType;
-            Util.each(this._s, function (child) {
-                if (child.gN() == 'FieldType') {
-                    fieldType = child.$c();
-                }
-            });
-            return Util.indexOf(this.nameTypes, fieldType) > -1;
-        };
-        /**
-         * 获取字段类型。
-         */
-        Field.prototype.gT = function () {
-            var fieldType;
-            Util.each(this._s, function (child) {
-                if (child.gN() == 'FieldType') {
-                    fieldType = child.$c();
-                }
-            });
-            return fieldType;
-        };
-        /**
-         * 获取字段类型。
-         */
-        Field.prototype.gET = function () {
-            var entity = this.entityTypes[this.gT()];
-            return entity;
-        };
-        /**
-         * 获取上限。
-         */
-        Field.prototype.gL = function () {
-            if (this._s.length == 0)
-                return 0;
-            var fieldLimit = 0;
-            Util.each(this._s, function (child) {
-                if (child.gN() == 'FieldLimit') {
-                    fieldLimit = parseInt(child.$c(), 10) || 0;
-                }
-            });
-            return fieldLimit;
-        };
-        /**
-         * 获取字段的值。
-         */
-        Field.prototype.g = function (val) {
-            if (this._s.length == 0)
-                return val ? val : '';
-            var fieldType = null;
-            var fieldLimit = null;
-            Util.each(this._s, function (child) {
-                if (child.gN() == 'FieldType') {
-                    fieldType = child.$c();
-                }
-                if (child.gN() == 'FieldLimit') {
-                    fieldLimit = child.$c();
-                }
-            });
-            if (Util.indexOf(this.numberTypes, fieldType) > -1) {
-                var limit = parseInt(fieldLimit, 10);
-                var value = (val != null && val != undefined) ? parseInt(val, 10) : 0;
-                return value > limit ? limit : value;
-            }
-            else if (this.entityTypes[fieldType]) {
-                if (!val)
-                    throw new E(E.STRUCT_FIELD_MISSING, this._l);
-                return val;
-            }
-            return val ? val : '';
-        };
-        return Field;
-    }(Tag.Unknown));
-    Tag.Field = Field;
-})(Tag || (Tag = {}));
-/**
- * 定义类别标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_State/FieldType.ts
- */
-/// <reference path="../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var FieldType = (function (_super) {
-        __extends(FieldType, _super);
-        function FieldType() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        FieldType.prototype.gN = function () {
-            return 'FieldType';
-        };
-        return FieldType;
-    }(Tag.Unknown));
-    Tag.FieldType = FieldType;
-})(Tag || (Tag = {}));
-/**
- * 定义上限标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_State/FieldLimit.ts
- */
-/// <reference path="../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var FieldLimit = (function (_super) {
-        __extends(FieldLimit, _super);
-        function FieldLimit() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        FieldLimit.prototype.gN = function () {
-            return 'FieldLimit';
-        };
-        return FieldLimit;
-    }(Tag.Unknown));
-    Tag.FieldLimit = FieldLimit;
-})(Tag || (Tag = {}));
-/**
- * 定义集合面板标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/_Panel/CollPanel.ts
- */
-/// <reference path="../../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var Util = __Bigine_Util;
-    var CollPanel = (function (_super) {
-        __extends(CollPanel, _super);
-        function CollPanel() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        CollPanel.prototype.gN = function () {
-            return 'CollPanel';
-        };
-        /**
-         * 根据标签结构生成数据结构。
-         */
-        CollPanel.prototype.g = function () {
-            var result = {};
-            var colls = [];
-            var strutc = '';
-            Util.each(this._s, function (child) {
-                if ('CollSource' == child.gN()) {
-                    colls.push(child.$c());
-                }
-                else if ('CollStruct' == child.gN()) {
-                    strutc = child.$c();
-                }
-            });
-            result["cn"] = colls;
-            result["s"] = strutc;
-            result["："] = "coll";
-            result["n"] = this._c;
-            return result;
-        };
-        return CollPanel;
-    }(Tag.Unknown));
-    Tag.CollPanel = CollPanel;
-})(Tag || (Tag = {}));
-/**
- * 定义使用集合标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/_Panel/CollSource.ts
- */
-/// <reference path="../../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    // import Util = __Bigine_Util;
-    var CollSource = (function (_super) {
-        __extends(CollSource, _super);
-        function CollSource() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        CollSource.prototype.gN = function () {
-            return 'CollSource';
-        };
-        return CollSource;
-    }(Tag.Unknown));
-    Tag.CollSource = CollSource;
-})(Tag || (Tag = {}));
-/**
- * 定义集合结构标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/_Panel/CollStruct.ts
- */
-/// <reference path="../../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    // import Util = __Bigine_Util;
-    var CollStruct = (function (_super) {
-        __extends(CollStruct, _super);
-        function CollStruct() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        CollStruct.prototype.gN = function () {
-            return 'CollStruct';
-        };
-        return CollStruct;
-    }(Tag.Unknown));
-    Tag.CollStruct = CollStruct;
-})(Tag || (Tag = {}));
-/**
- * 定义简单面板标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/_Panel/SimpPanel.ts
- */
-/// <reference path="../../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var Util = __Bigine_Util;
-    var SimpPanel = (function (_super) {
-        __extends(SimpPanel, _super);
-        function SimpPanel() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        SimpPanel.prototype.gN = function () {
-            return 'SimpPanel';
-        };
-        /**
-         * 根据标签结构生成数据结构。
-         */
-        SimpPanel.prototype.g = function () {
-            var result = {};
-            result['c'] = [];
-            Util.each(this._s, function (ele) {
-                result['c'].push(ele.g());
-            });
-            result['n'] = this._c;
-            result['：'] = 'simp';
-            return result;
-        };
-        return SimpPanel;
-    }(Tag.Unknown));
-    Tag.SimpPanel = SimpPanel;
-})(Tag || (Tag = {}));
-/**
- * 定义条目标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/_Panel/SimpEle.ts
- */
-/// <reference path="../../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    var Util = __Bigine_Util;
-    var SimpEle = (function (_super) {
-        __extends(SimpEle, _super);
-        function SimpEle() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        SimpEle.prototype.gN = function () {
-            return 'SimpEle';
-        };
-        /**
-         * 根据标签结构生成数据结构。
-         */
-        SimpEle.prototype.g = function () {
-            var result = {};
-            result['alias'] = this._c;
-            Util.each(this._s, function (child) {
-                if ('EleName' == child.gN()) {
-                    result['name'] = child.$c();
-                }
-                else if ('EleType' == child.gN()) {
-                    result['type'] = child.$c();
-                }
-            });
-            return result;
-        };
-        return SimpEle;
-    }(Tag.Unknown));
-    Tag.SimpEle = SimpEle;
-})(Tag || (Tag = {}));
-/**
- * 定义数据名标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/_Panel/EleName.ts
- */
-/// <reference path="../../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    // import Util = __Bigine_Util;
-    var EleName = (function (_super) {
-        __extends(EleName, _super);
-        function EleName() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        EleName.prototype.gN = function () {
-            return 'EleName';
-        };
-        return EleName;
-    }(Tag.Unknown));
-    Tag.EleName = EleName;
-})(Tag || (Tag = {}));
-/**
- * 定义数据类别标签组件。
- *
- * @author    姚尧 <yyao@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Structure/_Panel/EleType.ts
- */
-/// <reference path="../../Unknown.ts" />
-var Tag;
-(function (Tag) {
-    // import Util = __Bigine_Util;
-    var EleType = (function (_super) {
-        __extends(EleType, _super);
-        function EleType() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        EleType.prototype.gN = function () {
-            return 'EleType';
-        };
-        return EleType;
-    }(Tag.Unknown));
-    Tag.EleType = EleType;
-})(Tag || (Tag = {}));
-/**
  * 定义停顿动作标签组件。
  *
  * @author    李倩 <qli@atfacg.com>
@@ -14618,49 +14892,6 @@ var Tag;
     Tag.Expression = Expression;
 })(Tag || (Tag = {}));
 /**
- * 声明（运行时）付款数据元信息接口规范。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/IPayMetas.ts
- */
-/// <reference path="../../Core/_Runtime/IStates.ts" />
-/**
- * 定义（运行时）付费数据事件。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/Pay.ts
- */
-/// <reference path="../Event.ts" />
-/// <reference path="IPayMetas.ts" />
-var Ev;
-(function (Ev) {
-    var Pay = (function (_super) {
-        __extends(Pay, _super);
-        /**
-         * 构造函数。
-         */
-        function Pay(metas) {
-            _super.call(this, metas);
-            this.amount = metas.amount;
-            this.suc = metas.suc;
-            this.fail = metas.fail;
-            this.id = metas.id;
-        }
-        /**
-         * 获取类型。
-         */
-        Pay.prototype.gT = function () {
-            return 'pay';
-        };
-        return Pay;
-    }(Ev.Event));
-    Ev.Pay = Pay;
-})(Ev || (Ev = {}));
-/**
  * 定义（运行时）打赏事件。
  *
  * @author    李倩 <qli@atfacg.com>
@@ -14754,277 +14985,6 @@ var Tag;
     }(Tag.Idable));
     Tag.Donate = Donate;
 })(Tag || (Tag = {}));
-/**
- * 声明剧情结束事件元信息接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/IFinMetas.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../../Core/_Runtime/IEpisode.ts" />
-/**
- * 定义剧情结束事件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/Fin.ts
- */
-/// <reference path="../Event.ts" />
-/// <reference path="IFinMetas.ts" />
-var Ev;
-(function (Ev) {
-    var Fin = (function (_super) {
-        __extends(Fin, _super);
-        /**
-         * 构造函数。
-         */
-        function Fin(metas) {
-            _super.call(this, metas);
-        }
-        /**
-         * 获取类型。
-         */
-        Fin.prototype.gT = function () {
-            return 'fin';
-        };
-        return Fin;
-    }(Ev.Event));
-    Ev.Fin = Fin;
-})(Ev || (Ev = {}));
-/**
- * 声明评分事件元信息接口规范。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/IRankMetas.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../../Core/_Runtime/IEpisode.ts" />
-/**
- * 定义评分事件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/Rank.ts
- */
-/// <reference path="../Event.ts" />
-/// <reference path="IRankMetas.ts" />
-var Ev;
-(function (Ev) {
-    var Rank = (function (_super) {
-        __extends(Rank, _super);
-        /**
-         * 构造函数。
-         */
-        function Rank(metas) {
-            _super.call(this, metas);
-            this.grade = metas.grade;
-            this.score = metas.score;
-        }
-        /**
-         * 获取类型。
-         */
-        Rank.prototype.gT = function () {
-            return 'rank';
-        };
-        return Rank;
-    }(Ev.Event));
-    Ev.Rank = Rank;
-})(Ev || (Ev = {}));
-/**
- * 定义（运行时）付费数据事件。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/PayOption.ts
- */
-/// <reference path="Pay.ts" />
-var Ev;
-(function (Ev) {
-    var PayOption = (function (_super) {
-        __extends(PayOption, _super);
-        function PayOption() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取类型。
-         */
-        PayOption.prototype.gT = function () {
-            return 'pay.option';
-        };
-        return PayOption;
-    }(Ev.Pay));
-    Ev.PayOption = PayOption;
-})(Ev || (Ev = {}));
-/**
- * 声明（运行时）自动读档数据元信息接口规范。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/IAutoLoadMetas.ts
- */
-/// <reference path="../../Core/_Runtime/IStates.ts" />
-/**
- * 定义（运行时）自动读档数据事件。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/AutoLoad.ts
- */
-/// <reference path="../Event.ts" />
-/// <reference path="IAutoLoadMetas.ts" />
-var Ev;
-(function (Ev) {
-    var AutoLoad = (function (_super) {
-        __extends(AutoLoad, _super);
-        /**
-         * 构造函数。
-         */
-        function AutoLoad(metas) {
-            _super.call(this, metas);
-            this.valid = metas.valid;
-        }
-        /**
-         * 获取类型。
-         */
-        AutoLoad.prototype.gT = function () {
-            return 'autoload';
-        };
-        return AutoLoad;
-    }(Ev.Event));
-    Ev.AutoLoad = AutoLoad;
-})(Ev || (Ev = {}));
-/**
- * 声明（运行时）弹出 / 关闭读档提示 数据元信息接口规范。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/IScreenLoadMetas.ts
- */
-/// <reference path="../../Core/_Runtime/IStates.ts" />
-/**
- * 定义（运行时）弹出 / 关闭读档提示 数据事件。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/ScreenLoad.ts
- */
-/// <reference path="../Event.ts" />
-/// <reference path="IScreenLoadMetas.ts" />
-var Ev;
-(function (Ev) {
-    var ScreenLoad = (function (_super) {
-        __extends(ScreenLoad, _super);
-        /**
-         * 构造函数。
-         */
-        function ScreenLoad(metas) {
-            _super.call(this, metas);
-            this.type = metas.type;
-        }
-        /**
-         * 获取类型。
-         */
-        ScreenLoad.prototype.gT = function () {
-            return 'screen.load';
-        };
-        return ScreenLoad;
-    }(Ev.Event));
-    Ev.ScreenLoad = ScreenLoad;
-})(Ev || (Ev = {}));
-/**
- * 声明（运行时）弹出 / 关闭快速进入下一集提示 数据元信息接口规范。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/IScreenSaveMetas.ts
- */
-/// <reference path="../../Core/_Runtime/IStates.ts" />
-/**
- * 定义（运行时）弹出 / 关闭快速进入下一集提示 数据事件。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/ScreenSave.ts
- */
-/// <reference path="../Event.ts" />
-/// <reference path="IScreenSaveMetas.ts" />
-var Ev;
-(function (Ev) {
-    var ScreenSave = (function (_super) {
-        __extends(ScreenSave, _super);
-        /**
-         * 构造函数。
-         */
-        function ScreenSave(metas) {
-            _super.call(this, metas);
-            this.type = metas.type;
-        }
-        /**
-         * 获取类型。
-         */
-        ScreenSave.prototype.gT = function () {
-            return 'screen.save';
-        };
-        return ScreenSave;
-    }(Ev.Event));
-    Ev.ScreenSave = ScreenSave;
-})(Ev || (Ev = {}));
-/**
- * 声明评分事件元信息接口规范。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/IVideoMetas.ts
- */
-/// <reference path="../../../include/tsd.d.ts" />
-/// <reference path="../../Core/_Runtime/IEpisode.ts" />
-/**
- * 定义评分事件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/Video.ts
- */
-/// <reference path="../Event.ts" />
-/// <reference path="IVideoMetas.ts" />
-var Ev;
-(function (Ev) {
-    var Video = (function (_super) {
-        __extends(Video, _super);
-        /**
-         * 构造函数。
-         */
-        function Video(metas) {
-            _super.call(this, metas);
-            this.type = metas.type;
-            this.uri = metas.uri;
-            this.volume = metas.volume;
-        }
-        /**
-         * 获取类型。
-         */
-        Video.prototype.gT = function () {
-            return 'video';
-        };
-        return Video;
-    }(Ev.Event));
-    Ev.Video = Video;
-})(Ev || (Ev = {}));
 /**
  * 定义停止环境音乐动作标签组件。
  *
@@ -15358,18 +15318,44 @@ var Tag;
  * @license   GPL-3.0
  * @file      Tag/_pack.ts
  */
-/// <reference path="_Definition/_Char/DefChar.ts" />
+/// <reference path="../Ev/_Runtime/Begin.ts" />
+/// <reference path="../Ev/_Runtime/Resume.ts" />
+/// <reference path="../Ev/_Runtime/Load.ts" />
+/// <reference path="../Ev/_Runtime/Query.ts" />
+/// <reference path="../Ev/_Runtime/Scene.ts" />
+/// <reference path="../Ev/_Runtime/Action.ts" />
+/// <reference path="../Ev/_Runtime/Fin.ts" />
+/// <reference path="../Ev/_Runtime/Rank.ts" />
+/// <reference path="../Ev/_Runtime/PayOption.ts" />
+/// <reference path="../Ev/_Runtime/AutoLoad.ts" />
+/// <reference path="../Ev/_Runtime/ScreenLoad.ts" />
+/// <reference path="../Ev/_Runtime/ScreenSave.ts" />
+/// <reference path="../Ev/_Runtime/Video.ts" />
 /// <reference path="_Definition/DefBGM.ts" />
 /// <reference path="_Definition/DefCG.ts" />
 /// <reference path="_Definition/DefSE.ts" />
+/// <reference path="_Definition/_Char/DefChar.ts" />
 /// <reference path="_Definition/_Room/DefRoom.ts" />
 /// <reference path="_Definition/_Map/DefMap.ts" />
-/// <reference path="_Structure/Auto.ts" />
 /// <reference path="_Definition/Player.ts" />
+/// <reference path="_Structure/Auto.ts" />
 /// <reference path="_Structure/Theme.ts" />
 /// <reference path="_Structure/Resources.ts" />
 /// <reference path="_Structure/_Scene/Scene.ts" />
 /// <reference path="_Structure/Root.ts" />
+/// <reference path="_Structure/Status.ts" />
+/// <reference path="_Structure/_Panel/Panel.ts" />
+/// <reference path="_Structure/_Panel/CollPanel.ts" />
+/// <reference path="_Structure/_Panel/CollSource.ts" />
+/// <reference path="_Structure/_Panel/CollStruct.ts" />
+/// <reference path="_Structure/_Panel/SimpPanel.ts" />
+/// <reference path="_Structure/_Panel/SimpEle.ts" />
+/// <reference path="_Structure/_Panel/EleName.ts" />
+/// <reference path="_Structure/_Panel/EleType.ts" />
+/// <reference path="_State/Struct.ts" />
+/// <reference path="_State/Field.ts" />
+/// <reference path="_State/FieldType.ts" />
+/// <reference path="_State/FieldLimit.ts" />
 /// <reference path="_Action/_Director/CharOn.ts" />
 /// <reference path="_Action/_Director/CharOff.ts" />
 /// <reference path="_Action/_Director/CharSet.ts" />
@@ -15416,24 +15402,11 @@ var Tag;
 /// <reference path="_Action/_Logic/Copy.ts" />
 /// <reference path="_Action/_Logic/Add.ts" />
 /// <reference path="_Action/_Logic/Subtract.ts" />
-/// <reference path="_Structure/Status.ts" />
 /// <reference path="_Action/_Logic/Product.ts" />
 /// <reference path="_Action/_Logic/Define.ts" />
 /// <reference path="_Action/_Logic/Collection.ts" />
 /// <reference path="_Action/_Logic/CollPush.ts" />
 /// <reference path="_Action/_Logic/CollPop.ts" />
-/// <reference path="_State/Struct.ts" />
-/// <reference path="_State/Field.ts" />
-/// <reference path="_State/FieldType.ts" />
-/// <reference path="_State/FieldLimit.ts" />
-/// <reference path="_Structure/_Panel/Panel.ts" />
-/// <reference path="_Structure/_Panel/CollPanel.ts" />
-/// <reference path="_Structure/_Panel/CollSource.ts" />
-/// <reference path="_Structure/_Panel/CollStruct.ts" />
-/// <reference path="_Structure/_Panel/SimpPanel.ts" />
-/// <reference path="_Structure/_Panel/SimpEle.ts" />
-/// <reference path="_Structure/_Panel/EleName.ts" />
-/// <reference path="_Structure/_Panel/EleType.ts" />
 /// <reference path="_Action/_Director/Pause.ts" />
 /// <reference path="_Action/_Director/CameraMove.ts" />
 /// <reference path="_Action/_Director/CameraZoom.ts" />
@@ -15445,13 +15418,6 @@ var Tag;
 /// <reference path="_Action/_Director/HideStatus.ts" />
 /// <reference path="_Action/_Director/Expression.ts" />
 /// <reference path="_Action/_Logic/Donate.ts" />
-/// <reference path="../Ev/_Runtime/Fin.ts" />
-/// <reference path="../Ev/_Runtime/Rank.ts" />
-/// <reference path="../Ev/_Runtime/PayOption.ts" />
-/// <reference path="../Ev/_Runtime/AutoLoad.ts" />
-/// <reference path="../Ev/_Runtime/ScreenLoad.ts" />
-/// <reference path="../Ev/_Runtime/ScreenSave.ts" />
-/// <reference path="../Ev/_Runtime/Video.ts" />
 /// <reference path="_Action/_Director/PlayESM.ts" />
 /// <reference path="_Action/_Director/StopESM.ts" />
 /// <reference path="_Action/_Director/StopSE.ts" />
@@ -15471,12 +15437,6 @@ var Tag;
 /// <reference path="Episode.ts" />
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
-/// <reference path="../Ev/_Runtime/Begin.ts" />
-/// <reference path="../Ev/_Runtime/Resume.ts" />
-/// <reference path="../Ev/_Runtime/Load.ts" />
-/// <reference path="../Ev/_Runtime/Query.ts" />
-/// <reference path="../Ev/_Runtime/Scene.ts" />
-/// <reference path="../Ev/_Runtime/Action.ts" />
 /// <reference path="../Tag/_pack.ts" />
 var Runtime;
 (function (Runtime_1) {
@@ -15630,6 +15590,7 @@ var Runtime;
          */
         Runtime.prototype.play = function () {
             if (this._al[0] && this._al[1]) {
+                this._fp = true;
                 this._d.sl(this._al[0], true);
                 return this;
             }
@@ -15644,7 +15605,7 @@ var Runtime;
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
             this._d.Load(false);
-            this._d.OP(!this._e.gA(), this._n, this._c);
+            this._d.OP(!this._e.gA(), this._n, this._c, true);
             return this;
         };
         /**
@@ -16135,7 +16096,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.2-p1';
+    Bigine.version = '0.25.3';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

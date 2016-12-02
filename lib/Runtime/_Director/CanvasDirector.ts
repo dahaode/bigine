@@ -152,10 +152,13 @@ namespace Runtime {
                     .a(new G.Color(0, bounds.h - 11, bounds.w, 10, '#00ccff').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
-            this._ca = [undefined, undefined];
-            this._pc = undefined;
             this._fd = false;
+            this._pc =
             this._ft = undefined;
+            this._f =
+            this._pt = {};
+            this._ca = [undefined, undefined];
+            this._e = [0, 0];
             this._i = {
                 o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
                 s: Resource.Resource.g<string>(assets + 'oops.mp3', raw),
@@ -173,8 +176,6 @@ namespace Runtime {
             this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
             this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
             this._s['e']['cd'] = -1;
-            this._f = {};
-            this._e = [0, 0];
             this._l = (event: KeyboardEvent) => {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc) {
                     if (this._ft) this._ft.h();
@@ -232,21 +233,24 @@ namespace Runtime {
         /**
          * 开始动画。
          */
-        public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
+        public OP(start: boolean, title: string, author: string, isWx: boolean): Promise<Core.IRuntime> {
             let series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
             (<Sprite.Start> this._x['s']).u(title, series, this._c);
-            (<Sprite.Menu> this._x['m']).u(series);
             return this.c([[this._i['o']]])
                 .then(() => this.reset())
                 .then(() => {
-                    //let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
                     this._c.z();
-                        //.a(gLogo, this._x['c']);
-                    return this.lightOn()
-                        //.then(() => gLogo.p(new G.Delay(1000)))
-                        .then(() => this.lightOff())
-                        .then(() => {
-                            //this._c.e(gLogo);
+                    let q: Promise<Core.IRuntime> = this.lightOn();
+                    if (!isWx) {
+                        let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
+                        this._c.a(gLogo, this._x['c']);
+                        q = q.then(() => gLogo.p(new G.Delay(1000)))
+                            .then(() => {
+                                this._c.e(gLogo);
+                                return this.lightOff();
+                            });
+                    }
+                    return q.then(() => {
                             if (!author && !title) return;
                             let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
                             gAuthor.v(0);
@@ -254,7 +258,7 @@ namespace Runtime {
                                 .then(() => gAuthor.p(new G.Delay(1000)))
                                 .then(() => this.lightOff())
                                 .then(() => gAuthor.o(0));
-                        }).then(() => super.OP(start, title, author))
+                        }).then(() => super.OP(start, title, author, isWx))
                         .then((runtime: Core.IRuntime) => {
                             if (!this._a)
                                 this._x['t'].v(0);
@@ -292,27 +296,18 @@ namespace Runtime {
             return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                 let $c: string = 'slots.close',
                     $s: string = 'slots.save',
-                    close: () => void,
-                    save: () => void;
-                close = () => {
-                    this._x['ss'].removeEventListener($s, save);
-                    this._x['ss'].removeEventListener($c, close);
-                    resolve(this._r);
-                };
-                save = () => {
-                    this._x['ss'].removeEventListener($s, save);
-                    this._x['ss'].removeEventListener($c, close);
-                    resolve(this._r);
-                };
-                this.lightOn().then(() => {
-                    let callback: () => void = () => {
+                    done: () => void = () => {
+                        this._x['ss'].removeEventListener($s, done);
+                        this._x['ss'].removeEventListener($c, done);
+                        resolve(this._r);
+                    },
+                    callback: () => void = () => {
                         (<Sprite.SeriesSlots> this._x['ss']
-                            .addEventListener($c, close)
-                            .addEventListener($s, save)
+                            .addEventListener($c, done)
+                            .addEventListener($s, done)
                         ).vs(this._r, this._fs);
                     };
-                    this._r.gS().e('auto', true, callback);
-                });
+                this.lightOn().then(() => this._r.gS().e('auto', true, callback));
             }).then(() => this.lightOff());
         }
 
@@ -417,12 +412,7 @@ namespace Runtime {
          * 创建立绘。
          */
         protected $c(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image {
-            // 为防止立绘随着镜头的缩放而缩放，这里的立绘显示暂设定为固定IBounds{ x: 0, y: 0, w: 1280, h: 720 }
-            //var bounds: G.IBounds = CanvasDirector.BOUNDS,
-            var bounds: G.IBounds = <G.IBounds> { x: 0, y: 0, w: 1280, h: 720 },
-                x: number = this.$x(position);
-            // 为防止立绘在镜头的变化过程中错位，这里暂使用绝对定位（第六个参数设为true）
-            return <G.Image> new G.Image(resource.o(), x, 0, bounds.w, bounds.h, true)
+            return <G.Image> new G.Image(resource.o(), this.$x(position), 0, 1280, 720, true)
                 .i(<any> position)
                 .o(0);
         }
@@ -431,32 +421,7 @@ namespace Runtime {
          * 计算立绘位置 x 坐标。
          */
         protected $x(position: Core.IDirector.Position): number {
-            var pos: typeof Core.IDirector.Position = Core.IDirector.Position,
-                x: number = 0;
-            switch (position) {
-                case pos.LLeft:
-                    x = -600;
-                    break;
-                case pos.Left:
-                    x = -400;
-                    break;
-                case pos.CLeft:
-                    x = -200;
-                    break;
-                case pos.Center:
-                    x = 0;
-                    break;
-                case pos.CRight:
-                    x = 200;
-                    break;
-                case pos.Right:
-                    x = 400;
-                    break;
-                case pos.RRight:
-                    x = 600;
-                    break;
-            }
-            return x;
+            return (<number> position) * 200 - 800;
         }
 
         /**
@@ -480,48 +445,39 @@ namespace Runtime {
         }
 
         /**
-         * 某白在全屏中显示。
+         * 旁白在全屏中显示。
          */
         protected full(words: string): Promise<Core.IRuntime> {
-            return this.lightOn().then(() => {
-                return (<Sprite.Full> this._x['F']).u(words, this._a);
-            }).then(() => this._r);
+            return this.lightOn()
+                .then(() => (<Sprite.Full> this._x['F']).u(words, this._a))
+                .then(() => this._r);
         }
 
         /**
          * 全屏文本 开 / 关。
          */
-        public fullWords(on: boolean): Promise<Core.IRuntime> {
-            if (on) {
-                this._fd = true;
-                return super.fullWords(on);
-            } else {
-                return super.fullWords(on).then((runtime: Core.IRuntime) => {
-                    this._fd = false;
-                    (<Sprite.Full> this._x['F']).h();
-                    return this._r;
-                });
-            }
+        public fullWords(onoff: boolean): Promise<Core.IRuntime> {
+            this._fd = onoff;
+            if (!onoff) (<Sprite.Full> this._x['F']).h();
+            return super.fullWords(onoff);
         }
 
         /**
          * 清除全屏文本。
          */
         public fullClean(): Promise<Core.IRuntime> {
-            return super.fullClean().then((runtime: Core.IRuntime) => {
-                (<Sprite.Full> this._x['F']).clean();
-                return this._r;
-            });
+            return super.fullClean()
+                .then(() => (<Sprite.Full> this._x['F']).clean())
+                .then(() => this._r);
         }
 
         /**
          * 隐藏全屏文本。
          */
         public fullHide(): Promise<Core.IRuntime> {
-            return super.fullHide().then((runtime: Core.IRuntime) => {
-                (<Sprite.Full> this._x['F']).o(0);
-                return this._r;
-            });
+            return super.fullHide()
+                .then(() => (<Sprite.Full> this._x['F']).o(0))
+                .then(() => this._r);
         }
 
         /**
@@ -690,8 +646,8 @@ namespace Runtime {
                     var gOld: G.Element = <G.Element> this._c.q('b')[0];
                     if (camera) {
                         gOld.x(0).y(0).sW(1280).sH(720);
-                        runtime.gS().d('.z');
-                        runtime.gS().d('_z');
+                        runtime.gS().d('.z')
+                            .d('_z');
                     }
                     var gNew: G.Element = new G.Component()
                         .a(new G.Image(resource.o(), CanvasDirector.BOUNDS).i('n'))
@@ -789,8 +745,7 @@ namespace Runtime {
                 if (!added)
                     gPoints.push([z, gPoint]);
             });
-            gMap.c()
-                .o(1);
+            gMap.c().o(1);
             Util.each(gPoints, (item: [number, G.Button]) => {
                 gMap.a(item[1]);
             });
@@ -827,31 +782,29 @@ namespace Runtime {
                     handler: () => void = () => {
                         if (this._pc) {
                             let option: Tag.Option = this._pc,
+                                id: string = option.gI(),
                                 isPay: boolean,
-                                amount: number;
-                            if (option.gI()) {
-                                isPay = states.qp(option.gI(), option.gM());
+                                amount: number,
+                                done: () => void = () => {
+                                    option.p(this._r);
+                                    gChoose.removeEventListener(event, handler);
+                                    gChoose.h().then(() => {
+                                        resolve(this._r);
+                                    });
+                                    this._pc = undefined;
+                                };
+                            if (id) {
+                                isPay = states.qp(id, option.gM());
                                 option.sA(isPay);
                             }
                             amount = option.gA() ? 0 : option.gM();
                             if (!amount) {
-                                option.p(this._r);
-                                gChoose.removeEventListener(event, handler);
-                                gChoose.h().then(() => {
-                                    resolve(this._r);
-                                });
-                                this._pc = undefined;
+                                done();
                             } else {
-                                let id: string = option.gI(),
-                                    fail: () => void = () => { return; },
+                                let fail: () => void = () => { return; },
                                     suc: () => void = () => {
-                                        option.p(this._r);
                                         states.ep(id, amount);
-                                        gChoose.removeEventListener(event, handler);
-                                        gChoose.h().then(() => {
-                                            resolve(this._r);
-                                        });
-                                        this._pc = undefined;
+                                        done();
                                     };
                                 this._r.dispatchEvent(new Ev.PayOption({
                                     target: states,
@@ -875,20 +828,21 @@ namespace Runtime {
         public reset(): Promise<Core.IRuntime> {
             return super.reset().then((runtime: Core.IRuntime) => {
                 var gBack: G.Element = this._c.q('b')[0],
-                    gColor: G.Element = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000'));
+                    gColor: G.Element = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000')),
+                    series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
                 // 需要先删除旧选择再添加新选择，否则在选择处读档时，时序流中断(因为未删除监听事件)
                 this._c.e(this._x['C']);
-                this._x['C'] = <Sprite.Choose> new Sprite.Choose(this._pt['choose'])
-                    .addEventListener('choose', (ev: Ev.Choose) => {
+                this._x['C'] = <Sprite.Choose> new Sprite.Choose(this._pt, (ev: Ev.Choose) => {
                         this._pc = <Tag.Option> ev.choice;
                     });
-                this._c.a(this._x['C'], this._x['t']);
-                this._c.a(gColor, gBack)
+                this._c.a(this._x['C'], this._x['t'])
+                    .a(gColor, gBack)
                     .e(gBack);
                 gColor.i('b');
+                this._x['S'].v();
+                (<Sprite.Menu> this._x['m']).u(series);
                 (<G.Component> this._c.q('M')[0]).c();
-                (<G.Component> this._c.q('c')[0]).c()
-                    .o(0);
+                (<G.Component> this._c.q('c')[0]).c().o(0);
                 this._pc = undefined;
                 this._fd = false;
                 this._x['G'].h(0);
@@ -1037,63 +991,58 @@ namespace Runtime {
                 gCurtain: Sprite.Curtain = this._x['c'],
                 slotsFromStart: boolean = false,
                 states: Core.IStates = this._r.gS();
-            this._pt = theme;
+            this._pt = theme['choose'];
             // 特写。
             this._c.a(this._x['G'] = <Sprite.CG> new Sprite.CG(theme['cg']), gCurtain);
-            // 状态。
-            this._x['S'] = <Sprite.Status> new Sprite.Status(theme['status']);
-            resources.unshift(this._x['S'].l());
-            this._c.a(this._x['S'], gCurtain);
             // 某白。
-            this._x['W'] = <Sprite.Words> new Sprite.Words(theme['voiceover'], theme['monolog'], theme['speak'])
-                .addEventListener('words.animation', (ev: Ev.WordsAnimation) => {
+            this._x['W'] = <Sprite.Words> new Sprite.Words(theme['voiceover'], theme['monolog'], theme['speak'], (ev: Ev.WordsAnimation) => {
                     this._t = this._h = ev.animation;
                 });
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 全屏文本。
-            this._x['F'] = <Sprite.Full> new Sprite.Full(theme['full'])
-                .addEventListener('full.animation', (ev: Ev.FullAnimation) => {
+            this._x['F'] = <Sprite.Full> new Sprite.Full(theme['full'], (ev: Ev.FullAnimation) => {
                     this._t = this._h = ev.animation;
                     this._ft = ev.type;
                 });
             resources.unshift(this._x['F'].l());
             this._c.a(this._x['F'], gCurtain);
+            // 状态。
+            this._x['S'] = <Sprite.Status> new Sprite.Status(theme['status']);
+            resources.unshift(this._x['S'].l());
+            this._c.a(this._x['S'], gCurtain);
             // 选择。
-            this._x['C'] = <Sprite.Choose> new Sprite.Choose(theme['choose']);
-            resources.unshift(this._x['C'].l());
-            this._c.a(this._x['C'], gCurtain);
+            // this._x['C'] = <Sprite.Choose> new Sprite.Choose(theme['choose']);
+            // resources.unshift(this._x['C'].l());
+            // this._c.a(this._x['C'], gCurtain);
             // 提示。
             this._x['T'] = <Sprite.Tip> new Sprite.Tip(theme['tip']);
             resources.unshift(this._x['T'].l());
             this._c.a(this._x['T'], gCurtain);
             // 常驻按钮。
-            this._x['t'] = <Sprite.Tray> new Sprite.Tray(theme['tray'])
-                .addEventListener('tray.menu', () => {
+            this._x['t'] = <Sprite.Tray> new Sprite.Tray(theme['tray'], () => {
                     if (this._h) this._h.w();
                     this._x['m'].v();
                     this._x['t'].h();
-                }).addEventListener('tray.panel', () => {
+                }, () => {
                     this._x['P'].v();
                     this._x['t'].h();
                 });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
             // 面板。
-            this._x['P'] = <Sprite.Panel> new Sprite.Panel(theme['panel'])
-                .addEventListener('panel.close', () => {
+            this._x['P'] = <Sprite.Panel> new Sprite.Panel(theme['panel'], () => {
                     this._x['t'].v();
                     this._x['P'].h();
                 });
             resources.unshift(this._x['P'].l());
             this._c.a(this._x['P'], gCurtain);
             // 功能菜单。
-            this._x['m'] = <Sprite.Menu> new Sprite.Menu(theme['menu'])
-                .addEventListener('menu.close', () => {
+            this._x['m'] = <Sprite.Menu> new Sprite.Menu(theme['menu'], () => {
                     if (this._h) this._h.r();
                     this._x['t'].v();
                     this._x['m'].h();
-                }).addEventListener('menu.save', () => {
+                }, () => {
                     slotsFromStart = false;
                     (<Sprite.Slots> this._x['sl']).vs(this._r)
                         .then(() => {
@@ -1101,7 +1050,7 @@ namespace Runtime {
                         })['catch'](() => {
                             return;
                         });
-                }).addEventListener('menu.load', () => {
+                }, () => {
                     slotsFromStart = false;
                     (<Sprite.Slots> this._x['sl']).vl(this._r)
                         .then(() => {
@@ -1109,14 +1058,14 @@ namespace Runtime {
                         })['catch'](() => {
                             return;
                         });
-                }).addEventListener('menu.set', () => {
+                }, () => {
                     (<Sprite.Set> this._x['st']).vv(this._s['b']['baseVolume'], this._s['e']['baseVolume'], this._vo)
                         .then(() => {
                             this._x['m'].h(0);
                         })['catch'](() => {
                             return;
                         });
-                }).addEventListener('menu.replay', () => {
+                }, () => {
                     this._x['m'].h(0);
                     this._t = this._h = undefined;
                     this._r.stop();
@@ -1125,18 +1074,17 @@ namespace Runtime {
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
             // 开始菜单。
-            this._x['s'] = <Sprite.Start> new Sprite.Start(theme['start'])
-                .addEventListener('start.new', (event: Ev.StartNew) => {
+            this._x['s'] = <Sprite.Start> new Sprite.Start(theme['start'], (event: Ev.StartNew) => {
                     this.playSE(this._i['c']);
                     this.lightOff().then(() => {
                         event.target.h(0);
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
-                }).addEventListener('start.series', (event: Ev.StartSeries) => {
+                }, () => {
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
                     (<Sprite.SeriesSlots> this._x['ss']).vl(this._r);
-                }).addEventListener('start.load', (event: Ev.StartLoad) => {
+                }, () => {
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
                     (<Sprite.Slots> this._x['sl']).vl(this._r)
@@ -1147,8 +1095,7 @@ namespace Runtime {
             resources.unshift(this._x['s'].l());
             this._c.a(this._x['s'], gCurtain);
             // 档位菜单。
-            this._x['sl'] = <Sprite.Slots> new Sprite.Slots(theme['slots'])
-                .addEventListener('slots.close', () => {
+            this._x['sl'] = <Sprite.Slots> new Sprite.Slots(theme['slots'], () => {
                     if (states.g('.oc')) {
                         this._r.dispatchEvent(new Ev.ScreenLoad({
                             target: this._r.gS(),
@@ -1158,11 +1105,11 @@ namespace Runtime {
                     }
                     this._x[slotsFromStart ? 's' : 'm'].v();
                     this._x['sl'].h();
-                }).addEventListener('slots.save', (ev: Ev.SlotsSave) => {
+                }, (ev: Ev.SlotsSave) => {
                     this._x[slotsFromStart ? 's' : 'm'].v(0);
                     this._x['sl'].h(0);
                     this._r.gS().e(ev.slot);
-                }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
+                }, (ev: Ev.SlotsLoad) => {
                     this._r.dispatchEvent(new Ev.ScreenLoad({
                         target: this._r.gS(),
                         type: 'close'
@@ -1172,37 +1119,34 @@ namespace Runtime {
             resources.push(this._x['sl'].l());
             this._c.a(this._x['sl'], gCurtain);
             // 连载档位菜单。
-            this._x['ss'] = <Sprite.SeriesSlots> new Sprite.SeriesSlots(theme['series'])
-                .addEventListener('slots.close', () => {
+            this._x['ss'] = <Sprite.SeriesSlots> new Sprite.SeriesSlots(theme['series'], () => {
                     if (!slotsFromStart && states.g('.oc')) {
                         this._r.dispatchEvent(new Ev.ScreenSave({
                             target: this._r.gS(),
                             type: 'close'
                         }));
                         states.d('.oc');
-                        //this._r.gS().e('auto', true);
                     }
                     slotsFromStart = false;
                     this._x['ss'].h();
-                }).addEventListener('slots.save', (ev: Ev.SlotsSave) => {
+                }, (ev: Ev.SlotsSave) => {
                     this._r.dispatchEvent(new Ev.ScreenSave({
                         target: this._r.gS(),
                         type: 'close'
                     }));
                     this._x['ss'].h();
                     this._r.gS().e(ev.slot, true);
-                }).addEventListener('slots.load', (ev: Ev.SlotsLoad) => {
+                }, (ev: Ev.SlotsLoad) => {
                     slotsFromStart = false;
                     this.sl(ev.id);
                 });
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
             // 设置菜单。
-            this._x['st'] = <Sprite.Set> new Sprite.Set(theme['set'])
-                .addEventListener('set.close', () => {
+            this._x['st'] = <Sprite.Set> new Sprite.Set(theme['set'], () => {
                     this._x['m'].v();
                     this._x['st'].h();
-                }).addEventListener('set.volume', (ev: Ev.SetVolume) => {
+                }, (ev: Ev.SetVolume) => {
                     var bgm: HTMLAudioElement = this._s['b'];
                     var esm: HTMLAudioElement = this._s['s'];
                     var se: HTMLAudioElement = this._s['e'];

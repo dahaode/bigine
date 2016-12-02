@@ -25,7 +25,7 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>, close: () => void, save: () => void, load: () => void, set: () => void, replay: () => void) {
             let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _close: Util.IHashTable<any> = theme['close'],
@@ -46,6 +46,11 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_replay['i'], raw),
                 rr.g<HTMLImageElement>(_replay['ih'], raw)
             ];
+            this.addEventListener('menu.close', close)
+                .addEventListener('menu.save', save)
+                .addEventListener('menu.load', load)
+                .addEventListener('menu.set', set)
+                .addEventListener('menu.replay', replay);
         }
 
         protected pI(): Menu {

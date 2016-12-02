@@ -10,18 +10,9 @@
 /// <reference path="Sprite.ts" />
 
 namespace Sprite {
-    import Util = __Bigine_Util;
     import G = __Bigine_C2D;
 
     export class CG extends Sprite {
-
-        /**
-         * 构造函数。
-         */
-        constructor(theme: Util.IHashTable<any>) {
-            super(theme);
-        }
-
         /**
          * 更新图片。
          */

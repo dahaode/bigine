@@ -59,7 +59,7 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.FullAnimation) => void) {
             let _back: Util.IHashTable<any> = theme['back'],
                 _text: Util.IHashTable<any> = theme['text'],
                 canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -76,9 +76,10 @@ namespace Sprite {
             canvas.height = 720;
             this._ct = canvas.getContext('2d');
             this._ct.canvas.style.letterSpacing = _text['ls'] + 'px';  // 设置字间距
-            this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px ' + G.TextPhrase.FONT;
+            this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px "' + (_text['ff'] || '') + '", ' + G.TextPhrase.FONT;
             this._ct.textBaseline = 'middle';
             this._ct.shadowBlur = this._ct.shadowOffsetX = this._ct.shadowOffsetY = _text['ss'];
+            this.addEventListener('full.animation', listen);
         }
 
         protected pI(): Full {

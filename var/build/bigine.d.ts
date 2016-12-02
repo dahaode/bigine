@@ -130,7 +130,7 @@ declare namespace __Bigine {
         interface IDirector {
             c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
             Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<IRuntime>;
-            OP(start: boolean, title: string, author: string): Promise<IRuntime>;
+            OP(start: boolean, title: string, author: string, isWx: boolean): Promise<IRuntime>;
             ED(): Promise<IRuntime>;
             FAIL(): Promise<IRuntime>;
             charOn(resource: IResource<HTMLImageElement>, position: IDirector.Position): Promise<IRuntime>;
@@ -159,7 +159,7 @@ declare namespace __Bigine {
             cameraShake(): Promise<IRuntime>;
             status(onoff: boolean): Promise<IRuntime>;
             expression(name: string): Promise<IRuntime>;
-            fullWords(on: boolean): Promise<IRuntime>;
+            fullWords(onoff: boolean): Promise<IRuntime>;
             fullClean(): Promise<IRuntime>;
             fullHide(): Promise<IRuntime>;
         }
@@ -447,7 +447,7 @@ declare namespace __Bigine {
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
-            OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
+            OP(start: boolean, title: string, author: string, isWx: boolean): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             FAIL(): Promise<Core.IRuntime>;
             charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
@@ -476,7 +476,7 @@ declare namespace __Bigine {
             cameraShake(): Promise<Core.IRuntime>;
             status(onoff: boolean): Promise<Core.IRuntime>;
             expression(name: string): Promise<Core.IRuntime>;
-            fullWords(on: boolean): Promise<Core.IRuntime>;
+            fullWords(onoff: boolean): Promise<Core.IRuntime>;
             fullClean(): Promise<Core.IRuntime>;
             fullHide(): Promise<Core.IRuntime>;
             gD(): boolean;
@@ -526,7 +526,6 @@ declare namespace __Bigine {
     namespace Sprite {
         class Author extends Sprite {
             private _x;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
             protected pI(): Author;
             u(title: string): Author;
         }
@@ -572,7 +571,7 @@ declare namespace __Bigine {
             private _y;
             private _ke;
             private _bn;
-            constructor(theme: Util.IHashTable<any>);
+            constructor(theme: Util.IHashTable<any>, lnew: (event: Ev.StartNew) => void, series: () => void, load: () => void);
             protected pI(): Start;
             u(title: string, series: boolean, stage: G.Stage): Start;
             protected ev(series: boolean, stage: G.Stage): void;
@@ -607,7 +606,7 @@ declare namespace __Bigine {
             private _si;
             private _cb;
             private _tp;
-            constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.WordsAnimation) => void);
             protected pI(): Words;
             h(duration?: number): Promise<Words>;
             vv(clob: string, auto?: boolean): Promise<Words>;
@@ -646,7 +645,7 @@ declare namespace __Bigine {
     namespace Sprite {
         class Tray extends Sprite implements Core.ITray {
             private _x;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, menu: () => void, panel: () => void);
             protected pI(): Tray;
             u(panel: boolean): Tray;
         }
@@ -709,7 +708,7 @@ declare namespace __Bigine {
     namespace Sprite {
         class Menu extends Sprite implements Core.IMenu {
             private _x;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, close: () => void, save: () => void, load: () => void, set: () => void, replay: () => void);
             protected pI(): Menu;
             u(series: boolean): Menu;
         }
@@ -758,7 +757,7 @@ declare namespace __Bigine {
         class Slots extends Sprite implements Core.ISlots {
             private _c;
             private _x;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, close: () => void, save: (ev: Ev.SlotsSave) => void, load: (ev: Ev.SlotsLoad) => void);
             protected pI(): Slots;
             vs(runtime: Core.IRuntime, duration?: number): Promise<Slots>;
             vl(runtime: Core.IRuntime, duration?: number): Promise<Slots>;
@@ -773,6 +772,7 @@ declare namespace __Bigine {
             constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
             protected pI(): Status;
             u(sheet: [string, string][], runtime: Core.IRuntime): Status;
+            v(duration?: number): Promise<Status>;
         }
     }
     namespace Core {
@@ -808,7 +808,7 @@ declare namespace __Bigine {
             private _cp;
             private _ep;
             private _dr;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, listen: () => void);
             u(sheet: Array<Util.IHashTable<any>>, runtime: Core.IRuntime): Panel;
             protected pI(): Panel;
             private uT(sheet);
@@ -849,7 +849,7 @@ declare namespace __Bigine {
             private _bn;
             private _bi;
             private _ke;
-            constructor(theme: Util.IHashTable<any>);
+            constructor(theme: Util.IHashTable<any>, listen: (ev: Ev.Choose) => void);
             u(options: Core.IOptionTag[], stage: G.Stage): Choose;
             protected ev(options: Core.IOptionTag[], stage: G.Stage): void;
             h(duration?: number): Promise<Sprite>;
@@ -857,7 +857,6 @@ declare namespace __Bigine {
     }
     namespace Sprite {
         class CG extends Sprite {
-            constructor(theme: Util.IHashTable<any>);
             u(image: Resource.Resource<HTMLImageElement>): CG;
         }
     }
@@ -866,7 +865,7 @@ declare namespace __Bigine {
             private _c;
             private _x;
             private _de;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, close: () => void, save: (ev: Ev.SlotsSave) => void, load: (ev: Ev.SlotsLoad) => void);
             protected pI(): SeriesSlots;
             vs(runtime: Core.IRuntime, fs?: Core.IRuntime.Series, duration?: number): Promise<SeriesSlots>;
             vl(runtime: Core.IRuntime, duration?: number): Promise<SeriesSlots>;
@@ -912,7 +911,7 @@ declare namespace __Bigine {
             private _xb;
             private _ib;
             private _vo;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, close: () => void, volume: (ev: Ev.SetVolume) => void);
             protected pI(): Set;
             protected sv(x: number, voice: string): void;
             vv(bVolume: number, eVolume: number, on: boolean, duration?: number): Promise<Set>;
@@ -969,7 +968,7 @@ declare namespace __Bigine {
             private _tl;
             private _tx;
             private _ct;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.FullAnimation) => void);
             protected pI(): Full;
             h(duration?: number): Promise<Full>;
             u(clob: string, auto?: boolean): Promise<Full>;
@@ -1002,7 +1001,7 @@ declare namespace __Bigine {
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
-            OP(start: boolean, title: string, author: string): Promise<Core.IRuntime>;
+            OP(start: boolean, title: string, author: string, isWx: boolean): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             protected $s(): Promise<Core.IRuntime>;
             charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
@@ -1013,7 +1012,7 @@ declare namespace __Bigine {
             protected $x(position: Core.IDirector.Position): number;
             words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             protected full(words: string): Promise<Core.IRuntime>;
-            fullWords(on: boolean): Promise<Core.IRuntime>;
+            fullWords(onoff: boolean): Promise<Core.IRuntime>;
             fullClean(): Promise<Core.IRuntime>;
             fullHide(): Promise<Core.IRuntime>;
             tip(words: string): Promise<Core.IRuntime>;
@@ -1106,6 +1105,105 @@ declare namespace __Bigine {
             id: string;
             kind: string;
             constructor(metas: IActionMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IFinMetas extends Util.IEventMetas<Core.IEpisode> {
+        }
+    }
+    namespace Ev {
+        class Fin extends Event<Core.IEpisode> {
+            constructor(metas: IFinMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IRankMetas extends Util.IEventMetas<Core.IEpisode> {
+            grade: string;
+            score: number;
+        }
+    }
+    namespace Ev {
+        class Rank extends Event<Core.IEpisode> {
+            private grade;
+            private score;
+            constructor(metas: IRankMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IPayMetas extends Util.IEventMetas<Core.IStates> {
+            amount: number;
+            id: string;
+            suc: () => void;
+            fail: () => void;
+        }
+    }
+    namespace Ev {
+        class Pay extends Event<Core.IStates> {
+            private amount;
+            private id;
+            private suc;
+            private fail;
+            constructor(metas: IPayMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        class PayOption extends Pay {
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IAutoLoadMetas extends Util.IEventMetas<Core.IStates> {
+            valid: boolean;
+        }
+    }
+    namespace Ev {
+        class AutoLoad extends Event<Core.IStates> {
+            private valid;
+            constructor(metas: IAutoLoadMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IScreenLoadMetas extends Util.IEventMetas<Core.IStates> {
+            type: string;
+        }
+    }
+    namespace Ev {
+        class ScreenLoad extends Event<Core.IStates> {
+            private type;
+            constructor(metas: IScreenLoadMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IScreenSaveMetas extends Util.IEventMetas<Core.IStates> {
+            type: string;
+        }
+    }
+    namespace Ev {
+        class ScreenSave extends Event<Core.IStates> {
+            private type;
+            constructor(metas: IScreenSaveMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IVideoMetas extends Util.IEventMetas<Core.IEpisode> {
+            type: string;
+            uri: string;
+            volume: number;
+        }
+    }
+    namespace Ev {
+        class Video extends Event<Core.IEpisode> {
+            private type;
+            private uri;
+            private volume;
+            constructor(metas: IVideoMetas);
             gT(): string;
         }
     }
@@ -1222,11 +1320,39 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
+        class Audio extends Unknown {
+            protected _o: Core.IResource<string>;
+            gN(): string;
+            $r(ep: Core.IEpisode): void;
+            o(): Core.IResource<string>;
+        }
+    }
+    namespace Tag {
+        class DefBGM extends Entity {
+            gN(): string;
+            gT(): Core.IEpisode.Entity;
+            o(): Core.IResource<string>;
+        }
+    }
+    namespace Tag {
         class Image extends Unknown {
             protected _o: Core.IResource<HTMLImageElement>;
             gN(): string;
             $r(ep: Core.IEpisode): void;
             o(): Core.IResource<HTMLImageElement>;
+        }
+    }
+    namespace Tag {
+        class DefCG extends Entity {
+            gN(): string;
+            o(): Core.IResource<HTMLImageElement>;
+        }
+    }
+    namespace Tag {
+        class DefSE extends Entity {
+            gN(): string;
+            gT(): Core.IEpisode.Entity;
+            o(): Core.IResource<string>;
         }
     }
     namespace Tag {
@@ -1258,34 +1384,6 @@ declare namespace __Bigine {
             gT(): Core.IEpisode.Entity;
             o(id?: string): Core.IResource<HTMLImageElement>;
             d(): Core.IResource<HTMLImageElement>[];
-        }
-    }
-    namespace Tag {
-        class Audio extends Unknown {
-            protected _o: Core.IResource<string>;
-            gN(): string;
-            $r(ep: Core.IEpisode): void;
-            o(): Core.IResource<string>;
-        }
-    }
-    namespace Tag {
-        class DefBGM extends Entity {
-            gN(): string;
-            gT(): Core.IEpisode.Entity;
-            o(): Core.IResource<string>;
-        }
-    }
-    namespace Tag {
-        class DefCG extends Entity {
-            gN(): string;
-            o(): Core.IResource<HTMLImageElement>;
-        }
-    }
-    namespace Tag {
-        class DefSE extends Entity {
-            gN(): string;
-            gT(): Core.IEpisode.Entity;
-            o(): Core.IResource<string>;
         }
     }
     namespace Tag {
@@ -1533,11 +1631,6 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
-        class Auto extends Unknown {
-            gN(): string;
-        }
-    }
-    namespace Tag {
         class Player extends Unknown {
             private _o;
             gN(): string;
@@ -1545,6 +1638,11 @@ declare namespace __Bigine {
             gI(): string;
             gT(): Core.IEpisode.Entity;
             gC(): DefChar;
+        }
+    }
+    namespace Tag {
+        class Auto extends Unknown {
+            gN(): string;
         }
     }
     namespace Core {
@@ -1597,6 +1695,83 @@ declare namespace __Bigine {
             gT(): string;
             s(): [string, string][];
             p(): Array<Util.IHashTable<any>>;
+        }
+    }
+    namespace Tag {
+        class CollPanel extends Unknown {
+            gN(): string;
+            g(): Util.IHashTable<any>;
+        }
+    }
+    namespace Tag {
+        class CollSource extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class CollStruct extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class SimpPanel extends Unknown {
+            gN(): string;
+            g(): Util.IHashTable<any>;
+        }
+    }
+    namespace Tag {
+        class SimpEle extends Unknown {
+            gN(): string;
+            g(): Util.IHashTable<any>;
+        }
+    }
+    namespace Tag {
+        class EleName extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class EleType extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class Struct extends Entity {
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gN(): string;
+            gT(): Core.IEpisode.Entity;
+            gS(): Array<Unknown>;
+            gET(fieldName: string): Core.IEpisode.Entity;
+            iE(fieldName: string): boolean;
+            g(data: Util.IHashTable<any>): Util.IHashTable<any>;
+        }
+    }
+    namespace Tag {
+        class Field extends Unknown {
+            private _ep;
+            private numberTypes;
+            private nameTypes;
+            private entityTypes;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            $b(ep: Core.IEpisode): void;
+            gN(): string;
+            iE(): boolean;
+            gIE(val: string): Entity;
+            iN(): boolean;
+            gT(): string;
+            gET(): Core.IEpisode.Entity;
+            gL(): number;
+            g(val: string): number | string;
+        }
+    }
+    namespace Tag {
+        class FieldType extends Unknown {
+            gN(): string;
+        }
+    }
+    namespace Tag {
+        class FieldLimit extends Unknown {
+            gN(): string;
         }
     }
     namespace Tag {
@@ -1945,83 +2120,6 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
-        class Struct extends Entity {
-            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
-            gN(): string;
-            gT(): Core.IEpisode.Entity;
-            gS(): Array<Unknown>;
-            gET(fieldName: string): Core.IEpisode.Entity;
-            iE(fieldName: string): boolean;
-            g(data: Util.IHashTable<any>): Util.IHashTable<any>;
-        }
-    }
-    namespace Tag {
-        class Field extends Unknown {
-            private _ep;
-            private numberTypes;
-            private nameTypes;
-            private entityTypes;
-            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
-            $b(ep: Core.IEpisode): void;
-            gN(): string;
-            iE(): boolean;
-            gIE(val: string): Entity;
-            iN(): boolean;
-            gT(): string;
-            gET(): Core.IEpisode.Entity;
-            gL(): number;
-            g(val: string): number | string;
-        }
-    }
-    namespace Tag {
-        class FieldType extends Unknown {
-            gN(): string;
-        }
-    }
-    namespace Tag {
-        class FieldLimit extends Unknown {
-            gN(): string;
-        }
-    }
-    namespace Tag {
-        class CollPanel extends Unknown {
-            gN(): string;
-            g(): Util.IHashTable<any>;
-        }
-    }
-    namespace Tag {
-        class CollSource extends Unknown {
-            gN(): string;
-        }
-    }
-    namespace Tag {
-        class CollStruct extends Unknown {
-            gN(): string;
-        }
-    }
-    namespace Tag {
-        class SimpPanel extends Unknown {
-            gN(): string;
-            g(): Util.IHashTable<any>;
-        }
-    }
-    namespace Tag {
-        class SimpEle extends Unknown {
-            gN(): string;
-            g(): Util.IHashTable<any>;
-        }
-    }
-    namespace Tag {
-        class EleName extends Unknown {
-            gN(): string;
-        }
-    }
-    namespace Tag {
-        class EleType extends Unknown {
-            gN(): string;
-        }
-    }
-    namespace Tag {
         class Pause extends Action {
             private _ms;
             constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
@@ -2096,24 +2194,6 @@ declare namespace __Bigine {
         }
     }
     namespace Ev {
-        interface IPayMetas extends Util.IEventMetas<Core.IStates> {
-            amount: number;
-            id: string;
-            suc: () => void;
-            fail: () => void;
-        }
-    }
-    namespace Ev {
-        class Pay extends Event<Core.IStates> {
-            private amount;
-            private id;
-            private suc;
-            private fail;
-            constructor(metas: IPayMetas);
-            gT(): string;
-        }
-    }
-    namespace Ev {
         class Donate extends Pay {
             gT(): string;
         }
@@ -2122,87 +2202,6 @@ declare namespace __Bigine {
         class Donate extends Idable {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
-        }
-    }
-    namespace Ev {
-        interface IFinMetas extends Util.IEventMetas<Core.IEpisode> {
-        }
-    }
-    namespace Ev {
-        class Fin extends Event<Core.IEpisode> {
-            constructor(metas: IFinMetas);
-            gT(): string;
-        }
-    }
-    namespace Ev {
-        interface IRankMetas extends Util.IEventMetas<Core.IEpisode> {
-            grade: string;
-            score: number;
-        }
-    }
-    namespace Ev {
-        class Rank extends Event<Core.IEpisode> {
-            private grade;
-            private score;
-            constructor(metas: IRankMetas);
-            gT(): string;
-        }
-    }
-    namespace Ev {
-        class PayOption extends Pay {
-            gT(): string;
-        }
-    }
-    namespace Ev {
-        interface IAutoLoadMetas extends Util.IEventMetas<Core.IStates> {
-            valid: boolean;
-        }
-    }
-    namespace Ev {
-        class AutoLoad extends Event<Core.IStates> {
-            private valid;
-            constructor(metas: IAutoLoadMetas);
-            gT(): string;
-        }
-    }
-    namespace Ev {
-        interface IScreenLoadMetas extends Util.IEventMetas<Core.IStates> {
-            type: string;
-        }
-    }
-    namespace Ev {
-        class ScreenLoad extends Event<Core.IStates> {
-            private type;
-            constructor(metas: IScreenLoadMetas);
-            gT(): string;
-        }
-    }
-    namespace Ev {
-        interface IScreenSaveMetas extends Util.IEventMetas<Core.IStates> {
-            type: string;
-        }
-    }
-    namespace Ev {
-        class ScreenSave extends Event<Core.IStates> {
-            private type;
-            constructor(metas: IScreenSaveMetas);
-            gT(): string;
-        }
-    }
-    namespace Ev {
-        interface IVideoMetas extends Util.IEventMetas<Core.IEpisode> {
-            type: string;
-            uri: string;
-            volume: number;
-        }
-    }
-    namespace Ev {
-        class Video extends Event<Core.IEpisode> {
-            private type;
-            private uri;
-            private volume;
-            constructor(metas: IVideoMetas);
-            gT(): string;
         }
     }
     namespace Tag {

@@ -82,7 +82,7 @@ namespace Runtime {
         /**
          * 开始动画。
          */
-        public OP(start: boolean, title: string, author: string): Promise<Core.IRuntime> {
+        public OP(start: boolean, title: string, author: string, isWx: boolean): Promise<Core.IRuntime> {
             if (!start)
                 this._r.dispatchEvent(new Ev.Begin({
                     target: this._r.gE()
@@ -291,7 +291,7 @@ namespace Runtime {
         /**
          * 全屏文本 开 / 关。
          */
-        public fullWords(on: boolean): Promise<Core.IRuntime> {
+        public fullWords(onoff: boolean): Promise<Core.IRuntime> {
             return this._p;
         }
 

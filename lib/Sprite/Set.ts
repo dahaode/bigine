@@ -55,7 +55,7 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>, close: () => void, volume: (ev: Ev.SetVolume) => void) {
             let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _close: Util.IHashTable<any> = theme['close'],
@@ -69,6 +69,8 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_bgm['bg']['i'], raw),
                 rr.g<HTMLImageElement>(_bgm['bar']['ih'], raw)
             ];
+            this.addEventListener('set.close', close)
+                .addEventListener('set.volume', volume);
         }
 
         protected pI(): Set {

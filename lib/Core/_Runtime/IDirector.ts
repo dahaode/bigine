@@ -32,7 +32,7 @@ namespace Core {
         /**
          * 开场动画。
          */
-        OP(start: boolean, title: string, author: string): Promise<IRuntime>;
+        OP(start: boolean, title: string, author: string, isWx: boolean): Promise<IRuntime>;
 
         /**
          * 完结动画。
@@ -177,7 +177,7 @@ namespace Core {
         /**
          * 全屏文本 开 / 关。
          */
-        fullWords(on: boolean): Promise<IRuntime>;
+        fullWords(onoff: boolean): Promise<IRuntime>;
 
         /**
          * 清除全屏文本。

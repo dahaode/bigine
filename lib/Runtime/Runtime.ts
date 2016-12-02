@@ -10,12 +10,6 @@
 /// <reference path="Episode.ts" />
 /// <reference path="States.ts" />
 /// <reference path="_Director/DirectorFactory.ts" />
-/// <reference path="../Ev/_Runtime/Begin.ts" />
-/// <reference path="../Ev/_Runtime/Resume.ts" />
-/// <reference path="../Ev/_Runtime/Load.ts" />
-/// <reference path="../Ev/_Runtime/Query.ts" />
-/// <reference path="../Ev/_Runtime/Scene.ts" />
-/// <reference path="../Ev/_Runtime/Action.ts" />
 /// <reference path="../Tag/_pack.ts" />
 
 namespace Runtime {
@@ -260,6 +254,7 @@ namespace Runtime {
          */
         public play(): Runtime {
             if (this._al[0] && this._al[1]) {
+                this._fp = true;
                 this._d.sl(this._al[0], true);
                 return this;
             }
@@ -274,7 +269,7 @@ namespace Runtime {
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
             this._d.Load(false);
-            this._d.OP(!this._e.gA(), this._n, this._c);
+            this._d.OP(!this._e.gA(), this._n, this._c, true);
             return this;
         }
 

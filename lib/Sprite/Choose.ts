@@ -34,7 +34,7 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(theme: Util.IHashTable<any>) {
+        constructor(theme: Util.IHashTable<any>, listen: (ev: Ev.Choose) => void) {
             let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource;
             super(theme);
@@ -46,7 +46,7 @@ namespace Sprite {
             this._bn = [];
             this._bi =
             this._ke = undefined;
-            this.o(0);
+            this.addEventListener('choose', listen);
         }
 
         /**

@@ -54,7 +54,7 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>) {
+        constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.WordsAnimation) => void) {
             let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _vback: Util.IHashTable<any> = voiceover['back'],
@@ -100,6 +100,7 @@ namespace Sprite {
             if (_vcurs) this._rr.push(rr.g<HTMLImageElement>(_vcurs['i'], raw));
             if (_mcurs) this._rr.push(rr.g<HTMLImageElement>(_mcurs['i'], raw));
             if (_scurs) this._rr.push(rr.g<HTMLImageElement>(_scurs['i'], raw));
+            this.addEventListener('words.animation', listen);
         }
 
         protected pI(): Words {

@@ -85,7 +85,7 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>, listen: () => void) {
             let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _close: Util.IHashTable<any> = theme['close'],
@@ -133,7 +133,7 @@ namespace Sprite {
             this._cc = [];
             this._cp = 0;
             this._dr = {};
-            this.o(0);
+            this.addEventListener('panel.close', listen);
         }
 
         /**

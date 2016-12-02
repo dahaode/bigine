@@ -36,7 +36,7 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(theme: Util.IHashTable<Util.IHashTable<any>>) {
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>, close: () => void, save: (ev: Ev.SlotsSave) => void, load: (ev: Ev.SlotsLoad) => void) {
             let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _close: Util.IHashTable<any> = theme['close'],
@@ -62,6 +62,9 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_4['i'], raw),
                 rr.g<HTMLImageElement>(_4['ih'], raw)
             ];
+            this.addEventListener('slots.close', close)
+                .addEventListener('slots.save', save)
+                .addEventListener('slots.load', load);
         }
 
         protected pI(): SeriesSlots {

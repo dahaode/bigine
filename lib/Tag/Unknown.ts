@@ -191,7 +191,8 @@ namespace Tag {
                 parts.push(this.$v(this._c));
             if (this._p.length) {
                 Util.each(this._p, (param: string) => {
-                    params.push(this.$v(param));
+                    params.push(param);
+                    //params.push(this.$v(param));
                 });
                 parts.push(params);
             }

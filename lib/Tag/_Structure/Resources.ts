@@ -130,10 +130,7 @@ namespace Tag {
         private ll(ret: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>): Util.IHashTable<Util.IHashTable<Core.IEntityTag>> {
             ret['rooms']['00000000-0000-0000-0000-000000000000'] = new DefRoom([], ' ', [
                 new Times([], '', [
-                    new Unknown(['晨'], '00000000-0000-0000-0000-000000000000', [], -1),
-                    new Unknown(['午'], '00000000-0000-0000-0000-000000000000', [], -1),
-                    new Unknown(['晚'], '00000000-0000-0000-0000-000000000000', [], -1),
-                    new Unknown(['夜'], '00000000-0000-0000-0000-000000000000', [], -1)
+                    new Unknown(['默认'], '00000000-0000-0000-0000-000000000000', [], -1)
                 ], -1)], -1);
             ret['chars']['00000000-0000-0000-0000-000000000001'] = new DefChar([], ' ', [
                 new Avatar([], '00000000-0000-0000-0000-000000000001', [], -1),

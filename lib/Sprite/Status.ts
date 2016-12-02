@@ -87,8 +87,15 @@ namespace Sprite {
                     this._x[conf[0]].c().a(new G.TextPhrase(value));
                 });
             });
-            this.o(1);
+            //this.o(1);
             return this;
+        }
+
+        /**
+         * 显示。
+         */
+        public v(duration?: number): Promise<Status> {
+            return this._pi ? super.v(duration) : super.h(duration);
         }
     }
 }

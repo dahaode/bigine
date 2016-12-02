@@ -41,7 +41,7 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(theme: Util.IHashTable<any>) {
+        constructor(theme: Util.IHashTable<any>, lnew: (event: Ev.StartNew) => void, series: () => void, load: () => void) {
             let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _new: Util.IHashTable<any> = theme['new'],
@@ -60,6 +60,9 @@ namespace Sprite {
             this._y = {};
             this._bn =
             this._ke = undefined;
+            this.addEventListener('start.new', lnew)
+                .addEventListener('start.series', series)
+                .addEventListener('start.load', load);
         }
 
         protected pI(): Start {
