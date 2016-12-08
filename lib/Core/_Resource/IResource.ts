@@ -69,5 +69,10 @@ namespace Core {
              */
             ESM,
         }
+
+        /*
+         * guid 正则表达式
+         */
+        export const REGGUID: RegExp = /^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i;
     }
 }

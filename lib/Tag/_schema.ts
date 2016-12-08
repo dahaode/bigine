@@ -80,7 +80,9 @@ namespace Tag {
 
         Save: '自动存档',
         End: '游戏完结',
+        Fin: '作品完结',
         Fail: '游戏失败',
+        Lose: '作品失败',
         Stars: '评分',
 
         PlayBGM: '播放音乐',
@@ -152,7 +154,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 111
+    export var S: { [index: number]: any[] } = { // next 113
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             55: [0, 1],
@@ -272,7 +274,9 @@ namespace Tag {
         7: ['VoiceOver', 0, 1], // 文字
         8: ['Save', [0, 1], -1], // [存档标题?]
         9: ['End', 0, -1],
+        111: ['Fin', 0, -1],
         10: ['Fail', 0, -1],
+        112: ['Lose', 0, -1],
         11: ['Stars', [1, 2], -1], // [星级, 数据值?]
         12: ['PlayBGM', [1, 2], -1], // [背景音乐名, 音量?]
         103: ['PlayESM', [1, 2], -1], // [环境音乐名, 音量?]

@@ -199,6 +199,10 @@ var Core;
             Type[Type["ESM"] = 8] = "ESM";
         })(IResource.Type || (IResource.Type = {}));
         var Type = IResource.Type;
+        /*
+         * guid 正则表达式
+         */
+        IResource.REGGUID = /^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i;
     })(IResource = Core.IResource || (Core.IResource = {}));
 })(Core || (Core = {}));
 /**
@@ -679,21 +683,26 @@ var Resource;
         /**
          * 构造函数。
          */
-        function Resource(uri, type) {
-            var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext;
-            var offline = Bigine.offline;
+        function Resource(uri, type, start) {
+            if (start === void 0) { start = false; }
+            var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext, height = 720 <= env.Screen.Height ? 720 : 360, filename = height + '.', offline = Bigine.offline;
             if (types.Raw == type) {
-                var path = 'res/theme' + uri.substr(uri.indexOf('\/'));
-                //var path: string = '/Users/atfacg-dev/temp/res/theme' + uri.substr(uri.indexOf('\/'));
-                this._l = offline ? path : ('http://s.dahao.de/theme/' + uri);
+                if (offline) {
+                    this._l = 'res/theme' + uri.substr(uri.indexOf('\/'));
+                }
+                else if (/^:[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri)) {
+                    this._l = 'http://a' + (1 + parseInt(uri[1], 16) % 8) + '.dahao.de/' + uri.substr(1) + '/' + filename + (start ? 'jpg' : 'png');
+                }
+                else {
+                    this._l = 'http://s.dahao.de/theme/' + uri;
+                }
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
                     this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
             }
             else {
-                if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri))
+                if (!Core.IResource.REGGUID.test(uri))
                     throw new E(E.RES_INVALID_URI);
-                var height = 720 <= env.Screen.Height ? 720 : 360, filename = height + '.';
                 switch (type) {
                     case types.Room:
                     case types.CG:
@@ -712,7 +721,6 @@ var Resource;
                         break;
                 }
                 var local = 'res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
-                //var local: string = '/Users/atfacg-dev/temp/res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 this._l = offline ?
                     local :
                     ('http://a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
@@ -725,11 +733,12 @@ var Resource;
         /**
          * 获取资源。
          */
-        Resource.g = function (uri, type) {
+        Resource.g = function (uri, type, start) {
+            if (start === void 0) { start = false; }
             uri = uri.replace(/^.+:\/\//, '//');
             var key = uri + type;
             if (!(key in $r))
-                $r[key] = new Resource(uri, type);
+                $r[key] = new Resource(uri, type, start);
             return $r[key];
         };
         /**
@@ -772,6 +781,10 @@ var Resource;
                     img.crossOrigin = '';
                     img.onload = function () {
                         resolve(img);
+                    };
+                    img.onerror = function () {
+                        img.src = 'http://a1.dahao.de/00000000-0000-0000-0000-000000000001/180.png';
+                        img.onerror = null;
                     };
                     img.src = url;
                 });
@@ -1958,12 +1971,12 @@ var Sprite;
          */
         Author.prototype.u = function (title) {
             this.pI();
-            if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(title)) {
-                this._x.t(title);
-            }
-            else {
+            if (Core.IResource.REGGUID.test(title)) {
                 var res = Resource.Resource.g(title, Core.IResource.Type.Room);
                 this.a(new G.Image(res.o(), { x: 0, y: 0, w: 1280, h: 720 }));
+            }
+            else {
+                this._x.t(title);
             }
             return this;
         };
@@ -2125,7 +2138,7 @@ var Sprite;
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _new = theme['new'], _series = theme['series'], _load = theme['load'];
             _super.call(this, theme);
             this._rr = [
-                rr.g(theme['i'], raw),
+                rr.g(theme['i'], raw, true),
                 rr.g(_new['i'], raw),
                 rr.g(_new['ih'], raw),
                 rr.g(_series['i'], raw),
@@ -2368,14 +2381,12 @@ var Sprite;
                 .a(this._x['ma'] = new G.Sprite(_mavat, true))
                 .a(new G.Text(_mname, _mname['ff'], _mname['s'], _mname['lh'], left, true)
                 .tc(_mname['c'])
-                .ts(_mname['ss'], _mname['ss'], _mname['ss'])
                 .a(this._x['mn'] = new G.TextPhrase())).a(this._x['mt'] = new G.Sprite(_mback))
                 .o(0)).a(this._x['s'] = new G.Sprite(_sback)
                 .a(new G.Image(this._rr[2].o(), _sback, true))
                 .a(this._x['sa'] = new G.Sprite(_savat, true))
                 .a(new G.Text(_sname, _sname['ff'], _sname['s'], _sname['lh'], left, true)
                 .tc(_sname['c'])
-                .ts(_sname['ss'], _sname['ss'], _sname['ss'])
                 .a(this._x['sn'] = new G.TextPhrase())).a(this._x['st'] = new G.Sprite(_sback)).o(0));
             if (_vcurs)
                 this._x['v'].a(this._x['vc'] = new G.Image(this._rr[3].o(), _vcurs, true));
@@ -2516,8 +2527,8 @@ var Sprite;
             tText = new G.Text(tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
                 .tl(tBound['ls'])
-                .to(pause > 0 ? this._tp['c'].x : 0)
-                .ts(tBound['ss'], tBound['ss'], tBound['ss']);
+                .to(pause > 0 ? this._tp['c'].x : 0);
+            //.ts(tBound['ss']);
             this._x[_txt].a(tText);
             this.$w(tText.o(0), clob, this._c[theme]);
             this._x[theme].o(1);
@@ -3888,8 +3899,7 @@ var Sprite;
             this.o(0)
                 .a(new G.Image(this._rr[0].o(), _back))
                 .a(this._x = new G.Text(_text, _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
-                .tc(_text['c'])
-                .ts(_text['ss']));
+                .tc(_text['c']));
             return _super.prototype.pI.call(this);
         };
         /**
@@ -3997,8 +4007,8 @@ var Sprite;
             this._bi = undefined;
             Util.each(options.slice(0, 6), function (option) {
                 var text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
-                    .tc(_text['c'])
-                    .ts(_text['ss']);
+                    .tc(_text['c']);
+                //.ts(_text['ss']);
                 var money = option.gA() ? 0 : option.gM();
                 var btn = new G.Button(x, y, _back['w'], _back['h'])
                     .b(function () {
@@ -4012,8 +4022,8 @@ var Sprite;
                 _this.a(btn).a(text);
                 if (money) {
                     var xC = x + _text['x'] + _text['w'] - _count['w'], yC = y + _text['y'] + 0.5 * _back['h'], xR = x + _text['x'] + _text['w'] - _count['w'] - _radish['w'] - 10, yR = y + _text['y'] + 0.5 * (_back['h'] - _radish['h']), count = new G.Text(xC, yC, _count['w'], _count['h'], _count['ff'], _count['s'], _count['lh'], G.Text.Align.Left)
-                        .tc(_count['c'])
-                        .ts(_count['ss']);
+                        .tc(_count['c']);
+                    //.ts(_count['ss']);
                     _this.$w(count, money.toString(), _count['ch']);
                     _this.a(new G.Image(_this._rr[2].o(), xR, yR, _radish['w'], _radish['h'], true))
                         .a(count);
@@ -4375,7 +4385,6 @@ var Sprite;
  * @file      Core/_Sprite/ISet.ts
  */
 /// <reference path="ISprite.ts" />
-/// <reference path="../_Runtime/IStates.ts" />
 /**
  * 声明（画面调度）设置菜单关闭事件元信息接口规范。
  *
@@ -4734,7 +4743,6 @@ var Sprite;
  * @file      Sprite/IFull.ts
  */
 /// <reference path="ISprite.ts" />
-/// <reference path="../_Resource/IResource.ts" />
 /**
  * 声明（画面调度）全屏文本动画事件元信息接口规范。
  *
@@ -4824,7 +4832,7 @@ var Sprite;
             this.o(0)
                 .a(new G.Sprite(_back)
                 .a(new G.Image(this._rr[0].o(), _back, true))
-                .a(this._x['f'] = new G.Sprite(_back))).o(0);
+                .a(this._x['f'] = new G.Sprite(_back)));
             return _super.prototype.pI.call(this);
         };
         /**
@@ -4913,8 +4921,8 @@ var Sprite;
             tText = new G.Text(tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
                 .tl(tBound['ls'])
-                .to(pause > 0 ? this._tx : 0)
-                .ts(tBound['ss'], tBound['ss'], tBound['ss']);
+                .to(pause > 0 ? this._tx : 0);
+            //.ts(tBound['ss']);
             this._x['f'].a(tText);
             this.$w(tText.o(0), clob, this._c);
             this._x['f'].o(1);
@@ -5171,15 +5179,17 @@ var Runtime;
                 .then(function () { return _this.reset(); })
                 .then(function () {
                 _this._c.z();
-                var q = _this.lightOn();
+                var q;
                 if (!isWx) {
                     var gLogo_1 = new G.Component().a(new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
                     _this._c.a(gLogo_1, _this._x['c']);
-                    q = q.then(function () { return gLogo_1.p(new G.Delay(1000)); })
-                        .then(function () {
-                        _this._c.e(gLogo_1);
-                        return _this.lightOff();
-                    });
+                    q = _this.lightOn()
+                        .then(function () { return gLogo_1.p(new G.Delay(1000)); })
+                        .then(function () { return _this.lightOff(); })
+                        .then(function () { return _this._c.e(gLogo_1); });
+                }
+                else {
+                    q = _this.lightOff();
                 }
                 return q.then(function () {
                     if (!author && !title)
@@ -6791,7 +6801,9 @@ var Tag;
         FullHide: '隐藏文本',
         Save: '自动存档',
         End: '游戏完结',
+        Fin: '作品完结',
         Fail: '游戏失败',
+        Lose: '作品失败',
         Stars: '评分',
         PlayBGM: '播放音乐',
         HideCG: '关闭特写',
@@ -6967,7 +6979,9 @@ var Tag;
         7: ['VoiceOver', 0, 1],
         8: ['Save', [0, 1], -1],
         9: ['End', 0, -1],
+        111: ['Fin', 0, -1],
         10: ['Fail', 0, -1],
+        112: ['Lose', 0, -1],
         11: ['Stars', [1, 2], -1],
         12: ['PlayBGM', [1, 2], -1],
         103: ['PlayESM', [1, 2], -1],
@@ -11042,7 +11056,6 @@ var Tag;
                 };
                 try {
                     xhr_1.open('get', 'res/theme/theme.json', true);
-                    //xhr.open('get', '/Users/atfacg-dev/temp/res/theme/theme.json', true);
                     xhr_1.send();
                 }
                 catch (ex) {
@@ -11050,12 +11063,21 @@ var Tag;
                 }
             }
             else {
-                Util.Remote.get('http://s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, function (des) {
-                    des = _this.path(des, _this._c);
-                    callback(_this.extend(des, src));
-                }, function (error, status) {
-                    throw error;
-                });
+                if (Core.IResource.REGGUID.test(this._c)) {
+                    Util.Remote.post('//api.dahao.de/resource/theme/' + this._c + '/', {}, function (des) {
+                        callback(_this.extend(des['resource'], src));
+                    }, function (error, status) {
+                        throw error;
+                    });
+                }
+                else {
+                    Util.Remote.get('http://s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, function (des) {
+                        des = _this.path(des, _this._c);
+                        callback(_this.extend(des, src));
+                    }, function (error, status) {
+                        throw error;
+                    });
+                }
             }
         };
         /**
@@ -12411,6 +12433,32 @@ var Tag;
     Tag.End = End;
 })(Tag || (Tag = {}));
 /**
+ * 定义作品完结事件动作组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Flow/Fin.ts
+ */
+/// <reference path="End.ts" />
+var Tag;
+(function (Tag) {
+    var Fin = (function (_super) {
+        __extends(Fin, _super);
+        function Fin() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Fin.prototype.gN = function () {
+            return 'Fin';
+        };
+        return Fin;
+    }(Tag.End));
+    Tag.Fin = Fin;
+})(Tag || (Tag = {}));
+/**
  * 定义游戏失败事件动作组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -12447,6 +12495,32 @@ var Tag;
         return Fail;
     }(Tag.Action));
     Tag.Fail = Fail;
+})(Tag || (Tag = {}));
+/**
+ * 定义作品失败事件动作组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Flow/Lose.ts
+ */
+/// <reference path="Fail.ts" />
+var Tag;
+(function (Tag) {
+    var Lose = (function (_super) {
+        __extends(Lose, _super);
+        function Lose() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Lose.prototype.gN = function () {
+            return 'Lose';
+        };
+        return Lose;
+    }(Tag.Fail));
+    Tag.Lose = Lose;
 })(Tag || (Tag = {}));
 /**
  * 定义评分标签组件。
@@ -15365,7 +15439,9 @@ var Tag;
 /// <reference path="_Action/_Text/VoiceOver.ts" />
 /// <reference path="_Action/_Logic/Save.ts" />
 /// <reference path="_Action/_Flow/End.ts" />
+/// <reference path="_Action/_Flow/Fin.ts" />
 /// <reference path="_Action/_Flow/Fail.ts" />
+/// <reference path="_Action/_Flow/Lose.ts" />
 /// <reference path="_Action/_Flow/Stars.ts" />
 /// <reference path="_Action/_Director/PlayBGM.ts" />
 /// <reference path="_Action/_Director/HideCG.ts" />
@@ -15461,6 +15537,7 @@ var Runtime;
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
+            this._n = ['', '', false];
             this._al = [undefined, undefined, undefined];
             this.addEventListener('loading', function () {
                 _this._fl = true;
@@ -15605,7 +15682,7 @@ var Runtime;
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
             this._d.Load(false);
-            this._d.OP(!this._e.gA(), this._n, this._c, true);
+            this._d.OP(!this._e.gA(), this._n[0], this._n[1], this._n[2]);
             return this;
         };
         /**
@@ -15666,27 +15743,37 @@ var Runtime;
          * 设置作品标题。
          */
         Runtime.prototype.title = function (title) {
-            this._n = title;
+            this._n[0] = title;
             return this;
         };
         /**
          * 获取作品标题。
          */
         Runtime.prototype.gTitle = function () {
-            return this._n;
+            return this._n[0];
         };
         /**
          * 设置作者/logo。
          */
-        Runtime.prototype.author = function (title) {
-            this._c = title;
+        Runtime.prototype.author = function (logo) {
+            this._n[1] = logo;
             return this;
         };
         /**
          * 设置跨域标记。
          */
         Runtime.prototype.domain = function (text) {
-            Bigine.domain = text || '';
+            switch (text) {
+                case '52tian':
+                    Bigine.domain = text;
+                    break;
+                case 'wechat':
+                    this._n[2] = true;
+                    break;
+                default:
+                    this._n[2] = false;
+                    break;
+            }
             return this;
         };
         /**

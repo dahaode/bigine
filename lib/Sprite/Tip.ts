@@ -38,7 +38,7 @@ namespace Sprite {
                 .a(new G.Image(this._rr[0].o(), <G.IBounds> _back))
                 .a(this._x = new G.Text(<G.IBounds> _text, _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
                     .tc(_text['c'])
-                    .ts(_text['ss'])
+                    //.ts(_text['ss'])
                 );
             return <Tip> super.pI();
         }

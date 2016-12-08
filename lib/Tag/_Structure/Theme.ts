@@ -37,18 +37,25 @@ namespace Tag {
                 };
                 try {
                     xhr.open('get', 'res/theme/theme.json', true);
-                    //xhr.open('get', '/Users/atfacg-dev/temp/res/theme/theme.json', true);
                     xhr.send();
                 } catch (ex) {
                     throw ex.message;
                 }
             } else {
-                Util.Remote.get('http://s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, (des) => {
-                        des = this.path(des, this._c);
-                        callback(this.extend(des, src));
+                if (Core.IResource.REGGUID.test(this._c)) {
+                    Util.Remote.post<Util.IHashTable<any>>('//api.dahao.de/resource/theme/' + this._c + '/', {}, (des: Util.IHashTable<any>) => {
+                        callback(this.extend(des['resource'], src));
                     }, (error: Error, status?: any) => {
-                    throw error;
-                });
+                        throw error;
+                    });
+                } else {
+                    Util.Remote.get('http://s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, (des) => {
+                            des = this.path(des, this._c);
+                            callback(this.extend(des, src));
+                        }, (error: Error, status?: any) => {
+                        throw error;
+                    });
+                }
             }
         }
 

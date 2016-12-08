@@ -8,7 +8,6 @@
  */
 
 /// <reference path="ISprite.ts" />
-/// <reference path="../_Runtime/IStates.ts" />
 
 namespace Core {
     export interface ISet extends ISprite {

@@ -87,6 +87,7 @@ declare namespace __Bigine {
                 Raw = 7,
                 ESM = 8,
             }
+            const REGGUID: RegExp;
         }
     }
     namespace Core {
@@ -318,8 +319,8 @@ declare namespace __Bigine {
             private _q;
             private _w;
             private _r;
-            static g<U>(uri: string, type: Core.IResource.Type): Resource<U>;
-            constructor(uri: string, type: Core.IResource.Type);
+            static g<U>(uri: string, type: Core.IResource.Type, start?: boolean): Resource<U>;
+            constructor(uri: string, type: Core.IResource.Type, start?: boolean);
             l(): string;
             o(): Promise<T>;
             w(callback: (value: T) => void): Resource<T>;
@@ -1838,9 +1839,19 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
+        class Fin extends End {
+            gN(): string;
+        }
+    }
+    namespace Tag {
         class Fail extends Action {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class Lose extends Fail {
+            gN(): string;
         }
     }
     namespace Tag {
@@ -2271,7 +2282,6 @@ declare namespace __Bigine {
             private _fb;
             private _t;
             private _n;
-            private _c;
             private _nn;
             private _al;
             constructor(ep: Core.IRootTag);
@@ -2292,7 +2302,7 @@ declare namespace __Bigine {
             isReady(): boolean;
             title(title: string): Runtime;
             gTitle(): string;
-            author(title: string): Runtime;
+            author(logo: string): Runtime;
             domain(text: string): Runtime;
             user(nickname: string): Runtime;
             nickname(): string;

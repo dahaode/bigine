@@ -240,15 +240,16 @@ namespace Runtime {
                 .then(() => this.reset())
                 .then(() => {
                     this._c.z();
-                    let q: Promise<Core.IRuntime> = this.lightOn();
+                    let q: Promise<any>;
                     if (!isWx) {
                         let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
                         this._c.a(gLogo, this._x['c']);
-                        q = q.then(() => gLogo.p(new G.Delay(1000)))
-                            .then(() => {
-                                this._c.e(gLogo);
-                                return this.lightOff();
-                            });
+                        q = this.lightOn()
+                            .then(() => gLogo.p(new G.Delay(1000)))
+                            .then(() => this.lightOff())
+                            .then(() => this._c.e(gLogo));
+                    } else {
+                        q = this.lightOff();
                     }
                     return q.then(() => {
                             if (!author && !title) return;

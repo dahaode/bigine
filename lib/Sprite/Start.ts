@@ -49,7 +49,7 @@ namespace Sprite {
                 _load: Util.IHashTable<any> = theme['load'];
             super(theme);
             this._rr = [
-                rr.g<HTMLImageElement>(theme['i'], raw),
+                rr.g<HTMLImageElement>(theme['i'], raw, true),
                 rr.g<HTMLImageElement>(_new['i'], raw),
                 rr.g<HTMLImageElement>(_new['ih'], raw),
                 rr.g<HTMLImageElement>(_series['i'], raw),

@@ -82,14 +82,9 @@ namespace Runtime {
         private _t: Promise<Runtime>;
 
         /**
-         * 作品名称。
+         * 作品 [名称、作者名/logo、是否微信端]。
          */
-        private _n: string;
-
-        /**
-         * 作者名/logo。
-         */
-        private _c: string;
+        private _n: [string, string, boolean];
 
         /**
          * 用户名。
@@ -119,6 +114,7 @@ namespace Runtime {
             this._d.a(this._fa);
             this._fb = true;
             this._t = Promise.resolve(this);
+            this._n = ['', '', false];
             this._al = [undefined, undefined, undefined];
             this.addEventListener('loading', () => {
                 this._fl = true;
@@ -269,7 +265,7 @@ namespace Runtime {
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
             this._d.Load(false);
-            this._d.OP(!this._e.gA(), this._n, this._c, true);
+            this._d.OP(!this._e.gA(), this._n[0], this._n[1], this._n[2]);
             return this;
         }
 
@@ -337,7 +333,7 @@ namespace Runtime {
          * 设置作品标题。
          */
         public title(title: string): Runtime {
-            this._n = title;
+            this._n[0] = title;
             return this;
         }
 
@@ -345,14 +341,14 @@ namespace Runtime {
          * 获取作品标题。
          */
         public gTitle(): string {
-            return this._n;
+            return this._n[0];
         }
 
         /**
          * 设置作者/logo。
          */
-        public author(title: string): Runtime {
-            this._c = title;
+        public author(logo: string): Runtime {
+            this._n[1] = logo;
             return this;
         }
 
@@ -360,7 +356,17 @@ namespace Runtime {
          * 设置跨域标记。
          */
         public domain(text: string): Runtime {
-            Bigine.domain = text || '';
+            switch (text) {
+                case '52tian':
+                    Bigine.domain = text;
+                    break;
+                case 'wechat':
+                    this._n[2] = true;
+                    break;
+                default:
+                    this._n[2] = false;
+                    break;
+            }
             return this;
         }
 

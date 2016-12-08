@@ -42,35 +42,39 @@ namespace Resource {
         /**
          * 获取资源。
          */
-        public static g<U>(uri: string, type: Core.IResource.Type): Resource<U> {
+        public static g<U>(uri: string, type: Core.IResource.Type, start: boolean = false): Resource<U> {
             uri = uri.replace(/^.+:\/\//, '//');
             var key: string = uri + type;
             if (!(key in $r))
-                $r[key] = new Resource<U>(uri, type);
+                $r[key] = new Resource<U>(uri, type, start);
             return $r[key];
         }
 
         /**
          * 构造函数。
          */
-        constructor(uri: string, type: Core.IResource.Type) {
+        constructor(uri: string, type: Core.IResource.Type, start: boolean = false) {
             var env: typeof Util.ENV = Util.ENV,
                 types: typeof Core.IResource.Type = Core.IResource.Type,
                 ie9: boolean = env.MSIE && 'undefined' == typeof URL,
-                ext: string;
-            var offline: boolean = Bigine.offline;
+                ext: string,
+                height: number = 720 <= env.Screen.Height ? 720 : 360,
+                filename: string = height + '.',
+                offline: boolean = Bigine.offline;
             if (types.Raw == type) {
-                var path: string = 'res/theme' + uri.substr(uri.indexOf('\/'));
-                //var path: string = '/Users/atfacg-dev/temp/res/theme' + uri.substr(uri.indexOf('\/'));
-                this._l = offline ? path : ('http://s.dahao.de/theme/' + uri);
+                if (offline) {
+                    this._l = 'res/theme' + uri.substr(uri.indexOf('\/'));
+                } else if (/^:[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri)) {
+                    this._l = 'http://a' + (1 + parseInt(uri[1], 16) % 8) + '.dahao.de/' + uri.substr(1) + '/' + filename + (start ? 'jpg' : 'png');
+                } else {
+                    this._l = 'http://s.dahao.de/theme/' + uri;
+                }
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
                     this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
             } else {
-                if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri))
+                if (!Core.IResource.REGGUID.test(uri))
                     throw new E(E.RES_INVALID_URI);
-                var height: number = 720 <= env.Screen.Height ? 720 : 360,
-                    filename: string = height + '.';
                 switch (type) {
                     case types.Room:
                     case types.CG:
@@ -89,7 +93,6 @@ namespace Resource {
                         break;
                 }
                 var local: string = 'res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
-                //var local: string = '/Users/atfacg-dev/temp/res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 this._l = offline ?
                     local :
                     ('http://a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
@@ -141,6 +144,10 @@ namespace Resource {
                     img.crossOrigin = '';
                     img.onload = () => {
                         resolve(<any> img);
+                    };
+                    img.onerror = () => {
+                        img.src = 'http://a1.dahao.de/00000000-0000-0000-0000-000000000001/180.png';
+                        img.onerror = null;
                     };
                     img.src = url;
                 });

@@ -89,7 +89,7 @@ namespace Sprite {
                 .a(new G.Sprite(<G.IBounds> _back)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _back, true))
                     .a(this._x['f'] = new G.Sprite(<G.IBounds> _back))
-                ).o(0);
+                );
             return <Full> super.pI();
         }
 
@@ -177,8 +177,8 @@ namespace Sprite {
             tText = new G.Text(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
                 .tl(tBound['ls'])
-                .to(pause > 0 ? this._tx : 0)
-                .ts(tBound['ss'], tBound['ss'], tBound['ss']);
+                .to(pause > 0 ? this._tx : 0);
+                //.ts(tBound['ss']);
             (<G.Sprite> this._x['f']).a(tText);
             this.$w(<G.Text> tText.o(0), clob, this._c);
             (<G.Sprite> this._x['f']).o(1);

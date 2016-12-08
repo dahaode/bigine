@@ -66,8 +66,8 @@ namespace Sprite {
             this._bi = undefined;
             Util.each(options.slice(0, 6), (option: Core.IOptionTag) => {
                 let text: G.Text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
-                    .tc(_text['c'])
-                    .ts(_text['ss']);
+                    .tc(_text['c']);
+                    //.ts(_text['ss']);
                 let money: number = option.gA() ? 0 : option.gM();
                 let btn: G.Button = new G.Button(x, y, _back['w'], _back['h'])
                     .b(() => {
@@ -85,8 +85,8 @@ namespace Sprite {
                         xR: number = x + _text['x'] + _text['w'] - _count['w'] - _radish['w'] - 10,
                         yR: number = y + _text['y'] + 0.5 * (_back['h'] - _radish['h']),
                         count: G.Text = new G.Text(xC, yC, _count['w'], _count['h'], _count['ff'], _count['s'], _count['lh'], G.Text.Align.Left)
-                            .tc(_count['c'])
-                            .ts(_count['ss']);
+                            .tc(_count['c']);
+                            //.ts(_count['ss']);
                     this.$w(count, money.toString(), _count['ch']);
                     this.a(new G.Image(this._rr[2].o(), xR, yR, _radish['w'], _radish['h'], true))
                         .a(count);

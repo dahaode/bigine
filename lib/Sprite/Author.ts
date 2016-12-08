@@ -40,11 +40,11 @@ namespace Sprite {
          */
         public u(title: string): Author {
             this.pI();
-            if (!/^[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(title)) {
-                this._x.t(title);
-            } else {
+            if (Core.IResource.REGGUID.test(title)) {
                 let res: Resource.Resource<HTMLImageElement> = Resource.Resource.g<HTMLImageElement>(title, Core.IResource.Type.Room);
                 this.a(new G.Image(res.o(), { x: 0, y: 0, w: 1280, h: 720 }));
+            } else {
+                this._x.t(title);
             }
             return this;
         }

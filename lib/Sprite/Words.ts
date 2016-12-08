@@ -129,7 +129,7 @@ namespace Sprite {
                     .a(this._x['ma'] = new G.Sprite(<G.IBounds> _mavat, true))
                     .a(new G.Text(<G.IBounds> _mname, _mname['ff'], _mname['s'], _mname['lh'], left, true)
                         .tc(_mname['c'])
-                        .ts(_mname['ss'], _mname['ss'], _mname['ss'])
+                        //.ts(_mname['ss'])
                         .a(this._x['mn'] = new G.TextPhrase())
                     ).a(this._x['mt'] = new G.Sprite(<G.IBounds> _mback))
                     .o(0)
@@ -138,7 +138,7 @@ namespace Sprite {
                     .a(this._x['sa'] = new G.Sprite(<G.IBounds> _savat, true))
                     .a(new G.Text(<G.IBounds> _sname, _sname['ff'], _sname['s'], _sname['lh'], left, true)
                         .tc(_sname['c'])
-                        .ts(_sname['ss'], _sname['ss'], _sname['ss'])
+                        //.ts(_sname['ss'])
                         .a(this._x['sn'] = new G.TextPhrase())
                     ).a(this._x['st'] = new G.Sprite(<G.IBounds> _sback)
                     ).o(0)
@@ -278,8 +278,8 @@ namespace Sprite {
             tText = new G.Text(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
                 .tc(tBound['c'])
                 .tl(tBound['ls'])
-                .to(pause > 0 ? this._tp['c'].x : 0)
-                .ts(tBound['ss'], tBound['ss'], tBound['ss']);
+                .to(pause > 0 ? this._tp['c'].x : 0);
+                //.ts(tBound['ss']);
             (<G.Sprite> this._x[_txt]).a(tText);
             this.$w(<G.Text> tText.o(0), clob, this._c[theme]);
             (<G.Sprite> this._x[theme]).o(1);

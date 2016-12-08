@@ -8,7 +8,6 @@
  */
 
 /// <reference path="ISprite.ts" />
-/// <reference path="../_Resource/IResource.ts" />
 
 namespace Core {
     export interface IFull extends ISprite {
