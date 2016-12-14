@@ -119,8 +119,7 @@ namespace Sprite {
                 _sname: Util.IHashTable<any> = speak['name'],
                 _scurs: Util.IHashTable<any> = speak['cursor'],
                 left: G.Text.Align = G.Text.Align.Left;
-            (<Words> this.o(0))
-                .a(this._x['v'] = new G.Sprite(<G.IBounds> _vback)
+            this.a(this._x['v'] = new G.Sprite(<G.IBounds> _vback)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _vback, true))
                     .a(this._x['vt'] = new G.Sprite(<G.IBounds> _vback))
                     .o(0)

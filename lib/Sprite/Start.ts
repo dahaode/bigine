@@ -71,8 +71,7 @@ namespace Sprite {
                 _series: Util.IHashTable<any> = this._tm['series'],
                 _load: Util.IHashTable<any> = this._tm['load'],
                 _title: Util.IHashTable<any> = this._tm['title'];
-            (<Start> this.o(0))
-                .a(new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
+            this.a(new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
                 .a(this._y['n'] = new G.Button(<G.IBounds> _new)
                     .b(() => {
                         this.dispatchEvent(new Ev.StartNew({ target: this }));

@@ -34,8 +34,7 @@ namespace Sprite {
             if (this._pi) return this;
             let _back: Util.IHashTable<any> = this._tm['back'],
                 _text: Util.IHashTable<any> = this._tm['text'];
-            (<Tip> this.o(0))
-                .a(new G.Image(this._rr[0].o(), <G.IBounds> _back))
+            this.a(new G.Image(this._rr[0].o(), <G.IBounds> _back))
                 .a(this._x = new G.Text(<G.IBounds> _text, _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
                     .tc(_text['c'])
                     //.ts(_text['ss'])

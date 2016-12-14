@@ -14,6 +14,6 @@ namespace Core {
         /**
          * 配置面板。
          */
-        u(panel: boolean): ITray;
+        u(panel: boolean, review: boolean): ITray;
     }
 }

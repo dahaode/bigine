@@ -80,8 +80,7 @@ namespace Sprite {
                 _title: Util.IHashTable<any> = this._tm['title'],
                 _bgm: Util.IHashTable<any> = this._tm['bgm'],
                 _se: Util.IHashTable<any> = this._tm['se'];
-            (<Set> this.o(0))
-                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(<G.IBounds> _close)
                     .b(() => {
                         this.dispatchEvent(new Ev.SetClose({ target: this }));

@@ -51,6 +51,11 @@ namespace Runtime {
         protected _o: boolean;
 
         /**
+         * 是否显示回看按钮。
+         */
+        protected _sr: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -58,6 +63,7 @@ namespace Runtime {
             this._p = Promise.resolve(this._r);
             this._d =
             this._a =
+            this._sr =
             this._ra =
             this._o = false;
             this._v = 1;
@@ -342,6 +348,13 @@ namespace Runtime {
          */
         public a(auto: boolean): boolean {
             return this._a = auto;
+        }
+
+        /**
+         * 设置是否显示回看按钮。
+         */
+        public sr(show: boolean): boolean {
+            return this._sr = show;
         }
 
         /**

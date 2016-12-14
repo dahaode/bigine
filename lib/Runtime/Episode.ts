@@ -53,12 +53,18 @@ namespace Runtime {
         private _l: Util.IHashTable<Util.IHashTable<any>>;
 
         /**
+         * 是否显示回看。
+         */
+        private _sr: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(ep: Core.IRootTag, runtime: Core.IRuntime) {
             this._a = {};
             this._e = {};
             this._p = ep.a();
+            this._sr = ep.sr();
             this._s = ep.gS();
             this._t = ep.gT();
             this._l = null;
@@ -197,6 +203,13 @@ namespace Runtime {
          */
         public gA(): boolean {
             return this._p;
+        }
+
+        /**
+         * 是否显示回看。
+         */
+        public gSr(): boolean {
+            return this._sr;
         }
 
         /**

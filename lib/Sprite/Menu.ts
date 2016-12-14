@@ -61,8 +61,7 @@ namespace Sprite {
                 _load: Util.IHashTable<any> = this._tm['load'],
                 _set: Util.IHashTable<any> = this._tm['set'],
                 _replay: Util.IHashTable<any> = this._tm['replay'];
-            (<Menu> this.o(0))
-                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(<G.IBounds> _close)
                     .b(() => {
                         this.dispatchEvent(new Ev.MenuClose({ target: this }));

@@ -52,17 +52,16 @@ namespace Sprite {
         private _tx: number;
 
         /**
-         * 虚拟 Canvas，用于提前计算文字行数。
+         * 离线 Canvas，用于提前计算文字行数。
          */
         private _ct: CanvasRenderingContext2D;
 
         /**
          * 构造函数。
          */
-        constructor(theme: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.FullAnimation) => void) {
+        constructor(theme: Util.IHashTable<Util.IHashTable<any>>, context: CanvasRenderingContext2D, listen: (ev: Ev.FullAnimation) => void) {
             let _back: Util.IHashTable<any> = theme['back'],
-                _text: Util.IHashTable<any> = theme['text'],
-                canvas: HTMLCanvasElement = document.createElement('canvas');
+                _text: Util.IHashTable<any> = theme['text'];
             super(theme);
             this._rr = [
                 Resource.Resource.g<HTMLImageElement>(_back['i'], Core.IResource.Type.Raw)
@@ -71,22 +70,16 @@ namespace Sprite {
             this._cb = <G.IBounds> Util.clone(_text);
             this._be = <G.IBounds> _text;
             this._c = _text['ch'];
-            this._tl = this._tx = 0;
-            canvas.width = 1280;
-            canvas.height = 720;
-            this._ct = canvas.getContext('2d');
-            this._ct.canvas.style.letterSpacing = _text['ls'] + 'px';  // 设置字间距
-            this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px "' + (_text['ff'] || '') + '", ' + G.TextPhrase.FONT;
-            this._ct.textBaseline = 'middle';
-            this._ct.shadowBlur = this._ct.shadowOffsetX = this._ct.shadowOffsetY = _text['ss'];
+            this._tl =
+            this._tx = 0;
+            this._ct = context;
             this.addEventListener('full.animation', listen);
         }
 
         protected pI(): Full {
             if (this._pi) return this;
             let _back: Util.IHashTable<any> = this._tm['back'];
-            (<Full> this.o(0))
-                .a(new G.Sprite(<G.IBounds> _back)
+            this.a(new G.Sprite(<G.IBounds> _back)
                     .a(new G.Image(this._rr[0].o(), <G.IBounds> _back, true))
                     .a(this._x['f'] = new G.Sprite(<G.IBounds> _back))
                 );
@@ -120,7 +113,9 @@ namespace Sprite {
         public u(clob: string, auto: boolean = false): Promise<Full> {
             this.pI();
             let words: Array<string> = clob.split('\\r'),
-                funcs: Array<Function> = [];
+                funcs: Array<Function> = [],
+                font: string = this._be['s'] + 'px/' + Math.max(this._be['lh'], this._be['s']) + 'px "' + (this._be['ff'] || '') + '", ' + G.TextPhrase.FONT;
+            this._ct.canvas.style.letterSpacing = this._be['ls'] + 'px';  // 设置字间距
             Util.each(words, (word: string, index: number) => {
                 let bufs: Array<string> = word.split('\\l');
                 if (bufs.length == 1) {
@@ -131,7 +126,10 @@ namespace Sprite {
                         .replace(/【#[0-9a-fA-F]{6}/g, '')
                         .replace(/【/g, '')
                         .replace(/】/g, '');
+                    this._ct.save();
+                    this._ct.font = font;
                     let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
+                    this._ct.restore();
                     if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
                     Util.each(bufs, (buffer: string, i: number) => {
                         funcs.push(() => this.every(buffer, auto, false, i));
@@ -154,6 +152,7 @@ namespace Sprite {
                 tText: G.Text,
                 left: G.Text.Align = G.Text.Align.Left,
                 lHeight: number = Math.max(bBound['lh'], bBound['s']),
+                font: string = bBound['s'] + 'px/' + lHeight + 'px "' + (bBound['ff'] || '') + '", ' + G.TextPhrase.FONT,
                 sClob: string;
             while (/^\\n.*/.test(clob)) {   // 计算开头的空白行行数
                 eRow++;
@@ -171,7 +170,9 @@ namespace Sprite {
                 .replace(/【/g, '')
                 .replace(/】/g, '');
             this._ct.save();
+            this._ct.font = font;
             row = Math.ceil(this._ct.measureText(sClob).width / bBound.w);
+            this._ct.restore();
             if (this._tl + row > bBound['row'] && pause < 1) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
             tBound = Util.clone(this._cb);
             tText = new G.Text(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)

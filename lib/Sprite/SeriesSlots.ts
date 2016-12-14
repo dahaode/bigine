@@ -72,8 +72,7 @@ namespace Sprite {
             let _desc: Util.IHashTable<any> = this._tm['text'],
                 _close: Util.IHashTable<any> = this._tm['close'],
                 _mask: Util.IHashTable<any> = this._tm['mask'];
-            (<SeriesSlots> this.o(0))
-                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(<G.IBounds> _close)
                     .b(() => {
                         this.dispatchEvent(new Ev.SlotsClose({ target: this }));

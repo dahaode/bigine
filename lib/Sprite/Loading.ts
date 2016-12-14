@@ -49,8 +49,7 @@ namespace Sprite {
         protected pI(): Loading {
             if (this._pi) return this;
             let _text: Util.IHashTable<any> = this._tm['text'];
-            (<Loading> this.o(0))
-                .a(this._gi = new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
+            this.a(this._gi = new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
                 .a(new G.Text(<G.IBounds> _text, _text['ff'], _text['s'], _text['h'], this.$a(_text['a']))
                     .tc(_text['c'])
                     .a(this._x = new G.TextPhrase(''))

@@ -27,6 +27,11 @@ namespace Core {
         a(): boolean;
 
         /**
+         * 是否显示回看。
+         */
+        sr(): boolean;
+
+        /**
          * 加载资源包。
          */
         l(callback: Util.ISuccessCallback<Util.IHashTable<IEntityTag>>): boolean;

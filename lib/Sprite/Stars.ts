@@ -50,8 +50,7 @@ namespace Sprite {
                 _value: Util.IHashTable<any> = this._tm['value'],
                 center: G.Text.Align = G.Text.Align.Center;
             // 渲染评分初始样式
-            (<Stars> this.o(0))
-                .a(this._xs = new G.Sprite(0, 0, 1280, 720))
+            this.a(this._xs = new G.Sprite(0, 0, 1280, 720))
                 .a(this._nt = new G.Text(<G.IBounds> _name, _name['ff'], _name['s'], _name['lh'], center))
                 .a(this._vt = new G.Text(<G.IBounds> _value, _value['ff'], _value['s'], _value['lh'], center));
             return <Stars> super.pI();

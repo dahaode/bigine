@@ -146,7 +146,7 @@ namespace Resource {
                         resolve(<any> img);
                     };
                     img.onerror = () => {
-                        img.src = 'http://a1.dahao.de/00000000-0000-0000-0000-000000000001/180.png';
+                        img.src = 'http://a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png';
                         img.onerror = null;
                     };
                     img.src = url;

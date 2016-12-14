@@ -112,6 +112,7 @@ namespace Runtime {
             this._fv = 1;
             this._fa = this._e.gA();
             this._d.a(this._fa);
+            this._d.sr(this._e.gSr());
             this._fb = true;
             this._t = Promise.resolve(this);
             this._n = ['', '', false];

@@ -47,8 +47,7 @@ namespace Sprite {
                 _back: Util.IHashTable<any> = this._tm['back'],
                 i: number = 1,
                 j: Util.IHashTable<any>;
-            (<Status> this.o(0))
-                .a(new G.Image(this._rr[0].o(), <G.IBounds> _back));
+            this.a(new G.Image(this._rr[0].o(), <G.IBounds> _back));
             for (; i < 7; i++) {
                 j = this._tm[i];
                 this.a(this._x[i + 't'] = <G.Text> new G.Text(<G.IBounds> j['title'], j['title']['ff'], j['title']['s'], j['title']['lh'], left)

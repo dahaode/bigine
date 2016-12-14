@@ -118,6 +118,21 @@ namespace Runtime {
         private _ft: G.Animation;
 
         /**
+         * 回看 打开 / 关闭。
+         */
+        private _rv: boolean;
+
+        /**
+         * 离线 Canvas，用于提前计算文字行数。
+         */
+        private _cm: CanvasRenderingContext2D;
+
+        /**
+         * 记录回看打开前哪些 Component 是打开的。
+         */
+        private _ss: Array<string>;
+
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -125,19 +140,23 @@ namespace Runtime {
             var doc: Document = document,
                 els: NodeList | HTMLElement[] = doc.querySelectorAll('.bg-work'),
                 canvas: HTMLCanvasElement = doc.createElement('canvas'),
+                meatrue: HTMLCanvasElement = doc.createElement('canvas'),
                 raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
                 assets: string = '_/';
             canvas.width = bounds.w;
             canvas.height = bounds.h;
             canvas.className = 'viewport';
+            meatrue.style.display = 'none';
             if (!els.length) {
                 this._d = true;
                 els = [doc.createElement('div')];
                 (<HTMLElement> els[0]).className = 'bg-work dynamic';
                 doc.body.appendChild(els[0]);
             }
+            doc.body.appendChild(meatrue);
             els[0].appendChild(canvas);
+            this._cm = meatrue.getContext('2d');
             this._x = {};
             this._c = <G.Stage> new G.Stage(canvas.getContext('2d'))
                 .a(new G.Component()
@@ -152,13 +171,15 @@ namespace Runtime {
                     .a(new G.Color(0, bounds.h - 11, bounds.w, 10, '#00ccff').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
-            this._fd = false;
+            this._fd =
+            this._rv = false;
             this._pc =
             this._ft = undefined;
             this._f =
             this._pt = {};
             this._ca = [undefined, undefined];
             this._e = [0, 0];
+            this._ss = [];
             this._i = {
                 o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
                 s: Resource.Resource.g<string>(assets + 'oops.mp3', raw),
@@ -177,9 +198,12 @@ namespace Runtime {
             this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
             this._s['e']['cd'] = -1;
             this._l = (event: KeyboardEvent) => {
-                if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc) {
+                if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc && !this._rv) {
                     if (this._ft) this._ft.h();
                     this._t.h();
+                }
+                if (event.keyCode == 67 && !this._a && this._r.isPlaying()) {
+                    this.sReview(!this._rv);
                 }
             };
             this._fs = Core.IRuntime.Series.Alone;
@@ -429,6 +453,12 @@ namespace Runtime {
          * 某白。
          */
         public words(words: string, theme: string, who?: string, avatar?: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime> {
+            this._r.dispatchEvent(new Ev.Review({
+                target: null,
+                type: theme,
+                data: [words],
+                more: who
+            }));
             if (this._fd) {
                 return theme == 'voiceover' ? this.full(words) : super.words(words, theme);
             } else {
@@ -486,6 +516,12 @@ namespace Runtime {
          */
         public tip(words: string): Promise<Core.IRuntime> {
             let gTip: Sprite.Tip = <Sprite.Tip> this._x['T'];
+            this._r.dispatchEvent(new Ev.Review({
+                target: null,
+                type: 'tip',
+                data: [words],
+                more: ''
+            }));
             return this.lightOn()
                 .then(() => gTip.u(words).v())
                 .then(() => gTip.p(this._t = new G.WaitForClick()))
@@ -786,6 +822,8 @@ namespace Runtime {
                                 id: string = option.gI(),
                                 isPay: boolean,
                                 amount: number,
+                                select: string = option.gT(),
+                                clobs: Array<string> = [],
                                 done: () => void = () => {
                                     option.p(this._r);
                                     gChoose.removeEventListener(event, handler);
@@ -794,6 +832,21 @@ namespace Runtime {
                                     });
                                     this._pc = undefined;
                                 };
+                            Util.each(options, (opt: Tag.Option) => {
+                                var desc: string = opt.gT();
+                                desc = desc.replace(/【#[0-9a-fA-F]{6}/g, '')
+                                    .replace(/【/g, '')
+                                    .replace(/】/g, '');
+                                if (select == opt.gT())
+                                    desc = '【' + desc + '   √】';
+                                clobs.push('      ' + desc);
+                            });
+                            this._r.dispatchEvent(new Ev.Review({
+                                target: null,
+                                type: 'choose',
+                                data: clobs,
+                                more: ''
+                            }));
                             if (id) {
                                 isPay = states.qp(id, option.gM());
                                 option.sA(isPay);
@@ -845,7 +898,8 @@ namespace Runtime {
                 (<G.Component> this._c.q('M')[0]).c();
                 (<G.Component> this._c.q('c')[0]).c().o(0);
                 this._pc = undefined;
-                this._fd = false;
+                this._fd =
+                this._rv = false;
                 this._x['G'].h(0);
                 this._x['W'].h(0);
                 this._x['F'].h(0);
@@ -1002,7 +1056,7 @@ namespace Runtime {
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 全屏文本。
-            this._x['F'] = <Sprite.Full> new Sprite.Full(theme['full'], (ev: Ev.FullAnimation) => {
+            this._x['F'] = <Sprite.Full> new Sprite.Full(theme['full'], this._cm, (ev: Ev.FullAnimation) => {
                     this._t = this._h = ev.animation;
                     this._ft = ev.type;
                 });
@@ -1028,6 +1082,8 @@ namespace Runtime {
                 }, () => {
                     this._x['P'].v();
                     this._x['t'].h();
+                }, () => {
+                    this.sReview(true);
                 });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
@@ -1168,6 +1224,13 @@ namespace Runtime {
             // 作者
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
 
+            // 回溯。
+            this._x['R'] = <Sprite.Review> new Sprite.Review(theme['review'], this._r, this._cm, () => {
+                this.sReview(false);
+            });
+            resources.unshift(this._x['R'].l());
+            this._c.a(this._x['R'], gCurtain);
+
             this.c(resources);
             return this;
         }
@@ -1200,9 +1263,9 @@ namespace Runtime {
         public p(sheet: Array<Util.IHashTable<any>>): CanvasDirector {
             if (sheet && sheet.length > 0) {
                 (<Sprite.Panel> this._x['P']).u(sheet, this._r);
-                (<Sprite.Tray> this._x['t']).u(true);
+                (<Sprite.Tray> this._x['t']).u(true, this._sr);
             } else
-                (<Sprite.Tray> this._x['t']).u(false);
+                (<Sprite.Tray> this._x['t']).u(false, this._sr);
             return this;
         }
 
@@ -1329,6 +1392,31 @@ namespace Runtime {
             this._s['b'].play();
             this._s['s'].play();
             return <CanvasDirector> super.rp();
+        }
+
+        /**
+         * 打开 / 关闭 回看。
+         */
+        private sReview(v: boolean): CanvasDirector {
+            if (v) {
+                this._x['t'].h();
+                Util.each(['S', 'W', 'T', 'C', 'F', 'P', 'm', 'sl', 'ss', 'st'], (key: string) => {
+                    if (!this._x[key].gO()) {
+                        this._ss.push(key);
+                        this._x[key].o(0);
+                    }
+                });
+                (<Sprite.Review> this._x['R']).u();
+            } else {
+                this._x['R'].h();
+                this._x['t'].v();
+                Util.each(this._ss, (key: string) => {
+                    this._x[key].o(1);
+                });
+                this._ss = [];
+            }
+            this._rv = v;
+            return this;
         }
     }
 }

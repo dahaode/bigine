@@ -36,6 +36,55 @@ namespace Core {
                     "c": "#fff"
                 }
             },
+            "review": {
+                "back": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "i": "full.png"
+                },
+                "close": {
+                    "x": 1166,
+                    "y": 582,
+                    "w": 94,
+                    "h": 94,
+                    "i": "menu/back.png",
+                    "ih": "menu/back~hover.png"
+                },
+                "arrow": {
+                    "p": {
+                        "x": 20,
+                        "y": 343,
+                        "w": 80,
+                        "h": 80,
+                        "i": "panel/p.png",
+                        "ih": "panel/p~hover.png"
+                    },
+                    "n": {
+                        "x": 1192,
+                        "y": 343,
+                        "w": 80,
+                        "h": 80,
+                        "i": "panel/n.png",
+                        "ih": "panel/n~hover.png"
+                    }
+                },
+                "text": {
+                    "x": 100,
+                    "y": 100,
+                    "w": 1080,
+                    "h": 520,
+                    "lh": 40,
+                    "ls": 5,
+                    "s": 28,
+                    "ss": 3,
+                    "c": "#fff",
+                    "ch": "#f90",
+                    "row": 13,
+                    "rows": 260
+                }
+            },
             "full": {
                 "back": {
                     "x": 0,
@@ -298,6 +347,14 @@ namespace Core {
                     "h": 63,
                     "i": "menu/panel.png",
                     "ih": "menu/panel~hover.png"
+                },
+                "review": {
+                    "x": 1124,
+                    "y": 536,
+                    "w": 60,
+                    "h": 63,
+                    "i": "menu/history.png",
+                    "ih": "menu/history~hover.png"
                 }
             },
             "menu": {

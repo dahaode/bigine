@@ -104,6 +104,7 @@ namespace Tag {
         StopESM: '环境静音',
         StopSE: '停止音效',
         VolumeSet: '设置音量',
+        Review: '显示回看',
 
         Assert: '当数据',
         Assign: '设置数据',
@@ -154,9 +155,10 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 113
+    export var S: { [index: number]: any[] } = { // next 114
         '-1': ['Root', 0, -1, {
             54: [0, 1],
+            113: [0, 1],
             55: [0, 1],
             56: 1,
             57: 1,
@@ -306,6 +308,7 @@ namespace Tag {
         108: ['FullClean', 0, -1],
         109: ['FullHide', 0, -1],
         110: ['Unlock', 1, -1], // [萝卜币]
+        113: ['Review', 0, -1],
 
         58: ['Loop', 0, -1, {
             '-1': [1]

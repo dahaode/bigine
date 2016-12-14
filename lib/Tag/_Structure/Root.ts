@@ -150,6 +150,13 @@ namespace Tag {
         }
 
         /**
+         * 是否显示回看。
+         */
+        public sr(): boolean {
+            return 0 < this.$q('Review').length;
+        }
+
+        /**
          * 加载资源包。
          */
         public l(callback: Util.ISuccessCallback<Util.IHashTable<Core.IEntityTag>>): boolean {

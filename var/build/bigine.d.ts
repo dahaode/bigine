@@ -34,6 +34,7 @@ declare namespace __Bigine {
     namespace Core {
         interface IRootTag extends ITag {
             a(): boolean;
+            sr(): boolean;
             l(callback: Util.ISuccessCallback<Util.IHashTable<IEntityTag>>): boolean;
             gS(): string;
             t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;
@@ -335,6 +336,7 @@ declare namespace __Bigine {
             private _s;
             private _t;
             private _l;
+            private _sr;
             constructor(ep: Core.IRootTag, runtime: Core.IRuntime);
             a(scene: Core.ISceneTag): Episode;
             p(type: Core.ISceneTag.Type, runtime: Core.IRuntime): Promise<Core.IRuntime>;
@@ -344,6 +346,7 @@ declare namespace __Bigine {
             gS(): string;
             gT(): string;
             gA(): boolean;
+            gSr(): boolean;
             gC(): Util.IHashTable<Util.IHashTable<any>>;
             gL(): Util.IHashTable<Util.IHashTable<any>>;
         }
@@ -445,6 +448,7 @@ declare namespace __Bigine {
             protected _ra: boolean;
             protected _v: number;
             protected _o: boolean;
+            protected _sr: boolean;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
@@ -485,6 +489,7 @@ declare namespace __Bigine {
             s(sheet: [string, string][]): Director;
             p(sheet: Array<Util.IHashTable<any>>): Director;
             a(auto: boolean): boolean;
+            sr(show: boolean): boolean;
             v(volume: number): Director;
             f(): void;
             d(): void;
@@ -620,7 +625,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface ITray extends ISprite {
-            u(panel: boolean): ITray;
+            u(panel: boolean, review: boolean): ITray;
         }
     }
     namespace Ev {
@@ -643,12 +648,23 @@ declare namespace __Bigine {
             gT(): string;
         }
     }
+    namespace Ev {
+        interface ITrayReviewMetas extends Util.IEventMetas<Core.ITray> {
+        }
+    }
+    namespace Ev {
+        class TrayReview extends Event<Core.ITray> {
+            constructor(metas: ITrayReviewMetas);
+            gT(): string;
+        }
+    }
     namespace Sprite {
         class Tray extends Sprite implements Core.ITray {
             private _x;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, menu: () => void, panel: () => void);
+            private _v;
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, menu: () => void, panel: () => void, review: () => void);
             protected pI(): Tray;
-            u(panel: boolean): Tray;
+            u(panel: boolean, review: boolean): Tray;
         }
     }
     namespace Core {
@@ -969,7 +985,7 @@ declare namespace __Bigine {
             private _tl;
             private _tx;
             private _ct;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.FullAnimation) => void);
+            constructor(theme: Util.IHashTable<Util.IHashTable<any>>, context: CanvasRenderingContext2D, listen: (ev: Ev.FullAnimation) => void);
             protected pI(): Full;
             h(duration?: number): Promise<Full>;
             u(clob: string, auto?: boolean): Promise<Full>;
@@ -977,6 +993,37 @@ declare namespace __Bigine {
             clean(): Promise<Full>;
             $v(text: G.Text, auto: boolean, wait: boolean): Promise<G.Element>;
             private $c();
+        }
+    }
+    namespace Core {
+        interface IReview extends ISprite {
+            u(): IReview;
+        }
+    }
+    namespace Ev {
+        interface IReviewCloseMetas extends Util.IEventMetas<Core.IReview> {
+        }
+    }
+    namespace Ev {
+        class ReviewClose extends Event<Core.IReview> {
+            constructor(metas: IReviewCloseMetas);
+            gT(): string;
+        }
+    }
+    namespace Sprite {
+        class Review extends Sprite {
+            private _x;
+            private _ca;
+            private _ct;
+            private _ls;
+            private _ps;
+            private _pg;
+            constructor(theme: Util.IHashTable<any>, runtime: Core.IRuntime, context: CanvasRenderingContext2D, close: () => void);
+            protected pI(): Review;
+            protected calc(ev: Ev.Review): Review;
+            u(): Review;
+            h(duration?: number): Promise<Review>;
+            private goto();
         }
     }
     namespace Runtime {
@@ -999,6 +1046,9 @@ declare namespace __Bigine {
             private _pc;
             private _fd;
             private _ft;
+            private _rv;
+            private _cm;
+            private _ss;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
@@ -1051,6 +1101,7 @@ declare namespace __Bigine {
             e(type: Core.IRuntime.Series): CanvasDirector;
             rp(): CanvasDirector;
             rr(): CanvasDirector;
+            private sReview(v);
         }
     }
     namespace Runtime {
@@ -1205,6 +1256,22 @@ declare namespace __Bigine {
             private uri;
             private volume;
             constructor(metas: IVideoMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IReviewMetas extends Util.IEventMetas<Core.IStates> {
+            type: string;
+            data: Array<string>;
+            more: string;
+        }
+    }
+    namespace Ev {
+        class Review extends Event<Core.IStates> {
+            type: string;
+            data: Array<string>;
+            more: string;
+            constructor(metas: IReviewMetas);
             gT(): string;
         }
     }
@@ -1646,6 +1713,11 @@ declare namespace __Bigine {
             gN(): string;
         }
     }
+    namespace Tag {
+        class Review extends Action {
+            gN(): string;
+        }
+    }
     namespace Core {
         namespace ITheme {
             const THEME: Util.IHashTable<any>;
@@ -1690,6 +1762,7 @@ declare namespace __Bigine {
             toJsrn(): string;
             gU(): Unknown;
             a(): boolean;
+            sr(): boolean;
             l(callback: Util.ISuccessCallback<Util.IHashTable<Core.IEntityTag>>): boolean;
             gS(): string;
             t(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void;

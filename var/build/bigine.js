@@ -783,7 +783,7 @@ var Resource;
                         resolve(img);
                     };
                     img.onerror = function () {
-                        img.src = 'http://a1.dahao.de/00000000-0000-0000-0000-000000000001/180.png';
+                        img.src = 'http://a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png';
                         img.onerror = null;
                     };
                     img.src = url;
@@ -839,6 +839,7 @@ var Runtime;
             this._a = {};
             this._e = {};
             this._p = ep.a();
+            this._sr = ep.sr();
             this._s = ep.gS();
             this._t = ep.gT();
             this._l = null;
@@ -968,6 +969,12 @@ var Runtime;
          */
         Episode.prototype.gA = function () {
             return this._p;
+        };
+        /**
+         * 是否显示回看。
+         */
+        Episode.prototype.gSr = function () {
+            return this._sr;
         };
         /**
          * 获取主题信息。
@@ -1481,8 +1488,9 @@ var Runtime;
             this._p = Promise.resolve(this._r);
             this._d =
                 this._a =
-                    this._ra =
-                        this._o = false;
+                    this._sr =
+                        this._ra =
+                            this._o = false;
             this._v = 1;
         }
         /**
@@ -1729,6 +1737,12 @@ var Runtime;
             return this._a = auto;
         };
         /**
+         * 设置是否显示回看按钮。
+         */
+        Director.prototype.sr = function (show) {
+            return this._sr = show;
+        };
+        /**
          * 设置音量。
          */
         Director.prototype.v = function (volume) {
@@ -1957,8 +1971,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var _director = this._tm['director'], _title = this._tm['title'];
-            this.o(0)
-                .a(new G.Color(0, 0, 1280, 720, '#000'))
+            this.a(new G.Color(0, 0, 1280, 720, '#000'))
                 .a(new G.Text(_director, _director['ff'], _director['s'], _director['h'], this.$a(_director['a']))
                 .tc(_director['c'])
                 .a(new G.TextPhrase('作品'))).a(new G.Text(_title, _title['ff'], _title['s'], _title['h'], this.$a(_title['a']))
@@ -2158,8 +2171,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var _new = this._tm['new'], _series = this._tm['series'], _load = this._tm['load'], _title = this._tm['title'];
-            this.o(0)
-                .a(new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
+            this.a(new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
                 .a(this._y['n'] = new G.Button(_new)
                 .b(function () {
                 _this.dispatchEvent(new Ev.StartNew({ target: _this }));
@@ -2372,8 +2384,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var voiceover = this._tm['voiceover'], monolog = this._tm['monolog'], speak = this._tm['speak'], _vback = voiceover['back'], _vcurs = voiceover['cursor'], _mback = monolog['back'], _mavat = monolog['avatar'], _mname = monolog['name'], _mcurs = monolog['cursor'], _sback = speak['back'], _savat = speak['avatar'], _sname = speak['name'], _scurs = speak['cursor'], left = G.Text.Align.Left;
-            this.o(0)
-                .a(this._x['v'] = new G.Sprite(_vback)
+            this.a(this._x['v'] = new G.Sprite(_vback)
                 .a(new G.Image(this._rr[0].o(), _vback, true))
                 .a(this._x['vt'] = new G.Sprite(_vback))
                 .o(0)).a(this._x['m'] = new G.Sprite(_mback)
@@ -2699,6 +2710,45 @@ var Ev;
     Ev.TrayPanel = TrayPanel;
 })(Ev || (Ev = {}));
 /**
+ * 声明（画面调度）常驻按钮回看事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/ITrayReviewMetas.ts
+ */
+/// <reference path="../../Core/_Sprite/ITray.ts" />
+/**
+ * 定义（画面调度）常驻按钮回看事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/TrayReview.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="ITrayReviewMetas.ts" />
+var Ev;
+(function (Ev) {
+    var TrayReview = (function (_super) {
+        __extends(TrayReview, _super);
+        /**
+         * 构造函数。
+         */
+        function TrayReview(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        TrayReview.prototype.gT = function () {
+            return 'tray.review';
+        };
+        return TrayReview;
+    }(Ev.Event));
+    Ev.TrayReview = TrayReview;
+})(Ev || (Ev = {}));
+/**
  * 定义画面调度常驻按钮栏组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -2710,6 +2760,7 @@ var Ev;
 /// <reference path="../Resource/Resource.ts" />
 /// <reference path="../Ev/_Sprite/TrayMenu.ts" />
 /// <reference path="../Ev/_Sprite/TrayPanel.ts" />
+/// <reference path="../Ev/_Sprite/TrayReview.ts" />
 var Sprite;
 (function (Sprite) {
     var G = __Bigine_C2D;
@@ -2718,38 +2769,44 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Tray(theme, menu, panel) {
-            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _menu = theme['menu'], _panel = theme['panel'];
+        function Tray(theme, menu, panel, review) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _menu = theme['menu'], _panel = theme['panel'], _review = theme['review'];
             _super.call(this, theme, true);
             this._rr = [
                 rr.g(_menu['i'], raw),
                 rr.g(_menu['ih'], raw),
                 rr.g(_panel['i'], raw),
-                rr.g(_panel['ih'], raw)
+                rr.g(_panel['ih'], raw),
+                rr.g(_review['i'], raw),
+                rr.g(_review['ih'], raw)
             ];
             this.addEventListener('tray.menu', menu)
-                .addEventListener('tray.panel', panel);
+                .addEventListener('tray.panel', panel)
+                .addEventListener('tray.review', review);
         }
         Tray.prototype.pI = function () {
             var _this = this;
             if (this._pi)
                 return this;
-            var _menu = this._tm['menu'], _panel = this._tm['panel'];
-            this.o(0)
-                .a(new G.Button(_menu)
+            var _menu = this._tm['menu'], _panel = this._tm['panel'], _review = this._tm['review'];
+            this.a(new G.Button(_menu)
                 .b(function () {
                 _this.dispatchEvent(new Ev.TrayMenu({ target: _this }));
             }, new G.Image(this._rr[1].o(), _menu, true), new G.Image(this._rr[0].o(), _menu, true))).a(this._x = new G.Button(_panel)
                 .b(function () {
                 _this.dispatchEvent(new Ev.TrayPanel({ target: _this }));
-            }, new G.Image(this._rr[3].o(), _panel, true), new G.Image(this._rr[2].o(), _panel, true)));
+            }, new G.Image(this._rr[3].o(), _panel, true), new G.Image(this._rr[2].o(), _panel, true))).a(this._v = new G.Button(_review)
+                .b(function () {
+                _this.dispatchEvent(new Ev.TrayReview({ target: _this }));
+            }, new G.Image(this._rr[5].o(), _review, true), new G.Image(this._rr[4].o(), _review, true)));
             return _super.prototype.pI.call(this);
         };
         /**
          * 配置面板。
          */
-        Tray.prototype.u = function (panel) {
+        Tray.prototype.u = function (panel, review) {
             this.pI()._x.o(0 + panel);
+            this._v.o(0 + review);
             return this;
         };
         return Tray;
@@ -3014,8 +3071,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var _close = this._tm['close'], _mask = this._tm['mask'], _save = this._tm['save'], _load = this._tm['load'], _set = this._tm['set'], _replay = this._tm['replay'];
-            this.o(0)
-                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.MenuClose({ target: _this }));
@@ -3225,8 +3281,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var _close = this._tm['close'], _mask = this._tm['mask'];
-            this.o(0)
-                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
@@ -3371,8 +3426,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var left = G.Text.Align.Left, right = G.Text.Align.Right, _back = this._tm['back'], i = 1, j;
-            this.o(0)
-                .a(new G.Image(this._rr[0].o(), _back));
+            this.a(new G.Image(this._rr[0].o(), _back));
             for (; i < 7; i++) {
                 j = this._tm[i];
                 this.a(this._x[i + 't'] = new G.Text(j['title'], j['title']['ff'], j['title']['s'], j['title']['lh'], left)
@@ -3896,8 +3950,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var _back = this._tm['back'], _text = this._tm['text'];
-            this.o(0)
-                .a(new G.Image(this._rr[0].o(), _back))
+            this.a(new G.Image(this._rr[0].o(), _back))
                 .a(this._x = new G.Text(_text, _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
                 .tc(_text['c']));
             return _super.prototype.pI.call(this);
@@ -4193,8 +4246,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var _desc = this._tm['text'], _close = this._tm['close'], _mask = this._tm['mask'];
-            this.o(0)
-                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
@@ -4507,8 +4559,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var _close = this._tm['close'], _mask = this._tm['mask'], _title = this._tm['title'], _bgm = this._tm['bgm'], _se = this._tm['se'];
-            this.o(0)
-                .a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SetClose({ target: _this }));
@@ -4635,8 +4686,7 @@ var Sprite;
                 return this;
             var _name = this._tm['name'], _value = this._tm['value'], center = G.Text.Align.Center;
             // 渲染评分初始样式
-            this.o(0)
-                .a(this._xs = new G.Sprite(0, 0, 1280, 720))
+            this.a(this._xs = new G.Sprite(0, 0, 1280, 720))
                 .a(this._nt = new G.Text(_name, _name['ff'], _name['s'], _name['lh'], center))
                 .a(this._vt = new G.Text(_value, _value['ff'], _value['s'], _value['lh'], center));
             return _super.prototype.pI.call(this);
@@ -4685,8 +4735,7 @@ var Sprite;
             if (this._pi)
                 return this;
             var _text = this._tm['text'];
-            this.o(0)
-                .a(this._gi = new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
+            this.a(this._gi = new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
                 .a(new G.Text(_text, _text['ff'], _text['s'], _text['h'], this.$a(_text['a']))
                 .tc(_text['c'])
                 .a(this._x = new G.TextPhrase('')));
@@ -4805,8 +4854,8 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Full(theme, listen) {
-            var _back = theme['back'], _text = theme['text'], canvas = document.createElement('canvas');
+        function Full(theme, context, listen) {
+            var _back = theme['back'], _text = theme['text'];
             _super.call(this, theme);
             this._rr = [
                 Resource.Resource.g(_back['i'], Core.IResource.Type.Raw)
@@ -4815,22 +4864,16 @@ var Sprite;
             this._cb = Util.clone(_text);
             this._be = _text;
             this._c = _text['ch'];
-            this._tl = this._tx = 0;
-            canvas.width = 1280;
-            canvas.height = 720;
-            this._ct = canvas.getContext('2d');
-            this._ct.canvas.style.letterSpacing = _text['ls'] + 'px'; // 设置字间距
-            this._ct.font = _text['s'] + 'px/' + Math.max(_text['lh'], _text['s']) + 'px "' + (_text['ff'] || '') + '", ' + G.TextPhrase.FONT;
-            this._ct.textBaseline = 'middle';
-            this._ct.shadowBlur = this._ct.shadowOffsetX = this._ct.shadowOffsetY = _text['ss'];
+            this._tl =
+                this._tx = 0;
+            this._ct = context;
             this.addEventListener('full.animation', listen);
         }
         Full.prototype.pI = function () {
             if (this._pi)
                 return this;
             var _back = this._tm['back'];
-            this.o(0)
-                .a(new G.Sprite(_back)
+            this.a(new G.Sprite(_back)
                 .a(new G.Image(this._rr[0].o(), _back, true))
                 .a(this._x['f'] = new G.Sprite(_back)));
             return _super.prototype.pI.call(this);
@@ -4864,7 +4907,8 @@ var Sprite;
             var _this = this;
             if (auto === void 0) { auto = false; }
             this.pI();
-            var words = clob.split('\\r'), funcs = [];
+            var words = clob.split('\\r'), funcs = [], font = this._be['s'] + 'px/' + Math.max(this._be['lh'], this._be['s']) + 'px "' + (this._be['ff'] || '') + '", ' + G.TextPhrase.FONT;
+            this._ct.canvas.style.letterSpacing = this._be['ls'] + 'px'; // 设置字间距
             Util.each(words, function (word, index) {
                 var bufs = word.split('\\l');
                 if (bufs.length == 1) {
@@ -4876,7 +4920,10 @@ var Sprite;
                         .replace(/【#[0-9a-fA-F]{6}/g, '')
                         .replace(/【/g, '')
                         .replace(/】/g, '');
+                    _this._ct.save();
+                    _this._ct.font = font;
                     var row = Math.ceil(_this._ct.measureText(str).width / _this._be.w);
+                    _this._ct.restore();
                     if (_this._tl + row > _this._be['row'])
                         _this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
                     Util.each(bufs, function (buffer, i) {
@@ -4894,7 +4941,7 @@ var Sprite;
         Full.prototype.every = function (clob, auto, wait, pause) {
             var _this = this;
             if (pause === void 0) { pause = -1; }
-            var eRow = 0, row, tBound, bBound = this._be, tText, left = G.Text.Align.Left, lHeight = Math.max(bBound['lh'], bBound['s']), sClob;
+            var eRow = 0, row, tBound, bBound = this._be, tText, left = G.Text.Align.Left, lHeight = Math.max(bBound['lh'], bBound['s']), font = bBound['s'] + 'px/' + lHeight + 'px "' + (bBound['ff'] || '') + '", ' + G.TextPhrase.FONT, sClob;
             while (/^\\n.*/.test(clob)) {
                 eRow++;
                 clob = clob.substr(2);
@@ -4914,7 +4961,9 @@ var Sprite;
                 .replace(/【/g, '')
                 .replace(/】/g, '');
             this._ct.save();
+            this._ct.font = font;
             row = Math.ceil(this._ct.measureText(sClob).width / bBound.w);
+            this._ct.restore();
             if (this._tl + row > bBound['row'] && pause < 1)
                 this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
             tBound = Util.clone(this._cb);
@@ -5013,6 +5062,234 @@ var Sprite;
     Sprite.Full = Full;
 })(Sprite || (Sprite = {}));
 /**
+ * 声明画面调度回看接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/IReview.ts
+ */
+/// <reference path="ISprite.ts" />
+/**
+ * 声明（画面调度）回看关闭事件元信息接口规范。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/IReviewCloseMetas.ts
+ */
+/// <reference path="../../Core/_Sprite/IReview.ts" />
+/**
+ * 定义（画面调度）回看关闭事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Sprite/ReviewClose.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IReviewCloseMetas.ts" />
+var Ev;
+(function (Ev) {
+    var ReviewClose = (function (_super) {
+        __extends(ReviewClose, _super);
+        /**
+         * 构造函数。
+         */
+        function ReviewClose(metas) {
+            _super.call(this, metas);
+        }
+        /**
+         * 获取类型。
+         */
+        ReviewClose.prototype.gT = function () {
+            return 'review.close';
+        };
+        return ReviewClose;
+    }(Ev.Event));
+    Ev.ReviewClose = ReviewClose;
+})(Ev || (Ev = {}));
+/**
+ * 定义画面调度回看组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Sprite/Review.ts
+ */
+/// <reference path="Sprite.ts" />
+/// <reference path="../Ev/_Sprite/ReviewClose.ts" />
+var Sprite;
+(function (Sprite) {
+    var Util = __Bigine_Util;
+    var G = __Bigine_C2D;
+    var Review = (function (_super) {
+        __extends(Review, _super);
+        /**
+         * 构造函数。
+         */
+        function Review(theme, runtime, context, close) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _back = theme['back'], _close = theme['close'], _arrow = theme['arrow'];
+            _super.call(this, theme);
+            this._rr = [
+                rr.g(_back['i'], raw),
+                rr.g(_arrow['p']['i'], raw),
+                rr.g(_arrow['p']['ih'], raw),
+                rr.g(_arrow['n']['i'], raw),
+                rr.g(_arrow['n']['ih'], raw),
+                rr.g(_close['i'], raw),
+                rr.g(_close['ih'], raw)
+            ];
+            this._ca = {};
+            this._ls = [];
+            this._ps =
+                this._pg = 0;
+            this._ct = context;
+            this.addEventListener('review.close', close);
+            runtime.addEventListener('review', this.calc.bind(this));
+        }
+        /*
+         * 初始化
+         */
+        Review.prototype.pI = function () {
+            var _this = this;
+            if (this._pi)
+                return this;
+            var back = this._tm['back'], close = this._tm['close'], pBounds = this._tm['arrow']['p'], nBounds = this._tm['arrow']['n'];
+            this.a(new G.Image(this._rr[0].o(), back, true))
+                .a(this._x = new G.Sprite(back))
+                .a(this._ca['p'] = new G.Button(pBounds)
+                .b(function () {
+                _this._pg--;
+                _this.goto();
+                if (_this._pg <= 0) {
+                    _this._pg = 0;
+                    _this._ca['p'].o(0);
+                }
+                if (_this._ca['n'].gO() == 0)
+                    _this._ca['n'].o(1);
+            }, new G.Image(this._rr[2].o(), pBounds, true), new G.Image(this._rr[1].o(), pBounds, true)))
+                .a(this._ca['n'] = new G.Button(nBounds)
+                .b(function () {
+                _this._pg++;
+                _this.goto();
+                if (_this._pg >= _this._ps - 1) {
+                    _this._pg = _this._ps - 1;
+                    _this._ca['n'].o(0);
+                }
+                if (_this._ca['p'].gO() == 0)
+                    _this._ca['p'].o(1);
+            }, new G.Image(this._rr[4].o(), nBounds, true), new G.Image(this._rr[3].o(), nBounds, true)))
+                .a(new G.Button(close)
+                .b(function () {
+                _this.dispatchEvent(new Ev.ReviewClose({ target: _this }));
+                return;
+            }, new G.Image(this._rr[6].o(), close, true), new G.Image(this._rr[5].o(), close, true)));
+            this._ca['p'].o(0);
+            this._ca['n'].o(0);
+            return _super.prototype.pI.call(this);
+        };
+        /*
+         * 计算并添加行信息
+         */
+        Review.prototype.calc = function (ev) {
+            var _this = this;
+            var bound = this._tm['text'], data = ev.data, loop, text, left = G.Text.Align.Left, schedules, rows = this._tm['text']['rows'], split = function (word) {
+                while (/^\\n.*/.test(word)) {
+                    word = word.substr(2);
+                    _this._ls.push([0, 1]);
+                }
+                text = new G.Text(bound, bound['ff'], bound['s'], bound['lh'], left)
+                    .tc(bound['c'])
+                    .tl(bound['ls']);
+                _this.$w(text, word, bound['ch']);
+                schedules = text.cl(_this._ct, bound);
+                Util.each(schedules, function (line2) {
+                    _this._ls.push([2, [line2]]);
+                });
+            };
+            this._ct.canvas.style.letterSpacing = bound['ls'] + 'px'; // 设置字间距
+            switch (ev.type) {
+                case 'speak':
+                case 'monolog':
+                    this._ls.push([0, 1]);
+                    this._ls.push([1, ev.more]);
+                    loop = data[0].replace(/\\l/g, '').split('\\r');
+                    break;
+                case 'voiceover':
+                    loop = data[0].replace(/\\l/g, '').split('\\r');
+                    break;
+                case 'tip':
+                    split(data[0]);
+                    break;
+                case 'choose':
+                    this._ls.push([1, '.选择：']);
+                    loop = data;
+                    break;
+            }
+            if (loop)
+                for (var i = 0; i < loop.length; i++) {
+                    split(loop[i]);
+                }
+            if (this._ls.length > rows)
+                this._ls.splice(0, this._ls.length - rows);
+            return this;
+        };
+        /**
+         * 配置。
+         */
+        Review.prototype.u = function () {
+            this._ps = Math.ceil(this._ls.length / this._tm['text']['row']) || 1;
+            this._pg = this._ps - 1;
+            this.pI().goto();
+            if (this._ps > 1)
+                this._ca['p'].o(1);
+            return this.o(1);
+        };
+        /**
+         * 隐藏。
+         */
+        Review.prototype.h = function (duration) {
+            var _this = this;
+            return _super.prototype.h.call(this, duration).then(function () {
+                _this._ca['p'].o(0);
+                _this._ca['n'].o(0);
+                _this._x.c();
+                return _this;
+            });
+        };
+        /**
+         * 去第几页。
+         */
+        Review.prototype.goto = function () {
+            var _this = this;
+            this._x.c();
+            var rows = this._tm['text']['row'], start = this._pg * rows, lines = this._ls.slice(start, start + rows), left = G.Text.Align.Left, oBound = Util.clone(this._tm['text']), lHeight = Math.max(oBound['lh'], oBound['s']), tText;
+            if (lines.length == 0)
+                return this;
+            oBound['h'] = lHeight;
+            Util.each(lines, function (line) {
+                if (line[0]) {
+                    tText = new G.Text(Util.clone(oBound), oBound['ff'], oBound['s'], oBound['lh'], left, false)
+                        .tc(oBound['c'])
+                        .tl(oBound['ls']);
+                    if (line[0] == 1) {
+                        tText.a(new G.TextPhrase(line[1]));
+                    }
+                    else if (line[0] == 2) {
+                        tText.th(line[1]);
+                    }
+                    _this._x.a(tText);
+                }
+                oBound['y'] += lHeight;
+            });
+            return this;
+        };
+        return Review;
+    }(Sprite.Sprite));
+    Sprite.Review = Review;
+})(Sprite || (Sprite = {}));
+/**
  * 打包所有已定义地画面调度组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -5037,6 +5314,7 @@ var Sprite;
 /// <reference path="Stars.ts" />
 /// <reference path="Loading.ts" />
 /// <reference path="Full.ts" />
+/// <reference path="Review.ts" />
 /**
  * 定义基于 HTML Canvas 的（运行时）场效调度器组件。
  *
@@ -5066,17 +5344,20 @@ var Runtime;
         function CanvasDirector(runtime) {
             var _this = this;
             _super.call(this, runtime);
-            var doc = document, els = doc.querySelectorAll('.bg-work'), canvas = doc.createElement('canvas'), raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, assets = '_/';
+            var doc = document, els = doc.querySelectorAll('.bg-work'), canvas = doc.createElement('canvas'), meatrue = doc.createElement('canvas'), raw = Core.IResource.Type.Raw, bounds = CanvasDirector.BOUNDS, assets = '_/';
             canvas.width = bounds.w;
             canvas.height = bounds.h;
             canvas.className = 'viewport';
+            meatrue.style.display = 'none';
             if (!els.length) {
                 this._d = true;
                 els = [doc.createElement('div')];
                 els[0].className = 'bg-work dynamic';
                 doc.body.appendChild(els[0]);
             }
+            doc.body.appendChild(meatrue);
             els[0].appendChild(canvas);
+            this._cm = meatrue.getContext('2d');
             this._x = {};
             this._c = new G.Stage(canvas.getContext('2d'))
                 .a(new G.Component()
@@ -5091,13 +5372,15 @@ var Runtime;
                 .a(new G.Color(0, bounds.h - 11, bounds.w, 10, '#00ccff').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
-            this._fd = false;
+            this._fd =
+                this._rv = false;
             this._pc =
                 this._ft = undefined;
             this._f =
                 this._pt = {};
             this._ca = [undefined, undefined];
             this._e = [0, 0];
+            this._ss = [];
             this._i = {
                 o: Resource.Resource.g(assets + 'logo.png', raw),
                 s: Resource.Resource.g(assets + 'oops.mp3', raw),
@@ -5116,10 +5399,13 @@ var Runtime;
             this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
             this._s['e']['cd'] = -1;
             this._l = function (event) {
-                if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc) {
+                if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc && !_this._rv) {
                     if (_this._ft)
                         _this._ft.h();
                     _this._t.h();
+                }
+                if (event.keyCode == 67 && !_this._a && _this._r.isPlaying()) {
+                    _this.sReview(!_this._rv);
                 }
             };
             this._fs = Core.IRuntime.Series.Alone;
@@ -5353,6 +5639,12 @@ var Runtime;
          */
         CanvasDirector.prototype.words = function (words, theme, who, avatar) {
             var _this = this;
+            this._r.dispatchEvent(new Ev.Review({
+                target: null,
+                type: theme,
+                data: [words],
+                more: who
+            }));
             if (this._fd) {
                 return theme == 'voiceover' ? this.full(words) : _super.prototype.words.call(this, words, theme);
             }
@@ -5411,6 +5703,12 @@ var Runtime;
         CanvasDirector.prototype.tip = function (words) {
             var _this = this;
             var gTip = this._x['T'];
+            this._r.dispatchEvent(new Ev.Review({
+                target: null,
+                type: 'tip',
+                data: [words],
+                more: ''
+            }));
             return this.lightOn()
                 .then(function () { return gTip.u(words).v(); })
                 .then(function () { return gTip.p(_this._t = new G.WaitForClick()); })
@@ -5689,7 +5987,7 @@ var Runtime;
                 };
                 var gChoose = _this._x['C'], event = 'choose', states = _this._r.gS(), handler = function () {
                     if (_this._pc) {
-                        var option_1 = _this._pc, id_1 = option_1.gI(), isPay = void 0, amount_1, done_1 = function () {
+                        var option_1 = _this._pc, id_1 = option_1.gI(), isPay = void 0, amount_1, select_1 = option_1.gT(), clobs_1 = [], done_1 = function () {
                             option_1.p(_this._r);
                             gChoose.removeEventListener(event, handler);
                             gChoose.h().then(function () {
@@ -5697,6 +5995,21 @@ var Runtime;
                             });
                             _this._pc = undefined;
                         };
+                        Util.each(options, function (opt) {
+                            var desc = opt.gT();
+                            desc = desc.replace(/【#[0-9a-fA-F]{6}/g, '')
+                                .replace(/【/g, '')
+                                .replace(/】/g, '');
+                            if (select_1 == opt.gT())
+                                desc = '【' + desc + '   √】';
+                            clobs_1.push('      ' + desc);
+                        });
+                        _this._r.dispatchEvent(new Ev.Review({
+                            target: null,
+                            type: 'choose',
+                            data: clobs_1,
+                            more: ''
+                        }));
                         if (id_1) {
                             isPay = states.qp(id_1, option_1.gM());
                             option_1.sA(isPay);
@@ -5746,7 +6059,8 @@ var Runtime;
                 _this._c.q('M')[0].c();
                 _this._c.q('c')[0].c().o(0);
                 _this._pc = undefined;
-                _this._fd = false;
+                _this._fd =
+                    _this._rv = false;
                 _this._x['G'].h(0);
                 _this._x['W'].h(0);
                 _this._x['F'].h(0);
@@ -5893,7 +6207,7 @@ var Runtime;
             resources.unshift(this._x['W'].l());
             this._c.a(this._x['W'], gCurtain);
             // 全屏文本。
-            this._x['F'] = new Sprite.Full(theme['full'], function (ev) {
+            this._x['F'] = new Sprite.Full(theme['full'], this._cm, function (ev) {
                 _this._t = _this._h = ev.animation;
                 _this._ft = ev.type;
             });
@@ -5920,6 +6234,8 @@ var Runtime;
             }, function () {
                 _this._x['P'].v();
                 _this._x['t'].h();
+            }, function () {
+                _this.sReview(true);
             });
             resources.unshift(this._x['t'].l());
             this._c.a(this._x['t'], gCurtain);
@@ -6057,6 +6373,12 @@ var Runtime;
             resources.push(this._x['sr'].l());
             // 作者
             this._c.a(this._x['a'] = new Sprite.Author(theme['author']), gCurtain);
+            // 回溯。
+            this._x['R'] = new Sprite.Review(theme['review'], this._r, this._cm, function () {
+                _this.sReview(false);
+            });
+            resources.unshift(this._x['R'].l());
+            this._c.a(this._x['R'], gCurtain);
             this.c(resources);
             return this;
         };
@@ -6090,10 +6412,10 @@ var Runtime;
         CanvasDirector.prototype.p = function (sheet) {
             if (sheet && sheet.length > 0) {
                 this._x['P'].u(sheet, this._r);
-                this._x['t'].u(true);
+                this._x['t'].u(true, this._sr);
             }
             else
-                this._x['t'].u(false);
+                this._x['t'].u(false, this._sr);
             return this;
         };
         /**
@@ -6206,6 +6528,32 @@ var Runtime;
             this._s['b'].play();
             this._s['s'].play();
             return _super.prototype.rp.call(this);
+        };
+        /**
+         * 打开 / 关闭 回看。
+         */
+        CanvasDirector.prototype.sReview = function (v) {
+            var _this = this;
+            if (v) {
+                this._x['t'].h();
+                Util.each(['S', 'W', 'T', 'C', 'F', 'P', 'm', 'sl', 'ss', 'st'], function (key) {
+                    if (!_this._x[key].gO()) {
+                        _this._ss.push(key);
+                        _this._x[key].o(0);
+                    }
+                });
+                this._x['R'].u();
+            }
+            else {
+                this._x['R'].h();
+                this._x['t'].v();
+                Util.each(this._ss, function (key) {
+                    _this._x[key].o(1);
+                });
+                this._ss = [];
+            }
+            this._rv = v;
+            return this;
         };
         /**
          * 尺寸。
@@ -6728,6 +7076,48 @@ var Ev;
     Ev.Video = Video;
 })(Ev || (Ev = {}));
 /**
+ * 声明（运行时）需要增加的回看脚本通知事件元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IStateMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）存档事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Review.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IReviewMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Review = (function (_super) {
+        __extends(Review, _super);
+        /**
+         * 构造函数。
+         */
+        function Review(metas) {
+            _super.call(this, metas);
+            this.type = metas.type;
+            this.data = metas.data;
+            this.more = metas.more;
+        }
+        /**
+         * 获取类型。
+         */
+        Review.prototype.gT = function () {
+            return 'review';
+        };
+        return Review;
+    }(Ev.Event));
+    Ev.Review = Review;
+})(Ev || (Ev = {}));
+/**
  * 定义语法规约。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -6824,6 +7214,7 @@ var Tag;
         StopESM: '环境静音',
         StopSE: '停止音效',
         VolumeSet: '设置音量',
+        Review: '显示回看',
         Assert: '当数据',
         Assign: '设置数据',
         Compare: '对比数据',
@@ -6873,6 +7264,7 @@ var Tag;
     Tag.S = {
         '-1': ['Root', 0, -1, {
                 54: [0, 1],
+                113: [0, 1],
                 55: [0, 1],
                 56: 1,
                 57: 1,
@@ -7011,6 +7403,7 @@ var Tag;
         108: ['FullClean', 0, -1],
         109: ['FullHide', 0, -1],
         110: ['Unlock', 1, -1],
+        113: ['Review', 0, -1],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
@@ -9671,6 +10064,32 @@ var Tag;
     Tag.Auto = Auto;
 })(Tag || (Tag = {}));
 /**
+ * 定义显示回看动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/Review.ts
+ */
+/// <reference path="../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Review = (function (_super) {
+        __extends(Review, _super);
+        function Review() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Review.prototype.gN = function () {
+            return 'Review';
+        };
+        return Review;
+    }(Tag.Action));
+    Tag.Review = Review;
+})(Tag || (Tag = {}));
+/**
  * 声明默认主题对象组件。
  *
  * @author    李倩 <qli@atfacg.com>
@@ -9704,6 +10123,55 @@ var Core;
                     "lh": 24,
                     "a": "center",
                     "c": "#fff"
+                }
+            },
+            "review": {
+                "back": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "i": "full.png"
+                },
+                "close": {
+                    "x": 1166,
+                    "y": 582,
+                    "w": 94,
+                    "h": 94,
+                    "i": "menu/back.png",
+                    "ih": "menu/back~hover.png"
+                },
+                "arrow": {
+                    "p": {
+                        "x": 20,
+                        "y": 343,
+                        "w": 80,
+                        "h": 80,
+                        "i": "panel/p.png",
+                        "ih": "panel/p~hover.png"
+                    },
+                    "n": {
+                        "x": 1192,
+                        "y": 343,
+                        "w": 80,
+                        "h": 80,
+                        "i": "panel/n.png",
+                        "ih": "panel/n~hover.png"
+                    }
+                },
+                "text": {
+                    "x": 100,
+                    "y": 100,
+                    "w": 1080,
+                    "h": 520,
+                    "lh": 40,
+                    "ls": 5,
+                    "s": 28,
+                    "ss": 3,
+                    "c": "#fff",
+                    "ch": "#f90",
+                    "row": 13,
+                    "rows": 260
                 }
             },
             "full": {
@@ -9968,6 +10436,14 @@ var Core;
                     "h": 63,
                     "i": "menu/panel.png",
                     "ih": "menu/panel~hover.png"
+                },
+                "review": {
+                    "x": 1124,
+                    "y": 536,
+                    "w": 60,
+                    "h": 63,
+                    "i": "menu/history.png",
+                    "ih": "menu/history~hover.png"
                 }
             },
             "menu": {
@@ -11485,6 +11961,12 @@ var Tag;
          */
         Root.prototype.a = function () {
             return 0 < this.$q('Auto').length;
+        };
+        /**
+         * 是否显示回看。
+         */
+        Root.prototype.sr = function () {
+            return 0 < this.$q('Review').length;
         };
         /**
          * 加载资源包。
@@ -15405,6 +15887,7 @@ var Tag;
 /// <reference path="../Ev/_Runtime/ScreenLoad.ts" />
 /// <reference path="../Ev/_Runtime/ScreenSave.ts" />
 /// <reference path="../Ev/_Runtime/Video.ts" />
+/// <reference path="../Ev/_Runtime/Review.ts" />
 /// <reference path="_Definition/DefBGM.ts" />
 /// <reference path="_Definition/DefCG.ts" />
 /// <reference path="_Definition/DefSE.ts" />
@@ -15413,6 +15896,7 @@ var Tag;
 /// <reference path="_Definition/_Map/DefMap.ts" />
 /// <reference path="_Definition/Player.ts" />
 /// <reference path="_Structure/Auto.ts" />
+/// <reference path="_Structure/Review.ts" />
 /// <reference path="_Structure/Theme.ts" />
 /// <reference path="_Structure/Resources.ts" />
 /// <reference path="_Structure/_Scene/Scene.ts" />
@@ -15535,6 +16019,7 @@ var Runtime;
             this._fv = 1;
             this._fa = this._e.gA();
             this._d.a(this._fa);
+            this._d.sr(this._e.gSr());
             this._fb = true;
             this._t = Promise.resolve(this);
             this._n = ['', '', false];

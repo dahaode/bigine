@@ -24,3 +24,4 @@
 /// <reference path="Stars.ts" />
 /// <reference path="Loading.ts" />
 /// <reference path="Full.ts" />
+/// <reference path="Review.ts" />

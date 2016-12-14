@@ -23,8 +23,7 @@ namespace Sprite {
             if (this._pi) return this;
             let _director: Util.IHashTable<any> = this._tm['director'],
                 _title: Util.IHashTable<any> = this._tm['title'];
-            (<Author> this.o(0))
-                .a(new G.Color(0, 0, 1280, 720, '#000'))
+            this.a(new G.Color(0, 0, 1280, 720, '#000'))
                 .a(new G.Text(<G.IBounds> _director, _director['ff'], _director['s'], _director['h'], this.$a(_director['a']))
                     .tc(_director['c'])
                     .a(new G.TextPhrase('作品'))
