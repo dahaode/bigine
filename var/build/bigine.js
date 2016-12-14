@@ -783,7 +783,9 @@ var Resource;
                         resolve(img);
                     };
                     img.onerror = function () {
-                        img.src = 'http://a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png';
+                        img.src = Bigine.offline ?
+                            'res/00/00/00000000-0000-0000-0000-000000000004/180.png' :
+                            ('http://a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png?' + Bigine.domain);
                         img.onerror = null;
                     };
                     img.src = url;
@@ -6537,7 +6539,7 @@ var Runtime;
             if (v) {
                 this._x['t'].h();
                 Util.each(['S', 'W', 'T', 'C', 'F', 'P', 'm', 'sl', 'ss', 'st'], function (key) {
-                    if (!_this._x[key].gO()) {
+                    if (_this._x[key].gO()) {
                         _this._ss.push(key);
                         _this._x[key].o(0);
                     }
@@ -16668,7 +16670,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.4';
+    Bigine.version = '0.25.5';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

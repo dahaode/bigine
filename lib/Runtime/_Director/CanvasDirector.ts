@@ -1401,7 +1401,7 @@ namespace Runtime {
             if (v) {
                 this._x['t'].h();
                 Util.each(['S', 'W', 'T', 'C', 'F', 'P', 'm', 'sl', 'ss', 'st'], (key: string) => {
-                    if (!this._x[key].gO()) {
+                    if (this._x[key].gO()) {
                         this._ss.push(key);
                         this._x[key].o(0);
                     }

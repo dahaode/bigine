@@ -146,7 +146,9 @@ namespace Resource {
                         resolve(<any> img);
                     };
                     img.onerror = () => {
-                        img.src = 'http://a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png';
+                        img.src = Bigine.offline ?
+                            'res/00/00/00000000-0000-0000-0000-000000000004/180.png' :
+                            ('http://a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png?' + Bigine.domain);
                         img.onerror = null;
                     };
                     img.src = url;
