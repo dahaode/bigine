@@ -326,16 +326,16 @@
             "ih": "menu/menu~hover.png"
         },
         "panel": {
-            "x": 1100,
-            "y": 618,
+            "x": 1160,
+            "y": 520,
             "w": 60,
             "h": 63,
             "i": "menu/panel.png",
             "ih": "menu/panel~hover.png"
         },
         "review": {
-            "x": 1124,
-            "y": 536,
+            "x": 1100,
+            "y": 606,
             "w": 60,
             "h": 63,
             "i": "menu/history.png",
