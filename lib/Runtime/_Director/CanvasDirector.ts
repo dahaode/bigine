@@ -567,23 +567,25 @@ namespace Runtime {
                     music.volume = volume;
                     if (music.src != url) {
                         music.src = url;
-                        // APP 需要使用
-                        if (Util.ENV.Mobile && Bigine.offline && music.src != oops) {
-                            this._r.dispatchEvent(new Ev.Video({
-                                target: null,
-                                type: type == Core.IResource.Type.BGM ? 'bgm' : 'esm',
-                                uri: url,
-                                volume: volume
-                            }));
-                        }
                     }
                     return super.playMusic(type, resource, vol);
                 };
-            if (!resource)
-                music.play();
-            if (music.src && music.src != oops)
-                return new G.AudioFadeOut(1500).p(music).then(change);
-            return change();
+            // APP 需要使用
+            if (Util.ENV.Mobile && Bigine.offline) {
+                this._r.dispatchEvent(new Ev.Video({
+                    target: null,
+                    type: type == Core.IResource.Type.BGM ? 'bgm' : 'esm',
+                    uri: url,
+                    volume: volume
+                }));
+                return super.playMusic(type, resource, vol);
+            } else {
+                if (!resource)
+                    music.play();
+                if (music.src && music.src != oops)
+                    return new G.AudioFadeOut(1500).p(music).then(change);
+                return change();
+            }
         }
 
         /**
@@ -598,9 +600,6 @@ namespace Runtime {
                     this._s['b'].play();
                     this._s['s'].play();
                 };
-            se.addEventListener(type, resume);
-            se.volume = se['baseVolume'] * (vol || 1);
-            se.src = url;
             // APP 需要使用
             if (Util.ENV.Mobile && Bigine.offline) {
                 this._r.dispatchEvent(new Ev.Video({
@@ -609,9 +608,13 @@ namespace Runtime {
                     uri: url,
                     volume: se.volume
                 }));
+            } else {
+                se.addEventListener(type, resume);
+                se.volume = se['baseVolume'] * (vol || 1);
+                se.src = url;
+                if (!resource)
+                    this._s['e'].play();
             }
-            if (!resource)
-                this._s['e'].play();
             return super.playSE(resource, vol);
         }
 
@@ -900,6 +903,7 @@ namespace Runtime {
                 this._pc = undefined;
                 this._fd =
                 this._rv = false;
+                this._ss = [];
                 this._x['G'].h(0);
                 this._x['W'].h(0);
                 this._x['F'].h(0);

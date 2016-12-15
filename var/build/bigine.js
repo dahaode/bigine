@@ -5225,7 +5225,7 @@ var Sprite;
                     split(data[0]);
                     break;
                 case 'choose':
-                    this._ls.push([1, '.选择：']);
+                    this._ls.push([1, '◇ 选择']);
                     loop = data;
                     break;
             }
@@ -5751,23 +5751,26 @@ var Runtime;
                 music.volume = volume;
                 if (music.src != url) {
                     music.src = url;
-                    // APP 需要使用
-                    if (Util.ENV.Mobile && Bigine.offline && music.src != oops) {
-                        _this._r.dispatchEvent(new Ev.Video({
-                            target: null,
-                            type: type == Core.IResource.Type.BGM ? 'bgm' : 'esm',
-                            uri: url,
-                            volume: volume
-                        }));
-                    }
                 }
                 return _super.prototype.playMusic.call(_this, type, resource, vol);
             };
-            if (!resource)
-                music.play();
-            if (music.src && music.src != oops)
-                return new G.AudioFadeOut(1500).p(music).then(change);
-            return change();
+            // APP 需要使用
+            if (Util.ENV.Mobile && Bigine.offline) {
+                this._r.dispatchEvent(new Ev.Video({
+                    target: null,
+                    type: type == Core.IResource.Type.BGM ? 'bgm' : 'esm',
+                    uri: url,
+                    volume: volume
+                }));
+                return _super.prototype.playMusic.call(this, type, resource, vol);
+            }
+            else {
+                if (!resource)
+                    music.play();
+                if (music.src && music.src != oops)
+                    return new G.AudioFadeOut(1500).p(music).then(change);
+                return change();
+            }
         };
         /**
          * 播放音效。
@@ -5779,9 +5782,6 @@ var Runtime;
                 _this._s['b'].play();
                 _this._s['s'].play();
             };
-            se.addEventListener(type, resume);
-            se.volume = se['baseVolume'] * (vol || 1);
-            se.src = url;
             // APP 需要使用
             if (Util.ENV.Mobile && Bigine.offline) {
                 this._r.dispatchEvent(new Ev.Video({
@@ -5791,8 +5791,13 @@ var Runtime;
                     volume: se.volume
                 }));
             }
-            if (!resource)
-                this._s['e'].play();
+            else {
+                se.addEventListener(type, resume);
+                se.volume = se['baseVolume'] * (vol || 1);
+                se.src = url;
+                if (!resource)
+                    this._s['e'].play();
+            }
             return _super.prototype.playSE.call(this, resource, vol);
         };
         /**
@@ -6063,6 +6068,7 @@ var Runtime;
                 _this._pc = undefined;
                 _this._fd =
                     _this._rv = false;
+                _this._ss = [];
                 _this._x['G'].h(0);
                 _this._x['W'].h(0);
                 _this._x['F'].h(0);

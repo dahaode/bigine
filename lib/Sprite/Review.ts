@@ -160,7 +160,7 @@ namespace Sprite {
                     split(data[0]);
                     break;
                 case 'choose':
-                    this._ls.push([1, '.选择：']);
+                    this._ls.push([1, '◇ 选择']);
                     loop = data;
                     break;
             }
