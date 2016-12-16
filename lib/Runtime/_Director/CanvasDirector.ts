@@ -48,11 +48,6 @@ namespace Runtime {
         private _i: Util.IHashTable<Resource.Resource<string | HTMLImageElement>>;
 
         /**
-         * 文字配置。
-         */
-        private _f: Util.IHashTable<Util.IHashTable<string | number>>;
-
-        /**
          * 自动播放相关动画。
          */
         private _t: G.Animation;
@@ -133,6 +128,10 @@ namespace Runtime {
         private _ss: Array<string>;
 
         /**
+         * 记录打开的特效。
+         */
+        private _se: G.Dropping;
+        /**
          * 构造函数。
          */
         constructor(runtime: Core.IRuntime) {
@@ -171,12 +170,12 @@ namespace Runtime {
                     .a(new G.Color(0, bounds.h - 11, bounds.w, 10, '#00ccff').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
-            this._fd =
+            this._fd = false;
             this._rv = false;
-            this._pc =
+            this._pc = undefined;
             this._ft = undefined;
-            this._f =
             this._pt = {};
+            this._se = null;
             this._ca = [undefined, undefined];
             this._e = [0, 0];
             this._ss = [];
@@ -207,7 +206,7 @@ namespace Runtime {
                 }
             };
             this._fs = Core.IRuntime.Series.Alone;
-            window.addEventListener('keydown', this._l);
+            window.addEventListener('keyup', this._l);
         }
 
         /**
@@ -809,7 +808,7 @@ namespace Runtime {
         /**
          * 选择。
          */
-        public choose(options: Core.IOptionTag[]): Promise<Core.IRuntime> {
+        public choose(options: Core.IOptionTag[], time: number, answer: string): Promise<Core.IRuntime> {
             return new Promise((resolve: (data: Core.IRuntime) => void, reject: (reason?: any) => void) => {
                 this._q = () => {
                     E.doHalt<Core.IRuntime>()['catch']((error: any) => {
@@ -901,7 +900,7 @@ namespace Runtime {
                 (<G.Component> this._c.q('M')[0]).c();
                 (<G.Component> this._c.q('c')[0]).c().o(0);
                 this._pc = undefined;
-                this._fd =
+                this._fd = false;
                 this._rv = false;
                 this._ss = [];
                 this._x['G'].h(0);
@@ -909,6 +908,10 @@ namespace Runtime {
                 this._x['F'].h(0);
                 this._x['T'].h(0);
                 this._x['C'].h(0);
+                if (this._se) {
+                    this._se.h();
+                    this._se = null;
+                }
                 return runtime;
             });
         }
@@ -1043,6 +1046,20 @@ namespace Runtime {
         }
 
         /**
+         * 特效。
+         */
+        public effect(onoff: boolean, type: string): Promise<Core.IRuntime> {
+            if (onoff) {
+                this._se = new G.Dropping(0, Core.IEffect.EFFECT[type]);
+                this._c.p(this._se);
+            } else {
+                this._se.h();
+                this._se = null;
+            }
+            return super.effect(onoff, type);
+        }
+
+        /**
          * 使用主题。
          */
         public t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector {
@@ -1065,7 +1082,7 @@ namespace Runtime {
                     this._ft = ev.type;
                 });
             resources.unshift(this._x['F'].l());
-            this._c.a(this._x['F'], gCurtain);
+            this._c.a(this._x['F'].i('F'), gCurtain);
             // 状态。
             this._x['S'] = <Sprite.Status> new Sprite.Status(theme['status']);
             resources.unshift(this._x['S'].l());

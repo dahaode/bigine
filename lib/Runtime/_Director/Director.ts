@@ -225,7 +225,7 @@ namespace Runtime {
         /**
          * 选择。
          */
-        public choose(options: Core.IOptionTag[]): Promise<Core.IRuntime> {
+        public choose(options: Core.IOptionTag[], time: number, answer: string): Promise<Core.IRuntime> {
             return this._p;
         }
 
@@ -312,6 +312,13 @@ namespace Runtime {
          * 隐藏全屏文本。
          */
         public fullHide(): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 特效。
+         */
+        public effect(onoff: boolean, type: string): Promise<Core.IRuntime> {
             return this._p;
         }
 

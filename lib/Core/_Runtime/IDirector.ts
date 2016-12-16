@@ -127,7 +127,7 @@ namespace Core {
         /**
          * 选择。
          */
-        choose(options: IOptionTag[]): Promise<IRuntime>;
+        choose(options: IOptionTag[], time: number, answer: string): Promise<IRuntime>;
 
         /**
          * 重置。
@@ -188,6 +188,11 @@ namespace Core {
          * 隐藏全屏文本。
          */
         fullHide(): Promise<IRuntime>;
+
+        /**
+         * 特效。
+         */
+        effect(onoff: boolean, type: string): Promise<IRuntime>;
     }
 
     export namespace IDirector {

@@ -98,7 +98,8 @@ var Ev;
  *     * `_ra` -  切幕动画 - Tag    // 添加切幕动画命令时所需记录的存档信息
  *     * `_rb` -  神态动画 - Tag    // 添加神态动画命令时所需记录的存档信息
  *     * `_f` -  全屏文本 - Tag    // 添加全屏文本命令时所需记录的存档信息
- *     * `_td` -  全屏文本 - Tag    // 打赏时间
+ *     * `_td` -  打赏时间 - Tag    // 打赏时间
+ *     * `_ef` -  特效 - Tag       // 特效
  * 2. `.` 表明为会话持久信息，不能被存档记录；
  *     * `.p<人物名>` - 人物站位 - Runtime/Tag
  *     * `.a` - 动作编号 - Runtime/Tag
@@ -1631,7 +1632,7 @@ var Runtime;
         /**
          * 选择。
          */
-        Director.prototype.choose = function (options) {
+        Director.prototype.choose = function (options, time, answer) {
             return this._p;
         };
         /**
@@ -1706,6 +1707,12 @@ var Runtime;
          * 隐藏全屏文本。
          */
         Director.prototype.fullHide = function () {
+            return this._p;
+        };
+        /**
+         * 特效。
+         */
+        Director.prototype.effect = function (onoff, type) {
             return this._p;
         };
         /**
@@ -5374,12 +5381,12 @@ var Runtime;
                 .a(new G.Color(0, bounds.h - 11, bounds.w, 10, '#00ccff').i('e')).i('L').o(0));
             this.f();
             this._vo = true;
-            this._fd =
-                this._rv = false;
-            this._pc =
-                this._ft = undefined;
-            this._f =
-                this._pt = {};
+            this._fd = false;
+            this._rv = false;
+            this._pc = undefined;
+            this._ft = undefined;
+            this._pt = {};
+            this._se = null;
             this._ca = [undefined, undefined];
             this._e = [0, 0];
             this._ss = [];
@@ -5411,7 +5418,7 @@ var Runtime;
                 }
             };
             this._fs = Core.IRuntime.Series.Alone;
-            window.addEventListener('keydown', this._l);
+            window.addEventListener('keyup', this._l);
         }
         /**
          * 预加载指定资源组。
@@ -5984,7 +5991,7 @@ var Runtime;
         /**
          * 选择。
          */
-        CanvasDirector.prototype.choose = function (options) {
+        CanvasDirector.prototype.choose = function (options, time, answer) {
             var _this = this;
             return new Promise(function (resolve, reject) {
                 _this._q = function () {
@@ -6066,14 +6073,18 @@ var Runtime;
                 _this._c.q('M')[0].c();
                 _this._c.q('c')[0].c().o(0);
                 _this._pc = undefined;
-                _this._fd =
-                    _this._rv = false;
+                _this._fd = false;
+                _this._rv = false;
                 _this._ss = [];
                 _this._x['G'].h(0);
                 _this._x['W'].h(0);
                 _this._x['F'].h(0);
                 _this._x['T'].h(0);
                 _this._x['C'].h(0);
+                if (_this._se) {
+                    _this._se.h();
+                    _this._se = null;
+                }
                 return runtime;
             });
         };
@@ -6200,6 +6211,20 @@ var Runtime;
             return _super.prototype.expression.call(this, name);
         };
         /**
+         * 特效。
+         */
+        CanvasDirector.prototype.effect = function (onoff, type) {
+            if (onoff) {
+                this._se = new G.Dropping(0, Core.IEffect.EFFECT[type]);
+                this._c.p(this._se);
+            }
+            else {
+                this._se.h();
+                this._se = null;
+            }
+            return _super.prototype.effect.call(this, onoff, type);
+        };
+        /**
          * 使用主题。
          */
         CanvasDirector.prototype.t = function (id, theme) {
@@ -6220,7 +6245,7 @@ var Runtime;
                 _this._ft = ev.type;
             });
             resources.unshift(this._x['F'].l());
-            this._c.a(this._x['F'], gCurtain);
+            this._c.a(this._x['F'].i('F'), gCurtain);
             // 状态。
             this._x['S'] = new Sprite.Status(theme['status']);
             resources.unshift(this._x['S'].l());
@@ -6603,6 +6628,88 @@ var Runtime;
         DirectorFactory.c = c;
     })(DirectorFactory = Runtime.DirectorFactory || (Runtime.DirectorFactory = {}));
 })(Runtime || (Runtime = {}));
+/**
+ * 声明特效参数配置对象。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Core/_Resource/IEffect.ts
+ */
+var Core;
+(function (Core) {
+    var IEffect;
+    (function (IEffect) {
+        IEffect.EFFECT = {
+            "小雨": {
+                maxNum: 50,
+                numLevel: 1,
+                gravity: 0.2,
+                type: "rain",
+                speed: [0.2, 1.0],
+                size_range: [0.5, 1.5],
+                hasBounce: true,
+                wind_direction: -105,
+                hasGravity: true
+            },
+            "中雨": {
+                maxNum: 150,
+                numLevel: 3,
+                gravity: 0.2,
+                type: "rain",
+                speed: [0.4, 2.0],
+                size_range: [1.0, 3.0],
+                hasBounce: true,
+                wind_direction: -105,
+                hasGravity: true
+            },
+            "大雨": {
+                maxNum: 500,
+                numLevel: 10,
+                gravity: 0.4,
+                type: "rain",
+                speed: [0.8, 4.0],
+                size_range: [2.0, 6.0],
+                hasBounce: true,
+                wind_direction: -105,
+                hasGravity: true
+            },
+            "小雪": {
+                maxNum: 80,
+                numLevel: 1,
+                gravity: 0.02,
+                type: "snow",
+                speed: [0.01, 0.05],
+                size_range: [1, 3],
+                hasBounce: false,
+                wind_direction: 90,
+                hasGravity: true
+            },
+            "中雪": {
+                maxNum: 200,
+                numLevel: 2,
+                gravity: 0.02,
+                type: "snow",
+                speed: [0.02, 0.1],
+                size_range: [1, 4],
+                hasBounce: false,
+                wind_direction: 90,
+                hasGravity: true
+            },
+            "大雪": {
+                maxNum: 300,
+                numLevel: 3,
+                gravity: 0.03,
+                type: "snow",
+                speed: [0.1, 0.2],
+                size_range: [2, 4],
+                hasBounce: false,
+                wind_direction: 90,
+                hasGravity: true
+            }
+        };
+    })(IEffect = Core.IEffect || (Core.IEffect = {}));
+})(Core || (Core = {}));
 /**
  * 声明（运行时）继续游戏事件元信息接口规范。
  *
@@ -7223,6 +7330,7 @@ var Tag;
         StopSE: '停止音效',
         VolumeSet: '设置音量',
         Review: '显示回看',
+        Effect: '特效',
         Assert: '当数据',
         Assign: '设置数据',
         Compare: '对比数据',
@@ -7412,11 +7520,12 @@ var Tag;
         109: ['FullHide', 0, -1],
         110: ['Unlock', 1, -1],
         113: ['Review', 0, -1],
+        114: ['Effect', 1, 0],
         58: ['Loop', 0, -1, {
                 '-1': [1]
             }],
         59: ['LoopBreak', 0, -1],
-        25: ['Choose', [0, 1], 0, {
+        25: ['Choose', [0, 3], 0, {
                 53: [0],
                 99: [0]
             }],
@@ -14008,7 +14117,7 @@ var Tag;
                 });
             }
             if (opts.length)
-                return runtime.gD().choose(opts);
+                return runtime.gD().choose(opts, parseInt((this._p[1] || '0'), 10), this._p[2]);
             return runtime;
         };
         return Choose;
@@ -15875,6 +15984,42 @@ var Tag;
     Tag.Unlock = Unlock;
 })(Tag || (Tag = {}));
 /**
+ * 定义特效动画动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Director/Effect.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Effect = (function (_super) {
+        __extends(Effect, _super);
+        function Effect() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Effect.prototype.gN = function () {
+            return 'Effect';
+        };
+        /**
+         * 执行。
+         */
+        Effect.prototype.p = function (runtime) {
+            var states = runtime.gS(), onoff = this._p[0] == '开', name = '_ef', exist = states.g(name);
+            if (onoff == (exist != undefined))
+                return runtime;
+            onoff ? states.s(name, this._c) : states.d(name);
+            return runtime.gD().effect(onoff, this._c);
+        };
+        return Effect;
+    }(Tag.Action));
+    Tag.Effect = Effect;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -15882,6 +16027,7 @@ var Tag;
  * @license   GPL-3.0
  * @file      Tag/_pack.ts
  */
+/// <reference path="../Core/_Resource/IEffect.ts" />
 /// <reference path="../Ev/_Runtime/Begin.ts" />
 /// <reference path="../Ev/_Runtime/Resume.ts" />
 /// <reference path="../Ev/_Runtime/Load.ts" />
@@ -15994,6 +16140,7 @@ var Tag;
 /// <reference path="_Action/_Text/FullClean.ts" />
 /// <reference path="_Action/_Text/FullHide.ts" />
 /// <reference path="_Action/_Logic/Unlock.ts" />
+/// <reference path="_Action/_Director/Effect.ts" />
 /**
  * 定义（作品）运行时组件。
  *

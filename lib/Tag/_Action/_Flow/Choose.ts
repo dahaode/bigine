@@ -61,7 +61,7 @@ namespace Tag {
                 });
             }
             if (opts.length)
-                return runtime.gD().choose(opts);
+                return runtime.gD().choose(opts, parseInt((this._p[1] || '0'), 10), this._p[2]);
             return runtime;
         }
     }

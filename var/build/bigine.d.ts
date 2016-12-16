@@ -151,7 +151,7 @@ declare namespace __Bigine {
             asMap(points: Util.IHashTable<IPointTag>): Promise<IRuntime>;
             lightOff(): Promise<IRuntime>;
             lightOn(): Promise<IRuntime>;
-            choose(options: IOptionTag[]): Promise<IRuntime>;
+            choose(options: IOptionTag[], time: number, answer: string): Promise<IRuntime>;
             reset(): Promise<IRuntime>;
             setCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
             pause(milsec: number): Promise<IRuntime>;
@@ -164,6 +164,7 @@ declare namespace __Bigine {
             fullWords(onoff: boolean): Promise<IRuntime>;
             fullClean(): Promise<IRuntime>;
             fullHide(): Promise<IRuntime>;
+            effect(onoff: boolean, type: string): Promise<IRuntime>;
         }
         namespace IDirector {
             enum Position {
@@ -471,7 +472,7 @@ declare namespace __Bigine {
             asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime>;
             lightOff(): Promise<Core.IRuntime>;
             lightOn(): Promise<Core.IRuntime>;
-            choose(options: Core.IOptionTag[]): Promise<Core.IRuntime>;
+            choose(options: Core.IOptionTag[], time: number, answer: string): Promise<Core.IRuntime>;
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
             pause(milsec: number): Promise<Core.IRuntime>;
@@ -484,6 +485,7 @@ declare namespace __Bigine {
             fullWords(onoff: boolean): Promise<Core.IRuntime>;
             fullClean(): Promise<Core.IRuntime>;
             fullHide(): Promise<Core.IRuntime>;
+            effect(onoff: boolean, type: string): Promise<Core.IRuntime>;
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
             s(sheet: [string, string][]): Director;
@@ -1032,7 +1034,6 @@ declare namespace __Bigine {
             private _c;
             private _s;
             private _i;
-            private _f;
             private _t;
             private _h;
             private _q;
@@ -1049,6 +1050,7 @@ declare namespace __Bigine {
             private _rv;
             private _cm;
             private _ss;
+            private _se;
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
             Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
@@ -1078,7 +1080,7 @@ declare namespace __Bigine {
             asMap(points: Util.IHashTable<Core.IPointTag>): Promise<Core.IRuntime>;
             lightOff(): Promise<Core.IRuntime>;
             lightOn(): Promise<Core.IRuntime>;
-            choose(options: Core.IOptionTag[]): Promise<Core.IRuntime>;
+            choose(options: Core.IOptionTag[], time: number, answer: string): Promise<Core.IRuntime>;
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             pause(milsec: number): Promise<Core.IRuntime>;
@@ -1088,6 +1090,7 @@ declare namespace __Bigine {
             cameraShake(): Promise<Core.IRuntime>;
             status(onoff: boolean): Promise<Core.IRuntime>;
             expression(name: string): Promise<Core.IRuntime>;
+            effect(onoff: boolean, type: string): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             sl(id: string, aotuload?: boolean): void;
             s(sheet: [string, string][]): CanvasDirector;
@@ -1107,6 +1110,11 @@ declare namespace __Bigine {
     namespace Runtime {
         namespace DirectorFactory {
             function c(runtime: Core.IRuntime): Director;
+        }
+    }
+    namespace Core {
+        namespace IEffect {
+            const EFFECT: Util.IHashTable<any>;
         }
     }
     namespace Ev {
@@ -2335,6 +2343,12 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class Unlock extends Idable {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class Effect extends Action {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }

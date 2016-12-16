@@ -105,6 +105,7 @@ namespace Tag {
         StopSE: '停止音效',
         VolumeSet: '设置音量',
         Review: '显示回看',
+        Effect: '特效',
 
         Assert: '当数据',
         Assign: '设置数据',
@@ -155,7 +156,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 114
+    export var S: { [index: number]: any[] } = { // next 115
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             113: [0, 1],
@@ -309,13 +310,14 @@ namespace Tag {
         109: ['FullHide', 0, -1],
         110: ['Unlock', 1, -1], // [萝卜币]
         113: ['Review', 0, -1],
+        114: ['Effect', 1, 0],  // [开/关] 特效名称?
 
         58: ['Loop', 0, -1, {
             '-1': [1]
         }],
         59: ['LoopBreak', 0, -1],
 
-        25: ['Choose', [0, 1], 0, { // [变量名] 选项名?
+        25: ['Choose', [0, 3], 0, { // [变量名?, 时间?, 默认选择?] 选项名?
             53: [0],
             99: [0]
         }],
