@@ -164,7 +164,7 @@ declare namespace __Bigine {
             fullWords(onoff: boolean): Promise<IRuntime>;
             fullClean(): Promise<IRuntime>;
             fullHide(): Promise<IRuntime>;
-            effect(onoff: boolean, type: string): Promise<IRuntime>;
+            weather(onoff: boolean, type: string): Promise<IRuntime>;
         }
         namespace IDirector {
             enum Position {
@@ -485,7 +485,7 @@ declare namespace __Bigine {
             fullWords(onoff: boolean): Promise<Core.IRuntime>;
             fullClean(): Promise<Core.IRuntime>;
             fullHide(): Promise<Core.IRuntime>;
-            effect(onoff: boolean, type: string): Promise<Core.IRuntime>;
+            weather(onoff: boolean, type: string): Promise<Core.IRuntime>;
             gD(): boolean;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): Director;
             s(sheet: [string, string][]): Director;
@@ -848,7 +848,7 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface IChoose extends ISprite {
-            u(options: IOptionTag[], stage: G.Stage): IChoose;
+            u(options: IOptionTag[], stage: G.Stage, time: number, answer: string): IChoose;
         }
     }
     namespace Ev {
@@ -863,13 +863,136 @@ declare namespace __Bigine {
             gT(): string;
         }
     }
+    namespace Tag {
+        var T: {
+            [name: string]: string;
+        };
+        var S: {
+            [index: number]: any[];
+        };
+        var C: {
+            [tag: string]: string;
+        };
+        var I: {
+            [name: string]: number;
+        };
+    }
+    class E extends Error {
+        static SCHEMA_TAG_NOT_DECLARED: string;
+        static SCHEMA_CHILD_NOT_ALLOWED: string;
+        static LEX_ILLEGAL_SOURCE: string;
+        static LEX_UNEXPECTED_INDENTATION: string;
+        static TAG_PARAMS_TOO_FEW: string;
+        static TAG_PARAMS_TOO_MANY: string;
+        static TAG_PARAMS_NOT_TRUE: string;
+        static TAG_CONTENT_FORBIDEN: string;
+        static TAG_CONTENT_REQUIRED: string;
+        static TAG_CHILDREN_TOO_FEW: string;
+        static TAG_CHILDREN_TOO_MANY: string;
+        static DEF_CHAR_AVATAR_NOT_FOUND: string;
+        static DEF_CHAR_POSES_NOT_FOUND: string;
+        static DEF_EPISODE_NOT_REGISTERED: string;
+        static DEF_EPISODE_NOT_BINDED: string;
+        static DEF_ROOM_EMPTY: string;
+        static DEF_MAP_REGION_BROKEN: string;
+        static DEF_MAP_BGIMAGE_NOT_FOUND: string;
+        static DEF_MAP_HLIMAGE_NOT_FOUND: string;
+        static DEF_MAP_REGION_NOT_FOUND: string;
+        static DEF_MAP_TARGET_NOT_FOUND: string;
+        static DEF_MAP_POINT_NOT_FOUND: string;
+        static SCENE_TYPE_UNKNOWN: string;
+        static ROOT_NOT_PARENT: string;
+        static ACT_ILLEGAL_POSITION: string;
+        static ACT_ILLEGAL_CAMERA_MOVE: string;
+        static ACT_CHAR_NOT_ON: string;
+        static ACT_CHAR_ONSTAGE: string;
+        static ACT_ILLEGAL_STARS: string;
+        static ACT_CG_NOT_SHOWN: string;
+        static ACT_CG_ALREADY_SHOWN: string;
+        static ACT_ILLEGAL_OP: string;
+        static ACT_OPTION_CAST_FAILURE: string;
+        static RES_INVALID_URI: string;
+        static ENV_NOT_AVAILABLE: string;
+        static EP_DUPLICATE_ENTITY: string;
+        static EP_ENTITY_NOT_FOUND: string;
+        static EP_THEME_NOT_LOADED: string;
+        static G_PARENT_NOT_FOUND: string;
+        static SUPPORT_NO_CANVAS: string;
+        static UTIL_REMOTE_TIMEOUT: string;
+        static OPT_OPTIONS_MISSING: string;
+        static OPT_OPTIONS_CONFLICT: string;
+        static COLL_STRUCT_DISMATCHED: string;
+        static STRUCT_FIELD_MISSING: string;
+        static STRUCT_FIELD_TYPE_TOO_MANY: string;
+        static STRUCT_FIELD_CANNOT_EMPTY: string;
+        static FULL_ROW_TOO_MANY: string;
+        signal: E.Signal;
+        static doHalt<T>(): Promise<T>;
+        static ignoreHalt(error: E): Promise<void>;
+        static doBreak<T>(): Promise<T>;
+        static ignoreBreak(error: E): Promise<void>;
+        constructor(message: string, lineNo?: number);
+    }
+    namespace E {
+        enum Signal {
+            BREAK = -99,
+            HALT = -98,
+            OK = 0,
+        }
+    }
+    namespace Tag {
+        class Unknown implements Core.ITag {
+            protected _p: string[];
+            protected _c: string;
+            protected _s: Unknown[];
+            protected _l: number;
+            protected _u: Unknown;
+            protected _r: boolean;
+            protected _b: boolean;
+            private _q;
+            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
+            gL(): number;
+            gN(): string;
+            r(ep: Core.IEpisode): void;
+            protected $r(ep: Core.IEpisode): void;
+            b(ep: Core.IEpisode): void;
+            protected $b(ep: Core.IEpisode): void;
+            toString(): string;
+            toJsrn(): string;
+            protected $v(orig: string, wantstr?: boolean): number | string;
+            protected $u(parent: Unknown): void;
+            gU(): Unknown;
+            protected $i(abstract?: boolean): number;
+            $p(index: number): string;
+            $c(): string;
+            $q(name: string): Unknown[];
+        }
+    }
+    namespace Tag {
+        class Option extends Unknown implements Core.IOptionTag {
+            protected _k: string;
+            protected _i: string;
+            protected _a: boolean;
+            static f(tag: Unknown): Option;
+            gT(): string;
+            gN(): string;
+            p(runtime: Core.IRuntime): void;
+            sK(key: string): Option;
+            gM(): number;
+            sA(is: boolean): Option;
+            gA(): boolean;
+            gI(): string;
+            i(id: string): void;
+            toJsrn(): string;
+        }
+    }
     namespace Sprite {
         class Choose extends Sprite implements Core.IChoose {
             private _bn;
             private _bi;
             private _ke;
             constructor(theme: Util.IHashTable<any>, listen: (ev: Ev.Choose) => void);
-            u(options: Core.IOptionTag[], stage: G.Stage): Choose;
+            u(options: Core.IOptionTag[], stage: G.Stage, time: number, answer: string): Choose;
             protected ev(options: Core.IOptionTag[], stage: G.Stage): void;
             h(duration?: number): Promise<Sprite>;
         }
@@ -1090,7 +1213,7 @@ declare namespace __Bigine {
             cameraShake(): Promise<Core.IRuntime>;
             status(onoff: boolean): Promise<Core.IRuntime>;
             expression(name: string): Promise<Core.IRuntime>;
-            effect(onoff: boolean, type: string): Promise<Core.IRuntime>;
+            weather(onoff: boolean, type: string): Promise<Core.IRuntime>;
             t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             sl(id: string, aotuload?: boolean): void;
             s(sheet: [string, string][]): CanvasDirector;
@@ -1113,8 +1236,8 @@ declare namespace __Bigine {
         }
     }
     namespace Core {
-        namespace IEffect {
-            const EFFECT: Util.IHashTable<any>;
+        namespace IWeather {
+            const WEATHER: Util.IHashTable<any>;
         }
     }
     namespace Ev {
@@ -1281,111 +1404,6 @@ declare namespace __Bigine {
             more: string;
             constructor(metas: IReviewMetas);
             gT(): string;
-        }
-    }
-    namespace Tag {
-        var T: {
-            [name: string]: string;
-        };
-        var S: {
-            [index: number]: any[];
-        };
-        var C: {
-            [tag: string]: string;
-        };
-        var I: {
-            [name: string]: number;
-        };
-    }
-    class E extends Error {
-        static SCHEMA_TAG_NOT_DECLARED: string;
-        static SCHEMA_CHILD_NOT_ALLOWED: string;
-        static LEX_ILLEGAL_SOURCE: string;
-        static LEX_UNEXPECTED_INDENTATION: string;
-        static TAG_PARAMS_TOO_FEW: string;
-        static TAG_PARAMS_TOO_MANY: string;
-        static TAG_PARAMS_NOT_TRUE: string;
-        static TAG_CONTENT_FORBIDEN: string;
-        static TAG_CONTENT_REQUIRED: string;
-        static TAG_CHILDREN_TOO_FEW: string;
-        static TAG_CHILDREN_TOO_MANY: string;
-        static DEF_CHAR_AVATAR_NOT_FOUND: string;
-        static DEF_CHAR_POSES_NOT_FOUND: string;
-        static DEF_EPISODE_NOT_REGISTERED: string;
-        static DEF_EPISODE_NOT_BINDED: string;
-        static DEF_ROOM_EMPTY: string;
-        static DEF_MAP_REGION_BROKEN: string;
-        static DEF_MAP_BGIMAGE_NOT_FOUND: string;
-        static DEF_MAP_HLIMAGE_NOT_FOUND: string;
-        static DEF_MAP_REGION_NOT_FOUND: string;
-        static DEF_MAP_TARGET_NOT_FOUND: string;
-        static DEF_MAP_POINT_NOT_FOUND: string;
-        static SCENE_TYPE_UNKNOWN: string;
-        static ROOT_NOT_PARENT: string;
-        static ACT_ILLEGAL_POSITION: string;
-        static ACT_ILLEGAL_CAMERA_MOVE: string;
-        static ACT_CHAR_NOT_ON: string;
-        static ACT_CHAR_ONSTAGE: string;
-        static ACT_ILLEGAL_STARS: string;
-        static ACT_CG_NOT_SHOWN: string;
-        static ACT_CG_ALREADY_SHOWN: string;
-        static ACT_ILLEGAL_OP: string;
-        static ACT_OPTION_CAST_FAILURE: string;
-        static RES_INVALID_URI: string;
-        static ENV_NOT_AVAILABLE: string;
-        static EP_DUPLICATE_ENTITY: string;
-        static EP_ENTITY_NOT_FOUND: string;
-        static EP_THEME_NOT_LOADED: string;
-        static G_PARENT_NOT_FOUND: string;
-        static SUPPORT_NO_CANVAS: string;
-        static UTIL_REMOTE_TIMEOUT: string;
-        static OPT_OPTIONS_MISSING: string;
-        static OPT_OPTIONS_CONFLICT: string;
-        static COLL_STRUCT_DISMATCHED: string;
-        static STRUCT_FIELD_MISSING: string;
-        static STRUCT_FIELD_TYPE_TOO_MANY: string;
-        static STRUCT_FIELD_CANNOT_EMPTY: string;
-        static FULL_ROW_TOO_MANY: string;
-        signal: E.Signal;
-        static doHalt<T>(): Promise<T>;
-        static ignoreHalt(error: E): Promise<void>;
-        static doBreak<T>(): Promise<T>;
-        static ignoreBreak(error: E): Promise<void>;
-        constructor(message: string, lineNo?: number);
-    }
-    namespace E {
-        enum Signal {
-            BREAK = -99,
-            HALT = -98,
-            OK = 0,
-        }
-    }
-    namespace Tag {
-        class Unknown implements Core.ITag {
-            protected _p: string[];
-            protected _c: string;
-            protected _s: Unknown[];
-            protected _l: number;
-            protected _u: Unknown;
-            protected _r: boolean;
-            protected _b: boolean;
-            private _q;
-            constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
-            gL(): number;
-            gN(): string;
-            r(ep: Core.IEpisode): void;
-            protected $r(ep: Core.IEpisode): void;
-            b(ep: Core.IEpisode): void;
-            protected $b(ep: Core.IEpisode): void;
-            toString(): string;
-            toJsrn(): string;
-            protected $v(orig: string): number | string;
-            protected $u(parent: Unknown): void;
-            gU(): Unknown;
-            protected $i(abstract?: boolean): number;
-            $p(index: number): string;
-            $c(): string;
-            $q(name: string): Unknown[];
         }
     }
     namespace Tag {
@@ -2050,24 +2068,6 @@ declare namespace __Bigine {
         }
     }
     namespace Tag {
-        class Option extends Unknown implements Core.IOptionTag {
-            protected _k: string;
-            protected _i: string;
-            protected _a: boolean;
-            static f(tag: Unknown): Option;
-            gT(): string;
-            gN(): string;
-            p(runtime: Core.IRuntime): void;
-            sK(key: string): Option;
-            gM(): number;
-            sA(is: boolean): Option;
-            gA(): boolean;
-            gI(): string;
-            i(id: string): void;
-            toJsrn(): string;
-        }
-    }
-    namespace Tag {
         class Choose extends Action {
             gN(): string;
             constructor(params: string[], content: string, children: Unknown[], lineNo?: number);
@@ -2343,12 +2343,6 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class Unlock extends Idable {
-            gN(): string;
-            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
-        }
-    }
-    namespace Tag {
-        class Effect extends Action {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }

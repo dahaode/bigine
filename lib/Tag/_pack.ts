@@ -7,7 +7,7 @@
  * @file      Tag/_pack.ts
  */
 
-/// <reference path="../Core/_Resource/IEffect.ts" />
+/// <reference path="../Core/_Resource/IWeather.ts" />
 /// <reference path="../Ev/_Runtime/Begin.ts" />
 /// <reference path="../Ev/_Runtime/Resume.ts" />
 /// <reference path="../Ev/_Runtime/Load.ts" />
@@ -120,4 +120,3 @@
 /// <reference path="_Action/_Text/FullClean.ts" />
 /// <reference path="_Action/_Text/FullHide.ts" />
 /// <reference path="_Action/_Logic/Unlock.ts" />
-/// <reference path="_Action/_Director/Effect.ts" />

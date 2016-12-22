@@ -318,7 +318,7 @@ namespace Runtime {
         /**
          * 特效。
          */
-        public effect(onoff: boolean, type: string): Promise<Core.IRuntime> {
+        public weather(onoff: boolean, type: string): Promise<Core.IRuntime> {
             return this._p;
         }
 

@@ -192,7 +192,7 @@ namespace Core {
         /**
          * 特效。
          */
-        effect(onoff: boolean, type: string): Promise<IRuntime>;
+        weather(onoff: boolean, type: string): Promise<IRuntime>;
     }
 
     export namespace IDirector {

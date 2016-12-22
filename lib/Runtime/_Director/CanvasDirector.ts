@@ -70,7 +70,7 @@ namespace Runtime {
         /**
          * 键盘事件监听函数。
          */
-        private _l: (event: KeyboardEvent) => void;
+        private _l: Util.IHashTable<(event: KeyboardEvent) => void>;
 
         /**
          * 画面组件集合。
@@ -196,17 +196,21 @@ namespace Runtime {
             this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
             this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
             this._s['e']['cd'] = -1;
-            this._l = (event: KeyboardEvent) => {
+            this._l = {};
+            this._l[0] = (event: KeyboardEvent) => {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc && !this._rv) {
                     if (this._ft) this._ft.h();
                     this._t.h();
                 }
+            };
+            this._l[1] = (event: KeyboardEvent) => {
                 if (event.keyCode == 67 && !this._a && this._r.isPlaying()) {
                     this.sReview(!this._rv);
                 }
             };
             this._fs = Core.IRuntime.Series.Alone;
-            window.addEventListener('keyup', this._l);
+            window.addEventListener('keydown', this._l[0]);
+            window.addEventListener('keyup', this._l[1]);
         }
 
         /**
@@ -682,9 +686,9 @@ namespace Runtime {
                 .then((runtime: Core.IRuntime) => {
                     // 强制复位
                     var camera: string = <string> runtime.gS().g('.z');
-                    var gOld: G.Element = <G.Element> this._c.q('b')[0];
+                    var gOld: G.Sprite = <G.Sprite> this._c.q('b')[0];
                     if (camera) {
-                        gOld.x(0).y(0).sW(1280).sH(720);
+                        (<G.Image> gOld.q('n')[0]).x(0).y(0).sW(1280).sH(720);
                         runtime.gS().d('.z')
                             .d('_z');
                     }
@@ -835,13 +839,15 @@ namespace Runtime {
                                     this._pc = undefined;
                                 };
                             Util.each(options, (opt: Tag.Option) => {
-                                var desc: string = opt.gT();
-                                desc = desc.replace(/【#[0-9a-fA-F]{6}/g, '')
-                                    .replace(/【/g, '')
-                                    .replace(/】/g, '');
-                                if (select == opt.gT())
-                                    desc = '【' + desc + '   √】';
-                                clobs.push('      ' + desc);
+                                if (opt.$p(0) != answer) {
+                                    var desc: string = opt.gT();
+                                    desc = desc.replace(/【#[0-9a-fA-F]{6}/g, '')
+                                        .replace(/【/g, '')
+                                        .replace(/】/g, '');
+                                    if (select == opt.gT())
+                                        desc = '【' + desc + '   √】';
+                                    clobs.push('      ' + desc);
+                                }
                             });
                             this._r.dispatchEvent(new Ev.Review({
                                 target: null,
@@ -872,7 +878,7 @@ namespace Runtime {
                             }
                         }
                     };
-                gChoose.u(options, this._c).addEventListener(event, handler);
+                gChoose.u(options, this._c, time, answer).addEventListener(event, handler);
                 this.lightOn()
                     .then(() => gChoose.v());
             });
@@ -957,7 +963,7 @@ namespace Runtime {
          * 移动镜头。
          */
         public cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime> {
-            var gRoom: G.Image = <G.Image> this._c.q('b')[0],
+            var gRoom: G.Image = <G.Image> (<G.Sprite> this._c.q('b')[0]).q('n')[0],
                 x: number = Math.round(mx * (1 - 5 / 3) * 1280),
                 y: number = Math.round(my * (1 - 5 / 3) * 720);
             if (!gRoom) return this._p;
@@ -977,8 +983,6 @@ namespace Runtime {
                 ]).then(() => {
                     this._c.e(sClick);
                     this._t = this._h = undefined;
-                    aMove.h();
-                    gRoom.x(x).y(y);
                     resolve(this._r);
                 });
             });
@@ -988,14 +992,13 @@ namespace Runtime {
          * 放大/缩小镜头。
          */
         public cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime> {
-            var gRoom: G.Image = <G.Image> this._c.q('b')[0],
-                bound: G.IBounds = gRoom.gB();
+            var gRoom: G.Image = <G.Image> (<G.Sprite> this._c.q('b')[0]).q('n')[0];
             if (!gRoom) return this._p;
             let sClick: G.Component = new G.Component({}, false);  // 建立临时透明层，使得可以响应WaitForClick事件。
             this._c.a(sClick.i('P').o(1));
             return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
-                let aZoom: G.Zoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale }),
-                    aWFC: G.WaitForClick = new G.WaitForClick(() => {
+                let aZoom: G.Zoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale });
+                let aWFC: G.WaitForClick = new G.WaitForClick(() => {
                         aZoom.h();
                     });
                 this._t = this._h = aWFC;
@@ -1007,13 +1010,6 @@ namespace Runtime {
                 ]).then(() => {
                     this._c.e(sClick);
                     this._t = this._h = undefined;
-                    aZoom.h();
-                    let px: number = scale * (5 / 3 - 1) * 1280,
-                        py: number = scale * (5 / 3 - 1) * 720;
-                    gRoom.x(Math.round(bound.x - mx * px))
-                        .y(Math.round(bound.y - my * py))
-                        .sW(Math.round(bound.w + px))
-                        .sH(Math.round(bound.h + py));
                     resolve(this._r);
                 });
             });
@@ -1023,7 +1019,7 @@ namespace Runtime {
          * 抖动镜头。
          */
         public cameraShake(): Promise<Core.IRuntime> {
-            var gRoom: G.Image = <G.Image> this._c.q('b')[0];
+            var gRoom: G.Component = <G.Component> this._c.q('b')[0];
             gRoom.p(new G.Shake(500));
             return super.cameraShake();
         }
@@ -1048,15 +1044,16 @@ namespace Runtime {
         /**
          * 特效。
          */
-        public effect(onoff: boolean, type: string): Promise<Core.IRuntime> {
-            if (onoff) {
-                this._se = new G.Dropping(0, Core.IEffect.EFFECT[type]);
-                this._c.p(this._se);
-            } else {
+        public weather(onoff: boolean, type: string): Promise<Core.IRuntime> {
+            if (this._se) {
                 this._se.h();
                 this._se = null;
             }
-            return super.effect(onoff, type);
+            if (onoff) {
+                this._se = new G.Dropping(0, Core.IWeather.WEATHER[type]);
+                this._c.p(this._se);
+            }
+            return super.weather(onoff, type);
         }
 
         /**
@@ -1075,14 +1072,14 @@ namespace Runtime {
                     this._t = this._h = ev.animation;
                 });
             resources.unshift(this._x['W'].l());
-            this._c.a(this._x['W'], gCurtain);
+            this._c.a(this._x['W'].i('W'), gCurtain);
             // 全屏文本。
             this._x['F'] = <Sprite.Full> new Sprite.Full(theme['full'], this._cm, (ev: Ev.FullAnimation) => {
                     this._t = this._h = ev.animation;
                     this._ft = ev.type;
                 });
             resources.unshift(this._x['F'].l());
-            this._c.a(this._x['F'].i('F'), gCurtain);
+            this._c.a(this._x['F'], gCurtain);
             // 状态。
             this._x['S'] = <Sprite.Status> new Sprite.Status(theme['status']);
             resources.unshift(this._x['S'].l());
@@ -1360,7 +1357,8 @@ namespace Runtime {
             this._s['e'].pause();
             this._s['s'].pause();
             this._s = {};
-            window.removeEventListener('keydown', this._l);
+            window.removeEventListener('keydown', this._l[0]);
+            window.removeEventListener('keyup', this._l[1]);
         }
 
         /**

@@ -17,6 +17,6 @@ namespace Core {
         /**
          * 配置。
          */
-        u(options: IOptionTag[], stage: G.Stage): IChoose;
+        u(options: IOptionTag[], stage: G.Stage, time: number, answer: string): IChoose;
     }
 }

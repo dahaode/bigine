@@ -22,8 +22,13 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            runtime.gS().s('_w', this._p[0]);
-            return runtime;
+            var states: Core.IStates = runtime.gS(),
+                onoff: boolean = this._p[0] != '晴',
+                name: string = '_w',
+                weather: string = states.g(name);
+            if (onoff && this._p[0] == weather) return runtime;
+            onoff ? states.s(name, this._p[0]) : states.d(name);
+            return runtime.gD().weather(onoff, this._p[0]);
         }
     }
 }

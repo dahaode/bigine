@@ -10,6 +10,7 @@
 /// <reference path="../../Action.ts" />
 
 namespace Tag {
+    import Util = __Bigine_Util;
     export class Copy extends Action {
         /**
          * 获取标签名称。
@@ -23,8 +24,17 @@ namespace Tag {
          */
         public t(states: Core.IStates): boolean {
             var depth: number = states.g('$d');
-            states.c(this._p[1], this._p[0])
-                .c(this._p[0], '$v' + depth)
+            var sign: string = '／';
+            // 如果是设置结构体类型数据中字段值
+            if (/^.+／.+$/ig.test(this._p[1])) {
+                let vari: string = this._p[1].split(sign)[0];
+                let fieldName: string = this._p[1].split(sign)[1];
+                let data: Util.IHashTable<any> = states.g(vari);
+                states.s(this._p[0], data[fieldName]);
+            } else {
+                states.c(this._p[1], this._p[0]);
+            }
+            states.c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;
         }

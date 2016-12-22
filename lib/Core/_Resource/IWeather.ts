@@ -4,14 +4,14 @@
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Core/_Resource/IEffect.ts
+ * @file      Core/_Resource/Weather.ts
  */
 
 namespace Core {
     import Util = __Bigine_Util;
 
-    export namespace IEffect {
-        export const EFFECT: Util.IHashTable<any> = {
+    export namespace IWeather {
+        export const WEATHER: Util.IHashTable<any> = {
             "小雨": {
                 maxNum: 50,
                 numLevel: 1,
@@ -20,7 +20,7 @@ namespace Core {
                 speed: [0.2, 1.0],
                 size_range: [0.5, 1.5],
                 hasBounce: true,
-                wind_direction: -105,
+                wind_direction: 90,
                 hasGravity: true
             },
             "中雨": {
@@ -31,7 +31,7 @@ namespace Core {
                 speed: [0.4, 2.0],
                 size_range: [1.0, 3.0],
                 hasBounce: true,
-                wind_direction: -105,
+                wind_direction: 90,
                 hasGravity: true
             },
             "大雨": {
@@ -40,9 +40,9 @@ namespace Core {
                 gravity: 0.4,
                 type: "rain",
                 speed: [0.8, 4.0],
-                size_range: [2.0, 6.0],
+                size_range: [2, 6],
                 hasBounce: true,
-                wind_direction: -105,
+                wind_direction: 90,
                 hasGravity: true
             },
             "小雪": {

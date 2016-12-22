@@ -188,11 +188,10 @@ namespace Tag {
                 children: string[] = [],
                 clob: string;
             if (this._c)
-                parts.push(this.$v(this._c));
+                parts.push(this.$v(this._c, true));
             if (this._p.length) {
                 Util.each(this._p, (param: string) => {
-                    params.push(param);
-                    //params.push(this.$v(param));
+                    params.push(this.$v(param, true));
                 });
                 parts.push(params);
             }
@@ -209,11 +208,12 @@ namespace Tag {
         /**
          * 尝试将数值字符串转为数值。
          */
-        protected $v(orig: string): number | string {
+        protected $v(orig: string, wantstr?: boolean): number | string {
             if ('真' == orig) {
                 return 1;
             } else if ('伪' == orig)
                 return 0;
+            if (wantstr) return orig;
             var ret: number = <any> orig - 0;
             return isNaN(ret) ? orig : ret;
         }

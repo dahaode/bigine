@@ -99,7 +99,6 @@ var Ev;
  *     * `_rb` -  神态动画 - Tag    // 添加神态动画命令时所需记录的存档信息
  *     * `_f` -  全屏文本 - Tag    // 添加全屏文本命令时所需记录的存档信息
  *     * `_td` -  打赏时间 - Tag    // 打赏时间
- *     * `_ef` -  特效 - Tag       // 特效
  * 2. `.` 表明为会话持久信息，不能被存档记录；
  *     * `.p<人物名>` - 人物站位 - Runtime/Tag
  *     * `.a` - 动作编号 - Runtime/Tag
@@ -1712,7 +1711,7 @@ var Runtime;
         /**
          * 特效。
          */
-        Director.prototype.effect = function (onoff, type) {
+        Director.prototype.weather = function (onoff, type) {
             return this._p;
         };
         /**
@@ -4026,6 +4025,841 @@ var Ev;
     Ev.Choose = Choose;
 })(Ev || (Ev = {}));
 /**
+ * 定义语法规约。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_schema.ts
+ */
+var Tag;
+(function (Tag) {
+    /**
+     * 类到标签映射。
+     */
+    Tag.T = {
+        Unknown: 'UNKNOWN',
+        Root: 'ROOT',
+        DefBGM: '音乐',
+        Audio: '音源',
+        Image: '画面',
+        DefCG: '特写',
+        DefChar: '人物',
+        Avatar: '头像',
+        Poses: '姿态',
+        DefMap: '地图',
+        BGImage: '底图',
+        Point: '交互点',
+        HLImage: '高亮',
+        Region: '区域',
+        Target: '对应房间',
+        DefRoom: '房间',
+        Link: '使用地图',
+        Times: '时刻',
+        DefSE: '音效',
+        DefWeather: '天气',
+        Struct: '结构',
+        Field: '字段',
+        FieldType: '类别',
+        FieldLimit: '上限',
+        Auto: '自动播放',
+        Player: '主角',
+        Resources: '素材包',
+        Theme: '主题',
+        Status: '状态',
+        Panel: '面板',
+        SimpPanel: '简单面板',
+        SimpEle: '条目',
+        EleName: '数据名',
+        EleType: '数据类别',
+        CollPanel: '集合面板',
+        CollSource: '使用集合',
+        CollStruct: '集合结构',
+        Scene: '事件',
+        Type: '类型',
+        Conditions: '条件',
+        Content: '内容',
+        CharOn: '人物出场',
+        CharOff: '人物离场',
+        CharSet: '设置人物',
+        CharPose: '改变神态',
+        CharMove: '人物移动',
+        CameraSet: '设置镜头',
+        CameraZoom: '放大镜头',
+        CameraReset: '复位镜头',
+        CameraMove: '移动镜头',
+        CameraShake: '抖动镜头',
+        Monolog: '独白',
+        Speak: '对白',
+        Tip: '提示',
+        VoiceOver: '旁白',
+        FullWords: '全屏文本',
+        FullClean: '清除文本',
+        FullHide: '隐藏文本',
+        Save: '自动存档',
+        End: '游戏完结',
+        Fin: '作品完结',
+        Fail: '游戏失败',
+        Lose: '作品失败',
+        Stars: '评分',
+        PlayBGM: '播放音乐',
+        HideCG: '关闭特写',
+        ShowCG: '展示特写',
+        AsRoom: '设置房间',
+        Freeze: '移动中止',
+        AsTime: '设置时间',
+        Enter: '进入房间',
+        PlaySE: '播放音效',
+        Weather: '设置天气',
+        StopBGM: '停止音乐',
+        Pause: '停顿',
+        Curtains: '切幕动画',
+        Expression: '神态动画',
+        ShowStatus: '显示状态栏',
+        HideStatus: '隐藏状态栏',
+        PlayESM: '环境音乐',
+        StopESM: '环境静音',
+        StopSE: '停止音效',
+        VolumeSet: '设置音量',
+        Review: '显示回看',
+        Assert: '当数据',
+        Assign: '设置数据',
+        Compare: '对比数据',
+        Increase: '增加数据',
+        LoopBreak: '循环中止',
+        Maximum: '最大数据',
+        Minimum: '最小数据',
+        Choose: '选择',
+        Random: '随机数据',
+        IfTime: '当时间',
+        Copy: '复制数据',
+        Add: '数据合值',
+        Subtract: '数据差值',
+        Product: '数据倍值',
+        Define: '定义数据',
+        Collection: '定义集合',
+        CollPop: '删除元素',
+        CollPush: '增加元素',
+        Donate: '打赏',
+        Unlock: '解锁',
+        DefOptions: '定义选择',
+        AddOption: '添加选项',
+        DropOption: '去除选项',
+        Option: '选项',
+        And: '且',
+        Or: '或',
+        Otherwise: '否则',
+        Then: '那么',
+        When: '如果',
+        Loop: '循环',
+        WhenVar: '如果数据'
+    };
+    /**
+     * 语法规则。
+     *
+     * {
+     *     [index: number]: {
+     *         name: string,
+     *         params: number[], // [最小量, 最大量]
+     *         content: number // -1 禁止，0 可选，1 必须,
+     *         children: {
+     *             [index: number]: number[] // [最小量, 最大量]
+     *         }
+     *     }
+     * }
+     */
+    Tag.S = {
+        '-1': ['Root', 0, -1, {
+                54: [0, 1],
+                113: [0, 1],
+                55: [0, 1],
+                56: 1,
+                57: 1,
+                73: [0, 1],
+                74: [0, 1],
+                76: [0],
+                49: [1],
+                33: [0],
+                34: [0],
+                35: [0],
+                38: [0],
+                44: [0],
+                47: [0],
+                48: [0]
+            }],
+        54: ['Auto', 0, -1],
+        55: ['Player', 0, 1],
+        56: ['Resources', 0, 1],
+        57: ['Theme', 0, 1],
+        73: ['Status', 0, -1, {
+                53: [0, 6]
+            }],
+        74: ['Panel', 0, -1, {
+                84: [0],
+                88: [0]
+            }],
+        84: ['SimpPanel', 0, 1, {
+                85: [1]
+            }],
+        85: ['SimpEle', 0, 1, {
+                86: 1,
+                87: [0, 1]
+            }],
+        86: ['EleName', 0, 1],
+        87: ['EleType', 0, 1],
+        88: ['CollPanel', 0, 1, {
+                89: 1,
+                90: 1
+            }],
+        89: ['CollSource', 0, 1],
+        90: ['CollStruct', 0, 1],
+        49: ['Scene', 0, 1, {
+                50: 1,
+                51: [0, 1],
+                52: 1
+            }],
+        50: ['Type', 0, 1],
+        51: ['Conditions', 0, -1, {
+                '-1': [0]
+            }],
+        52: ['Content', 0, -1, {
+                '-1': [1]
+            }],
+        33: ['DefBGM', 0, 1, {
+                32: 1
+            }],
+        32: ['Audio', 0, 1],
+        34: ['DefCG', 0, 1, {
+                31: 1
+            }],
+        31: ['Image', 0, 1],
+        35: ['DefChar', [0, 1], 1, {
+                36: [0, 1],
+                37: [0, 1]
+            }],
+        36: ['Avatar', 0, 1],
+        37: ['Poses', 0, -1, {
+                53: [0]
+            }],
+        38: ['DefMap', [0, 1], 1, {
+                39: [0, 1],
+                40: [1]
+            }],
+        39: ['BGImage', 0, 1],
+        40: ['Point', [0, 1], 1, {
+                41: [0, 1],
+                42: [0, 1],
+                43: [0, 1]
+            }],
+        41: ['HLImage', 0, 1],
+        42: ['Region', 0, 1],
+        43: ['Target', 0, 1],
+        44: ['DefRoom', 0, 1, {
+                45: [0, 1],
+                46: [0, 1]
+            }],
+        45: ['Link', 0, 1],
+        46: ['Times', 0, -1, {
+                53: [1]
+            }],
+        47: ['DefSE', 0, 1, {
+                32: 1
+            }],
+        48: ['DefWeather', 0, 1],
+        53: ['Unknown', [1, 2], 0],
+        0: ['CharOn', [0, 1], 1],
+        1: ['CharOff', 1, -1],
+        2: ['CharSet', [0, 1], 1],
+        3: ['CharPose', 1, 1],
+        62: ['CharMove', 1, 1],
+        4: ['Monolog', 0, 1],
+        5: ['Speak', [2, 3], 1],
+        6: ['Tip', 0, 1],
+        7: ['VoiceOver', 0, 1],
+        8: ['Save', [0, 1], -1],
+        9: ['End', 0, -1],
+        111: ['Fin', 0, -1],
+        10: ['Fail', 0, -1],
+        112: ['Lose', 0, -1],
+        11: ['Stars', [1, 2], -1],
+        12: ['PlayBGM', [1, 2], -1],
+        103: ['PlayESM', [1, 2], -1],
+        64: ['StopBGM', 0, -1],
+        104: ['StopESM', 0, -1],
+        105: ['StopSE', 0, -1],
+        13: ['HideCG', 0, -1],
+        14: ['ShowCG', 1, -1],
+        15: ['AsRoom', [1, 2], 0],
+        16: ['Freeze', 0, -1],
+        17: ['AsTime', 1, -1],
+        18: ['Enter', 1, -1],
+        19: ['PlaySE', [1, 2], -1],
+        20: ['Weather', 1, -1],
+        91: ['Pause', [0, 1], -1],
+        92: ['CameraSet', 0, 1],
+        93: ['CameraReset', [0, 1], -1],
+        94: ['CameraZoom', [0, 1], 1],
+        95: ['CameraMove', [0, 1], 1],
+        96: ['Curtains', [0, 1], -1],
+        97: ['CameraShake', 0, -1],
+        100: ['ShowStatus', 0, -1],
+        101: ['HideStatus', 0, -1],
+        102: ['Expression', [0, 1], -1],
+        106: ['VolumeSet', 2, -1],
+        107: ['FullWords', 1, -1],
+        108: ['FullClean', 0, -1],
+        109: ['FullHide', 0, -1],
+        110: ['Unlock', 1, -1],
+        113: ['Review', 0, -1],
+        58: ['Loop', 0, -1, {
+                '-1': [1]
+            }],
+        59: ['LoopBreak', 0, -1],
+        25: ['Choose', [0, 3], 0, {
+                53: [0],
+                99: [0]
+            }],
+        65: ['DefOptions', 0, 1, {
+                53: [0],
+                99: [0]
+            }],
+        66: ['AddOption', [2, 3], 0],
+        67: ['DropOption', 2, -1],
+        99: ['Option', [1, 2], 0],
+        23: ['Assign', 1, 1],
+        30: ['Increase', 1, 1],
+        68: ['Random', 1, -1],
+        69: ['IfTime', 1, -1],
+        70: ['Copy', 2, -1],
+        71: ['Add', 1, -1, {
+                53: [1]
+            }],
+        72: ['Subtract', 2, -1, {
+                53: [1]
+            }],
+        75: ['Product', 1, -1, {
+                53: [1]
+            }],
+        22: ['Assert', [2, 3], -1],
+        98: ['Donate', 1, -1],
+        24: ['Compare', 1, -1],
+        21: ['And', 0, -1, {
+                '-1': [1]
+            }],
+        26: ['Or', 0, -1, {
+                '-1': [1]
+            }],
+        60: ['Maximum', [0, 1], -1, {
+                53: [1]
+            }],
+        61: ['Minimum', [0, 1], -1, {
+                53: [1]
+            }],
+        28: ['Then', 0, -1, {
+                '-1': [1]
+            }],
+        29: ['When', 1, -1, {
+                '-1': [1]
+            }],
+        63: ['WhenVar', 1, -1, {
+                '-1': [1]
+            }],
+        27: ['Otherwise', 0, -1, {
+                '-1': [1]
+            }],
+        76: ['Struct', 0, 1, {
+                77: [1]
+            }],
+        77: ['Field', 0, 1, {
+                78: [0, 1],
+                79: [0, 1]
+            }],
+        78: ['FieldType', 0, 1],
+        79: ['FieldLimit', 0, 1],
+        80: ['Define', 1, 1, {
+                53: [0]
+            }],
+        81: ['Collection', 1, 1, {
+                53: [0]
+            }],
+        82: ['CollPush', 1, 1],
+        83: ['CollPop', 1, 1] // [集合名] 数据名
+    };
+    var ii, jj;
+    for (ii in Tag.S)
+        if (Tag.S.hasOwnProperty(ii)) {
+            if (!(Tag.S[ii][1] instanceof Array))
+                Tag.S[ii][1] = [Tag.S[ii][1], Tag.S[ii][1]];
+            if (Tag.S[ii][3])
+                for (jj in Tag.S[ii][3])
+                    if (!(Tag.S[ii][3][jj] instanceof Array))
+                        Tag.S[ii][3][jj] = [Tag.S[ii][3][jj], Tag.S[ii][3][jj]];
+        }
+    /**
+     * 标签到类映射。
+     */
+    Tag.C = {
+        游戏结束: 'End',
+        当线索: 'Assert',
+        设置线索: 'Assign',
+        对比线索: 'Compare'
+    };
+    for (ii in Tag.T)
+        if (Tag.T.hasOwnProperty(ii) && !(Tag.T[ii] in Tag.C))
+            Tag.C[Tag.T[ii]] = ii;
+    /**
+     * 标签索引。
+     */
+    Tag.I = {};
+    for (ii in Tag.S)
+        if (Tag.S.hasOwnProperty(ii))
+            Tag.I[Tag.S[ii][0]] = ii;
+})(Tag || (Tag = {}));
+/**
+ * 定义引擎异常。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      E.ts
+ */
+/// <reference path="../include/tsd.d.ts" />
+var E = (function (_super) {
+    __extends(E, _super);
+    /**
+     * 构造函数。
+     */
+    function E(message, lineNo) {
+        _super.call(this);
+        if ('captureStackTrace' in Error)
+            Error['captureStackTrace'](this, E);
+        this.signal = (lineNo in E.Signal) ?
+            lineNo :
+            E.Signal.OK;
+        if (0 < lineNo)
+            message = '第 ' + lineNo + ' 行' + message;
+        this.name = 'BigineError';
+        this.message = message;
+    }
+    /**
+     * 中断顺序时序流。
+     */
+    E.doHalt = function () {
+        return Promise.reject(new E('', E.Signal.HALT));
+    };
+    /**
+     * 忽略中断信号。
+     */
+    E.ignoreHalt = function (error) {
+        if (E.Signal.HALT == error.signal)
+            return Promise.resolve();
+        return Promise.reject(error);
+    };
+    /**
+     * 中断循环时序流。
+     */
+    E.doBreak = function () {
+        return Promise.reject(new E('', E.Signal.BREAK));
+    };
+    /**
+     * 忽略循环中断信号。
+     */
+    E.ignoreBreak = function (error) {
+        if (E.Signal.BREAK == error.signal)
+            return Promise.resolve();
+        return Promise.reject(error);
+    };
+    E.SCHEMA_TAG_NOT_DECLARED = '标签尚未声明语法规则';
+    E.SCHEMA_CHILD_NOT_ALLOWED = '上级标签不支持此子标签';
+    E.LEX_ILLEGAL_SOURCE = '语法格式错误';
+    E.LEX_UNEXPECTED_INDENTATION = '缩进深度错误';
+    E.TAG_PARAMS_TOO_FEW = '标签参数个数不满足最低要求';
+    E.TAG_PARAMS_TOO_MANY = '标签参数个数超过最大限制';
+    E.TAG_PARAMS_NOT_TRUE = '标签参数不正确';
+    E.TAG_CONTENT_FORBIDEN = '标签不接受内容';
+    E.TAG_CONTENT_REQUIRED = '标签内容缺失';
+    E.TAG_CHILDREN_TOO_FEW = '子标签数量不满足最低要求';
+    E.TAG_CHILDREN_TOO_MANY = '子标签数量超过最大限制';
+    E.DEF_CHAR_AVATAR_NOT_FOUND = '头像标签缺失';
+    E.DEF_CHAR_POSES_NOT_FOUND = '姿态标签未定义';
+    E.DEF_EPISODE_NOT_REGISTERED = '关联实体尚未注册';
+    E.DEF_EPISODE_NOT_BINDED = '关联实体尚未绑定';
+    E.DEF_ROOM_EMPTY = '使用地图标签和时刻标签均未定义';
+    E.DEF_MAP_REGION_BROKEN = '区域定义信息出错';
+    E.DEF_MAP_BGIMAGE_NOT_FOUND = '底图标签缺失';
+    E.DEF_MAP_HLIMAGE_NOT_FOUND = '高亮图标签缺失';
+    E.DEF_MAP_REGION_NOT_FOUND = '区域标签缺失';
+    E.DEF_MAP_TARGET_NOT_FOUND = '对应房间标签缺失';
+    E.DEF_MAP_POINT_NOT_FOUND = '继承交互点未定义';
+    E.SCENE_TYPE_UNKNOWN = '无效的事件类型';
+    E.ROOT_NOT_PARENT = '根标签没有父标签';
+    E.ACT_ILLEGAL_POSITION = '无效地人物站位';
+    E.ACT_ILLEGAL_CAMERA_MOVE = '无效地镜头移动位置';
+    E.ACT_CHAR_NOT_ON = '人物并不在场';
+    E.ACT_CHAR_ONSTAGE = '人物已在场';
+    E.ACT_ILLEGAL_STARS = '无效地评分星级';
+    E.ACT_CG_NOT_SHOWN = '并未展示任何特写';
+    E.ACT_CG_ALREADY_SHOWN = '正在展示另一特写';
+    E.ACT_ILLEGAL_OP = '无效的比较符';
+    E.ACT_OPTION_CAST_FAILURE = '无法转化为选项';
+    E.RES_INVALID_URI = '无效的资源地址';
+    E.ENV_NOT_AVAILABLE = '环境不满足播放条件';
+    E.EP_DUPLICATE_ENTITY = '实体编号重复';
+    E.EP_ENTITY_NOT_FOUND = '实体不存在';
+    E.EP_THEME_NOT_LOADED = '主题数据尚未加载完成';
+    E.G_PARENT_NOT_FOUND = '画面父元素未绑定';
+    E.SUPPORT_NO_CANVAS = '浏览器不支持 Canvas';
+    E.UTIL_REMOTE_TIMEOUT = '远端请求超时';
+    E.OPT_OPTIONS_MISSING = '选项声明缺失';
+    E.OPT_OPTIONS_CONFLICT = '选项声明冲突';
+    E.COLL_STRUCT_DISMATCHED = '数据非指定结构类型';
+    E.STRUCT_FIELD_MISSING = '实体字段内容缺失';
+    E.STRUCT_FIELD_TYPE_TOO_MANY = '指定类型的字段定义过多';
+    E.STRUCT_FIELD_CANNOT_EMPTY = '非空字段未设置数据';
+    E.FULL_ROW_TOO_MANY = '全屏文本中旁白文字过多';
+    return E;
+}(Error));
+var E;
+(function (E) {
+    (function (Signal) {
+        /**
+         * 中断循环。
+         */
+        Signal[Signal["BREAK"] = -99] = "BREAK";
+        /**
+         * 中断时序播放。
+         */
+        Signal[Signal["HALT"] = -98] = "HALT";
+        /**
+         * 正常。
+         */
+        Signal[Signal["OK"] = 0] = "OK";
+    })(E.Signal || (E.Signal = {}));
+    var Signal = E.Signal;
+})(E || (E = {}));
+/**
+ * 定义未知标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/Unknown.ts
+ */
+/// <reference path="../Core/_Tag/ITag.ts" />
+/// <reference path="_schema.ts" />
+/// <reference path="../E.ts" />
+var Tag;
+(function (Tag) {
+    var Util = __Bigine_Util;
+    var Unknown = (function () {
+        /**
+         * 构造函数。
+         */
+        function Unknown(params, content, children, lineNo) {
+            var _this = this;
+            this._l = lineNo || 0;
+            this._r =
+                this._b = false;
+            this._q = {};
+            var schema = Tag.S[this.$i()], contraints = {};
+            if (params.length < schema[1][0]) {
+                throw new E(E.TAG_PARAMS_TOO_FEW, lineNo);
+            }
+            else if (undefined !== schema[1][1] && params.length > schema[1][1])
+                throw new E(E.TAG_PARAMS_TOO_MANY, lineNo);
+            this._p = params;
+            if (-1 == schema[2] && content.length) {
+                throw new E(E.TAG_CONTENT_FORBIDEN, lineNo);
+            }
+            else if (1 == schema[2] && !content.length)
+                throw new E(E.TAG_CONTENT_REQUIRED, lineNo);
+            this._c = content;
+            Util.each(schema[3] || {}, function (value, index) {
+                var counter;
+                if ('number' == typeof value) {
+                    counter = [value, value];
+                }
+                else {
+                    counter = value.slice(0);
+                    if (1 == counter.length)
+                        counter[1] = Infinity;
+                }
+                counter[2] = counter[3] = 0;
+                contraints[index] = counter;
+            });
+            Util.each(children, function (tag) {
+                var index = tag.$i(!!contraints[-1]);
+                if (!(index in contraints))
+                    throw new E(E.SCHEMA_CHILD_NOT_ALLOWED, tag.gL());
+                contraints[index][2]++;
+                contraints[index][3] = tag.gL();
+                tag.$u(_this);
+            });
+            Util.each(contraints, function (counter) {
+                if (-1 != counter[0] && counter[0] > counter[2])
+                    throw new E(E.TAG_CHILDREN_TOO_FEW, counter[3] || lineNo);
+                if (counter[1] < counter[2])
+                    throw new E(E.TAG_CHILDREN_TOO_MANY, counter[3]);
+            });
+            this._s = children;
+        }
+        /**
+         * 获取行号。
+         */
+        Unknown.prototype.gL = function () {
+            return this._l;
+        };
+        /**
+         * 获取标签名称。
+         */
+        Unknown.prototype.gN = function () {
+            return 'Unknown';
+        };
+        /**
+         * 注册（子标签实体及自身实体）至作品。
+         */
+        Unknown.prototype.r = function (ep) {
+            if (this._r)
+                return;
+            this._r = true;
+            Util.each(this._s, function (tag) {
+                tag.r(ep);
+            });
+            this.$r(ep);
+        };
+        /**
+         * 注册（自身实体）至（运行时）作品。
+         */
+        Unknown.prototype.$r = function (ep) {
+            //
+        };
+        /**
+         * 绑定（运行时）作品（实体到子标签及自身）。
+         */
+        Unknown.prototype.b = function (ep) {
+            if (this._b)
+                return;
+            this._b = true;
+            Util.each(this._s, function (tag) {
+                tag.b(ep);
+            });
+            this.$b(ep);
+        };
+        /**
+         * 绑定（运行时）作品（实体）。
+         */
+        Unknown.prototype.$b = function (ep) {
+            //
+        };
+        /**
+         * 转化为（中文）剧本（代码）。
+         */
+        Unknown.prototype.toString = function () {
+            if (-1 == this._l)
+                return '';
+            var clob = Tag.T[this.gN()], params = this._p.slice(0);
+            if ('UNKNOWN' == clob)
+                clob = params.shift();
+            if (params.length)
+                clob += '（' + params.join('，') + '）';
+            if (this._c || this._s.length)
+                clob += '：';
+            clob += this._c + '\n';
+            Util.each(this._s, function (tag) {
+                clob += '\t' + tag.toString().replace(/\n/g, '\n\t').replace(/\t$/, '');
+            });
+            return clob;
+        };
+        /**
+         * 转化为运行时（Javascript）代码。
+         */
+        Unknown.prototype.toJsrn = function () {
+            var _this = this;
+            if (-1 == this._l)
+                return '';
+            var parts = [this.$i()], params = [], children = [], clob;
+            if (this._c)
+                parts.push(this.$v(this._c, true));
+            if (this._p.length) {
+                Util.each(this._p, function (param) {
+                    params.push(_this.$v(param, true));
+                });
+                parts.push(params);
+            }
+            Util.each(this._s, function (tag) {
+                children.push(tag.toJsrn());
+            });
+            clob = JSON.stringify(parts);
+            clob = clob.substr(1, clob.length - 2);
+            if (children.length)
+                clob += ',[' + children.join(',') + ']';
+            return '$(' + clob + ')';
+        };
+        /**
+         * 尝试将数值字符串转为数值。
+         */
+        Unknown.prototype.$v = function (orig, wantstr) {
+            if ('真' == orig) {
+                return 1;
+            }
+            else if ('伪' == orig)
+                return 0;
+            if (wantstr)
+                return orig;
+            var ret = orig - 0;
+            return isNaN(ret) ? orig : ret;
+        };
+        /**
+         * 设置父标签。
+         */
+        Unknown.prototype.$u = function (parent) {
+            this._u = parent;
+        };
+        /**
+         * 获取父标签。
+         */
+        Unknown.prototype.gU = function () {
+            return this._u;
+        };
+        /**
+         * 获取标签索引号。
+         */
+        Unknown.prototype.$i = function (abstract) {
+            var index = Tag.I[this.gN()];
+            if (undefined === index)
+                throw new E(E.SCHEMA_TAG_NOT_DECLARED, this._l);
+            return index - 0;
+        };
+        /**
+         * 获取指定参数。
+         */
+        Unknown.prototype.$p = function (index) {
+            return this._p[index];
+        };
+        /**
+         * 获取内容。
+         */
+        Unknown.prototype.$c = function () {
+            return this._c;
+        };
+        /**
+         * 过滤名称符合要求地子标签。
+         */
+        Unknown.prototype.$q = function (name) {
+            var _this = this;
+            if (!(name in Tag.I))
+                throw new E(E.SCHEMA_TAG_NOT_DECLARED);
+            if (!(name in this._q)) {
+                this._q[name] = [];
+                Util.each(this._s, function (tag) {
+                    if (tag.gN() == name)
+                        _this._q[name].push(tag);
+                });
+            }
+            return this._q[name];
+        };
+        return Unknown;
+    }());
+    Tag.Unknown = Unknown;
+})(Tag || (Tag = {}));
+/**
+ * 定义选项动作标签组件。
+ *
+ * @author    郑煜宇 <yzheng@atfacg.com>
+ * @copyright © 2015 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Flow/Option.ts
+ */
+/// <reference path="../../Unknown.ts" />
+/// <reference path="../../../Core/_Tag/IOptionTag.ts" />
+var Tag;
+(function (Tag) {
+    var Option = (function (_super) {
+        __extends(Option, _super);
+        function Option() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 类型转换。
+         */
+        Option.f = function (tag) {
+            if ('Unknown' != tag.gN())
+                throw new E(E.ACT_OPTION_CAST_FAILURE, tag.gL());
+            var opt = new Option([tag.$p(0)], tag.$c(), [], tag.gL());
+            return opt;
+        };
+        /**
+         * 获取描述文字。
+         */
+        Option.prototype.gT = function () {
+            return this._c || this._p[0];
+        };
+        /**
+         * 获取标签名称。
+         */
+        Option.prototype.gN = function () {
+            return 'Option';
+        };
+        /**
+         * 交互逻辑。
+         */
+        Option.prototype.p = function (runtime) {
+            var states = runtime.gS(), depth = states.g('$d'), kv = '$v' + depth;
+            states.s(kv, this.$v(this._p[0]))
+                .s('$t' + depth, false);
+            if (this._k)
+                states.c(kv, this._k);
+        };
+        /**
+         * 设置状态键名。
+         */
+        Option.prototype.sK = function (key) {
+            this._k = key;
+            return this;
+        };
+        /**
+         * 获取萝卜币。
+         */
+        Option.prototype.gM = function () {
+            return parseInt(this._p[1], 10) || 0;
+        };
+        /**
+         * 设置是否付费信息。
+         */
+        Option.prototype.sA = function (is) {
+            this._a = is;
+            return this;
+        };
+        /**
+         * 获取是否付费信息。
+         */
+        Option.prototype.gA = function () {
+            return this._a;
+        };
+        /**
+         * 获取编号。
+         */
+        Option.prototype.gI = function () {
+            return this._i;
+        };
+        /**
+         * 恢复编号。
+         */
+        Option.prototype.i = function (id) {
+            this._i = id;
+        };
+        /**
+         * 转化为运行时（Javascript）代码。
+         */
+        Option.prototype.toJsrn = function () {
+            var clob = _super.prototype.toJsrn.call(this);
+            return this._p[1] ? clob.substr(0, clob.length - 1) + ',"' + this._i + '")' : clob;
+        };
+        return Option;
+    }(Tag.Unknown));
+    Tag.Option = Option;
+})(Tag || (Tag = {}));
+/**
  * 定义画面调度选择组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -4036,6 +4870,7 @@ var Ev;
 /// <reference path="Sprite.ts" />
 /// <reference path="../Resource/Resource.ts" />
 /// <reference path="../Ev/_Sprite/Choose.ts" />
+/// <reference path="../Tag/_Action/_Flow/Option.ts" />
 var Sprite;
 (function (Sprite) {
     var Util = __Bigine_Util;
@@ -4061,13 +4896,17 @@ var Sprite;
         /**
          * 配置。
          */
-        Choose.prototype.u = function (options, stage) {
+        Choose.prototype.u = function (options, stage, time, answer) {
             var _this = this;
-            var margin = this._tm['m'], _back = this._tm['back'], _text = this._tm['text'], _count = this._tm['count'], _radish = this._tm['radish'], opts = options.slice(0, 6), x = 0 | (1280 - _back['w']) / 2, y = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
+            var margin = this._tm['m'], w = 1280, selected = options[0], _pro, _si, _back = this._tm['back'], _text = this._tm['text'], _count = this._tm['count'], _radish = this._tm['radish'], opts = options.slice(0, 6), x = 0 | (w - _back['w']) / 2, y = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
             this.c();
             this._bn = [];
             this._bi = undefined;
             Util.each(options.slice(0, 6), function (option) {
+                if (option.$p(0) == answer) {
+                    selected = option;
+                    return;
+                }
                 var text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
                     .tc(_text['c']);
                 //.ts(_text['ss']);
@@ -4078,6 +4917,12 @@ var Sprite;
                         target: _this,
                         choice: option
                     }));
+                    if (_si) {
+                        clearTimeout(_si);
+                        _si = undefined;
+                    }
+                    if (_pro)
+                        _pro.h();
                 }, new G.Image(_this._rr[1].o(), x, y, _back['w'], _back['h'], true), new G.Image(_this._rr[0].o(), x, y, _back['w'], _back['h'], true));
                 _this._bn.push(btn);
                 _this.$w(text, option.gT(), _text['ch']);
@@ -4093,6 +4938,20 @@ var Sprite;
                 y += _back['h'] + margin;
             });
             this.ev(options, stage);
+            if (time > 0) {
+                var bar = void 0;
+                this.a(new G.Color(0, 0, w, 17, '#e7e7e7'))
+                    .a(bar = new G.Color(-w, 1, w, 15, '#ff0000'));
+                bar.p(_pro = new G.Progress(time * 1000, { width: w }));
+                _si = setTimeout(function () {
+                    _this.dispatchEvent(new Ev.Choose({
+                        target: _this,
+                        choice: selected
+                    }));
+                    clearTimeout(_si);
+                    _si = undefined;
+                }, time * 1000);
+            }
             return this;
         };
         /**
@@ -4157,14 +5016,14 @@ var Sprite;
                 if (event.keyCode == 38 || event.keyCode == 40)
                     event.preventDefault();
             };
-            window.addEventListener('keydown', this._ke);
+            window.addEventListener('keyup', this._ke);
         };
         /**
          * 隐藏。
          */
         Choose.prototype.h = function (duration) {
             if (this._ke) {
-                window.removeEventListener('keydown', this._ke);
+                window.removeEventListener('keyup', this._ke);
                 this._ke = undefined;
             }
             this._bn = [];
@@ -5407,18 +6266,22 @@ var Runtime;
             this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
             this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
             this._s['e']['cd'] = -1;
-            this._l = function (event) {
+            this._l = {};
+            this._l[0] = function (event) {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc && !_this._rv) {
                     if (_this._ft)
                         _this._ft.h();
                     _this._t.h();
                 }
+            };
+            this._l[1] = function (event) {
                 if (event.keyCode == 67 && !_this._a && _this._r.isPlaying()) {
                     _this.sReview(!_this._rv);
                 }
             };
             this._fs = Core.IRuntime.Series.Alone;
-            window.addEventListener('keyup', this._l);
+            window.addEventListener('keydown', this._l[0]);
+            window.addEventListener('keyup', this._l[1]);
         }
         /**
          * 预加载指定资源组。
@@ -5874,7 +6737,7 @@ var Runtime;
                 var camera = runtime.gS().g('.z');
                 var gOld = _this._c.q('b')[0];
                 if (camera) {
-                    gOld.x(0).y(0).sW(1280).sH(720);
+                    gOld.q('n')[0].x(0).y(0).sW(1280).sH(720);
                     runtime.gS().d('.z')
                         .d('_z');
                 }
@@ -6010,13 +6873,15 @@ var Runtime;
                             _this._pc = undefined;
                         };
                         Util.each(options, function (opt) {
-                            var desc = opt.gT();
-                            desc = desc.replace(/【#[0-9a-fA-F]{6}/g, '')
-                                .replace(/【/g, '')
-                                .replace(/】/g, '');
-                            if (select_1 == opt.gT())
-                                desc = '【' + desc + '   √】';
-                            clobs_1.push('      ' + desc);
+                            if (opt.$p(0) != answer) {
+                                var desc = opt.gT();
+                                desc = desc.replace(/【#[0-9a-fA-F]{6}/g, '')
+                                    .replace(/【/g, '')
+                                    .replace(/】/g, '');
+                                if (select_1 == opt.gT())
+                                    desc = '【' + desc + '   √】';
+                                clobs_1.push('      ' + desc);
+                            }
                         });
                         _this._r.dispatchEvent(new Ev.Review({
                             target: null,
@@ -6047,7 +6912,7 @@ var Runtime;
                         }
                     }
                 };
-                gChoose.u(options, _this._c).addEventListener(event, handler);
+                gChoose.u(options, _this._c, time, answer).addEventListener(event, handler);
                 _this.lightOn()
                     .then(function () { return gChoose.v(); });
             });
@@ -6130,7 +6995,7 @@ var Runtime;
          */
         CanvasDirector.prototype.cameraMove = function (mx, my, ms) {
             var _this = this;
-            var gRoom = this._c.q('b')[0], x = Math.round(mx * (1 - 5 / 3) * 1280), y = Math.round(my * (1 - 5 / 3) * 720);
+            var gRoom = this._c.q('b')[0].q('n')[0], x = Math.round(mx * (1 - 5 / 3) * 1280), y = Math.round(my * (1 - 5 / 3) * 720);
             if (!gRoom)
                 return this._p;
             var sClick = new G.Component({}, false); // 建立临时透明层，使得可以响应WaitForClick事件。
@@ -6148,8 +7013,6 @@ var Runtime;
                 ]).then(function () {
                     _this._c.e(sClick);
                     _this._t = _this._h = undefined;
-                    aMove.h();
-                    gRoom.x(x).y(y);
                     resolve(_this._r);
                 });
             });
@@ -6159,13 +7022,14 @@ var Runtime;
          */
         CanvasDirector.prototype.cameraZoom = function (mx, my, ms, scale) {
             var _this = this;
-            var gRoom = this._c.q('b')[0], bound = gRoom.gB();
+            var gRoom = this._c.q('b')[0].q('n')[0];
             if (!gRoom)
                 return this._p;
             var sClick = new G.Component({}, false); // 建立临时透明层，使得可以响应WaitForClick事件。
             this._c.a(sClick.i('P').o(1));
             return new Promise(function (resolve) {
-                var aZoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale }), aWFC = new G.WaitForClick(function () {
+                var aZoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale });
+                var aWFC = new G.WaitForClick(function () {
                     aZoom.h();
                 });
                 _this._t = _this._h = aWFC;
@@ -6177,12 +7041,6 @@ var Runtime;
                 ]).then(function () {
                     _this._c.e(sClick);
                     _this._t = _this._h = undefined;
-                    aZoom.h();
-                    var px = scale * (5 / 3 - 1) * 1280, py = scale * (5 / 3 - 1) * 720;
-                    gRoom.x(Math.round(bound.x - mx * px))
-                        .y(Math.round(bound.y - my * py))
-                        .sW(Math.round(bound.w + px))
-                        .sH(Math.round(bound.h + py));
                     resolve(_this._r);
                 });
             });
@@ -6213,16 +7071,16 @@ var Runtime;
         /**
          * 特效。
          */
-        CanvasDirector.prototype.effect = function (onoff, type) {
-            if (onoff) {
-                this._se = new G.Dropping(0, Core.IEffect.EFFECT[type]);
-                this._c.p(this._se);
-            }
-            else {
+        CanvasDirector.prototype.weather = function (onoff, type) {
+            if (this._se) {
                 this._se.h();
                 this._se = null;
             }
-            return _super.prototype.effect.call(this, onoff, type);
+            if (onoff) {
+                this._se = new G.Dropping(0, Core.IWeather.WEATHER[type]);
+                this._c.p(this._se);
+            }
+            return _super.prototype.weather.call(this, onoff, type);
         };
         /**
          * 使用主题。
@@ -6238,14 +7096,14 @@ var Runtime;
                 _this._t = _this._h = ev.animation;
             });
             resources.unshift(this._x['W'].l());
-            this._c.a(this._x['W'], gCurtain);
+            this._c.a(this._x['W'].i('W'), gCurtain);
             // 全屏文本。
             this._x['F'] = new Sprite.Full(theme['full'], this._cm, function (ev) {
                 _this._t = _this._h = ev.animation;
                 _this._ft = ev.type;
             });
             resources.unshift(this._x['F'].l());
-            this._c.a(this._x['F'].i('F'), gCurtain);
+            this._c.a(this._x['F'], gCurtain);
             // 状态。
             this._x['S'] = new Sprite.Status(theme['status']);
             resources.unshift(this._x['S'].l());
@@ -6513,7 +7371,8 @@ var Runtime;
             this._s['e'].pause();
             this._s['s'].pause();
             this._s = {};
-            window.removeEventListener('keydown', this._l);
+            window.removeEventListener('keydown', this._l[0]);
+            window.removeEventListener('keyup', this._l[1]);
         };
         /**
          * 取消阻塞。
@@ -6634,13 +7493,13 @@ var Runtime;
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Core/_Resource/IEffect.ts
+ * @file      Core/_Resource/Weather.ts
  */
 var Core;
 (function (Core) {
-    var IEffect;
-    (function (IEffect) {
-        IEffect.EFFECT = {
+    var IWeather;
+    (function (IWeather) {
+        IWeather.WEATHER = {
             "小雨": {
                 maxNum: 50,
                 numLevel: 1,
@@ -6649,7 +7508,7 @@ var Core;
                 speed: [0.2, 1.0],
                 size_range: [0.5, 1.5],
                 hasBounce: true,
-                wind_direction: -105,
+                wind_direction: 90,
                 hasGravity: true
             },
             "中雨": {
@@ -6660,7 +7519,7 @@ var Core;
                 speed: [0.4, 2.0],
                 size_range: [1.0, 3.0],
                 hasBounce: true,
-                wind_direction: -105,
+                wind_direction: 90,
                 hasGravity: true
             },
             "大雨": {
@@ -6669,9 +7528,9 @@ var Core;
                 gravity: 0.4,
                 type: "rain",
                 speed: [0.8, 4.0],
-                size_range: [2.0, 6.0],
+                size_range: [2, 6],
                 hasBounce: true,
-                wind_direction: -105,
+                wind_direction: 90,
                 hasGravity: true
             },
             "小雪": {
@@ -6708,7 +7567,7 @@ var Core;
                 hasGravity: true
             }
         };
-    })(IEffect = Core.IEffect || (Core.IEffect = {}));
+    })(IWeather = Core.IWeather || (Core.IWeather = {}));
 })(Core || (Core = {}));
 /**
  * 声明（运行时）继续游戏事件元信息接口规范。
@@ -7232,744 +8091,6 @@ var Ev;
     }(Ev.Event));
     Ev.Review = Review;
 })(Ev || (Ev = {}));
-/**
- * 定义语法规约。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_schema.ts
- */
-var Tag;
-(function (Tag) {
-    /**
-     * 类到标签映射。
-     */
-    Tag.T = {
-        Unknown: 'UNKNOWN',
-        Root: 'ROOT',
-        DefBGM: '音乐',
-        Audio: '音源',
-        Image: '画面',
-        DefCG: '特写',
-        DefChar: '人物',
-        Avatar: '头像',
-        Poses: '姿态',
-        DefMap: '地图',
-        BGImage: '底图',
-        Point: '交互点',
-        HLImage: '高亮',
-        Region: '区域',
-        Target: '对应房间',
-        DefRoom: '房间',
-        Link: '使用地图',
-        Times: '时刻',
-        DefSE: '音效',
-        DefWeather: '天气',
-        Struct: '结构',
-        Field: '字段',
-        FieldType: '类别',
-        FieldLimit: '上限',
-        Auto: '自动播放',
-        Player: '主角',
-        Resources: '素材包',
-        Theme: '主题',
-        Status: '状态',
-        Panel: '面板',
-        SimpPanel: '简单面板',
-        SimpEle: '条目',
-        EleName: '数据名',
-        EleType: '数据类别',
-        CollPanel: '集合面板',
-        CollSource: '使用集合',
-        CollStruct: '集合结构',
-        Scene: '事件',
-        Type: '类型',
-        Conditions: '条件',
-        Content: '内容',
-        CharOn: '人物出场',
-        CharOff: '人物离场',
-        CharSet: '设置人物',
-        CharPose: '改变神态',
-        CharMove: '人物移动',
-        CameraSet: '设置镜头',
-        CameraZoom: '放大镜头',
-        CameraReset: '复位镜头',
-        CameraMove: '移动镜头',
-        CameraShake: '抖动镜头',
-        Monolog: '独白',
-        Speak: '对白',
-        Tip: '提示',
-        VoiceOver: '旁白',
-        FullWords: '全屏文本',
-        FullClean: '清除文本',
-        FullHide: '隐藏文本',
-        Save: '自动存档',
-        End: '游戏完结',
-        Fin: '作品完结',
-        Fail: '游戏失败',
-        Lose: '作品失败',
-        Stars: '评分',
-        PlayBGM: '播放音乐',
-        HideCG: '关闭特写',
-        ShowCG: '展示特写',
-        AsRoom: '设置房间',
-        Freeze: '移动中止',
-        AsTime: '设置时间',
-        Enter: '进入房间',
-        PlaySE: '播放音效',
-        Weather: '设置天气',
-        StopBGM: '停止音乐',
-        Pause: '停顿',
-        Curtains: '切幕动画',
-        Expression: '神态动画',
-        ShowStatus: '显示状态栏',
-        HideStatus: '隐藏状态栏',
-        PlayESM: '环境音乐',
-        StopESM: '环境静音',
-        StopSE: '停止音效',
-        VolumeSet: '设置音量',
-        Review: '显示回看',
-        Effect: '特效',
-        Assert: '当数据',
-        Assign: '设置数据',
-        Compare: '对比数据',
-        Increase: '增加数据',
-        LoopBreak: '循环中止',
-        Maximum: '最大数据',
-        Minimum: '最小数据',
-        Choose: '选择',
-        Random: '随机数据',
-        IfTime: '当时间',
-        Copy: '复制数据',
-        Add: '数据合值',
-        Subtract: '数据差值',
-        Product: '数据倍值',
-        Define: '定义数据',
-        Collection: '定义集合',
-        CollPop: '删除元素',
-        CollPush: '增加元素',
-        Donate: '打赏',
-        Unlock: '解锁',
-        DefOptions: '定义选择',
-        AddOption: '添加选项',
-        DropOption: '去除选项',
-        Option: '选项',
-        And: '且',
-        Or: '或',
-        Otherwise: '否则',
-        Then: '那么',
-        When: '如果',
-        Loop: '循环',
-        WhenVar: '如果数据'
-    };
-    /**
-     * 语法规则。
-     *
-     * {
-     *     [index: number]: {
-     *         name: string,
-     *         params: number[], // [最小量, 最大量]
-     *         content: number // -1 禁止，0 可选，1 必须,
-     *         children: {
-     *             [index: number]: number[] // [最小量, 最大量]
-     *         }
-     *     }
-     * }
-     */
-    Tag.S = {
-        '-1': ['Root', 0, -1, {
-                54: [0, 1],
-                113: [0, 1],
-                55: [0, 1],
-                56: 1,
-                57: 1,
-                73: [0, 1],
-                74: [0, 1],
-                76: [0],
-                49: [1],
-                33: [0],
-                34: [0],
-                35: [0],
-                38: [0],
-                44: [0],
-                47: [0],
-                48: [0]
-            }],
-        54: ['Auto', 0, -1],
-        55: ['Player', 0, 1],
-        56: ['Resources', 0, 1],
-        57: ['Theme', 0, 1],
-        73: ['Status', 0, -1, {
-                53: [0, 6]
-            }],
-        74: ['Panel', 0, -1, {
-                84: [0],
-                88: [0]
-            }],
-        84: ['SimpPanel', 0, 1, {
-                85: [1]
-            }],
-        85: ['SimpEle', 0, 1, {
-                86: 1,
-                87: [0, 1]
-            }],
-        86: ['EleName', 0, 1],
-        87: ['EleType', 0, 1],
-        88: ['CollPanel', 0, 1, {
-                89: 1,
-                90: 1
-            }],
-        89: ['CollSource', 0, 1],
-        90: ['CollStruct', 0, 1],
-        49: ['Scene', 0, 1, {
-                50: 1,
-                51: [0, 1],
-                52: 1
-            }],
-        50: ['Type', 0, 1],
-        51: ['Conditions', 0, -1, {
-                '-1': [0]
-            }],
-        52: ['Content', 0, -1, {
-                '-1': [1]
-            }],
-        33: ['DefBGM', 0, 1, {
-                32: 1
-            }],
-        32: ['Audio', 0, 1],
-        34: ['DefCG', 0, 1, {
-                31: 1
-            }],
-        31: ['Image', 0, 1],
-        35: ['DefChar', [0, 1], 1, {
-                36: [0, 1],
-                37: [0, 1]
-            }],
-        36: ['Avatar', 0, 1],
-        37: ['Poses', 0, -1, {
-                53: [0]
-            }],
-        38: ['DefMap', [0, 1], 1, {
-                39: [0, 1],
-                40: [1]
-            }],
-        39: ['BGImage', 0, 1],
-        40: ['Point', [0, 1], 1, {
-                41: [0, 1],
-                42: [0, 1],
-                43: [0, 1]
-            }],
-        41: ['HLImage', 0, 1],
-        42: ['Region', 0, 1],
-        43: ['Target', 0, 1],
-        44: ['DefRoom', 0, 1, {
-                45: [0, 1],
-                46: [0, 1]
-            }],
-        45: ['Link', 0, 1],
-        46: ['Times', 0, -1, {
-                53: [1]
-            }],
-        47: ['DefSE', 0, 1, {
-                32: 1
-            }],
-        48: ['DefWeather', 0, 1],
-        53: ['Unknown', [1, 2], 0],
-        0: ['CharOn', [0, 1], 1],
-        1: ['CharOff', 1, -1],
-        2: ['CharSet', [0, 1], 1],
-        3: ['CharPose', 1, 1],
-        62: ['CharMove', 1, 1],
-        4: ['Monolog', 0, 1],
-        5: ['Speak', [2, 3], 1],
-        6: ['Tip', 0, 1],
-        7: ['VoiceOver', 0, 1],
-        8: ['Save', [0, 1], -1],
-        9: ['End', 0, -1],
-        111: ['Fin', 0, -1],
-        10: ['Fail', 0, -1],
-        112: ['Lose', 0, -1],
-        11: ['Stars', [1, 2], -1],
-        12: ['PlayBGM', [1, 2], -1],
-        103: ['PlayESM', [1, 2], -1],
-        64: ['StopBGM', 0, -1],
-        104: ['StopESM', 0, -1],
-        105: ['StopSE', 0, -1],
-        13: ['HideCG', 0, -1],
-        14: ['ShowCG', 1, -1],
-        15: ['AsRoom', [1, 2], 0],
-        16: ['Freeze', 0, -1],
-        17: ['AsTime', 1, -1],
-        18: ['Enter', 1, -1],
-        19: ['PlaySE', [1, 2], -1],
-        20: ['Weather', 1, -1],
-        91: ['Pause', [0, 1], -1],
-        92: ['CameraSet', 0, 1],
-        93: ['CameraReset', [0, 1], -1],
-        94: ['CameraZoom', [0, 1], 1],
-        95: ['CameraMove', [0, 1], 1],
-        96: ['Curtains', [0, 1], -1],
-        97: ['CameraShake', 0, -1],
-        100: ['ShowStatus', 0, -1],
-        101: ['HideStatus', 0, -1],
-        102: ['Expression', [0, 1], -1],
-        106: ['VolumeSet', 2, -1],
-        107: ['FullWords', 1, -1],
-        108: ['FullClean', 0, -1],
-        109: ['FullHide', 0, -1],
-        110: ['Unlock', 1, -1],
-        113: ['Review', 0, -1],
-        114: ['Effect', 1, 0],
-        58: ['Loop', 0, -1, {
-                '-1': [1]
-            }],
-        59: ['LoopBreak', 0, -1],
-        25: ['Choose', [0, 3], 0, {
-                53: [0],
-                99: [0]
-            }],
-        65: ['DefOptions', 0, 1, {
-                53: [0],
-                99: [0]
-            }],
-        66: ['AddOption', [2, 3], 0],
-        67: ['DropOption', 2, -1],
-        99: ['Option', [1, 2], 0],
-        23: ['Assign', 1, 1],
-        30: ['Increase', 1, 1],
-        68: ['Random', 1, -1],
-        69: ['IfTime', 1, -1],
-        70: ['Copy', 2, -1],
-        71: ['Add', 1, -1, {
-                53: [1]
-            }],
-        72: ['Subtract', 2, -1, {
-                53: [1]
-            }],
-        75: ['Product', 1, -1, {
-                53: [1]
-            }],
-        22: ['Assert', [2, 3], -1],
-        98: ['Donate', 1, -1],
-        24: ['Compare', 1, -1],
-        21: ['And', 0, -1, {
-                '-1': [1]
-            }],
-        26: ['Or', 0, -1, {
-                '-1': [1]
-            }],
-        60: ['Maximum', [0, 1], -1, {
-                53: [1]
-            }],
-        61: ['Minimum', [0, 1], -1, {
-                53: [1]
-            }],
-        28: ['Then', 0, -1, {
-                '-1': [1]
-            }],
-        29: ['When', 1, -1, {
-                '-1': [1]
-            }],
-        63: ['WhenVar', 1, -1, {
-                '-1': [1]
-            }],
-        27: ['Otherwise', 0, -1, {
-                '-1': [1]
-            }],
-        76: ['Struct', 0, 1, {
-                77: [1]
-            }],
-        77: ['Field', 0, 1, {
-                78: [0, 1],
-                79: [0, 1]
-            }],
-        78: ['FieldType', 0, 1],
-        79: ['FieldLimit', 0, 1],
-        80: ['Define', 1, 1, {
-                53: [0]
-            }],
-        81: ['Collection', 1, 1, {
-                53: [0]
-            }],
-        82: ['CollPush', 1, 1],
-        83: ['CollPop', 1, 1] // [集合名] 数据名
-    };
-    var ii, jj;
-    for (ii in Tag.S)
-        if (Tag.S.hasOwnProperty(ii)) {
-            if (!(Tag.S[ii][1] instanceof Array))
-                Tag.S[ii][1] = [Tag.S[ii][1], Tag.S[ii][1]];
-            if (Tag.S[ii][3])
-                for (jj in Tag.S[ii][3])
-                    if (!(Tag.S[ii][3][jj] instanceof Array))
-                        Tag.S[ii][3][jj] = [Tag.S[ii][3][jj], Tag.S[ii][3][jj]];
-        }
-    /**
-     * 标签到类映射。
-     */
-    Tag.C = {
-        游戏结束: 'End',
-        当线索: 'Assert',
-        设置线索: 'Assign',
-        对比线索: 'Compare'
-    };
-    for (ii in Tag.T)
-        if (Tag.T.hasOwnProperty(ii) && !(Tag.T[ii] in Tag.C))
-            Tag.C[Tag.T[ii]] = ii;
-    /**
-     * 标签索引。
-     */
-    Tag.I = {};
-    for (ii in Tag.S)
-        if (Tag.S.hasOwnProperty(ii))
-            Tag.I[Tag.S[ii][0]] = ii;
-})(Tag || (Tag = {}));
-/**
- * 定义引擎异常。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      E.ts
- */
-/// <reference path="../include/tsd.d.ts" />
-var E = (function (_super) {
-    __extends(E, _super);
-    /**
-     * 构造函数。
-     */
-    function E(message, lineNo) {
-        _super.call(this);
-        if ('captureStackTrace' in Error)
-            Error['captureStackTrace'](this, E);
-        this.signal = (lineNo in E.Signal) ?
-            lineNo :
-            E.Signal.OK;
-        if (0 < lineNo)
-            message = '第 ' + lineNo + ' 行' + message;
-        this.name = 'BigineError';
-        this.message = message;
-    }
-    /**
-     * 中断顺序时序流。
-     */
-    E.doHalt = function () {
-        return Promise.reject(new E('', E.Signal.HALT));
-    };
-    /**
-     * 忽略中断信号。
-     */
-    E.ignoreHalt = function (error) {
-        if (E.Signal.HALT == error.signal)
-            return Promise.resolve();
-        return Promise.reject(error);
-    };
-    /**
-     * 中断循环时序流。
-     */
-    E.doBreak = function () {
-        return Promise.reject(new E('', E.Signal.BREAK));
-    };
-    /**
-     * 忽略循环中断信号。
-     */
-    E.ignoreBreak = function (error) {
-        if (E.Signal.BREAK == error.signal)
-            return Promise.resolve();
-        return Promise.reject(error);
-    };
-    E.SCHEMA_TAG_NOT_DECLARED = '标签尚未声明语法规则';
-    E.SCHEMA_CHILD_NOT_ALLOWED = '上级标签不支持此子标签';
-    E.LEX_ILLEGAL_SOURCE = '语法格式错误';
-    E.LEX_UNEXPECTED_INDENTATION = '缩进深度错误';
-    E.TAG_PARAMS_TOO_FEW = '标签参数个数不满足最低要求';
-    E.TAG_PARAMS_TOO_MANY = '标签参数个数超过最大限制';
-    E.TAG_PARAMS_NOT_TRUE = '标签参数不正确';
-    E.TAG_CONTENT_FORBIDEN = '标签不接受内容';
-    E.TAG_CONTENT_REQUIRED = '标签内容缺失';
-    E.TAG_CHILDREN_TOO_FEW = '子标签数量不满足最低要求';
-    E.TAG_CHILDREN_TOO_MANY = '子标签数量超过最大限制';
-    E.DEF_CHAR_AVATAR_NOT_FOUND = '头像标签缺失';
-    E.DEF_CHAR_POSES_NOT_FOUND = '姿态标签未定义';
-    E.DEF_EPISODE_NOT_REGISTERED = '关联实体尚未注册';
-    E.DEF_EPISODE_NOT_BINDED = '关联实体尚未绑定';
-    E.DEF_ROOM_EMPTY = '使用地图标签和时刻标签均未定义';
-    E.DEF_MAP_REGION_BROKEN = '区域定义信息出错';
-    E.DEF_MAP_BGIMAGE_NOT_FOUND = '底图标签缺失';
-    E.DEF_MAP_HLIMAGE_NOT_FOUND = '高亮图标签缺失';
-    E.DEF_MAP_REGION_NOT_FOUND = '区域标签缺失';
-    E.DEF_MAP_TARGET_NOT_FOUND = '对应房间标签缺失';
-    E.DEF_MAP_POINT_NOT_FOUND = '继承交互点未定义';
-    E.SCENE_TYPE_UNKNOWN = '无效的事件类型';
-    E.ROOT_NOT_PARENT = '根标签没有父标签';
-    E.ACT_ILLEGAL_POSITION = '无效地人物站位';
-    E.ACT_ILLEGAL_CAMERA_MOVE = '无效地镜头移动位置';
-    E.ACT_CHAR_NOT_ON = '人物并不在场';
-    E.ACT_CHAR_ONSTAGE = '人物已在场';
-    E.ACT_ILLEGAL_STARS = '无效地评分星级';
-    E.ACT_CG_NOT_SHOWN = '并未展示任何特写';
-    E.ACT_CG_ALREADY_SHOWN = '正在展示另一特写';
-    E.ACT_ILLEGAL_OP = '无效的比较符';
-    E.ACT_OPTION_CAST_FAILURE = '无法转化为选项';
-    E.RES_INVALID_URI = '无效的资源地址';
-    E.ENV_NOT_AVAILABLE = '环境不满足播放条件';
-    E.EP_DUPLICATE_ENTITY = '实体编号重复';
-    E.EP_ENTITY_NOT_FOUND = '实体不存在';
-    E.EP_THEME_NOT_LOADED = '主题数据尚未加载完成';
-    E.G_PARENT_NOT_FOUND = '画面父元素未绑定';
-    E.SUPPORT_NO_CANVAS = '浏览器不支持 Canvas';
-    E.UTIL_REMOTE_TIMEOUT = '远端请求超时';
-    E.OPT_OPTIONS_MISSING = '选项声明缺失';
-    E.OPT_OPTIONS_CONFLICT = '选项声明冲突';
-    E.COLL_STRUCT_DISMATCHED = '数据非指定结构类型';
-    E.STRUCT_FIELD_MISSING = '实体字段内容缺失';
-    E.STRUCT_FIELD_TYPE_TOO_MANY = '指定类型的字段定义过多';
-    E.STRUCT_FIELD_CANNOT_EMPTY = '非空字段未设置数据';
-    E.FULL_ROW_TOO_MANY = '全屏文本中旁白文字过多';
-    return E;
-}(Error));
-var E;
-(function (E) {
-    (function (Signal) {
-        /**
-         * 中断循环。
-         */
-        Signal[Signal["BREAK"] = -99] = "BREAK";
-        /**
-         * 中断时序播放。
-         */
-        Signal[Signal["HALT"] = -98] = "HALT";
-        /**
-         * 正常。
-         */
-        Signal[Signal["OK"] = 0] = "OK";
-    })(E.Signal || (E.Signal = {}));
-    var Signal = E.Signal;
-})(E || (E = {}));
-/**
- * 定义未知标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/Unknown.ts
- */
-/// <reference path="../Core/_Tag/ITag.ts" />
-/// <reference path="_schema.ts" />
-/// <reference path="../E.ts" />
-var Tag;
-(function (Tag) {
-    var Util = __Bigine_Util;
-    var Unknown = (function () {
-        /**
-         * 构造函数。
-         */
-        function Unknown(params, content, children, lineNo) {
-            var _this = this;
-            this._l = lineNo || 0;
-            this._r =
-                this._b = false;
-            this._q = {};
-            var schema = Tag.S[this.$i()], contraints = {};
-            if (params.length < schema[1][0]) {
-                throw new E(E.TAG_PARAMS_TOO_FEW, lineNo);
-            }
-            else if (undefined !== schema[1][1] && params.length > schema[1][1])
-                throw new E(E.TAG_PARAMS_TOO_MANY, lineNo);
-            this._p = params;
-            if (-1 == schema[2] && content.length) {
-                throw new E(E.TAG_CONTENT_FORBIDEN, lineNo);
-            }
-            else if (1 == schema[2] && !content.length)
-                throw new E(E.TAG_CONTENT_REQUIRED, lineNo);
-            this._c = content;
-            Util.each(schema[3] || {}, function (value, index) {
-                var counter;
-                if ('number' == typeof value) {
-                    counter = [value, value];
-                }
-                else {
-                    counter = value.slice(0);
-                    if (1 == counter.length)
-                        counter[1] = Infinity;
-                }
-                counter[2] = counter[3] = 0;
-                contraints[index] = counter;
-            });
-            Util.each(children, function (tag) {
-                var index = tag.$i(!!contraints[-1]);
-                if (!(index in contraints))
-                    throw new E(E.SCHEMA_CHILD_NOT_ALLOWED, tag.gL());
-                contraints[index][2]++;
-                contraints[index][3] = tag.gL();
-                tag.$u(_this);
-            });
-            Util.each(contraints, function (counter) {
-                if (-1 != counter[0] && counter[0] > counter[2])
-                    throw new E(E.TAG_CHILDREN_TOO_FEW, counter[3] || lineNo);
-                if (counter[1] < counter[2])
-                    throw new E(E.TAG_CHILDREN_TOO_MANY, counter[3]);
-            });
-            this._s = children;
-        }
-        /**
-         * 获取行号。
-         */
-        Unknown.prototype.gL = function () {
-            return this._l;
-        };
-        /**
-         * 获取标签名称。
-         */
-        Unknown.prototype.gN = function () {
-            return 'Unknown';
-        };
-        /**
-         * 注册（子标签实体及自身实体）至作品。
-         */
-        Unknown.prototype.r = function (ep) {
-            if (this._r)
-                return;
-            this._r = true;
-            Util.each(this._s, function (tag) {
-                tag.r(ep);
-            });
-            this.$r(ep);
-        };
-        /**
-         * 注册（自身实体）至（运行时）作品。
-         */
-        Unknown.prototype.$r = function (ep) {
-            //
-        };
-        /**
-         * 绑定（运行时）作品（实体到子标签及自身）。
-         */
-        Unknown.prototype.b = function (ep) {
-            if (this._b)
-                return;
-            this._b = true;
-            Util.each(this._s, function (tag) {
-                tag.b(ep);
-            });
-            this.$b(ep);
-        };
-        /**
-         * 绑定（运行时）作品（实体）。
-         */
-        Unknown.prototype.$b = function (ep) {
-            //
-        };
-        /**
-         * 转化为（中文）剧本（代码）。
-         */
-        Unknown.prototype.toString = function () {
-            if (-1 == this._l)
-                return '';
-            var clob = Tag.T[this.gN()], params = this._p.slice(0);
-            if ('UNKNOWN' == clob)
-                clob = params.shift();
-            if (params.length)
-                clob += '（' + params.join('，') + '）';
-            if (this._c || this._s.length)
-                clob += '：';
-            clob += this._c + '\n';
-            Util.each(this._s, function (tag) {
-                clob += '\t' + tag.toString().replace(/\n/g, '\n\t').replace(/\t$/, '');
-            });
-            return clob;
-        };
-        /**
-         * 转化为运行时（Javascript）代码。
-         */
-        Unknown.prototype.toJsrn = function () {
-            if (-1 == this._l)
-                return '';
-            var parts = [this.$i()], params = [], children = [], clob;
-            if (this._c)
-                parts.push(this.$v(this._c));
-            if (this._p.length) {
-                Util.each(this._p, function (param) {
-                    params.push(param);
-                    //params.push(this.$v(param));
-                });
-                parts.push(params);
-            }
-            Util.each(this._s, function (tag) {
-                children.push(tag.toJsrn());
-            });
-            clob = JSON.stringify(parts);
-            clob = clob.substr(1, clob.length - 2);
-            if (children.length)
-                clob += ',[' + children.join(',') + ']';
-            return '$(' + clob + ')';
-        };
-        /**
-         * 尝试将数值字符串转为数值。
-         */
-        Unknown.prototype.$v = function (orig) {
-            if ('真' == orig) {
-                return 1;
-            }
-            else if ('伪' == orig)
-                return 0;
-            var ret = orig - 0;
-            return isNaN(ret) ? orig : ret;
-        };
-        /**
-         * 设置父标签。
-         */
-        Unknown.prototype.$u = function (parent) {
-            this._u = parent;
-        };
-        /**
-         * 获取父标签。
-         */
-        Unknown.prototype.gU = function () {
-            return this._u;
-        };
-        /**
-         * 获取标签索引号。
-         */
-        Unknown.prototype.$i = function (abstract) {
-            var index = Tag.I[this.gN()];
-            if (undefined === index)
-                throw new E(E.SCHEMA_TAG_NOT_DECLARED, this._l);
-            return index - 0;
-        };
-        /**
-         * 获取指定参数。
-         */
-        Unknown.prototype.$p = function (index) {
-            return this._p[index];
-        };
-        /**
-         * 获取内容。
-         */
-        Unknown.prototype.$c = function () {
-            return this._c;
-        };
-        /**
-         * 过滤名称符合要求地子标签。
-         */
-        Unknown.prototype.$q = function (name) {
-            var _this = this;
-            if (!(name in Tag.I))
-                throw new E(E.SCHEMA_TAG_NOT_DECLARED);
-            if (!(name in this._q)) {
-                this._q[name] = [];
-                Util.each(this._s, function (tag) {
-                    if (tag.gN() == name)
-                        _this._q[name].push(tag);
-                });
-            }
-            return this._q[name];
-        };
-        return Unknown;
-    }());
-    Tag.Unknown = Unknown;
-})(Tag || (Tag = {}));
 /**
  * 定义实体（定义）抽象组件。
  *
@@ -9520,7 +9641,7 @@ var Tag;
         Idable.prototype.p = function (runtime) {
             if (!this._d)
                 return runtime;
-            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), esm = states.g('_e'), cg = states.g(kid), cur = states.g('_ra'), exp = states.g('_rb'), kfull = '_f', full = states.g(kfull), ll = pos.LLeft, llChar = states.g(kid + ll), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), rr = pos.RRight, rrChar = states.g(kid + rr), ctype = type.Chr, room;
+            var pos = Core.IDirector.Position, type = Core.IEpisode.Entity, states = runtime.gS(), director = runtime.gD(), episode = runtime.gE(), kid = '.c', kdata = '_c', kpose = '_s', kpos = '.p', kcmr = '.z', q = Promise.resolve(runtime), kroom = states.g('_rd'), kdo = '$rd', kcamera = '_z', camera = states.g(kcamera), bgm = states.g('_b'), esm = states.g('_e'), cg = states.g(kid), cur = states.g('_ra'), exp = states.g('_rb'), kfull = '_f', weather = states.g('_w'), full = states.g(kfull), ll = pos.LLeft, llChar = states.g(kid + ll), l = pos.Left, lChar = states.g(kid + l), cl = pos.CLeft, clChar = states.g(kid + cl), c = pos.Center, cChar = states.g(kid + c), cr = pos.CRight, crChar = states.g(kid + cr), r = pos.Right, rChar = states.g(kid + r), rr = pos.RRight, rrChar = states.g(kid + rr), ctype = type.Chr, room;
             if (bgm)
                 q = q.then(function () {
                     var defbgm = episode.q(typeof bgm == 'string' ? bgm : bgm[0], type.BGM);
@@ -9605,6 +9726,10 @@ var Tag;
             if (full)
                 q = q.then(function () {
                     return director.fullWords(full);
+                });
+            if (weather)
+                q = q.then(function () {
+                    return director.weather(true, weather);
                 });
             return q;
         };
@@ -13321,8 +13446,11 @@ var Tag;
          * 执行。
          */
         Weather.prototype.p = function (runtime) {
-            runtime.gS().s('_w', this._p[0]);
-            return runtime;
+            var states = runtime.gS(), onoff = this._p[0] != '晴', name = '_w', weather = states.g(name);
+            if (onoff && this._p[0] == weather)
+                return runtime;
+            onoff ? states.s(name, this._p[0]) : states.d(name);
+            return runtime.gD().weather(onoff, this._p[0]);
         };
         return Weather;
     }(Tag.Action));
@@ -13957,103 +14085,6 @@ var Tag;
         return When;
     }(Tag.Action));
     Tag.When = When;
-})(Tag || (Tag = {}));
-/**
- * 定义选项动作标签组件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2015 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Action/_Flow/Option.ts
- */
-/// <reference path="../../Unknown.ts" />
-/// <reference path="../../../Core/_Tag/IOptionTag.ts" />
-var Tag;
-(function (Tag) {
-    var Option = (function (_super) {
-        __extends(Option, _super);
-        function Option() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 类型转换。
-         */
-        Option.f = function (tag) {
-            if ('Unknown' != tag.gN())
-                throw new E(E.ACT_OPTION_CAST_FAILURE, tag.gL());
-            var opt = new Option([tag.$p(0)], tag.$c(), [], tag.gL());
-            return opt;
-        };
-        /**
-         * 获取描述文字。
-         */
-        Option.prototype.gT = function () {
-            return this._c || this._p[0];
-        };
-        /**
-         * 获取标签名称。
-         */
-        Option.prototype.gN = function () {
-            return 'Option';
-        };
-        /**
-         * 交互逻辑。
-         */
-        Option.prototype.p = function (runtime) {
-            var states = runtime.gS(), depth = states.g('$d'), kv = '$v' + depth;
-            states.s(kv, this.$v(this._p[0]))
-                .s('$t' + depth, false);
-            if (this._k)
-                states.c(kv, this._k);
-        };
-        /**
-         * 设置状态键名。
-         */
-        Option.prototype.sK = function (key) {
-            this._k = key;
-            return this;
-        };
-        /**
-         * 获取萝卜币。
-         */
-        Option.prototype.gM = function () {
-            return parseInt(this._p[1], 10) || 0;
-        };
-        /**
-         * 设置是否付费信息。
-         */
-        Option.prototype.sA = function (is) {
-            this._a = is;
-            return this;
-        };
-        /**
-         * 获取是否付费信息。
-         */
-        Option.prototype.gA = function () {
-            return this._a;
-        };
-        /**
-         * 获取编号。
-         */
-        Option.prototype.gI = function () {
-            return this._i;
-        };
-        /**
-         * 恢复编号。
-         */
-        Option.prototype.i = function (id) {
-            this._i = id;
-        };
-        /**
-         * 转化为运行时（Javascript）代码。
-         */
-        Option.prototype.toJsrn = function () {
-            var clob = _super.prototype.toJsrn.call(this);
-            return this._p[1] ? clob.substr(0, clob.length - 1) + ',"' + this._i + '")' : clob;
-        };
-        return Option;
-    }(Tag.Unknown));
-    Tag.Option = Option;
 })(Tag || (Tag = {}));
 /**
  * 定义选择动作标签组件。
@@ -14726,8 +14757,18 @@ var Tag;
          */
         Copy.prototype.t = function (states) {
             var depth = states.g('$d');
-            states.c(this._p[1], this._p[0])
-                .c(this._p[0], '$v' + depth)
+            var sign = '／';
+            // 如果是设置结构体类型数据中字段值
+            if (/^.+／.+$/ig.test(this._p[1])) {
+                var vari = this._p[1].split(sign)[0];
+                var fieldName = this._p[1].split(sign)[1];
+                var data = states.g(vari);
+                states.s(this._p[0], data[fieldName]);
+            }
+            else {
+                states.c(this._p[1], this._p[0]);
+            }
+            states.c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;
         };
@@ -15984,42 +16025,6 @@ var Tag;
     Tag.Unlock = Unlock;
 })(Tag || (Tag = {}));
 /**
- * 定义特效动画动作标签组件。
- *
- * @author    李倩 <qli@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Tag/_Action/_Director/Effect.ts
- */
-/// <reference path="../../Action.ts" />
-var Tag;
-(function (Tag) {
-    var Effect = (function (_super) {
-        __extends(Effect, _super);
-        function Effect() {
-            _super.apply(this, arguments);
-        }
-        /**
-         * 获取标签名称。
-         */
-        Effect.prototype.gN = function () {
-            return 'Effect';
-        };
-        /**
-         * 执行。
-         */
-        Effect.prototype.p = function (runtime) {
-            var states = runtime.gS(), onoff = this._p[0] == '开', name = '_ef', exist = states.g(name);
-            if (onoff == (exist != undefined))
-                return runtime;
-            onoff ? states.s(name, this._c) : states.d(name);
-            return runtime.gD().effect(onoff, this._c);
-        };
-        return Effect;
-    }(Tag.Action));
-    Tag.Effect = Effect;
-})(Tag || (Tag = {}));
-/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -16027,7 +16032,7 @@ var Tag;
  * @license   GPL-3.0
  * @file      Tag/_pack.ts
  */
-/// <reference path="../Core/_Resource/IEffect.ts" />
+/// <reference path="../Core/_Resource/IWeather.ts" />
 /// <reference path="../Ev/_Runtime/Begin.ts" />
 /// <reference path="../Ev/_Runtime/Resume.ts" />
 /// <reference path="../Ev/_Runtime/Load.ts" />
@@ -16140,7 +16145,6 @@ var Tag;
 /// <reference path="_Action/_Text/FullClean.ts" />
 /// <reference path="_Action/_Text/FullHide.ts" />
 /// <reference path="_Action/_Logic/Unlock.ts" />
-/// <reference path="_Action/_Director/Effect.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -16823,7 +16827,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.5';
+    Bigine.version = '0.25.6';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

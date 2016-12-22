@@ -57,6 +57,7 @@ namespace Tag {
                 cur: string = states.g('_ra'),
                 exp: string = states.g('_rb'),
                 kfull: string = '_f',
+                weather: string = states.g('_w'),
                 full: boolean = states.g(kfull),
                 ll: Core.IDirector.Position = pos.LLeft,
                 llChar: string = states.g(kid + ll),
@@ -161,6 +162,10 @@ namespace Tag {
             if (full)
                 q = q.then(() => {
                     return director.fullWords(full);
+                });
+            if (weather)
+                q = q.then(() => {
+                    return director.weather(true, weather);
                 });
             return q;
         }

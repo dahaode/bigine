@@ -10,6 +10,7 @@
 /// <reference path="Sprite.ts" />
 /// <reference path="../Resource/Resource.ts" />
 /// <reference path="../Ev/_Sprite/Choose.ts" />
+/// <reference path="../Tag/_Action/_Flow/Option.ts" />
 
 namespace Sprite {
     import Util = __Bigine_Util;
@@ -52,19 +53,27 @@ namespace Sprite {
         /**
          * 配置。
          */
-        public u(options: Core.IOptionTag[], stage: G.Stage): Choose {
+        public u(options: Core.IOptionTag[], stage: G.Stage, time: number, answer: string): Choose {
             let margin: number = this._tm['m'],
+                w: number = 1280,
+                selected: Tag.Option = <Tag.Option> options[0],
+                _pro: G.Progress,
+                _si: number,
                 _back: Util.IHashTable<any> = this._tm['back'],
                 _text: Util.IHashTable<any> = this._tm['text'],
                 _count: Util.IHashTable<any> = this._tm['count'],
                 _radish: Util.IHashTable<any> = this._tm['radish'],
                 opts: Core.IOptionTag[] = options.slice(0, 6),
-                x: number = 0 | (1280 - _back['w']) / 2,
+                x: number = 0 | (w - _back['w']) / 2,
                 y: number = 0 | (720 - opts.length * _back['h'] - (opts.length - 1) * margin) / 2;
             this.c();
             this._bn = [];
             this._bi = undefined;
-            Util.each(options.slice(0, 6), (option: Core.IOptionTag) => {
+            Util.each(options.slice(0, 6), (option: Tag.Option) => {
+                if (option.$p(0) == answer) {
+                    selected = option;
+                    return;
+                }
                 let text: G.Text = new G.Text(x + _text['x'], y + _text['y'], _text['w'], _text['h'], _text['ff'], _text['s'], _text['lh'], G.Text.Align.Center)
                     .tc(_text['c']);
                     //.ts(_text['ss']);
@@ -75,6 +84,11 @@ namespace Sprite {
                             target: this,
                             choice: option
                         }));
+                        if (_si) {
+                            clearTimeout(_si);
+                            _si = undefined;
+                        }
+                        if (_pro) _pro.h();
                     }, new G.Image(this._rr[1].o(), x, y, _back['w'], _back['h'], true), new G.Image(this._rr[0].o(), x, y, _back['w'], _back['h'], true));
                 this._bn.push(btn);
                 this.$w(text, option.gT(), _text['ch']);
@@ -94,6 +108,21 @@ namespace Sprite {
                 y += _back['h'] + margin;
             });
             this.ev(options, stage);
+            if (time > 0) {
+                let bar: G.Element;
+                this.a(new G.Color(0, 0, w, 17, '#e7e7e7'))
+                    .a(bar = new G.Color(-w, 1, w, 15, '#ff0000'));
+                bar.p(_pro = new G.Progress(time * 1000, {width: w}));
+                _si = setTimeout(() => {
+                    this.dispatchEvent(new Ev.Choose({
+                        target: this,
+                        choice: selected
+                    }));
+                    clearTimeout(_si);
+                    _si = undefined;
+                }, time * 1000);
+
+            }
             return this;
         }
 
@@ -157,7 +186,7 @@ namespace Sprite {
 
                 if (event.keyCode == 38 || event.keyCode == 40) event.preventDefault();
             };
-            window.addEventListener('keydown', this._ke);
+            window.addEventListener('keyup', this._ke);
         }
 
         /**
@@ -165,7 +194,7 @@ namespace Sprite {
          */
         public h(duration?: number): Promise<Sprite> {
             if (this._ke) {
-                window.removeEventListener('keydown', this._ke);
+                window.removeEventListener('keyup', this._ke);
                 this._ke = undefined;
             }
             this._bn = [];
