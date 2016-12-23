@@ -16244,6 +16244,22 @@ var Runtime;
                 _this._fb =
                     _this._fp = false;
             });
+            document.addEventListener('touchstart', function (event) {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            });
+            document.addEventListener('touchmove', function (event) {
+                event.preventDefault();
+            }, false);
+            var lastTouchEnd = 0;
+            document.addEventListener('touchend', function (event) {
+                var now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
         }
         /**
          * 新增事件监听。

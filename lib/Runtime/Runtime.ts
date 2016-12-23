@@ -177,6 +177,22 @@ namespace Runtime {
                 this._fb =
                 this._fp = false;
             });
+            document.addEventListener('touchstart', (event: TouchEvent) => {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            });
+            document.addEventListener('touchmove', (event: TouchEvent) => {
+                event.preventDefault();
+            }, false);
+            var lastTouchEnd: number = 0;
+            document.addEventListener('touchend', (event: TouchEvent) => {
+                var now: number = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
         }
 
         /**
