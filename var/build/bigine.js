@@ -544,45 +544,6 @@ var Ev;
     Ev.Ready = Ready;
 })(Ev || (Ev = {}));
 /**
- * 声明（运行时）（loading文件加载完成）就绪事件元信息接口规范。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/ILoadingMetas.ts
- */
-/// <reference path="../../Core/_Runtime/IEpisode.ts" />
-/**
- * 定义（运行时）（loading文件加载完成）就绪事件。
- *
- * @author    郑煜宇 <yzheng@atfacg.com>
- * @copyright © 2016 Dahao.de
- * @license   GPL-3.0
- * @file      Ev/_Runtime/Loading.ts
- */
-/// <reference path="../Event.ts" />
-/// <reference path="ILoadingMetas.ts" />
-var Ev;
-(function (Ev) {
-    var Loading = (function (_super) {
-        __extends(Loading, _super);
-        /**
-         * 构造函数。
-         */
-        function Loading(metas) {
-            _super.call(this, metas);
-        }
-        /**
-         * 获取类型。
-         */
-        Loading.prototype.gT = function () {
-            return 'loading';
-        };
-        return Loading;
-    }(Ev.Event));
-    Ev.Loading = Loading;
-})(Ev || (Ev = {}));
-/**
  * 声明（运行时）错误事件元信息接口规范。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -825,7 +786,6 @@ var Resource;
  * @file      Runtime/Episode.ts
  */
 /// <reference path="../Ev/_Runtime/Ready.ts" />
-/// <reference path="../Ev/_Runtime/Loading.ts" />
 /// <reference path="../Ev/_Runtime/Error.ts" />
 /// <reference path="../Ev/_Runtime/End.ts" />
 /// <reference path="../Resource/Resource.ts" />
@@ -844,55 +804,92 @@ var Runtime;
             this._sr = ep.sr();
             this._s = ep.gS();
             this._t = ep.gT();
-            this._l = null;
+            //this._l = null;
             ep.r(this);
-            var load = function () {
-                Promise.all([
-                    new Promise(function (resolve) {
-                        var res = ep.l(function (entities) {
-                            Util.each(entities, function (typed) {
-                                Util.each(typed, function (entity) {
-                                    entity.r(_this);
-                                });
+            Promise.all([
+                new Promise(function (resolve) {
+                    var res = ep.l(function (entities) {
+                        Util.each(entities, function (typed) {
+                            Util.each(typed, function (entity) {
+                                entity.r(_this);
                             });
-                            resolve();
                         });
-                        if (!res)
-                            resolve();
-                    }).then(function () {
-                        ep.b(_this);
-                    }),
-                    new Promise(function (resolve) {
-                        ep.t(function (data) {
-                            _this._c = data;
-                            resolve();
-                        });
-                    })
-                ]).then(function () {
-                    runtime.dispatchEvent(new Ev.Ready({
-                        target: _this
-                    }));
-                })['catch'](function (error) {
-                    runtime.dispatchEvent(new Ev.Error({
-                        target: _this,
-                        error: error
-                    }));
-                });
-            };
-            if (Bigine.offline) {
-                load();
-                return;
-            }
-            var uri = 'http://s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain;
-            Util.Remote.get(uri, function (des) {
-                _this._l = des;
-                runtime.dispatchEvent(new Ev.Loading({
+                        resolve();
+                    });
+                    if (!res)
+                        resolve();
+                }).then(function () {
+                    ep.b(_this);
+                }),
+                new Promise(function (resolve) {
+                    ep.t(function (data) {
+                        _this._c = data;
+                        resolve();
+                    });
+                }),
+                new Promise(function (resolve) {
+                    setTimeout(function () {
+                        resolve();
+                    }, 5000);
+                })
+            ]).then(function () {
+                runtime.dispatchEvent(new Ev.Ready({
                     target: _this
                 }));
-                load();
-            }, function (error, status) {
-                throw error;
+            })['catch'](function (error) {
+                runtime.dispatchEvent(new Ev.Error({
+                    target: _this,
+                    error: error
+                }));
             });
+            // let load: () => void = () => {
+            //     Promise.all([
+            //         new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+            //             var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
+            //                 Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
+            //                     Util.each(typed, (entity: Core.IEntityTag) => {
+            //                         entity.r(this);
+            //                     });
+            //                 });
+            //                 resolve();
+            //             });
+            //             if (!res)
+            //                 resolve();
+            //         }).then(() => {
+            //             ep.b(this);
+            //         }),
+            //         new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+            //             ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
+            //                 this._c = data;
+            //                 resolve();
+            //             });
+            //         })
+            //     ]).then(() => {
+            //         runtime.dispatchEvent(new Ev.Ready({
+            //             target: this
+            //         }));
+            //     })['catch']((error: any) => {
+            //         runtime.dispatchEvent(new Ev.Error({
+            //             target: this,
+            //             error: error
+            //         }));
+            //     });
+            // };
+            // if (Bigine.offline) {
+            //     load();
+            //     return;
+            // }
+            // let uri: string = 'http://s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain;
+            // Util.Remote.get(uri,
+            //     (des) => {
+            //         this._l = des;
+            //         runtime.dispatchEvent(new Ev.Loading({
+            //             target: this
+            //         }));
+            //         load();
+            //     }, (error: Error, status?: any) => {
+            //         throw error;
+            //     });
         }
         /**
          * 添加事件。
@@ -985,12 +982,6 @@ var Runtime;
             if (!this._c)
                 throw new E(E.EP_THEME_NOT_LOADED);
             return this._c;
-        };
-        /**
-         * 获取Loading主题信息。
-         */
-        Episode.prototype.gL = function () {
-            return this._l;
         };
         return Episode;
     }());
@@ -1500,19 +1491,25 @@ var Runtime;
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        Director.prototype.c = function (resources) {
+        Director.prototype.c = function (resources, visible) {
             return Resource.Prefecher.c(resources, this._r.gL());
         };
         /**
          * 加载动画。
          */
-        Director.prototype.Load = function (loaded, theme) {
+        Director.prototype.Init = function (loaded) {
+            return this._p;
+        };
+        /**
+         * 作者Logo。
+         */
+        Director.prototype.Author = function (title, author) {
             return this._p;
         };
         /**
          * 开始动画。
          */
-        Director.prototype.OP = function (start, title, author, isWx) {
+        Director.prototype.OP = function (start, title) {
             if (!start)
                 this._r.dispatchEvent(new Ev.Begin({
                     target: this._r.gE()
@@ -5574,82 +5571,65 @@ var Sprite;
     Sprite.Stars = Stars;
 })(Sprite || (Sprite = {}));
 /**
- * 定义Loading信息组件。
+ * 定义初始化加载界面组件。
  *
  * @author    李倩 <qli@atfacg.com>
  * @copyright © 2016 Dahao.de
  * @license   GPL-3.0
- * @file      Sprite/Loading.ts
+ * @file      Sprite/Init.ts
  */
 /// <reference path="Sprite.ts" />
 var Sprite;
 (function (Sprite) {
-    var Util = __Bigine_Util;
     var G = __Bigine_C2D;
-    var Loading = (function (_super) {
-        __extends(Loading, _super);
+    var Init = (function (_super) {
+        __extends(Init, _super);
         /**
          * 构造函数。
          */
-        function Loading(theme) {
-            _super.call(this, theme);
+        function Init() {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource;
+            _super.call(this, {});
+            this._g = [undefined, undefined];
             this._rr = [
-                Resource.Resource.g('_/loading.png', Core.IResource.Type.Raw)
+                rr.g('_/logo.png', raw),
+                rr.g('_/luobo/1.png', raw),
+                rr.g('_/luobo/2.png', raw),
+                rr.g('_/luobo/3.png', raw),
+                rr.g('_/luobo/4.png', raw),
+                rr.g('_/luobo/5.png', raw),
+                rr.g('_/luobo/6.png', raw),
+                rr.g('_/luobo/7.png', raw),
+                rr.g('_/luobo/8.png', raw),
+                rr.g('_/luobo/9.png', raw),
+                rr.g('_/luobo/10.png', raw),
+                rr.g('_/luobo/11.png', raw),
+                rr.g('_/luobo/12.png', raw)
             ];
-            this._ws = theme['words'] || {};
-            this._si = undefined;
         }
-        Loading.prototype.pI = function () {
-            if (this._pi)
-                return this;
-            var _text = this._tm['text'];
-            this.a(this._gi = new G.Image(this._rr[0].o(), 0, 0, 1280, 720))
-                .a(new G.Text(_text, _text['ff'], _text['s'], _text['h'], this.$a(_text['a']))
-                .tc(_text['c'])
-                .a(this._x = new G.TextPhrase('')));
-            return _super.prototype.pI.call(this);
-        };
         /**
-         * 设置底层信息。
+         * 配置。
          */
-        Loading.prototype.u = function () {
-            var _this = this;
-            this.pI();
-            var speed = 0.05, time = 30, index = 1, max = 0;
-            Util.each(this._ws, function (word) {
-                max++;
-            });
-            index = 1 + Math.round(Math.random() * (max - 1));
-            this._gi.o(1);
-            this._si = setInterval(function () {
-                var now = _this._gi.gO();
-                speed = (now >= 1 || now <= 0.4) ? (speed * -1) : speed;
-                now += speed;
-                _this._gi.o(now);
-                if (max > 0 && time >= 30) {
-                    if (!_this._ws[index])
-                        index = 1;
-                    _this._x.t(_this._ws[index]);
-                    index++;
-                    time = 0;
-                }
-                time++;
-            }, 100);
+        Init.prototype.u = function () {
+            var color = [['#00FFC0', 0], ['#0080C0', 0], ['#00FFC0', 1]], bound = { x: 592, y: 340, w: 96, h: 120 }, linear;
+            this.a(new G.Image(this._rr[0].o(), 438, 200, 404, 118))
+                .a(linear = new G.ColorLinear(440, 500, 400, 8, color, 4))
+                .o(1);
+            linear.p(this._g[0] = new G.Bar(color));
+            this.p(this._g[1] = new G.Gif(this._rr.slice(1), bound));
             return this;
         };
         /**
          * 隐藏。
          */
-        Loading.prototype.h = function (duration) {
-            if (this._si) {
-                clearInterval(this._si);
-                this._si = undefined;
-            }
+        Init.prototype.h = function (duration) {
+            this._g[0].h();
+            this._g[1].h();
             return _super.prototype.h.call(this, duration);
         };
-        return Loading;
+        return Init;
     }(Sprite.Sprite));
-    Sprite.Loading = Loading;
+    Sprite.Init = Init;
 })(Sprite || (Sprite = {}));
 /**
  * 声明画面调度全屏文本接口规范。
@@ -6180,7 +6160,7 @@ var Sprite;
 /// <reference path="SeriesSlots.ts" />
 /// <reference path="Set.ts" />
 /// <reference path="Stars.ts" />
-/// <reference path="Loading.ts" />
+/// <reference path="Init.ts" />
 /// <reference path="Full.ts" />
 /// <reference path="Review.ts" />
 /**
@@ -6250,7 +6230,6 @@ var Runtime;
             this._e = [0, 0];
             this._ss = [];
             this._i = {
-                o: Resource.Resource.g(assets + 'logo.png', raw),
                 s: Resource.Resource.g(assets + 'oops.mp3', raw),
                 f: Resource.Resource.g(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g(assets + 'click.mp3', raw)
@@ -6282,15 +6261,33 @@ var Runtime;
             this._fs = Core.IRuntime.Series.Alone;
             window.addEventListener('keydown', this._l[0]);
             window.addEventListener('keyup', this._l[1]);
+            doc.addEventListener('touchstart', function (event) {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            });
+            doc.addEventListener('touchmove', function (event) {
+                event.preventDefault();
+            }, false);
+            var lastTouchEnd = 0;
+            doc.addEventListener('touchend', function (event) {
+                var now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
         }
         /**
          * 预加载指定资源组。
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        CanvasDirector.prototype.c = function (resources) {
+        CanvasDirector.prototype.c = function (resources, visible) {
             var _this = this;
             var gLoading = this._c.q('L')[0], gElapsed = gLoading.q('e')[0], bounds = CanvasDirector.BOUNDS, progress = function (done) {
+                if (visible)
+                    return;
                 var e = _this._e;
                 e[0 + done]++;
                 if (e[0] == e[1]) {
@@ -6313,52 +6310,47 @@ var Runtime;
         /**
          * 加载动画。
          */
-        CanvasDirector.prototype.Load = function (loaded, theme) {
+        CanvasDirector.prototype.Init = function (loaded) {
             if (loaded) {
-                if (!this._x['ld'])
-                    this._c.a(this._x['ld'] = new Sprite.Loading(theme));
-                this._x['ld'].u().v(0);
-                return _super.prototype.Load.call(this, loaded);
+                if (!this._x['ii'])
+                    this._c.a(this._x['ii'] = new Sprite.Init());
+                this._x['ii'].u();
+                return _super.prototype.Init.call(this, loaded);
             }
             else {
-                if (this._x['ld'])
-                    this._x['ld'].h(0);
-                return _super.prototype.Load.call(this, loaded);
+                if (this._x['ii']) {
+                    this._x['ii'].h(0);
+                    this._c.e(this._x['ii']);
+                }
+                return _super.prototype.Init.call(this, loaded);
             }
+        };
+        /**
+         * 作者Logo。
+         */
+        CanvasDirector.prototype.Author = function (title, author) {
+            var _this = this;
+            if (!author && !title)
+                return _super.prototype.Author.call(this, title, author);
+            var gAuthor = this._x['a'].u(author ? author : title);
+            gAuthor.v(0);
+            return this.lightOn()
+                .then(function () { return gAuthor.p(new G.Delay(1000)); })
+                .then(function () { return _this.lightOff(); })
+                .then(function () { return gAuthor.o(0); })
+                .then(function () { return _super.prototype.Author.call(_this, title, author); });
         };
         /**
          * 开始动画。
          */
-        CanvasDirector.prototype.OP = function (start, title, author, isWx) {
+        CanvasDirector.prototype.OP = function (start, title) {
             var _this = this;
             var series = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
             this._x['s'].u(title, series, this._c);
-            return this.c([[this._i['o']]])
-                .then(function () { return _this.reset(); })
+            return this.reset()
                 .then(function () {
                 _this._c.z();
-                var q;
-                if (!isWx) {
-                    var gLogo_1 = new G.Component().a(new G.Image(_this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
-                    _this._c.a(gLogo_1, _this._x['c']);
-                    q = _this.lightOn()
-                        .then(function () { return gLogo_1.p(new G.Delay(1000)); })
-                        .then(function () { return _this.lightOff(); })
-                        .then(function () { return _this._c.e(gLogo_1); });
-                }
-                else {
-                    q = _this.lightOff();
-                }
-                return q.then(function () {
-                    if (!author && !title)
-                        return;
-                    var gAuthor = _this._x['a'].u(author ? author : title);
-                    gAuthor.v(0);
-                    return _this.lightOn()
-                        .then(function () { return gAuthor.p(new G.Delay(1000)); })
-                        .then(function () { return _this.lightOff(); })
-                        .then(function () { return gAuthor.o(0); });
-                }).then(function () { return _super.prototype.OP.call(_this, start, title, author, isWx); })
+                return _super.prototype.OP.call(_this, start, title)
                     .then(function (runtime) {
                     if (!_this._a)
                         _this._x['t'].v(0);
@@ -6368,6 +6360,41 @@ var Runtime;
                     return _this.lightOn();
                 });
             });
+            // let series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
+            // (<Sprite.Start> this._x['s']).u(title, series, this._c);
+            // return this.c([[this._i['o']]])
+            //     .then(() => this.reset())
+            //     .then(() => {
+            //         this._c.z();
+            //         let q: Promise<any>;
+            //         if (!isWx) {
+            //             let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
+            //             this._c.a(gLogo, this._x['c']);
+            //             q = this.lightOn()
+            //                 .then(() => gLogo.p(new G.Delay(1000)))
+            //                 .then(() => this.lightOff())
+            //                 .then(() => this._c.e(gLogo));
+            //         } else {
+            //             q = this.lightOff();
+            //         }
+            //         return q.then(() => {
+            //                 if (!author && !title) return;
+            //                 let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
+            //                 gAuthor.v(0);
+            //                 return this.lightOn()
+            //                     .then(() => gAuthor.p(new G.Delay(1000)))
+            //                     .then(() => this.lightOff())
+            //                     .then(() => gAuthor.o(0));
+            //             }).then(() => super.OP(start, title, author, isWx))
+            //             .then((runtime: Core.IRuntime) => {
+            //                 if (!this._a)
+            //                     this._x['t'].v(0);
+            //                 if (!start)
+            //                     return runtime;
+            //                 this._x['s'].v(0);
+            //                 return this.lightOn();
+            //             });
+            //     });
         };
         /**
          * 完结动画。
@@ -7270,7 +7297,7 @@ var Runtime;
             });
             resources.unshift(this._x['R'].l());
             this._c.a(this._x['R'], gCurtain);
-            this.c(resources);
+            this.c(resources, true);
             return this;
         };
         CanvasDirector.prototype.sl = function (id, aotuload) {
@@ -7503,7 +7530,7 @@ var Core;
             "小雨": {
                 maxNum: 50,
                 numLevel: 1,
-                gravity: 0.2,
+                gravity: 0.4,
                 type: "rain",
                 speed: [0.2, 1.0],
                 size_range: [0.5, 1.5],
@@ -7514,7 +7541,7 @@ var Core;
             "中雨": {
                 maxNum: 150,
                 numLevel: 3,
-                gravity: 0.2,
+                gravity: 0.6,
                 type: "rain",
                 speed: [0.4, 2.0],
                 size_range: [1.0, 3.0],
@@ -7525,7 +7552,7 @@ var Core;
             "大雨": {
                 maxNum: 500,
                 numLevel: 10,
-                gravity: 0.4,
+                gravity: 0.8,
                 type: "rain",
                 speed: [0.8, 4.0],
                 size_range: [2, 6],
@@ -7536,7 +7563,7 @@ var Core;
             "小雪": {
                 maxNum: 80,
                 numLevel: 1,
-                gravity: 0.02,
+                gravity: 0.04,
                 type: "snow",
                 speed: [0.01, 0.05],
                 size_range: [1, 3],
@@ -7547,7 +7574,7 @@ var Core;
             "中雪": {
                 maxNum: 200,
                 numLevel: 2,
-                gravity: 0.02,
+                gravity: 0.04,
                 type: "snow",
                 speed: [0.02, 0.1],
                 size_range: [1, 4],
@@ -7558,7 +7585,7 @@ var Core;
             "大雪": {
                 maxNum: 300,
                 numLevel: 3,
-                gravity: 0.03,
+                gravity: 0.06,
                 type: "snow",
                 speed: [0.1, 0.2],
                 size_range: [2, 4],
@@ -16183,18 +16210,13 @@ var Runtime;
             this._t = Promise.resolve(this);
             this._n = ['', '', false];
             this._al = [undefined, undefined, undefined];
-            this.addEventListener('loading', function () {
-                _this._fl = true;
-                if (_this._fp) {
-                    _this._d.Load(true, _this._e.gL());
-                }
-            });
+            this._d.Init(true);
             this.addEventListener('ready', function () {
                 _this._d.t(_this._e.gT(), _this._e.gC())
                     .s(ep.s())
                     .p(ep.p());
                 _this._fr = true;
-                _this._d.Load(false);
+                _this._d.Init(false);
                 _this._s.l().then(function () {
                     var valid = false;
                     if (_this._al[0] && _this._al[2] == 'pay') {
@@ -16235,7 +16257,8 @@ var Runtime;
                 _this._fb = true;
                 _this._fh = false;
                 _this._s.d(' ');
-                _this.t(function () { return _this._e.p(Core.ISceneTag.Type.Begin, _this); });
+                _this._d.Author(_this._n[0], _this._n[1])
+                    .then(function () { return _this.t(function () { return _this._e.p(Core.ISceneTag.Type.Begin, _this); }); });
             });
             this.addEventListener('resume', function () {
                 _this._fb = true;
@@ -16244,22 +16267,6 @@ var Runtime;
                 _this._fb =
                     _this._fp = false;
             });
-            document.addEventListener('touchstart', function (event) {
-                if (event.touches.length > 1) {
-                    event.preventDefault();
-                }
-            });
-            document.addEventListener('touchmove', function (event) {
-                event.preventDefault();
-            }, false);
-            var lastTouchEnd = 0;
-            document.addEventListener('touchend', function (event) {
-                var now = (new Date()).getTime();
-                if (now - lastTouchEnd <= 300) {
-                    event.preventDefault();
-                }
-                lastTouchEnd = now;
-            }, false);
         }
         /**
          * 新增事件监听。
@@ -16341,8 +16348,8 @@ var Runtime;
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
-            this._d.Load(false);
-            this._d.OP(!this._e.gA(), this._n[0], this._n[1], this._n[2]);
+            this._d.Init(false);
+            this._d.OP(!this._e.gA(), this._n[0]);
             return this;
         };
         /**

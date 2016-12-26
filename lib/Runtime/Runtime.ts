@@ -117,18 +117,13 @@ namespace Runtime {
             this._t = Promise.resolve(this);
             this._n = ['', '', false];
             this._al = [undefined, undefined, undefined];
-            this.addEventListener('loading', () => {
-                this._fl = true;
-                if (this._fp) {
-                    this._d.Load(true, this._e.gL());
-                }
-            });
+            this._d.Init(true);
             this.addEventListener('ready', () => {
                 this._d.t(this._e.gT(), this._e.gC())
                     .s(ep.s())
                     .p(ep.p());
                 this._fr = true;
-                this._d.Load(false);
+                this._d.Init(false);
                 this._s.l().then(() => {
                     let valid: boolean = false;
                     if (this._al[0] && this._al[2] == 'pay') {
@@ -168,7 +163,8 @@ namespace Runtime {
                 this._fb = true;
                 this._fh = false;
                 this._s.d(' ');
-                this.t(() => this._e.p(Core.ISceneTag.Type.Begin, this));
+                this._d.Author(this._n[0], this._n[1])
+                    .then(() => this.t(() => this._e.p(Core.ISceneTag.Type.Begin, this)));
             });
             this.addEventListener('resume', () => {
                 this._fb = true;
@@ -177,22 +173,6 @@ namespace Runtime {
                 this._fb =
                 this._fp = false;
             });
-            document.addEventListener('touchstart', (event: TouchEvent) => {
-                if (event.touches.length > 1) {
-                    event.preventDefault();
-                }
-            });
-            document.addEventListener('touchmove', (event: TouchEvent) => {
-                event.preventDefault();
-            }, false);
-            var lastTouchEnd: number = 0;
-            document.addEventListener('touchend', (event: TouchEvent) => {
-                var now: number = (new Date()).getTime();
-                if (now - lastTouchEnd <= 300) {
-                    event.preventDefault();
-                }
-                lastTouchEnd = now;
-            }, false);
         }
 
         /**
@@ -281,8 +261,8 @@ namespace Runtime {
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
-            this._d.Load(false);
-            this._d.OP(!this._e.gA(), this._n[0], this._n[1], this._n[2]);
+            this._d.Init(false);
+            this._d.OP(!this._e.gA(), this._n[0]);
             return this;
         }
 

@@ -15,7 +15,7 @@ namespace Core {
             "小雨": {
                 maxNum: 50,
                 numLevel: 1,
-                gravity: 0.2,
+                gravity: 0.4,
                 type: "rain",
                 speed: [0.2, 1.0],
                 size_range: [0.5, 1.5],
@@ -26,7 +26,7 @@ namespace Core {
             "中雨": {
                 maxNum: 150,
                 numLevel: 3,
-                gravity: 0.2,
+                gravity: 0.6,
                 type: "rain",
                 speed: [0.4, 2.0],
                 size_range: [1.0, 3.0],
@@ -37,7 +37,7 @@ namespace Core {
             "大雨": {
                 maxNum: 500,
                 numLevel: 10,
-                gravity: 0.4,
+                gravity: 0.8,
                 type: "rain",
                 speed: [0.8, 4.0],
                 size_range: [2, 6],
@@ -48,7 +48,7 @@ namespace Core {
             "小雪": {
                 maxNum: 80,
                 numLevel: 1,
-                gravity: 0.02,
+                gravity: 0.04,
                 type: "snow",
                 speed: [0.01, 0.05],
                 size_range: [1, 3],
@@ -59,7 +59,7 @@ namespace Core {
             "中雪": {
                 maxNum: 200,
                 numLevel: 2,
-                gravity: 0.02,
+                gravity: 0.04,
                 type: "snow",
                 speed: [0.02, 0.1],
                 size_range: [1, 4],
@@ -70,7 +70,7 @@ namespace Core {
             "大雪": {
                 maxNum: 300,
                 numLevel: 3,
-                gravity: 0.03,
+                gravity: 0.06,
                 type: "snow",
                 speed: [0.1, 0.2],
                 size_range: [2, 4],

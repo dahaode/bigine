@@ -74,21 +74,28 @@ namespace Runtime {
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        public c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void> {
+        public c(resources: Resource.Resource<string | HTMLImageElement>[][], visible?: boolean): Promise<void> {
             return Resource.Prefecher.c(resources, this._r.gL());
         }
 
         /**
          * 加载动画。
          */
-        public Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime> {
+        public Init(loaded: boolean): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
+         * 作者Logo。
+         */
+        public Author(title: string, author: string): Promise<Core.IRuntime> {
             return this._p;
         }
 
         /**
          * 开始动画。
          */
-        public OP(start: boolean, title: string, author: string, isWx: boolean): Promise<Core.IRuntime> {
+        public OP(start: boolean, title: string): Promise<Core.IRuntime> {
             if (!start)
                 this._r.dispatchEvent(new Ev.Begin({
                     target: this._r.gE()

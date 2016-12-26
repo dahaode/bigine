@@ -130,9 +130,10 @@ declare namespace __Bigine {
     }
     namespace Core {
         interface IDirector {
-            c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
-            Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<IRuntime>;
-            OP(start: boolean, title: string, author: string, isWx: boolean): Promise<IRuntime>;
+            c(resources: IResource<string | HTMLImageElement>[][], visible?: boolean): Promise<void>;
+            Init(loaded: boolean): Promise<IRuntime>;
+            Author(title: string, author: string): Promise<IRuntime>;
+            OP(start: boolean, title: string): Promise<IRuntime>;
             ED(): Promise<IRuntime>;
             FAIL(): Promise<IRuntime>;
             charOn(resource: IResource<HTMLImageElement>, position: IDirector.Position): Promise<IRuntime>;
@@ -284,16 +285,6 @@ declare namespace __Bigine {
         }
     }
     namespace Ev {
-        interface ILoadingMetas extends Util.IEventMetas<Core.IEpisode> {
-        }
-    }
-    namespace Ev {
-        class Loading extends Event<Core.IEpisode> {
-            constructor(metas: ILoadingMetas);
-            gT(): string;
-        }
-    }
-    namespace Ev {
         interface IErrorMetas extends Util.IEventMetas<any> {
             error: Error;
         }
@@ -336,7 +327,6 @@ declare namespace __Bigine {
             private _p;
             private _s;
             private _t;
-            private _l;
             private _sr;
             constructor(ep: Core.IRootTag, runtime: Core.IRuntime);
             a(scene: Core.ISceneTag): Episode;
@@ -349,7 +339,6 @@ declare namespace __Bigine {
             gA(): boolean;
             gSr(): boolean;
             gC(): Util.IHashTable<Util.IHashTable<any>>;
-            gL(): Util.IHashTable<Util.IHashTable<any>>;
         }
     }
     namespace Ev {
@@ -451,9 +440,10 @@ declare namespace __Bigine {
             protected _o: boolean;
             protected _sr: boolean;
             constructor(runtime: Core.IRuntime);
-            c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
-            Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
-            OP(start: boolean, title: string, author: string, isWx: boolean): Promise<Core.IRuntime>;
+            c(resources: Resource.Resource<string | HTMLImageElement>[][], visible?: boolean): Promise<void>;
+            Init(loaded: boolean): Promise<Core.IRuntime>;
+            Author(title: string, author: string): Promise<Core.IRuntime>;
+            OP(start: boolean, title: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             FAIL(): Promise<Core.IRuntime>;
             charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;
@@ -1070,15 +1060,11 @@ declare namespace __Bigine {
         }
     }
     namespace Sprite {
-        class Loading extends Sprite {
-            private _x;
-            private _ws;
-            private _gi;
-            private _si;
-            constructor(theme: Util.IHashTable<Util.IHashTable<any>>);
-            protected pI(): Loading;
-            u(): Loading;
-            h(duration?: number): Promise<Sprite>;
+        class Init extends Sprite {
+            private _g;
+            constructor();
+            u(): Init;
+            h(duration?: number): Promise<Full>;
         }
     }
     namespace Core {
@@ -1175,9 +1161,10 @@ declare namespace __Bigine {
             private _ss;
             private _se;
             constructor(runtime: Core.IRuntime);
-            c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void>;
-            Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime>;
-            OP(start: boolean, title: string, author: string, isWx: boolean): Promise<Core.IRuntime>;
+            c(resources: Resource.Resource<string | HTMLImageElement>[][], visible?: boolean): Promise<void>;
+            Init(loaded: boolean): Promise<Core.IRuntime>;
+            Author(title: string, author: string): Promise<Core.IRuntime>;
+            OP(start: boolean, title: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
             protected $s(): Promise<Core.IRuntime>;
             charOn(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): Promise<Core.IRuntime>;

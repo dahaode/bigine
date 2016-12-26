@@ -22,17 +22,22 @@ namespace Core {
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        c(resources: IResource<string | HTMLImageElement>[][]): Promise<void>;
+        c(resources: IResource<string | HTMLImageElement>[][], visible?: boolean): Promise<void>;
 
         /**
          * 加载动画。
          */
-        Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<IRuntime>;
+        Init(loaded: boolean): Promise<IRuntime>;
+
+        /**
+         * 作者Logo。
+         */
+        Author(title: string, author: string): Promise<IRuntime>;
 
         /**
          * 开场动画。
          */
-        OP(start: boolean, title: string, author: string, isWx: boolean): Promise<IRuntime>;
+        OP(start: boolean, title: string): Promise<IRuntime>;
 
         /**
          * 完结动画。

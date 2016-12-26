@@ -22,6 +22,6 @@
 /// <reference path="SeriesSlots.ts" />
 /// <reference path="Set.ts" />
 /// <reference path="Stars.ts" />
-/// <reference path="Loading.ts" />
+/// <reference path="Init.ts" />
 /// <reference path="Full.ts" />
 /// <reference path="Review.ts" />

@@ -8,7 +8,6 @@
  */
 
 /// <reference path="../Ev/_Runtime/Ready.ts" />
-/// <reference path="../Ev/_Runtime/Loading.ts" />
 /// <reference path="../Ev/_Runtime/Error.ts" />
 /// <reference path="../Ev/_Runtime/End.ts" />
 /// <reference path="../Resource/Resource.ts" />
@@ -50,7 +49,7 @@ namespace Runtime {
         /**
          * Loading主题名称。
          */
-        private _l: Util.IHashTable<Util.IHashTable<any>>;
+        //private _l: Util.IHashTable<Util.IHashTable<any>>;
 
         /**
          * 是否显示回看。
@@ -67,56 +66,92 @@ namespace Runtime {
             this._sr = ep.sr();
             this._s = ep.gS();
             this._t = ep.gT();
-            this._l = null;
+            //this._l = null;
             ep.r(this);
-            let load: () => void = () => {
-                Promise.all([
-                    new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-                        var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
-                            Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
-                                Util.each(typed, (entity: Core.IEntityTag) => {
-                                    entity.r(this);
-                                });
+            Promise.all([
+                new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                    var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
+                        Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
+                            Util.each(typed, (entity: Core.IEntityTag) => {
+                                entity.r(this);
                             });
-                            resolve();
                         });
-                        if (!res)
-                            resolve();
-                    }).then(() => {
-                        ep.b(this);
-                    }),
-                    new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-                        ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
-                            this._c = data;
-                            resolve();
-                        });
-                    })
-                ]).then(() => {
-                    runtime.dispatchEvent(new Ev.Ready({
-                        target: this
-                    }));
-                })['catch']((error: any) => {
-                    runtime.dispatchEvent(new Ev.Error({
-                        target: this,
-                        error: error
-                    }));
-                });
-            };
-            if (Bigine.offline) {
-                load();
-                return;
-            }
-            let uri: string = 'http://s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain;
-            Util.Remote.get(uri,
-                (des) => {
-                    this._l = des;
-                    runtime.dispatchEvent(new Ev.Loading({
-                        target: this
-                    }));
-                    load();
-                }, (error: Error, status?: any) => {
-                    throw error;
-                });
+                        resolve();
+                    });
+                    if (!res)
+                        resolve();
+                }).then(() => {
+                    ep.b(this);
+                }),
+                new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                    ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
+                        this._c = data;
+                        resolve();
+                    });
+                }),
+                new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                    setTimeout(() => {
+                        resolve();
+                    }, 5000);
+                })
+            ]).then(() => {
+                runtime.dispatchEvent(new Ev.Ready({
+                    target: this
+                }));
+            })['catch']((error: any) => {
+                runtime.dispatchEvent(new Ev.Error({
+                    target: this,
+                    error: error
+                }));
+            });
+            // let load: () => void = () => {
+            //     Promise.all([
+            //         new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+            //             var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
+            //                 Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
+            //                     Util.each(typed, (entity: Core.IEntityTag) => {
+            //                         entity.r(this);
+            //                     });
+            //                 });
+            //                 resolve();
+            //             });
+            //             if (!res)
+            //                 resolve();
+            //         }).then(() => {
+            //             ep.b(this);
+            //         }),
+            //         new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+            //             ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
+            //                 this._c = data;
+            //                 resolve();
+            //             });
+            //         })
+            //     ]).then(() => {
+            //         runtime.dispatchEvent(new Ev.Ready({
+            //             target: this
+            //         }));
+            //     })['catch']((error: any) => {
+            //         runtime.dispatchEvent(new Ev.Error({
+            //             target: this,
+            //             error: error
+            //         }));
+            //     });
+            // };
+            // if (Bigine.offline) {
+            //     load();
+            //     return;
+            // }
+            // let uri: string = 'http://s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain;
+            // Util.Remote.get(uri,
+            //     (des) => {
+            //         this._l = des;
+            //         runtime.dispatchEvent(new Ev.Loading({
+            //             target: this
+            //         }));
+            //         load();
+            //     }, (error: Error, status?: any) => {
+            //         throw error;
+            //     });
         }
 
         /**
@@ -224,8 +259,8 @@ namespace Runtime {
         /**
          * 获取Loading主题信息。
          */
-        public gL(): Util.IHashTable<Util.IHashTable<any>> {
-            return this._l;
-        }
+        // public gL(): Util.IHashTable<Util.IHashTable<any>> {
+        //     return this._l;
+        // }
     }
 }

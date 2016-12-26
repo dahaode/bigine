@@ -180,7 +180,6 @@ namespace Runtime {
             this._e = [0, 0];
             this._ss = [];
             this._i = {
-                o: Resource.Resource.g<HTMLImageElement>(assets + 'logo.png', raw),
                 s: Resource.Resource.g<string>(assets + 'oops.mp3', raw),
                 f: Resource.Resource.g<string>(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
@@ -211,6 +210,22 @@ namespace Runtime {
             this._fs = Core.IRuntime.Series.Alone;
             window.addEventListener('keydown', this._l[0]);
             window.addEventListener('keyup', this._l[1]);
+            doc.addEventListener('touchstart', (event: TouchEvent) => {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            });
+            doc.addEventListener('touchmove', (event: TouchEvent) => {
+                event.preventDefault();
+            }, false);
+            var lastTouchEnd: number = 0;
+            doc.addEventListener('touchend', (event: TouchEvent) => {
+                var now: number = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
         }
 
         /**
@@ -218,11 +233,12 @@ namespace Runtime {
          *
          * @param resources 一个（作品）事件所包含地所有资源
          */
-        public c(resources: Resource.Resource<string | HTMLImageElement>[][]): Promise<void> {
+        public c(resources: Resource.Resource<string | HTMLImageElement>[][], visible?: boolean): Promise<void> {
             var gLoading: G.Component = <G.Component> this._c.q('L')[0],
                 gElapsed: G.Element = gLoading.q('e')[0],
                 bounds: G.IBounds = CanvasDirector.BOUNDS,
                 progress: (done: boolean) => void = (done: boolean) => {
+                    if (visible) return;
                     var e: [number, number] = this._e;
                     e[0 + <any> done]++;
                     if (e[0] == e[1]) {
@@ -246,47 +262,44 @@ namespace Runtime {
         /**
          * 加载动画。
          */
-        public Load(loaded: boolean, theme?: Util.IHashTable<Util.IHashTable<any>>): Promise<Core.IRuntime> {
+        public Init(loaded: boolean): Promise<Core.IRuntime> {
             if (loaded) {
-                if (!this._x['ld']) this._c.a(this._x['ld'] = <Sprite.Loading> new Sprite.Loading(theme));
-                (<Sprite.Loading> this._x['ld']).u().v(0);
-                return super.Load(loaded);
+                if (!this._x['ii']) this._c.a(this._x['ii'] = <Sprite.Init> new Sprite.Init());
+                (<Sprite.Init> this._x['ii']).u();
+                return super.Init(loaded);
             } else {
-                if (this._x['ld']) (<Sprite.Loading> this._x['ld']).h(0);
-                return super.Load(loaded);
+                if (this._x['ii']) {
+                    this._x['ii'].h(0);
+                    this._c.e(this._x['ii']);
+                }
+                return super.Init(loaded);
             }
+        }
+
+        /**
+         * 作者Logo。
+         */
+        public Author(title: string, author: string): Promise<Core.IRuntime> {
+            if (!author && !title) return super.Author(title, author);
+            let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
+            gAuthor.v(0);
+            return this.lightOn()
+                .then(() => gAuthor.p(new G.Delay(1000)))
+                .then(() => this.lightOff())
+                .then(() => gAuthor.o(0))
+                .then(() => super.Author(title, author));
         }
 
         /**
          * 开始动画。
          */
-        public OP(start: boolean, title: string, author: string, isWx: boolean): Promise<Core.IRuntime> {
+        public OP(start: boolean, title: string): Promise<Core.IRuntime> {
             let series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
             (<Sprite.Start> this._x['s']).u(title, series, this._c);
-            return this.c([[this._i['o']]])
-                .then(() => this.reset())
+            return this.reset()
                 .then(() => {
                     this._c.z();
-                    let q: Promise<any>;
-                    if (!isWx) {
-                        let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
-                        this._c.a(gLogo, this._x['c']);
-                        q = this.lightOn()
-                            .then(() => gLogo.p(new G.Delay(1000)))
-                            .then(() => this.lightOff())
-                            .then(() => this._c.e(gLogo));
-                    } else {
-                        q = this.lightOff();
-                    }
-                    return q.then(() => {
-                            if (!author && !title) return;
-                            let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
-                            gAuthor.v(0);
-                            return this.lightOn()
-                                .then(() => gAuthor.p(new G.Delay(1000)))
-                                .then(() => this.lightOff())
-                                .then(() => gAuthor.o(0));
-                        }).then(() => super.OP(start, title, author, isWx))
+                    return super.OP(start, title)
                         .then((runtime: Core.IRuntime) => {
                             if (!this._a)
                                 this._x['t'].v(0);
@@ -296,6 +309,41 @@ namespace Runtime {
                             return this.lightOn();
                         });
                 });
+            // let series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
+            // (<Sprite.Start> this._x['s']).u(title, series, this._c);
+            // return this.c([[this._i['o']]])
+            //     .then(() => this.reset())
+            //     .then(() => {
+            //         this._c.z();
+            //         let q: Promise<any>;
+            //         if (!isWx) {
+            //             let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
+            //             this._c.a(gLogo, this._x['c']);
+            //             q = this.lightOn()
+            //                 .then(() => gLogo.p(new G.Delay(1000)))
+            //                 .then(() => this.lightOff())
+            //                 .then(() => this._c.e(gLogo));
+            //         } else {
+            //             q = this.lightOff();
+            //         }
+            //         return q.then(() => {
+            //                 if (!author && !title) return;
+            //                 let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
+            //                 gAuthor.v(0);
+            //                 return this.lightOn()
+            //                     .then(() => gAuthor.p(new G.Delay(1000)))
+            //                     .then(() => this.lightOff())
+            //                     .then(() => gAuthor.o(0));
+            //             }).then(() => super.OP(start, title, author, isWx))
+            //             .then((runtime: Core.IRuntime) => {
+            //                 if (!this._a)
+            //                     this._x['t'].v(0);
+            //                 if (!start)
+            //                     return runtime;
+            //                 this._x['s'].v(0);
+            //                 return this.lightOn();
+            //             });
+            //     });
         }
 
         /**
@@ -1249,7 +1297,7 @@ namespace Runtime {
             resources.unshift(this._x['R'].l());
             this._c.a(this._x['R'], gCurtain);
 
-            this.c(resources);
+            this.c(resources, true);
             return this;
         }
 
