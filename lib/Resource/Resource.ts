@@ -65,13 +65,13 @@ namespace Resource {
                 if (offline) {
                     this._l = 'res/theme' + uri.substr(uri.indexOf('\/'));
                 } else if (/^:[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri)) {
-                    this._l = 'http://a' + (1 + parseInt(uri[1], 16) % 8) + '.dahao.de/' + uri.substr(1) + '/' + filename + (start ? 'jpg' : 'png');
+                    this._l = '//a' + (1 + parseInt(uri[1], 16) % 8) + '.dahao.de/' + uri.substr(1) + '/' + filename + (start ? 'jpg' : 'png');
                 } else {
-                    this._l = 'http://s.dahao.de/theme/' + uri;
+                    this._l = '//s.dahao.de/theme/' + uri;
                 }
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
+                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
             } else {
                 if (!Core.IResource.REGGUID.test(uri))
                     throw new E(E.RES_INVALID_URI);
@@ -95,12 +95,14 @@ namespace Resource {
                 var local: string = 'res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 this._l = offline ?
                     local :
-                    ('http://a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
+                    ('//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
+                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
             }
             this._w = [];
             this._r = false;
+            if (this._l.substr(0, 2) == '//')
+                this._l = env.Protocol + this._l;
         }
 
         /**
@@ -148,7 +150,7 @@ namespace Resource {
                     img.onerror = () => {
                         img.src = Bigine.offline ?
                             'res/00/00/00000000-0000-0000-0000-000000000004/180.png' :
-                            ('http://a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png?' + Bigine.domain);
+                            (Util.ENV.Protocol + '//a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png?' + Bigine.domain);
                         img.onerror = null;
                     };
                     img.src = url;

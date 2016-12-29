@@ -652,14 +652,14 @@ var Resource;
                     this._l = 'res/theme' + uri.substr(uri.indexOf('\/'));
                 }
                 else if (/^:[\d0-f]{8}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{4}-[\d0-f]{12}$/i.test(uri)) {
-                    this._l = 'http://a' + (1 + parseInt(uri[1], 16) % 8) + '.dahao.de/' + uri.substr(1) + '/' + filename + (start ? 'jpg' : 'png');
+                    this._l = '//a' + (1 + parseInt(uri[1], 16) % 8) + '.dahao.de/' + uri.substr(1) + '/' + filename + (start ? 'jpg' : 'png');
                 }
                 else {
-                    this._l = 'http://s.dahao.de/theme/' + uri;
+                    this._l = '//s.dahao.de/theme/' + uri;
                 }
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
+                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
             }
             else {
                 if (!Core.IResource.REGGUID.test(uri))
@@ -684,12 +684,14 @@ var Resource;
                 var local = 'res/' + uri.substr(0, 2) + '/' + uri.substr(2, 2) + '/' + uri + '/' + filename;
                 this._l = offline ?
                     local :
-                    ('http://a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
+                    ('//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = (offline ? 'app://res/.9/' : 'http://dahao.de/.9/') + uri;
+                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
             }
             this._w = [];
             this._r = false;
+            if (this._l.substr(0, 2) == '//')
+                this._l = env.Protocol + this._l;
         }
         /**
          * 获取资源。
@@ -746,7 +748,7 @@ var Resource;
                     img.onerror = function () {
                         img.src = Bigine.offline ?
                             'res/00/00/00000000-0000-0000-0000-000000000004/180.png' :
-                            ('http://a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png?' + Bigine.domain);
+                            (Util.ENV.Protocol + '//a1.dahao.de/00000000-0000-0000-0000-000000000004/180.png?' + Bigine.domain);
                         img.onerror = null;
                     };
                     img.src = url;
@@ -804,7 +806,6 @@ var Runtime;
             this._sr = ep.sr();
             this._s = ep.gS();
             this._t = ep.gT();
-            //this._l = null;
             ep.r(this);
             Promise.all([
                 new Promise(function (resolve) {
@@ -830,7 +831,7 @@ var Runtime;
                 new Promise(function (resolve) {
                     setTimeout(function () {
                         resolve();
-                    }, 5000);
+                    }, 2000);
                 })
             ]).then(function () {
                 runtime.dispatchEvent(new Ev.Ready({
@@ -842,54 +843,6 @@ var Runtime;
                     error: error
                 }));
             });
-            // let load: () => void = () => {
-            //     Promise.all([
-            //         new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-            //             var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
-            //                 Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
-            //                     Util.each(typed, (entity: Core.IEntityTag) => {
-            //                         entity.r(this);
-            //                     });
-            //                 });
-            //                 resolve();
-            //             });
-            //             if (!res)
-            //                 resolve();
-            //         }).then(() => {
-            //             ep.b(this);
-            //         }),
-            //         new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-            //             ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
-            //                 this._c = data;
-            //                 resolve();
-            //             });
-            //         })
-            //     ]).then(() => {
-            //         runtime.dispatchEvent(new Ev.Ready({
-            //             target: this
-            //         }));
-            //     })['catch']((error: any) => {
-            //         runtime.dispatchEvent(new Ev.Error({
-            //             target: this,
-            //             error: error
-            //         }));
-            //     });
-            // };
-            // if (Bigine.offline) {
-            //     load();
-            //     return;
-            // }
-            // let uri: string = 'http://s.dahao.de/theme/_/load.json?0.24.2-' + Bigine.domain;
-            // Util.Remote.get(uri,
-            //     (des) => {
-            //         this._l = des;
-            //         runtime.dispatchEvent(new Ev.Loading({
-            //             target: this
-            //         }));
-            //         load();
-            //     }, (error: Error, status?: any) => {
-            //         throw error;
-            //     });
         }
         /**
          * 添加事件。
@@ -11793,7 +11746,7 @@ var Tag;
          */
         Theme.prototype.l = function (callback) {
             var _this = this;
-            var version = Bigine.version, domain = Bigine.domain, src = this.path(Core.ITheme.THEME, _base);
+            var version = Bigine.version, env = Util.ENV, domain = Bigine.domain, src = this.path(Core.ITheme.THEME, _base);
             if (Bigine.offline) {
                 var xhr_1 = new XMLHttpRequest();
                 xhr_1.onload = function () {
@@ -11809,14 +11762,14 @@ var Tag;
             }
             else {
                 if (Core.IResource.REGGUID.test(this._c)) {
-                    Util.Remote.post('//api.dahao.de/resource/theme/' + this._c + '/', {}, function (des) {
+                    Util.Remote.post(env.Protocol + '//api.dahao.de/resource/theme/' + this._c + '/', {}, function (des) {
                         callback(_this.extend(des['resource'], src));
                     }, function (error, status) {
                         throw error;
                     });
                 }
                 else {
-                    Util.Remote.get('http://s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, function (des) {
+                    Util.Remote.get(env.Protocol + '//s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, function (des) {
                         des = _this.path(des, _this._c);
                         callback(_this.extend(des, src));
                     }, function (error, status) {
@@ -16850,7 +16803,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.6';
+    Bigine.version = '0.25.7';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

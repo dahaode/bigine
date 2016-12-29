@@ -28,6 +28,7 @@ namespace Tag {
          */
         public l(callback: Util.ISuccessCallback<Util.IHashTable<any>>): void {
             let version: string = Bigine.version,
+                env: typeof Util.ENV = Util.ENV,
                 domain: string = Bigine.domain,
                 src: Util.IHashTable<any> = this.path(Core.ITheme.THEME, _base);
             if (Bigine.offline) {
@@ -43,13 +44,13 @@ namespace Tag {
                 }
             } else {
                 if (Core.IResource.REGGUID.test(this._c)) {
-                    Util.Remote.post<Util.IHashTable<any>>('//api.dahao.de/resource/theme/' + this._c + '/', {}, (des: Util.IHashTable<any>) => {
+                    Util.Remote.post<Util.IHashTable<any>>(env.Protocol + '//api.dahao.de/resource/theme/' + this._c + '/', {}, (des: Util.IHashTable<any>) => {
                         callback(this.extend(des['resource'], src));
                     }, (error: Error, status?: any) => {
                         throw error;
                     });
                 } else {
-                    Util.Remote.get('http://s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, (des) => {
+                    Util.Remote.get(env.Protocol + '//s.dahao.de/theme/' + this._c + '/theme.json?' + version + domain, (des) => {
                             des = this.path(des, this._c);
                             callback(this.extend(des, src));
                         }, (error: Error, status?: any) => {
