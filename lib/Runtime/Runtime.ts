@@ -258,9 +258,9 @@ namespace Runtime {
             if (!this._fr)
                 return this;
             this._s.i({});
-            this._d.playMusic(Core.IResource.Type.BGM);
-            this._d.playMusic(Core.IResource.Type.ESM);
-            this._d.playSE();
+            // this._d.playMusic(Core.IResource.Type.BGM);
+            // this._d.playMusic(Core.IResource.Type.ESM);
+            // this._d.playSE();
             this._d.Init(false);
             this._d.OP(!this._e.gA(), this._n[0]);
             return this;

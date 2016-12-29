@@ -184,17 +184,6 @@ namespace Runtime {
                 f: Resource.Resource.g<string>(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
             };
-            this._s = {
-                b: new Audio(),
-                e: new Audio(),
-                s: new Audio()
-            };
-            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
-            this._s['b'].loop = this._s['s'].loop = true;
-            this._s['b'].src = this._s['s'].src = this._i['s'].l();
-            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
-            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
-            this._s['e']['cd'] = -1;
             this._l = {};
             this._l[0] = (event: KeyboardEvent) => {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc && !this._rv) {
@@ -1196,18 +1185,38 @@ namespace Runtime {
                 });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
+            let _s: () => void = () => {
+                if (this._s) return;
+                this._s = {
+                    b: new Audio(),
+                    e: new Audio(),
+                    s: new Audio()
+                };
+                this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
+                this._s['b'].loop = this._s['s'].loop = true;
+                this._s['b'].src = this._s['s'].src = this._i['s'].l();
+                this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
+                this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
+                this._s['e']['cd'] = -1;
+                this.playMusic(Core.IResource.Type.BGM);
+                this.playMusic(Core.IResource.Type.ESM);
+                this.playSE();
+            };
             // 开始菜单。
             this._x['s'] = <Sprite.Start> new Sprite.Start(theme['start'], (event: Ev.StartNew) => {
+                    _s();
                     this.playSE(this._i['c']);
                     this.lightOff().then(() => {
                         event.target.h(0);
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
                 }, () => {
+                    _s();
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
                     (<Sprite.SeriesSlots> this._x['ss']).vl(this._r);
                 }, () => {
+                    _s();
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
                     (<Sprite.Slots> this._x['sl']).vl(this._r)

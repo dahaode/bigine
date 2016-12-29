@@ -6187,17 +6187,6 @@ var Runtime;
                 f: Resource.Resource.g(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g(assets + 'click.mp3', raw)
             };
-            this._s = {
-                b: new Audio(),
-                e: new Audio(),
-                s: new Audio()
-            };
-            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
-            this._s['b'].loop = this._s['s'].loop = true;
-            this._s['b'].src = this._s['s'].src = this._i['s'].l();
-            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
-            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
-            this._s['e']['cd'] = -1;
             this._l = {};
             this._l[0] = function (event) {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc && !_this._rv) {
@@ -7154,18 +7143,39 @@ var Runtime;
             });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
+            var _s = function () {
+                if (_this._s)
+                    return;
+                _this._s = {
+                    b: new Audio(),
+                    e: new Audio(),
+                    s: new Audio()
+                };
+                _this._s['b'].autoplay = _this._s['e'].autoplay = _this._s['s'].autoplay = true;
+                _this._s['b'].loop = _this._s['s'].loop = true;
+                _this._s['b'].src = _this._s['s'].src = _this._i['s'].l();
+                _this._s['b']['baseVolume'] = _this._s['e']['baseVolume'] = _this._s['s']['baseVolume'] = 1;
+                _this._s['b']['scale'] = _this._s['e']['scale'] = _this._s['s']['scale'] = 1;
+                _this._s['e']['cd'] = -1;
+                _this.playMusic(Core.IResource.Type.BGM);
+                _this.playMusic(Core.IResource.Type.ESM);
+                _this.playSE();
+            };
             // 开始菜单。
             this._x['s'] = new Sprite.Start(theme['start'], function (event) {
+                _s();
                 _this.playSE(_this._i['c']);
                 _this.lightOff().then(function () {
                     event.target.h(0);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
             }, function () {
+                _s();
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
                 _this._x['ss'].vl(_this._r);
             }, function () {
+                _s();
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
                 _this._x['sl'].vl(_this._r)['catch'](function () {
@@ -16298,9 +16308,9 @@ var Runtime;
             if (!this._fr)
                 return this;
             this._s.i({});
-            this._d.playMusic(Core.IResource.Type.BGM);
-            this._d.playMusic(Core.IResource.Type.ESM);
-            this._d.playSE();
+            // this._d.playMusic(Core.IResource.Type.BGM);
+            // this._d.playMusic(Core.IResource.Type.ESM);
+            // this._d.playSE();
             this._d.Init(false);
             this._d.OP(!this._e.gA(), this._n[0]);
             return this;
@@ -16803,7 +16813,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.7';
+    Bigine.version = '0.25.7-p1';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
