@@ -86,6 +86,13 @@ namespace Runtime {
         }
 
         /**
+         * 绘制加载动画。
+         */
+        public drawInit(isWechat: boolean): Promise<Core.IRuntime> {
+            return this._p;
+        }
+
+        /**
          * 作者Logo。
          */
         public Author(title: string, author: string): Promise<Core.IRuntime> {

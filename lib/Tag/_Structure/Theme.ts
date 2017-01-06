@@ -80,7 +80,7 @@ namespace Tag {
                 if (typeof data == 'object') {
                     this.path(data, theme);
                 } else if (typeof data == 'string') {
-                    if (/.png$/.test(data) || /.jpg$/.test(data)) {
+                    if (/.png$/.test(data) || /.jpg$/.test(data) || /.mp3$/.test(data)) {
                         src[index] = theme + '/' + data;
                     }
                 }

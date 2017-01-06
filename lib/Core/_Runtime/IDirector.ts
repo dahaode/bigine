@@ -30,6 +30,11 @@ namespace Core {
         Init(loaded: boolean): Promise<IRuntime>;
 
         /**
+         * 绘制加载动画。
+         */
+        drawInit(isWechat: boolean): Promise<IRuntime>;
+
+        /**
          * 作者Logo。
          */
         Author(title: string, author: string): Promise<IRuntime>;

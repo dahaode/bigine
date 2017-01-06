@@ -22,6 +22,7 @@
 /// <reference path="../Ev/_Runtime/ScreenSave.ts" />
 /// <reference path="../Ev/_Runtime/Video.ts" />
 /// <reference path="../Ev/_Runtime/Review.ts" />
+/// <reference path="../Ev/_Runtime/Auto.ts" />
 /// <reference path="_Definition/DefBGM.ts" />
 /// <reference path="_Definition/DefCG.ts" />
 /// <reference path="_Definition/DefSE.ts" />

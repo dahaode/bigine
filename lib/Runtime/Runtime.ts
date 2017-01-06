@@ -82,9 +82,9 @@ namespace Runtime {
         private _t: Promise<Runtime>;
 
         /**
-         * 作品 [名称、作者名/logo、是否微信端]。
+         * 作品 [名称、作者名/logo]。
          */
-        private _n: [string, string, boolean];
+        private _n: [string, string];
 
         /**
          * 用户名。
@@ -115,15 +115,15 @@ namespace Runtime {
             this._d.sr(this._e.gSr());
             this._fb = true;
             this._t = Promise.resolve(this);
-            this._n = ['', '', false];
+            this._n = ['', ''];
             this._al = [undefined, undefined, undefined];
             this._d.Init(true);
             this.addEventListener('ready', () => {
+                this._d.Init(false);
                 this._d.t(this._e.gT(), this._e.gC())
                     .s(ep.s())
                     .p(ep.p());
                 this._fr = true;
-                this._d.Init(false);
                 this._s.l().then(() => {
                     let valid: boolean = false;
                     if (this._al[0] && this._al[2] == 'pay') {
@@ -258,9 +258,9 @@ namespace Runtime {
             if (!this._fr)
                 return this;
             this._s.i({});
-            // this._d.playMusic(Core.IResource.Type.BGM);
-            // this._d.playMusic(Core.IResource.Type.ESM);
-            // this._d.playSE();
+            this._d.playMusic(Core.IResource.Type.BGM);
+            this._d.playMusic(Core.IResource.Type.ESM);
+            this._d.playSE();
             this._d.Init(false);
             this._d.OP(!this._e.gA(), this._n[0]);
             return this;
@@ -358,12 +358,10 @@ namespace Runtime {
                     Bigine.domain = text;
                     break;
                 case 'wechat':
-                    this._n[2] = true;
-                    break;
-                default:
-                    this._n[2] = false;
-                    break;
+                    this._d.drawInit(true);
+                    return this;
             }
+            this._d.drawInit(false);
             return this;
         }
 

@@ -132,6 +132,7 @@ declare namespace __Bigine {
         interface IDirector {
             c(resources: IResource<string | HTMLImageElement>[][], visible?: boolean): Promise<void>;
             Init(loaded: boolean): Promise<IRuntime>;
+            drawInit(isWechat: boolean): Promise<IRuntime>;
             Author(title: string, author: string): Promise<IRuntime>;
             OP(start: boolean, title: string): Promise<IRuntime>;
             ED(): Promise<IRuntime>;
@@ -442,6 +443,7 @@ declare namespace __Bigine {
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][], visible?: boolean): Promise<void>;
             Init(loaded: boolean): Promise<Core.IRuntime>;
+            drawInit(isWechat: boolean): Promise<Core.IRuntime>;
             Author(title: string, author: string): Promise<Core.IRuntime>;
             OP(start: boolean, title: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
@@ -1063,7 +1065,8 @@ declare namespace __Bigine {
         class Init extends Sprite {
             private _g;
             constructor();
-            u(): Init;
+            sl(isWechat: boolean): Resource.Resource<string | HTMLImageElement>[];
+            u(isWechat: boolean): Init;
             h(duration?: number): Promise<Full>;
         }
     }
@@ -1145,6 +1148,7 @@ declare namespace __Bigine {
             private _i;
             private _t;
             private _h;
+            private _ta;
             private _q;
             private _e;
             private _l;
@@ -1163,6 +1167,7 @@ declare namespace __Bigine {
             constructor(runtime: Core.IRuntime);
             c(resources: Resource.Resource<string | HTMLImageElement>[][], visible?: boolean): Promise<void>;
             Init(loaded: boolean): Promise<Core.IRuntime>;
+            drawInit(isWechat: boolean): Promise<Core.IRuntime>;
             Author(title: string, author: string): Promise<Core.IRuntime>;
             OP(start: boolean, title: string): Promise<Core.IRuntime>;
             ED(): Promise<Core.IRuntime>;
@@ -1201,11 +1206,12 @@ declare namespace __Bigine {
             status(onoff: boolean): Promise<Core.IRuntime>;
             expression(name: string): Promise<Core.IRuntime>;
             weather(onoff: boolean, type: string): Promise<Core.IRuntime>;
-            t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
+            t(id: string, theme: Util.IHashTable<any>): CanvasDirector;
             sl(id: string, aotuload?: boolean): void;
             s(sheet: [string, string][]): CanvasDirector;
             p(sheet: Array<Util.IHashTable<any>>): CanvasDirector;
             a(auto: boolean): boolean;
+            protected $a(): CanvasDirector;
             v(volume: number): CanvasDirector;
             f(): void;
             d(): void;
@@ -1390,6 +1396,18 @@ declare namespace __Bigine {
             data: Array<string>;
             more: string;
             constructor(metas: IReviewMetas);
+            gT(): string;
+        }
+    }
+    namespace Ev {
+        interface IAutoMetas extends Util.IEventMetas<Core.IStates> {
+            auto: boolean;
+        }
+    }
+    namespace Ev {
+        class Auto extends Event<Core.IStates> {
+            private auto;
+            constructor(metas: IAutoMetas);
             gT(): string;
         }
     }

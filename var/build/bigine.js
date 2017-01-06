@@ -659,7 +659,7 @@ var Resource;
                 }
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
+                    this._l = (offline ? 'app://res/.9/' : '//dahao.de/.9/') + uri;
             }
             else {
                 if (!Core.IResource.REGGUID.test(uri))
@@ -686,7 +686,7 @@ var Resource;
                     local :
                     ('//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
+                    this._l = (offline ? 'app://res/.9/' : '//dahao.de/.9/') + uri;
             }
             this._w = [];
             this._r = false;
@@ -1451,6 +1451,12 @@ var Runtime;
          * 加载动画。
          */
         Director.prototype.Init = function (loaded) {
+            return this._p;
+        };
+        /**
+         * 绘制加载动画。
+         */
+        Director.prototype.drawInit = function (isWechat) {
             return this._p;
         };
         /**
@@ -5541,43 +5547,75 @@ var Sprite;
          * 构造函数。
          */
         function Init() {
-            var raw = Core.IResource.Type.Raw, rr = Resource.Resource;
             _super.call(this, {});
             this._g = [undefined, undefined];
-            this._rr = [
-                rr.g('_/logo.png', raw),
-                rr.g('_/luobo/1.png', raw),
-                rr.g('_/luobo/2.png', raw),
-                rr.g('_/luobo/3.png', raw),
-                rr.g('_/luobo/4.png', raw),
-                rr.g('_/luobo/5.png', raw),
-                rr.g('_/luobo/6.png', raw),
-                rr.g('_/luobo/7.png', raw),
-                rr.g('_/luobo/8.png', raw),
-                rr.g('_/luobo/9.png', raw),
-                rr.g('_/luobo/10.png', raw),
-                rr.g('_/luobo/11.png', raw),
-                rr.g('_/luobo/12.png', raw)
-            ];
         }
+        /**
+         * 设置远端资源列表。
+         */
+        Init.prototype.sl = function (isWechat) {
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource;
+            if (isWechat) {
+                this._rr = [
+                    rr.g('_/wechat/bg.png', raw),
+                    rr.g('_/wechat/01.png', raw),
+                    rr.g('_/wechat/02.png', raw),
+                    rr.g('_/wechat/03.png', raw),
+                    rr.g('_/wechat/04.png', raw),
+                    rr.g('_/wechat/05.png', raw),
+                    rr.g('_/wechat/06.png', raw),
+                    rr.g('_/wechat/07.png', raw),
+                    rr.g('_/wechat/08.png', raw),
+                    rr.g('_/wechat/09.png', raw)
+                ];
+            }
+            else {
+                this._rr = [
+                    rr.g('_/logo.png', raw),
+                    rr.g('_/luobo/1.png', raw),
+                    rr.g('_/luobo/2.png', raw),
+                    rr.g('_/luobo/3.png', raw),
+                    rr.g('_/luobo/4.png', raw),
+                    rr.g('_/luobo/5.png', raw),
+                    rr.g('_/luobo/6.png', raw),
+                    rr.g('_/luobo/7.png', raw),
+                    rr.g('_/luobo/8.png', raw),
+                    rr.g('_/luobo/9.png', raw),
+                    rr.g('_/luobo/10.png', raw),
+                    rr.g('_/luobo/11.png', raw),
+                    rr.g('_/luobo/12.png', raw)
+                ];
+            }
+            return this._rr;
+        };
         /**
          * 配置。
          */
-        Init.prototype.u = function () {
-            var color = [['#00FFC0', 0], ['#0080C0', 0], ['#00FFC0', 1]], bound = { x: 592, y: 340, w: 96, h: 120 }, linear;
-            this.a(new G.Image(this._rr[0].o(), 438, 200, 404, 118))
-                .a(linear = new G.ColorLinear(440, 500, 400, 8, color, 4))
-                .o(1);
-            linear.p(this._g[0] = new G.Bar(color));
-            this.p(this._g[1] = new G.Gif(this._rr.slice(1), bound));
-            return this;
+        Init.prototype.u = function (isWechat) {
+            var bound;
+            if (isWechat) {
+                bound = { x: 950, y: 600, w: 267, h: 96 };
+                this.a(new G.Image(this._rr[0].o(), 0, 0, 1280, 720));
+                this.p(this._g[0] = new G.Gif(this._rr.slice(1), { bound: bound, interval: 15 }));
+            }
+            else {
+                var color = [['#00FFC0', 0], ['#0080C0', 0], ['#00FFC0', 1]], linear = void 0;
+                bound = { x: 592, y: 340, w: 96, h: 120 };
+                this.a(new G.Image(this._rr[0].o(), 438, 200, 404, 118))
+                    .a(linear = new G.ColorLinear(440, 500, 400, 8, color, 4));
+                this.p(this._g[0] = new G.Gif(this._rr.slice(1), { bound: bound, interval: 3 }));
+                linear.p(this._g[1] = new G.Bar(color));
+            }
+            return this.o(1);
         };
         /**
          * 隐藏。
          */
         Init.prototype.h = function (duration) {
-            this._g[0].h();
-            this._g[1].h();
+            if (this._g[0])
+                this._g[0].h();
+            if (this._g[1])
+                this._g[1].h();
             return _super.prototype.h.call(this, duration);
         };
         return Init;
@@ -5777,12 +5815,17 @@ var Sprite;
             this.$w(tText.o(0), clob, this._c);
             this._x['f'].o(1);
             return this.$v(tText, auto, pause >= 0 ? true : wait).then(function () {
-                if (_this._h) {
-                    var pnt = tText.gCp();
-                    _this._cb.y = pnt.y;
-                    _this._tx = pnt.x - bBound.x;
-                    _this._tl = (pnt.y - bBound.y) / lHeight;
-                }
+                // if (this._h) {
+                //     let pnt: G.IPoint = tText.gCp();
+                //     this._cb.y = pnt.y;
+                //     this._tx = pnt.x - bBound.x;
+                //     this._tl = (pnt.y - bBound.y) / lHeight;
+                // }
+                tText.d(_this._ct);
+                var pnt = tText.gCp();
+                _this._cb.y = pnt.y;
+                _this._tx = pnt.x - bBound.x;
+                _this._tl = (pnt.y - bBound.y) / lHeight;
                 return _this;
             });
         };
@@ -6187,6 +6230,17 @@ var Runtime;
                 f: Resource.Resource.g(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g(assets + 'click.mp3', raw)
             };
+            this._s = {
+                b: new Audio(),
+                e: new Audio(),
+                s: new Audio()
+            };
+            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
+            this._s['b'].loop = this._s['s'].loop = true;
+            this._s['b'].src = this._s['s'].src = this._i['s'].l();
+            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
+            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
+            this._s['e']['cd'] = -1;
             this._l = {};
             this._l[0] = function (event) {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc && !_this._rv) {
@@ -6256,16 +6310,27 @@ var Runtime;
             if (loaded) {
                 if (!this._x['ii'])
                     this._c.a(this._x['ii'] = new Sprite.Init());
-                this._x['ii'].u();
                 return _super.prototype.Init.call(this, loaded);
             }
             else {
                 if (this._x['ii']) {
                     this._x['ii'].h(0);
                     this._c.e(this._x['ii']);
+                    this._x['ii'] = null;
                 }
                 return _super.prototype.Init.call(this, loaded);
             }
+        };
+        /**
+         * 绘制加载动画。
+         */
+        CanvasDirector.prototype.drawInit = function (isWechat) {
+            var _this = this;
+            if (this._x['ii']) {
+                this.c([this._x['ii'].sl(isWechat)])
+                    .then(function () { return _this._x['ii'].u(isWechat); });
+            }
+            return _super.prototype.drawInit.call(this, isWechat);
         };
         /**
          * 作者Logo。
@@ -6593,6 +6658,8 @@ var Runtime;
                 }
                 return _super.prototype.playMusic.call(_this, type, resource, vol);
             };
+            if (!music)
+                return _super.prototype.playMusic.call(this, type, resource, vol);
             // APP 需要使用
             if (Util.ENV.Mobile && Bigine.offline) {
                 this._r.dispatchEvent(new Ev.Video({
@@ -6621,6 +6688,8 @@ var Runtime;
                 _this._s['b'].play();
                 _this._s['s'].play();
             };
+            if (!se)
+                return _super.prototype.playSE.call(this, resource, vol);
             // APP 需要使用
             if (Util.ENV.Mobile && Bigine.offline) {
                 this._r.dispatchEvent(new Ev.Video({
@@ -6749,10 +6818,10 @@ var Runtime;
                         return _this._r;
                     });
                 case 'ShutterH':
-                    curtain = new G.Shutter(1000, { direction: 'H' });
+                    curtain = new G.Shutter(1000, { direction: 'H', bsize: 720 <= Util.ENV.Screen.Height });
                     break;
                 case 'ShutterV':
-                    curtain = new G.Shutter(1000, { direction: 'V' });
+                    curtain = new G.Shutter(1000, { direction: 'V', bsize: 720 <= Util.ENV.Screen.Height });
                     break;
                 case 'Gradient':
                     return gNew.p(new G.FadeIn(500)).then(function () {
@@ -6967,11 +7036,14 @@ var Runtime;
             var gRoom = this._c.q('b')[0].q('n')[0], x = Math.round(mx * (1 - 5 / 3) * 1280), y = Math.round(my * (1 - 5 / 3) * 720);
             if (!gRoom)
                 return this._p;
-            var sClick = new G.Component({}, false); // 建立临时透明层，使得可以响应WaitForClick事件。
+            // 建立临时透明层，使得可以响应WaitForClick事件。
+            var sClick = new G.Component({}, false);
             this._c.a(sClick.i('P').o(1));
             return new Promise(function (resolve) {
                 var aMove = new G.Move(ms, { x: x, y: y }), aWFC = new G.WaitForClick(function () {
                     aMove.h();
+                    if (_this._ta && _this._a)
+                        _this._ta.h();
                 });
                 _this._t = _this._h = aWFC;
                 Promise.race([
@@ -6994,12 +7066,15 @@ var Runtime;
             var gRoom = this._c.q('b')[0].q('n')[0];
             if (!gRoom)
                 return this._p;
-            var sClick = new G.Component({}, false); // 建立临时透明层，使得可以响应WaitForClick事件。
+            // 建立临时透明层，使得可以响应WaitForClick事件。
+            var sClick = new G.Component({}, false);
             this._c.a(sClick.i('P').o(1));
             return new Promise(function (resolve) {
                 var aZoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale });
                 var aWFC = new G.WaitForClick(function () {
                     aZoom.h();
+                    if (_this._ta && _this._a)
+                        _this._ta.h();
                 });
                 _this._t = _this._h = aWFC;
                 Promise.race([
@@ -7143,39 +7218,38 @@ var Runtime;
             });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
-            var _s = function () {
-                if (_this._s)
-                    return;
-                _this._s = {
-                    b: new Audio(),
-                    e: new Audio(),
-                    s: new Audio()
-                };
-                _this._s['b'].autoplay = _this._s['e'].autoplay = _this._s['s'].autoplay = true;
-                _this._s['b'].loop = _this._s['s'].loop = true;
-                _this._s['b'].src = _this._s['s'].src = _this._i['s'].l();
-                _this._s['b']['baseVolume'] = _this._s['e']['baseVolume'] = _this._s['s']['baseVolume'] = 1;
-                _this._s['b']['scale'] = _this._s['e']['scale'] = _this._s['s']['scale'] = 1;
-                _this._s['e']['cd'] = -1;
-                _this.playMusic(Core.IResource.Type.BGM);
-                _this.playMusic(Core.IResource.Type.ESM);
-                _this.playSE();
-            };
+            // let _s: () => void = () => {
+            //     if (this._s) return;
+            //     this._s = {
+            //         b: new Audio(),
+            //         e: new Audio(),
+            //         s: new Audio()
+            //     };
+            //     this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
+            //     this._s['b'].loop = this._s['s'].loop = true;
+            //     this._s['b'].src = this._s['s'].src = this._i['s'].l();
+            //     this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
+            //     this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
+            //     this._s['e']['cd'] = -1;
+            //     this.playMusic(Core.IResource.Type.BGM);
+            //     this.playMusic(Core.IResource.Type.ESM);
+            //     this.playSE();
+            // };
             // 开始菜单。
             this._x['s'] = new Sprite.Start(theme['start'], function (event) {
-                _s();
+                //_s();
                 _this.playSE(_this._i['c']);
                 _this.lightOff().then(function () {
                     event.target.h(0);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
             }, function () {
-                _s();
+                //_s();
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
                 _this._x['ss'].vl(_this._r);
             }, function () {
-                _s();
+                //_s();
                 slotsFromStart = true;
                 _this.playSE(_this._i['c']);
                 _this._x['sl'].vl(_this._r)['catch'](function () {
@@ -7261,6 +7335,12 @@ var Runtime;
             resources.unshift(this._x['R'].l());
             this._c.a(this._x['R'], gCurtain);
             this.c(resources, true);
+            if (this._a)
+                this.$a();
+            if (theme['click'])
+                this._i['c'] = Resource.Resource.g(theme['click'], Core.IResource.Type.Raw);
+            if (theme['foucs'])
+                this._i['f'] = Resource.Resource.g(theme['click'], Core.IResource.Type.Raw);
             return this;
         };
         CanvasDirector.prototype.sl = function (id, aotuload) {
@@ -7315,7 +7395,30 @@ var Runtime;
                 this._t.h();
                 this._t = undefined;
             }
+            if (auto && this._x['T'])
+                this.$a();
             return _super.prototype.a.call(this, auto);
+        };
+        /**
+         * 自动播放遮蔽层。
+         */
+        CanvasDirector.prototype.$a = function () {
+            var _this = this;
+            if (this._c.q('A')[0])
+                return this;
+            var sAuto = new G.Component({}, false);
+            this._c.a(sAuto.i('A').o(1), this._x['T']);
+            sAuto.p(this._ta = new G.WaitForClick())
+                .then(function () {
+                _this._c.e(sAuto);
+                _this._ta = null;
+                _this._r.auto(false);
+                _this._r.dispatchEvent(new Ev.Auto({
+                    target: null,
+                    auto: false
+                }));
+            });
+            return this;
         };
         /**
          * 设置音量。
@@ -8080,6 +8183,46 @@ var Ev;
         return Review;
     }(Ev.Event));
     Ev.Review = Review;
+})(Ev || (Ev = {}));
+/**
+ * 声明（运行时）自动播放数据元信息接口规范。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/IAutoMetas.ts
+ */
+/// <reference path="../../Core/_Runtime/IStates.ts" />
+/**
+ * 定义（运行时）自动播放数据事件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2016 Dahao.de
+ * @license   GPL-3.0
+ * @file      Ev/_Runtime/Auto.ts
+ */
+/// <reference path="../Event.ts" />
+/// <reference path="IAutoMetas.ts" />
+var Ev;
+(function (Ev) {
+    var Auto = (function (_super) {
+        __extends(Auto, _super);
+        /**
+         * 构造函数。
+         */
+        function Auto(metas) {
+            _super.call(this, metas);
+            this.auto = metas.auto;
+        }
+        /**
+         * 获取类型。
+         */
+        Auto.prototype.gT = function () {
+            return 'auto';
+        };
+        return Auto;
+    }(Ev.Event));
+    Ev.Auto = Auto;
 })(Ev || (Ev = {}));
 /**
  * 定义实体（定义）抽象组件。
@@ -11811,7 +11954,7 @@ var Tag;
                     _this.path(data, theme);
                 }
                 else if (typeof data == 'string') {
-                    if (/.png$/.test(data) || /.jpg$/.test(data)) {
+                    if (/.png$/.test(data) || /.jpg$/.test(data) || /.mp3$/.test(data)) {
                         src[index] = theme + '/' + data;
                     }
                 }
@@ -16037,6 +16180,7 @@ var Tag;
 /// <reference path="../Ev/_Runtime/ScreenSave.ts" />
 /// <reference path="../Ev/_Runtime/Video.ts" />
 /// <reference path="../Ev/_Runtime/Review.ts" />
+/// <reference path="../Ev/_Runtime/Auto.ts" />
 /// <reference path="_Definition/DefBGM.ts" />
 /// <reference path="_Definition/DefCG.ts" />
 /// <reference path="_Definition/DefSE.ts" />
@@ -16171,15 +16315,15 @@ var Runtime;
             this._d.sr(this._e.gSr());
             this._fb = true;
             this._t = Promise.resolve(this);
-            this._n = ['', '', false];
+            this._n = ['', ''];
             this._al = [undefined, undefined, undefined];
             this._d.Init(true);
             this.addEventListener('ready', function () {
+                _this._d.Init(false);
                 _this._d.t(_this._e.gT(), _this._e.gC())
                     .s(ep.s())
                     .p(ep.p());
                 _this._fr = true;
-                _this._d.Init(false);
                 _this._s.l().then(function () {
                     var valid = false;
                     if (_this._al[0] && _this._al[2] == 'pay') {
@@ -16308,9 +16452,9 @@ var Runtime;
             if (!this._fr)
                 return this;
             this._s.i({});
-            // this._d.playMusic(Core.IResource.Type.BGM);
-            // this._d.playMusic(Core.IResource.Type.ESM);
-            // this._d.playSE();
+            this._d.playMusic(Core.IResource.Type.BGM);
+            this._d.playMusic(Core.IResource.Type.ESM);
+            this._d.playSE();
             this._d.Init(false);
             this._d.OP(!this._e.gA(), this._n[0]);
             return this;
@@ -16398,12 +16542,10 @@ var Runtime;
                     Bigine.domain = text;
                     break;
                 case 'wechat':
-                    this._n[2] = true;
-                    break;
-                default:
-                    this._n[2] = false;
-                    break;
+                    this._d.drawInit(true);
+                    return this;
             }
+            this._d.drawInit(false);
             return this;
         };
         /**
@@ -16813,7 +16955,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.7-p1';
+    Bigine.version = '0.25.8';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

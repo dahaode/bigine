@@ -184,12 +184,17 @@ namespace Sprite {
             this.$w(<G.Text> tText.o(0), clob, this._c);
             (<G.Sprite> this._x['f']).o(1);
             return this.$v(tText, auto, pause >= 0 ? true : wait).then(() => {
-                if (this._h) {
-                    let pnt: G.IPoint = tText.gCp();
-                    this._cb.y = pnt.y;
-                    this._tx = pnt.x - bBound.x;
-                    this._tl = (pnt.y - bBound.y) / lHeight;
-                }
+                // if (this._h) {
+                //     let pnt: G.IPoint = tText.gCp();
+                //     this._cb.y = pnt.y;
+                //     this._tx = pnt.x - bBound.x;
+                //     this._tl = (pnt.y - bBound.y) / lHeight;
+                // }
+                tText.d(this._ct);
+                let pnt: G.IPoint = tText.gCp();
+                this._cb.y = pnt.y;
+                this._tx = pnt.x - bBound.x;
+                this._tl = (pnt.y - bBound.y) / lHeight;
                 return this;
             });
         }

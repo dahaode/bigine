@@ -58,6 +58,11 @@ namespace Runtime {
         private _h: G.Animation;
 
         /**
+         * 自动播放透明层动画。
+         */
+        private _ta: G.WaitForClick;
+
+        /**
          * 阻塞类 Promise 。
          */
         private _q: () => void;
@@ -184,6 +189,17 @@ namespace Runtime {
                 f: Resource.Resource.g<string>(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
             };
+            this._s = {
+                    b: new Audio(),
+                    e: new Audio(),
+                    s: new Audio()
+                };
+            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
+            this._s['b'].loop = this._s['s'].loop = true;
+            this._s['b'].src = this._s['s'].src = this._i['s'].l();
+            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
+            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
+            this._s['e']['cd'] = -1;
             this._l = {};
             this._l[0] = (event: KeyboardEvent) => {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc && !this._rv) {
@@ -254,15 +270,26 @@ namespace Runtime {
         public Init(loaded: boolean): Promise<Core.IRuntime> {
             if (loaded) {
                 if (!this._x['ii']) this._c.a(this._x['ii'] = <Sprite.Init> new Sprite.Init());
-                (<Sprite.Init> this._x['ii']).u();
                 return super.Init(loaded);
             } else {
                 if (this._x['ii']) {
                     this._x['ii'].h(0);
                     this._c.e(this._x['ii']);
+                    this._x['ii'] = null;
                 }
                 return super.Init(loaded);
             }
+        }
+
+        /**
+         * 绘制加载动画。
+         */
+        public drawInit(isWechat: boolean): Promise<Core.IRuntime> {
+            if (this._x['ii']) {
+                this.c([(<Sprite.Init> this._x['ii']).sl(isWechat)])
+                    .then(() => (<Sprite.Init> this._x['ii']).u(isWechat));
+            }
+            return super.drawInit(isWechat);
         }
 
         /**
@@ -610,6 +637,8 @@ namespace Runtime {
                     }
                     return super.playMusic(type, resource, vol);
                 };
+            if (!music)
+                return super.playMusic(type, resource, vol);
             // APP 需要使用
             if (Util.ENV.Mobile && Bigine.offline) {
                 this._r.dispatchEvent(new Ev.Video({
@@ -640,6 +669,8 @@ namespace Runtime {
                     this._s['b'].play();
                     this._s['s'].play();
                 };
+            if (!se)
+                return super.playSE(resource, vol);
             // APP 需要使用
             if (Util.ENV.Mobile && Bigine.offline) {
                 this._r.dispatchEvent(new Ev.Video({
@@ -769,10 +800,10 @@ namespace Runtime {
                             return this._r;
                         });
                 case 'ShutterH':
-                    curtain = new G.Shutter(1000, { direction: 'H' });
+                    curtain = new G.Shutter(1000, { direction: 'H', bsize: 720 <= Util.ENV.Screen.Height });
                     break;
                 case 'ShutterV':
-                    curtain = new G.Shutter(1000, { direction: 'V' });
+                    curtain = new G.Shutter(1000, { direction: 'V', bsize: 720 <= Util.ENV.Screen.Height });
                     break;
                 case 'Gradient':
                     return gNew.p(new G.FadeIn(500)).then(() => {
@@ -1004,12 +1035,14 @@ namespace Runtime {
                 x: number = Math.round(mx * (1 - 5 / 3) * 1280),
                 y: number = Math.round(my * (1 - 5 / 3) * 720);
             if (!gRoom) return this._p;
-            let sClick: G.Component = new G.Component({}, false);  // 建立临时透明层，使得可以响应WaitForClick事件。
+            // 建立临时透明层，使得可以响应WaitForClick事件。
+            let sClick: G.Component = new G.Component({}, false);
             this._c.a(sClick.i('P').o(1));
             return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                 let aMove: G.Move = new G.Move(ms, { x: x, y: y }),
                     aWFC: G.WaitForClick = new G.WaitForClick(() => {
                         aMove.h();
+                        if (this._ta && this._a) this._ta.h();
                     });
                 this._t = this._h = aWFC;
                 Promise.race<any>([
@@ -1031,12 +1064,14 @@ namespace Runtime {
         public cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime> {
             var gRoom: G.Image = <G.Image> (<G.Sprite> this._c.q('b')[0]).q('n')[0];
             if (!gRoom) return this._p;
-            let sClick: G.Component = new G.Component({}, false);  // 建立临时透明层，使得可以响应WaitForClick事件。
+            // 建立临时透明层，使得可以响应WaitForClick事件。
+            let sClick: G.Component = new G.Component({}, false);
             this._c.a(sClick.i('P').o(1));
             return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                 let aZoom: G.Zoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale });
                 let aWFC: G.WaitForClick = new G.WaitForClick(() => {
                         aZoom.h();
+                        if (this._ta && this._a) this._ta.h();
                     });
                 this._t = this._h = aWFC;
                 Promise.race<any>([
@@ -1096,7 +1131,7 @@ namespace Runtime {
         /**
          * 使用主题。
          */
-        public t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector {
+        public t(id: string, theme: Util.IHashTable<any>): CanvasDirector {
             let resources: Resource.Resource<string | HTMLImageElement>[][] = [],
                 gCurtain: Sprite.Curtain = this._x['c'],
                 slotsFromStart: boolean = false,
@@ -1185,38 +1220,38 @@ namespace Runtime {
                 });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
-            let _s: () => void = () => {
-                if (this._s) return;
-                this._s = {
-                    b: new Audio(),
-                    e: new Audio(),
-                    s: new Audio()
-                };
-                this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
-                this._s['b'].loop = this._s['s'].loop = true;
-                this._s['b'].src = this._s['s'].src = this._i['s'].l();
-                this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
-                this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
-                this._s['e']['cd'] = -1;
-                this.playMusic(Core.IResource.Type.BGM);
-                this.playMusic(Core.IResource.Type.ESM);
-                this.playSE();
-            };
+            // let _s: () => void = () => {
+            //     if (this._s) return;
+            //     this._s = {
+            //         b: new Audio(),
+            //         e: new Audio(),
+            //         s: new Audio()
+            //     };
+            //     this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
+            //     this._s['b'].loop = this._s['s'].loop = true;
+            //     this._s['b'].src = this._s['s'].src = this._i['s'].l();
+            //     this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
+            //     this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
+            //     this._s['e']['cd'] = -1;
+            //     this.playMusic(Core.IResource.Type.BGM);
+            //     this.playMusic(Core.IResource.Type.ESM);
+            //     this.playSE();
+            // };
             // 开始菜单。
             this._x['s'] = <Sprite.Start> new Sprite.Start(theme['start'], (event: Ev.StartNew) => {
-                    _s();
+                    //_s();
                     this.playSE(this._i['c']);
                     this.lightOff().then(() => {
                         event.target.h(0);
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
                 }, () => {
-                    _s();
+                    //_s();
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
                     (<Sprite.SeriesSlots> this._x['ss']).vl(this._r);
                 }, () => {
-                    _s();
+                    //_s();
                     slotsFromStart = true;
                     this.playSE(this._i['c']);
                     (<Sprite.Slots> this._x['sl']).vl(this._r)
@@ -1307,6 +1342,14 @@ namespace Runtime {
             this._c.a(this._x['R'], gCurtain);
 
             this.c(resources, true);
+            if (this._a) this.$a();
+
+            if (theme['click'])
+                this._i['c'] = Resource.Resource.g<string>(theme['click'], Core.IResource.Type.Raw);
+
+            if (theme['foucs'])
+                this._i['f'] = Resource.Resource.g<string>(theme['click'], Core.IResource.Type.Raw);
+
             return this;
         }
 
@@ -1360,7 +1403,28 @@ namespace Runtime {
                 this._t.h();
                 this._t = undefined;
             }
+            if (auto && this._x['T']) this.$a();
             return super.a(auto);
+        }
+
+        /**
+         * 自动播放遮蔽层。
+         */
+        protected $a(): CanvasDirector {
+            if (this._c.q('A')[0]) return this;
+            let sAuto: G.Component = new G.Component({}, false);
+            this._c.a(sAuto.i('A').o(1), this._x['T']);
+            sAuto.p(this._ta = new G.WaitForClick())
+                .then(() => {
+                    this._c.e(sAuto);
+                    this._ta = null;
+                    this._r.auto(false);
+                    this._r.dispatchEvent(new Ev.Auto({
+                        target: null,
+                        auto: false
+                    }));
+                });
+            return this;
         }
 
         /**
@@ -1402,7 +1466,7 @@ namespace Runtime {
             canvas.style.height = h + 'px';
             canvas.style.marginTop = t + 'px';
             this._c.z();
-    }
+        }
 
         /**
          * 自我销毁。
