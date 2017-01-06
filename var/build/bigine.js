@@ -6171,10 +6171,14 @@ var Sprite;
 /// <reference path="../../Sprite/_pack.ts" />
 /**
  * * b - 背景
+ * *   --> n - 房间
  * * M - 地图
  * * c - 人物
  * * L - 加载进度条
- * * e - 完成进度条
+ * *   --> e - 完成进度条
+ * * P - 停顿、镜头遮蔽层
+ * * W - 某白
+ * * A - 自动播放遮蔽层
  */
 var Runtime;
 (function (Runtime) {
