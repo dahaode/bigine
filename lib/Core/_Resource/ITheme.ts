@@ -14,6 +14,9 @@ namespace Core {
 
     export namespace ITheme {
         export const THEME: Util.IHashTable<any> = {
+            "music": {
+                "click": "click.mp3"
+            },
             "author": {
                 "title": {
                     "x": 0,

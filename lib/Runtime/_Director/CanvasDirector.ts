@@ -841,7 +841,7 @@ namespace Runtime {
                 z = point.gZ();
                 gPoint = <G.Button> new G.Button(point.gX(), point.gY(), point.gW(), point.gH())
                     .b(() => {
-                        this.playSE(this._i['c']);
+                        this.playSE(this._i['m'] || this._i['c']);
                         point.p(this._r);
                     }, new G.Image(point.o().o(), bounds, true))
                     .addEventListener('focus', () => {
@@ -906,6 +906,7 @@ namespace Runtime {
                                     });
                                     this._pc = undefined;
                                 };
+                            if (this._i['h']) this.playSE(this._i['h']);
                             Util.each(options, (opt: Tag.Option) => {
                                 if (opt.$p(0) != answer) {
                                     var desc: string = opt.gT();
@@ -1131,11 +1132,12 @@ namespace Runtime {
         /**
          * 使用主题。
          */
-        public t(id: string, theme: Util.IHashTable<any>): CanvasDirector {
+        public t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector {
             let resources: Resource.Resource<string | HTMLImageElement>[][] = [],
                 gCurtain: Sprite.Curtain = this._x['c'],
                 slotsFromStart: boolean = false,
-                states: Core.IStates = this._r.gS();
+                states: Core.IStates = this._r.gS(),
+                music: Util.IHashTable<any> = theme['music'];
             this._pt = theme['choose'];
             // 特写。
             this._c.a(this._x['G'] = <Sprite.CG> new Sprite.CG(theme['cg']), gCurtain);
@@ -1240,7 +1242,7 @@ namespace Runtime {
             // 开始菜单。
             this._x['s'] = <Sprite.Start> new Sprite.Start(theme['start'], (event: Ev.StartNew) => {
                     //_s();
-                    this.playSE(this._i['c']);
+                    this.playSE(this._i['t'] || this._i['c']);
                     this.lightOff().then(() => {
                         event.target.h(0);
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
@@ -1248,12 +1250,12 @@ namespace Runtime {
                 }, () => {
                     //_s();
                     slotsFromStart = true;
-                    this.playSE(this._i['c']);
+                    this.playSE(this._i['t'] || this._i['c']);
                     (<Sprite.SeriesSlots> this._x['ss']).vl(this._r);
                 }, () => {
                     //_s();
                     slotsFromStart = true;
-                    this.playSE(this._i['c']);
+                    this.playSE(this._i['t'] || this._i['c']);
                     (<Sprite.Slots> this._x['sl']).vl(this._r)
                         ['catch'](() => {
                             return;
@@ -1273,6 +1275,7 @@ namespace Runtime {
                     this._x[slotsFromStart ? 's' : 'm'].v();
                     this._x['sl'].h();
                 }, (ev: Ev.SlotsSave) => {
+                    this.playSE(this._i['c']);
                     this._x[slotsFromStart ? 's' : 'm'].v(0);
                     this._x['sl'].h(0);
                     this._r.gS().e(ev.slot);
@@ -1344,11 +1347,14 @@ namespace Runtime {
             this.c(resources, true);
             if (this._a) this.$a();
 
-            if (theme['click'])
-                this._i['c'] = Resource.Resource.g<string>(theme['click'], Core.IResource.Type.Raw);
-
-            if (theme['foucs'])
-                this._i['f'] = Resource.Resource.g<string>(theme['click'], Core.IResource.Type.Raw);
+            if (music['start'])
+                this._i['t'] = Resource.Resource.g<string>(music['start'], Core.IResource.Type.Raw);
+            if (music['choose'])
+                this._i['h'] = Resource.Resource.g<string>(music['choose'], Core.IResource.Type.Raw);
+            if (music['mclick'])
+                this._i['m'] = Resource.Resource.g<string>(music['mclick'], Core.IResource.Type.Raw);
+            if (music['mfoucs'])
+                this._i['f'] = Resource.Resource.g<string>(music['mfoucs'], Core.IResource.Type.Raw);
 
             return this;
         }

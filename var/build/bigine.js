@@ -659,7 +659,7 @@ var Resource;
                 }
                 ext = this._l.substr(-4);
                 if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = (offline ? 'app://res/.9/' : '//dahao.de/.9/') + uri;
+                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
             }
             else {
                 if (!Core.IResource.REGGUID.test(uri))
@@ -686,7 +686,7 @@ var Resource;
                     local :
                     ('//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = (offline ? 'app://res/.9/' : '//dahao.de/.9/') + uri;
+                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
             }
             this._w = [];
             this._r = false;
@@ -6854,7 +6854,7 @@ var Runtime;
                 z = point.gZ();
                 gPoint = new G.Button(point.gX(), point.gY(), point.gW(), point.gH())
                     .b(function () {
-                    _this.playSE(_this._i['c']);
+                    _this.playSE(_this._i['m'] || _this._i['c']);
                     point.p(_this._r);
                 }, new G.Image(point.o().o(), bounds, true))
                     .addEventListener('focus', function () {
@@ -6910,6 +6910,8 @@ var Runtime;
                             });
                             _this._pc = undefined;
                         };
+                        if (_this._i['h'])
+                            _this.playSE(_this._i['h']);
                         Util.each(options, function (opt) {
                             if (opt.$p(0) != answer) {
                                 var desc = opt.gT();
@@ -7131,7 +7133,7 @@ var Runtime;
          */
         CanvasDirector.prototype.t = function (id, theme) {
             var _this = this;
-            var resources = [], gCurtain = this._x['c'], slotsFromStart = false, states = this._r.gS();
+            var resources = [], gCurtain = this._x['c'], slotsFromStart = false, states = this._r.gS(), music = theme['music'];
             this._pt = theme['choose'];
             // 特写。
             this._c.a(this._x['G'] = new Sprite.CG(theme['cg']), gCurtain);
@@ -7238,7 +7240,7 @@ var Runtime;
             // 开始菜单。
             this._x['s'] = new Sprite.Start(theme['start'], function (event) {
                 //_s();
-                _this.playSE(_this._i['c']);
+                _this.playSE(_this._i['t'] || _this._i['c']);
                 _this.lightOff().then(function () {
                     event.target.h(0);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
@@ -7246,12 +7248,12 @@ var Runtime;
             }, function () {
                 //_s();
                 slotsFromStart = true;
-                _this.playSE(_this._i['c']);
+                _this.playSE(_this._i['t'] || _this._i['c']);
                 _this._x['ss'].vl(_this._r);
             }, function () {
                 //_s();
                 slotsFromStart = true;
-                _this.playSE(_this._i['c']);
+                _this.playSE(_this._i['t'] || _this._i['c']);
                 _this._x['sl'].vl(_this._r)['catch'](function () {
                     return;
                 });
@@ -7270,6 +7272,7 @@ var Runtime;
                 _this._x[slotsFromStart ? 's' : 'm'].v();
                 _this._x['sl'].h();
             }, function (ev) {
+                _this.playSE(_this._i['c']);
                 _this._x[slotsFromStart ? 's' : 'm'].v(0);
                 _this._x['sl'].h(0);
                 _this._r.gS().e(ev.slot);
@@ -7337,10 +7340,14 @@ var Runtime;
             this.c(resources, true);
             if (this._a)
                 this.$a();
-            if (theme['click'])
-                this._i['c'] = Resource.Resource.g(theme['click'], Core.IResource.Type.Raw);
-            if (theme['foucs'])
-                this._i['f'] = Resource.Resource.g(theme['click'], Core.IResource.Type.Raw);
+            if (music['start'])
+                this._i['t'] = Resource.Resource.g(music['start'], Core.IResource.Type.Raw);
+            if (music['choose'])
+                this._i['h'] = Resource.Resource.g(music['choose'], Core.IResource.Type.Raw);
+            if (music['mclick'])
+                this._i['m'] = Resource.Resource.g(music['mclick'], Core.IResource.Type.Raw);
+            if (music['mfoucs'])
+                this._i['f'] = Resource.Resource.g(music['mfoucs'], Core.IResource.Type.Raw);
             return this;
         };
         CanvasDirector.prototype.sl = function (id, aotuload) {
@@ -10478,6 +10485,9 @@ var Core;
     var ITheme;
     (function (ITheme) {
         ITheme.THEME = {
+            "music": {
+                "click": "click.mp3"
+            },
             "author": {
                 "title": {
                     "x": 0,

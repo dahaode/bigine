@@ -1206,7 +1206,7 @@ declare namespace __Bigine {
             status(onoff: boolean): Promise<Core.IRuntime>;
             expression(name: string): Promise<Core.IRuntime>;
             weather(onoff: boolean, type: string): Promise<Core.IRuntime>;
-            t(id: string, theme: Util.IHashTable<any>): CanvasDirector;
+            t(id: string, theme: Util.IHashTable<Util.IHashTable<any>>): CanvasDirector;
             sl(id: string, aotuload?: boolean): void;
             s(sheet: [string, string][]): CanvasDirector;
             p(sheet: Array<Util.IHashTable<any>>): CanvasDirector;
