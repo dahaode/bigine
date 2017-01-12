@@ -1613,7 +1613,7 @@ var Runtime;
         /**
          * 切幕动画。
          */
-        Director.prototype.curtain = function (name) {
+        Director.prototype.curtain = function (name, secend) {
             return this._p;
         };
         /**
@@ -4256,7 +4256,7 @@ var Tag;
         93: ['CameraReset', [0, 1], -1],
         94: ['CameraZoom', [0, 1], 1],
         95: ['CameraMove', [0, 1], 1],
-        96: ['Curtains', [0, 1], -1],
+        96: ['Curtains', [0, 2], -1],
         97: ['CameraShake', 0, -1],
         100: ['ShowStatus', 0, -1],
         101: ['HideStatus', 0, -1],
@@ -6222,11 +6222,12 @@ var Runtime;
             this._vo = true;
             this._fd = false;
             this._rv = false;
+            this._st = true;
             this._pc = undefined;
             this._ft = undefined;
             this._pt = {};
             this._se = null;
-            this._ca = [undefined, undefined];
+            this._ca = [undefined, undefined, undefined];
             this._e = [0, 0];
             this._ss = [];
             this._i = {
@@ -6809,26 +6810,26 @@ var Runtime;
          */
         CanvasDirector.prototype.$ca = function (gOld, gNew) {
             var _this = this;
-            var gCurtain = this._x['c'], curtain;
+            var gCurtain = this._x['c'], secend = this._ca[2], curtain;
             switch (this._ca[0]) {
                 case 'Fade':
-                    return gCurtain.v(500)
+                    return gCurtain.v(secend || 500)
                         .then(function () {
                         gOld.o(0);
                         _this.lightOn();
                     }).then(function () {
-                        gNew.p(new G.FadeIn(500));
+                        gNew.p(new G.FadeIn(secend || 500));
                         _this._c.e(gOld);
                         return _this._r;
                     });
                 case 'ShutterH':
-                    curtain = new G.Shutter(1000, { direction: 'H', bsize: 720 <= Util.ENV.Screen.Height });
+                    curtain = new G.Shutter(secend || 1000, { direction: 'H', bsize: 720 <= Util.ENV.Screen.Height });
                     break;
                 case 'ShutterV':
-                    curtain = new G.Shutter(1000, { direction: 'V', bsize: 720 <= Util.ENV.Screen.Height });
+                    curtain = new G.Shutter(secend || 1000, { direction: 'V', bsize: 720 <= Util.ENV.Screen.Height });
                     break;
                 case 'Gradient':
-                    return gNew.p(new G.FadeIn(500)).then(function () {
+                    return gNew.p(new G.FadeIn(secend || 500)).then(function () {
                         _this._c.e(gOld);
                         return _this._r;
                     });
@@ -6977,7 +6978,8 @@ var Runtime;
                     .a(gColor, gBack)
                     .e(gBack);
                 gColor.i('b');
-                _this._x['S'].v();
+                if (_this._st)
+                    _this._x['S'].v();
                 _this._x['m'].u(series);
                 _this._c.q('M')[0].c();
                 _this._c.q('c')[0].c().o(0);
@@ -7030,9 +7032,10 @@ var Runtime;
         /**
          * 切幕动画。
          */
-        CanvasDirector.prototype.curtain = function (name) {
+        CanvasDirector.prototype.curtain = function (name, secend) {
             this._ca[0] = name;
-            return _super.prototype.curtain.call(this, name);
+            this._ca[2] = secend;
+            return _super.prototype.curtain.call(this, name, secend);
         };
         /**
          * 移动镜头。
@@ -7108,6 +7111,7 @@ var Runtime;
          */
         CanvasDirector.prototype.status = function (onoff) {
             var gStatus = this._x['S'];
+            this._st = onoff;
             onoff ? gStatus.v(0) : gStatus.h(0);
             return _super.prototype.status.call(this, onoff);
         };
@@ -9799,9 +9803,10 @@ var Tag;
                     return director.playMusic(Core.IResource.Type.ESM, defesm ? defesm.o() : undefined, vol);
                 });
             if (cur)
-                q = q.then(function () {
-                    return director.curtain(cur);
-                });
+                var arr = cur.split(','), name = arr[0], secend = parseInt(arr[1] || '0', 10);
+            q = q.then(function () {
+                return director.curtain(name, secend);
+            });
             if (exp)
                 q = q.then(function () {
                     return director.expression(exp);
@@ -15596,11 +15601,11 @@ var Tag;
          * 执行。
          */
         Curtains.prototype.p = function (runtime) {
-            var states = runtime.gS(), curtain = states.g('_ra');
+            var states = runtime.gS(), secend = parseInt(this._p[1] || '0', 10), curtain = states.g('_ra');
             if (curtain == this._a)
                 return runtime;
-            this._a ? states.s('_ra', this._a) : states.d('_ra');
-            return runtime.gD().curtain(this._a);
+            this._a ? states.s('_ra', this._a + ',' + secend.toString()) : states.d('_ra');
+            return runtime.gD().curtain(this._a, secend);
         };
         return Curtains;
     }(Tag.Action));
@@ -16969,7 +16974,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.8';
+    Bigine.version = '0.25.9';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

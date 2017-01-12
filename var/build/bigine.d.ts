@@ -157,7 +157,7 @@ declare namespace __Bigine {
             reset(): Promise<IRuntime>;
             setCG(resource: IResource<HTMLImageElement>): Promise<IRuntime>;
             pause(milsec: number): Promise<IRuntime>;
-            curtain(name: string): Promise<IRuntime>;
+            curtain(name: string, secend?: number): Promise<IRuntime>;
             cameraMove(mx: number, my: number, ms: number): Promise<IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<IRuntime>;
             cameraShake(): Promise<IRuntime>;
@@ -468,7 +468,7 @@ declare namespace __Bigine {
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Core.IResource<HTMLImageElement>): Promise<Core.IRuntime>;
             pause(milsec: number): Promise<Core.IRuntime>;
-            curtain(name: string): Promise<Core.IRuntime>;
+            curtain(name: string, secend?: number): Promise<Core.IRuntime>;
             cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
             cameraShake(): Promise<Core.IRuntime>;
@@ -1161,6 +1161,7 @@ declare namespace __Bigine {
             private _fd;
             private _ft;
             private _rv;
+            private _st;
             private _cm;
             private _ss;
             private _se;
@@ -1199,7 +1200,7 @@ declare namespace __Bigine {
             reset(): Promise<Core.IRuntime>;
             setCG(resource: Resource.Resource<HTMLImageElement>): Promise<Core.IRuntime>;
             pause(milsec: number): Promise<Core.IRuntime>;
-            curtain(name: string): Promise<Core.IRuntime>;
+            curtain(name: string, secend?: number): Promise<Core.IRuntime>;
             cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
             cameraShake(): Promise<Core.IRuntime>;

@@ -88,8 +88,11 @@ namespace Tag {
                     return director.playMusic(Core.IResource.Type.ESM, defesm ? defesm.o() : undefined, vol);
                 });
             if (cur)
+                var arr: Array<string> = cur.split(','),
+                    name: string = arr[0],
+                    secend: number = parseInt(arr[1] || '0', 10);
                 q = q.then(() =>
-                    director.curtain(cur)
+                    director.curtain(name, secend)
                 );
             if (exp)
                 q = q.then(() =>

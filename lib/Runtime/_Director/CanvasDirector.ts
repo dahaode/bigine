@@ -92,9 +92,9 @@ namespace Runtime {
         private _fs: Core.IRuntime.Series;
 
         /**
-         * 动画(切幕动画，神态动画)。
+         * 动画(切幕动画，神态动画，切幕动画时长)。
          */
-        private _ca: [string, string];
+        private _ca: [string, string, number];
 
         /**
          * 声音开关。
@@ -125,6 +125,11 @@ namespace Runtime {
          * 回看 打开 / 关闭。
          */
         private _rv: boolean;
+
+        /**
+         * 状态栏 显示 / 隐藏。
+         */
+        private _st: boolean;
 
         /**
          * 离线 Canvas，用于提前计算文字行数。
@@ -181,11 +186,12 @@ namespace Runtime {
             this._vo = true;
             this._fd = false;
             this._rv = false;
+            this._st = true;
             this._pc = undefined;
             this._ft = undefined;
             this._pt = {};
             this._se = null;
-            this._ca = [undefined, undefined];
+            this._ca = [undefined, undefined, undefined];
             this._e = [0, 0];
             this._ss = [];
             this._i = {
@@ -791,26 +797,27 @@ namespace Runtime {
          */
         protected $ca(gOld: G.Element, gNew: G.Element): Promise<Core.IRuntime> {
             let gCurtain: Sprite.Curtain = this._x['c'],
+                secend: number = this._ca[2],
                 curtain: G.Animation;
             switch (this._ca[0]) {
                 case 'Fade':
-                    return gCurtain.v(500)
+                    return gCurtain.v(secend || 500)
                         .then(() => {
                             gOld.o(0);
                             this.lightOn();
                         }).then(() => {
-                            gNew.p(new G.FadeIn(500));
+                            gNew.p(new G.FadeIn(secend || 500));
                             this._c.e(gOld);
                             return this._r;
                         });
                 case 'ShutterH':
-                    curtain = new G.Shutter(1000, { direction: 'H', bsize: 720 <= Util.ENV.Screen.Height });
+                    curtain = new G.Shutter(secend || 1000, { direction: 'H', bsize: 720 <= Util.ENV.Screen.Height });
                     break;
                 case 'ShutterV':
-                    curtain = new G.Shutter(1000, { direction: 'V', bsize: 720 <= Util.ENV.Screen.Height });
+                    curtain = new G.Shutter(secend || 1000, { direction: 'V', bsize: 720 <= Util.ENV.Screen.Height });
                     break;
                 case 'Gradient':
-                    return gNew.p(new G.FadeIn(500)).then(() => {
+                    return gNew.p(new G.FadeIn(secend || 500)).then(() => {
                         this._c.e(gOld);
                         return this._r;
                     });
@@ -974,7 +981,7 @@ namespace Runtime {
                     .a(gColor, gBack)
                     .e(gBack);
                 gColor.i('b');
-                this._x['S'].v();
+                if (this._st) this._x['S'].v();
                 (<Sprite.Menu> this._x['m']).u(series);
                 (<G.Component> this._c.q('M')[0]).c();
                 (<G.Component> this._c.q('c')[0]).c().o(0);
@@ -1027,9 +1034,10 @@ namespace Runtime {
         /**
          * 切幕动画。
          */
-        public curtain(name: string): Promise<Core.IRuntime> {
+        public curtain(name: string, secend?: number): Promise<Core.IRuntime> {
             this._ca[0] = name;
-            return super.curtain(name);
+            this._ca[2] = secend;
+            return super.curtain(name, secend);
         }
 
         /**
@@ -1106,6 +1114,7 @@ namespace Runtime {
          */
         public status(onoff: boolean): Promise<Core.IRuntime> {
             var gStatus: Sprite.Status = <Sprite.Status> this._x['S'];
+            this._st = onoff;
             onoff ? gStatus.v(0) : gStatus.h(0);
             return super.status(onoff);
         }

@@ -269,7 +269,7 @@ namespace Runtime {
         /**
          * 切幕动画。
          */
-        public curtain(name: string): Promise<Core.IRuntime> {
+        public curtain(name: string, secend?: number): Promise<Core.IRuntime> {
             return this._p;
         }
 

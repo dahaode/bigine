@@ -1,6 +1,6 @@
 {
   "name": "bigine",
-  "version": "0.25.8",
+  "version": "0.25.9",
   "description": "DaHao.de 播放引擎（TypeScript 版）",
   "keywords": [
     "dahao",
@@ -28,7 +28,7 @@
     "definition": "var/build/bigine.d.ts"
   },
   "dependencies": {
-    "bigine.c2d": "^0.3.3",
+    "bigine.c2d": "^0.3.4",
     "bigine.util": "^0.2.4",
     "es6-promise": "^3.1.2"
   },

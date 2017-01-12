@@ -157,7 +157,7 @@ namespace Core {
         /**
          * 切幕动画。
          */
-        curtain(name: string): Promise<IRuntime>;
+        curtain(name: string, secend?: number): Promise<IRuntime>;
 
         /**
          * 移动镜头。

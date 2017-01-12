@@ -54,11 +54,12 @@ namespace Tag {
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
             var states: Core.IStates = runtime.gS(),
+                secend: number = parseInt(this._p[1] || '0', 10),
                 curtain: string = states.g('_ra');
             if (curtain == this._a)
                 return runtime;
-            this._a ? states.s('_ra', this._a) : states.d('_ra');
-            return runtime.gD().curtain(this._a);
+            this._a ? states.s('_ra', this._a + ',' + secend.toString()) : states.d('_ra');
+            return runtime.gD().curtain(this._a, secend);
         }
     }
 }
