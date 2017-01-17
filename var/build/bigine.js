@@ -6209,7 +6209,7 @@ var Runtime;
             this._x = {};
             this._c = new G.Stage(canvas.getContext('2d'))
                 .a(new G.Component()
-                .a(new G.Color(bounds, '#000')).i('b'))
+                .a(new G.Color(bounds, '#000')).i('b').o(1))
                 .a(new G.Component()
                 .a(new G.Sprite(bounds)).i('M').o(0))
                 .a(new G.Component()
@@ -6977,7 +6977,7 @@ var Runtime;
                 _this._c.a(_this._x['C'], _this._x['t'])
                     .a(gColor, gBack)
                     .e(gBack);
-                gColor.i('b');
+                gColor.i('b').o(1);
                 if (_this._st)
                     _this._x['S'].v();
                 _this._x['m'].u(series);
@@ -16474,6 +16474,7 @@ var Runtime;
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
+            this._d.curtain(null);
             this._d.Init(false);
             this._d.OP(!this._e.gA(), this._n[0]);
             return this;

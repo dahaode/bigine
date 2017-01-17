@@ -261,6 +261,7 @@ namespace Runtime {
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
+            this._d.curtain(null);
             this._d.Init(false);
             this._d.OP(!this._e.gA(), this._n[0]);
             return this;

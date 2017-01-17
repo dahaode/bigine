@@ -200,10 +200,10 @@ namespace Runtime {
                 c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
             };
             this._s = {
-                    b: new Audio(),
-                    e: new Audio(),
-                    s: new Audio()
-                };
+                b: new Audio(),
+                e: new Audio(),
+                s: new Audio()
+            };
             this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
             this._s['b'].loop = this._s['s'].loop = true;
             this._s['b'].src = this._s['s'].src = this._i['s'].l();
