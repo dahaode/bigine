@@ -6215,7 +6215,7 @@ var Runtime;
                 .a(new G.Component()
                 .a(new G.Sprite(bounds)).i('c').o(0))
                 .a(this._x['c'] = new Sprite.Curtain())
-                .a(new G.Component()
+                .a(new G.Component({}, true)
                 .a(new G.Color(0, bounds.h - 12, bounds.w, 12, '#e7e7e7'))
                 .a(new G.Color(0, bounds.h - 11, bounds.w, 10, '#00ccff').i('e')).i('L').o(0));
             this.f();
