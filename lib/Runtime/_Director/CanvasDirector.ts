@@ -173,7 +173,7 @@ namespace Runtime {
             this._x = {};
             this._c = <G.Stage> new G.Stage(canvas.getContext('2d'))
                 .a(new G.Component()
-                    .a(new G.Color(bounds, '#000')).i('b'))
+                    .a(new G.Color(bounds, '#000')).i('b').o(1))
                 .a(new G.Component()
                     .a(new G.Sprite(bounds)).i('M').o(0))
                 .a(new G.Component()
@@ -980,7 +980,7 @@ namespace Runtime {
                 this._c.a(this._x['C'], this._x['t'])
                     .a(gColor, gBack)
                     .e(gBack);
-                gColor.i('b');
+                gColor.i('b').o(1);
                 if (this._st) this._x['S'].v();
                 (<Sprite.Menu> this._x['m']).u(series);
                 (<G.Component> this._c.q('M')[0]).c();
