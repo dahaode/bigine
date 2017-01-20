@@ -1050,13 +1050,13 @@ namespace Runtime {
             if (!gRoom) return this._p;
             // 建立临时透明层，使得可以响应WaitForClick事件。
             let sClick: G.Component = new G.Component({}, false);
-            this._c.a(sClick.i('P').o(1));
-            return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
-                let aMove: G.Move = new G.Move(ms, { x: x, y: y }),
+            let aMove: G.Move = new G.Move(ms, { x: x, y: y }),
                     aWFC: G.WaitForClick = new G.WaitForClick(() => {
                         aMove.h();
                         if (this._ta && this._a) this._ta.h();
                     });
+            this._c.a(sClick.i('P').o(1));
+            return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                 this._t = this._h = aWFC;
                 Promise.race<any>([
                     gRoom.p(aMove).then(() => {
@@ -1064,6 +1064,7 @@ namespace Runtime {
                     }),
                     sClick.p(aWFC)
                 ]).then(() => {
+                    aMove.h();
                     this._c.e(sClick);
                     this._t = this._h = undefined;
                     resolve(this._r);
@@ -1079,13 +1080,13 @@ namespace Runtime {
             if (!gRoom) return this._p;
             // 建立临时透明层，使得可以响应WaitForClick事件。
             let sClick: G.Component = new G.Component({}, false);
-            this._c.a(sClick.i('P').o(1));
-            return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
-                let aZoom: G.Zoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale });
+            let aZoom: G.Zoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale });
                 let aWFC: G.WaitForClick = new G.WaitForClick(() => {
                         aZoom.h();
                         if (this._ta && this._a) this._ta.h();
                     });
+            this._c.a(sClick.i('P').o(1));
+            return new Promise((resolve: (runtime: Core.IRuntime) => void) => {
                 this._t = this._h = aWFC;
                 Promise.race<any>([
                     gRoom.p(aZoom).then(() => {
@@ -1093,6 +1094,7 @@ namespace Runtime {
                     }),
                     sClick.p(aWFC)
                 ]).then(() => {
+                    aZoom.h();
                     this._c.e(sClick);
                     this._t = this._h = undefined;
                     resolve(this._r);

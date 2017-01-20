@@ -57,7 +57,7 @@ namespace Resource {
             var env: typeof Util.ENV = Util.ENV,
                 types: typeof Core.IResource.Type = Core.IResource.Type,
                 ie9: boolean = env.MSIE && 'undefined' == typeof URL,
-                ext: string,
+                ext: string = uri.substr(-4),
                 height: number = 720 <= env.Screen.Height ? 720 : 360,
                 filename: string = height + '.',
                 offline: boolean = Bigine.offline;
@@ -68,10 +68,9 @@ namespace Resource {
                     this._l = '//a' + (1 + parseInt(uri[1], 16) % 8) + '.dahao.de/' + uri.substr(1) + '/' + filename + (start ? 'jpg' : 'png');
                 } else {
                     this._l = '//s.dahao.de/theme/' + uri;
+                    if (ie9 && ('.jpg' == ext || '.png' == ext))
+                        this._l = '//dahao.de/.9/' + uri;
                 }
-                ext = this._l.substr(-4);
-                if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
             } else {
                 if (!Core.IResource.REGGUID.test(uri))
                     throw new E(E.RES_INVALID_URI);
@@ -97,7 +96,7 @@ namespace Resource {
                     local :
                     ('//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
+                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri + '/' + filename;
             }
             this._w = [];
             this._r = false;

@@ -646,7 +646,7 @@ var Resource;
          */
         function Resource(uri, type, start) {
             if (start === void 0) { start = false; }
-            var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext, height = 720 <= env.Screen.Height ? 720 : 360, filename = height + '.', offline = Bigine.offline;
+            var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext = uri.substr(-4), height = 720 <= env.Screen.Height ? 720 : 360, filename = height + '.', offline = Bigine.offline;
             if (types.Raw == type) {
                 if (offline) {
                     this._l = 'res/theme' + uri.substr(uri.indexOf('\/'));
@@ -656,10 +656,9 @@ var Resource;
                 }
                 else {
                     this._l = '//s.dahao.de/theme/' + uri;
+                    if (ie9 && ('.jpg' == ext || '.png' == ext))
+                        this._l = '//dahao.de/.9/' + uri;
                 }
-                ext = this._l.substr(-4);
-                if (ie9 && ('.jpg' == ext || '.png' == ext))
-                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
             }
             else {
                 if (!Core.IResource.REGGUID.test(uri))
@@ -686,7 +685,7 @@ var Resource;
                     local :
                     ('//a' + (1 + parseInt(uri[0], 16) % 8) + '.dahao.de/' + uri + '/' + filename);
                 if (ie9 && '.mp3' != this._l.substr(-4))
-                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri;
+                    this._l = (offline ? 'res/.9/' : '//dahao.de/.9/') + uri + '/' + filename;
             }
             this._w = [];
             this._r = false;
@@ -7047,13 +7046,13 @@ var Runtime;
                 return this._p;
             // 建立临时透明层，使得可以响应WaitForClick事件。
             var sClick = new G.Component({}, false);
+            var aMove = new G.Move(ms, { x: x, y: y }), aWFC = new G.WaitForClick(function () {
+                aMove.h();
+                if (_this._ta && _this._a)
+                    _this._ta.h();
+            });
             this._c.a(sClick.i('P').o(1));
             return new Promise(function (resolve) {
-                var aMove = new G.Move(ms, { x: x, y: y }), aWFC = new G.WaitForClick(function () {
-                    aMove.h();
-                    if (_this._ta && _this._a)
-                        _this._ta.h();
-                });
                 _this._t = _this._h = aWFC;
                 Promise.race([
                     gRoom.p(aMove).then(function () {
@@ -7061,6 +7060,7 @@ var Runtime;
                     }),
                     sClick.p(aWFC)
                 ]).then(function () {
+                    aMove.h();
                     _this._c.e(sClick);
                     _this._t = _this._h = undefined;
                     resolve(_this._r);
@@ -7077,14 +7077,14 @@ var Runtime;
                 return this._p;
             // 建立临时透明层，使得可以响应WaitForClick事件。
             var sClick = new G.Component({}, false);
+            var aZoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale });
+            var aWFC = new G.WaitForClick(function () {
+                aZoom.h();
+                if (_this._ta && _this._a)
+                    _this._ta.h();
+            });
             this._c.a(sClick.i('P').o(1));
             return new Promise(function (resolve) {
-                var aZoom = new G.Zoom(ms, { mx: mx, my: my, scale: scale });
-                var aWFC = new G.WaitForClick(function () {
-                    aZoom.h();
-                    if (_this._ta && _this._a)
-                        _this._ta.h();
-                });
                 _this._t = _this._h = aWFC;
                 Promise.race([
                     gRoom.p(aZoom).then(function () {
@@ -7092,6 +7092,7 @@ var Runtime;
                     }),
                     sClick.p(aWFC)
                 ]).then(function () {
+                    aZoom.h();
                     _this._c.e(sClick);
                     _this._t = _this._h = undefined;
                     resolve(_this._r);
@@ -16975,7 +16976,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.9';
+    Bigine.version = '0.25.9-p1';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
