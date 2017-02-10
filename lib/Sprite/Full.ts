@@ -57,6 +57,11 @@ namespace Sprite {
         private _ct: CanvasRenderingContext2D;
 
         /**
+         * 是否隐藏，隐藏后时序流快进。
+         */
+        private _po: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(theme: Util.IHashTable<Util.IHashTable<any>>, context: CanvasRenderingContext2D, listen: (ev: Ev.FullAnimation) => void) {
@@ -92,6 +97,7 @@ namespace Sprite {
         public h(duration?: number): Promise<Full> {
             if (!this._pi) return super.h(duration);
             if (this._h) {
+                this._po = true;
                 this._h.h();
                 this._h = undefined;
                 this.dispatchEvent(new Ev.FullAnimation({
@@ -113,32 +119,51 @@ namespace Sprite {
         public u(clob: string, auto: boolean = false): Promise<Full> {
             this.pI();
             let words: Array<string> = clob.split('\\r'),
-                funcs: Array<Function> = [],
                 font: string = this._be['s'] + 'px/' + Math.max(this._be['lh'], this._be['s']) + 'px "' + (this._be['ff'] || '') + '", ' + G.TextPhrase.FONT;
             this._ct.canvas.style.letterSpacing = this._be['ls'] + 'px';  // 设置字间距
-            Util.each(words, (word: string, index: number) => {
-                let bufs: Array<string> = word.split('\\l');
-                if (bufs.length == 1) {
-                    funcs.push(() => this.every(word, auto, index == words.length - 1));
-                } else {
-                    let str: string = word.replace(/\\l/g, '')
+            // Util.each(words, (word: string, index: number) => {
+            //     let bufs: Array<string> = word.split('\\l');
+            //     if (bufs.length == 1) {
+            //         funcs.push(() => this.every(word, auto, index == words.length - 1));
+            //     } else {
+            //         let str: string = word.replace(/\\l/g, '')
+            //             .replace(/\\n/g, '')
+            //             .replace(/【#[0-9a-fA-F]{6}/g, '')
+            //             .replace(/【/g, '')
+            //             .replace(/】/g, '');
+            //         this._ct.save();
+            //         this._ct.font = font;
+            //         let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
+            //         this._ct.restore();
+            //         if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
+            //         Util.each(bufs, (buffer: string, i: number) => {
+            //             funcs.push(() => this.every(buffer, auto, false, i));
+            //         });
+            //     }
+            // });
+            // return funcs.reduce((previous: Promise<Full>, current: (value: Full) => {} | Thenable<{}>) => {
+            //     return previous.then(current);
+            // }, Promise.resolve());
+            return Util.Q.every(words, (word: string, index: number) => {
+                this._po = false;
+                let bufs: Array<string> = word.split('\\l'),
+                    str: string = word.replace(/\\l/g, '')
                         .replace(/\\n/g, '')
                         .replace(/【#[0-9a-fA-F]{6}/g, '')
                         .replace(/【/g, '')
                         .replace(/】/g, '');
-                    this._ct.save();
-                    this._ct.font = font;
-                    let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
-                    this._ct.restore();
-                    if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
-                    Util.each(bufs, (buffer: string, i: number) => {
-                        funcs.push(() => this.every(buffer, auto, false, i));
-                    });
-                }
+                this._ct.save();
+                this._ct.font = font;
+                let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
+                this._ct.restore();
+                if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
+                return Util.Q.every(bufs, (buffer: string, i: number) => {
+                    if (this._po) return Promise.resolve(this);
+                    var wait: boolean = bufs.length == 1 ? (index == words.length - 1) : false;
+                    var pause: number = bufs.length == 1 ? -1 : i;
+                    return this.every(buffer, auto, wait, pause);
+                });
             });
-            return funcs.reduce((previous: Promise<Full>, current: (value: Full) => {} | Thenable<{}>) => {
-                return previous.then(current);
-            }, Promise.resolve());
         }
 
         /**

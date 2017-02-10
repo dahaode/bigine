@@ -29,11 +29,13 @@ namespace Tag {
                 logger: Util.ILogger = runtime.gL(),
                 title: string = 'CONTENT',
                 kid: string = '.a',
+                kt: string = '_t',
                 id: string = states.g(kid),
+                time: string = states.g(kt),
                 offline: boolean = Bigine.offline;
             logger.o(title);
             states.s('$d', 1);
-            return director.c(offline ? [[]] : (<Core.IResource<string | HTMLImageElement>[][]> Loop.prototype.c.call(this)))
+            return director.c(offline ? [[]] : (<Core.IResource<string | HTMLImageElement>[][]> Loop.prototype.c.call(this, time)))
                 .then(() => Util.Q.every(this._s, (action: Action) => {
                     if (runtime.gH())
                         return E.doHalt<Core.IRuntime>();

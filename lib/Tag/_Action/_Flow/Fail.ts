@@ -22,10 +22,10 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            runtime.gS().d('_rc')
-                .d('_rd')
-                .d('$rc')
-                .d('$rd');
+            // runtime.gS().d('_rc')
+            //     .d('_rd')
+            //     .d('$rc')
+            //     .d('$rd');
             runtime.t(() => runtime.gD().FAIL()
                 .then(() => runtime.gE().p(Core.ISceneTag.Type.Fail, runtime))
             );

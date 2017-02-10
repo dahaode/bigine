@@ -1,6 +1,6 @@
 {
   "name": "bigine",
-  "version": "0.25.9-p1",
+  "version": "0.26.0",
   "description": "DaHao.de 播放引擎（TypeScript 版）",
   "keywords": [
     "dahao",

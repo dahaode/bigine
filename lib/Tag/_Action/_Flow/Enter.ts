@@ -88,7 +88,7 @@ namespace Tag {
                         .m(kto, kco)
                         .c(kcn, kdn)
                         .c(kco, kdo);
-                    director.c([this._mo.d()]);
+                    director.c([[this._mo.o(states.g(kt))]]);
                     var map: DefMap = this._mo.gM();
                     return director.lightOff()
                         .then(() => {

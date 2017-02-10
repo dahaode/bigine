@@ -2378,6 +2378,7 @@ var Sprite;
             if (!this._pi)
                 return _super.prototype.h.call(this, duration);
             if (this._h) {
+                this._po = true;
                 this._h.h();
                 this._h = undefined;
                 this.dispatchEvent(new Ev.WordsAnimation({
@@ -2457,23 +2458,33 @@ var Sprite;
          */
         Words.prototype.split = function (clob, theme, auto) {
             var _this = this;
-            var words = clob.split('\\r'), _txt = theme + 't', funcs = [];
+            var words = clob.split('\\r'), _txt = theme + 't';
             this._x[_txt].c();
             this._cb[theme].y = this._tp[theme].y;
-            Util.each(words, function (word, index) {
+            // Util.each(words, (word: string, index: number) => {
+            //     let bufs: Array<string> = word.split('\\l');
+            //     if (bufs.length == 1) {
+            //         funcs.push(() => this.every(word, theme, auto, index == words.length - 1));
+            //     } else {
+            //         Util.each(bufs, (buffer: string, i: number) => {
+            //             funcs.push(() => this.every(buffer, theme, auto, false, i));
+            //         });
+            //     }
+            // });
+            // return funcs.reduce((previous: Promise<Words>, current: (value: Words) => {} | Thenable<{}>) => {
+            //     return previous.then(current);
+            // }, Promise.resolve());
+            return Util.Q.every(words, function (word, index) {
+                _this._po = false;
                 var bufs = word.split('\\l');
-                if (bufs.length == 1) {
-                    funcs.push(function () { return _this.every(word, theme, auto, index == words.length - 1); });
-                }
-                else {
-                    Util.each(bufs, function (buffer, i) {
-                        funcs.push(function () { return _this.every(buffer, theme, auto, false, i); });
-                    });
-                }
+                return Util.Q.every(bufs, function (buffer, i) {
+                    if (_this._po)
+                        return Promise.resolve(_this);
+                    var wait = bufs.length == 1 ? (index == words.length - 1) : false;
+                    var pause = bufs.length == 1 ? -1 : i;
+                    return _this.every(buffer, theme, auto, wait, pause);
+                });
             });
-            return funcs.reduce(function (previous, current) {
-                return previous.then(current);
-            }, Promise.resolve());
         };
         /**
          * 对于分解的话逐行进行处理。
@@ -5724,6 +5735,7 @@ var Sprite;
             if (!this._pi)
                 return _super.prototype.h.call(this, duration);
             if (this._h) {
+                this._po = true;
                 this._h.h();
                 this._h = undefined;
                 this.dispatchEvent(new Ev.FullAnimation({
@@ -5745,33 +5757,52 @@ var Sprite;
             var _this = this;
             if (auto === void 0) { auto = false; }
             this.pI();
-            var words = clob.split('\\r'), funcs = [], font = this._be['s'] + 'px/' + Math.max(this._be['lh'], this._be['s']) + 'px "' + (this._be['ff'] || '') + '", ' + G.TextPhrase.FONT;
+            var words = clob.split('\\r'), font = this._be['s'] + 'px/' + Math.max(this._be['lh'], this._be['s']) + 'px "' + (this._be['ff'] || '') + '", ' + G.TextPhrase.FONT;
             this._ct.canvas.style.letterSpacing = this._be['ls'] + 'px'; // 设置字间距
-            Util.each(words, function (word, index) {
-                var bufs = word.split('\\l');
-                if (bufs.length == 1) {
-                    funcs.push(function () { return _this.every(word, auto, index == words.length - 1); });
-                }
-                else {
-                    var str = word.replace(/\\l/g, '')
-                        .replace(/\\n/g, '')
-                        .replace(/【#[0-9a-fA-F]{6}/g, '')
-                        .replace(/【/g, '')
-                        .replace(/】/g, '');
-                    _this._ct.save();
-                    _this._ct.font = font;
-                    var row = Math.ceil(_this._ct.measureText(str).width / _this._be.w);
-                    _this._ct.restore();
-                    if (_this._tl + row > _this._be['row'])
-                        _this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
-                    Util.each(bufs, function (buffer, i) {
-                        funcs.push(function () { return _this.every(buffer, auto, false, i); });
-                    });
-                }
+            // Util.each(words, (word: string, index: number) => {
+            //     let bufs: Array<string> = word.split('\\l');
+            //     if (bufs.length == 1) {
+            //         funcs.push(() => this.every(word, auto, index == words.length - 1));
+            //     } else {
+            //         let str: string = word.replace(/\\l/g, '')
+            //             .replace(/\\n/g, '')
+            //             .replace(/【#[0-9a-fA-F]{6}/g, '')
+            //             .replace(/【/g, '')
+            //             .replace(/】/g, '');
+            //         this._ct.save();
+            //         this._ct.font = font;
+            //         let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
+            //         this._ct.restore();
+            //         if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
+            //         Util.each(bufs, (buffer: string, i: number) => {
+            //             funcs.push(() => this.every(buffer, auto, false, i));
+            //         });
+            //     }
+            // });
+            // return funcs.reduce((previous: Promise<Full>, current: (value: Full) => {} | Thenable<{}>) => {
+            //     return previous.then(current);
+            // }, Promise.resolve());
+            return Util.Q.every(words, function (word, index) {
+                _this._po = false;
+                var bufs = word.split('\\l'), str = word.replace(/\\l/g, '')
+                    .replace(/\\n/g, '')
+                    .replace(/【#[0-9a-fA-F]{6}/g, '')
+                    .replace(/【/g, '')
+                    .replace(/】/g, '');
+                _this._ct.save();
+                _this._ct.font = font;
+                var row = Math.ceil(_this._ct.measureText(str).width / _this._be.w);
+                _this._ct.restore();
+                if (_this._tl + row > _this._be['row'])
+                    _this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
+                return Util.Q.every(bufs, function (buffer, i) {
+                    if (_this._po)
+                        return Promise.resolve(_this);
+                    var wait = bufs.length == 1 ? (index == words.length - 1) : false;
+                    var pause = bufs.length == 1 ? -1 : i;
+                    return _this.every(buffer, auto, wait, pause);
+                });
             });
-            return funcs.reduce(function (previous, current) {
-                return previous.then(current);
-            }, Promise.resolve());
         };
         /**
          * 对于分解的话进行处理。
@@ -6208,7 +6239,7 @@ var Runtime;
             this._x = {};
             this._c = new G.Stage(canvas.getContext('2d'))
                 .a(new G.Component()
-                .a(new G.Color(bounds, '#000')).i('b').o(1))
+                .a(new G.Color(bounds, '#000').i('n')).i('b').o(1))
                 .a(new G.Component()
                 .a(new G.Sprite(bounds)).i('M').o(0))
                 .a(new G.Component()
@@ -6621,9 +6652,12 @@ var Runtime;
             }));
             return this.lightOn()
                 .then(function () { return gTip.u(words).v(); })
-                .then(function () { return gTip.p(_this._t = new G.WaitForClick()); })
+                .then(function () { return gTip.p(_this._t = _this._h = new G.WaitForClick()); })
                 .then(function () { return gTip.h(); })
-                .then(function () { return _this._r; });
+                .then(function () {
+                _this._h = _this._t = undefined;
+                return _this._r;
+            });
         };
         ;
         /**
@@ -6967,7 +7001,7 @@ var Runtime;
         CanvasDirector.prototype.reset = function () {
             var _this = this;
             return _super.prototype.reset.call(this).then(function (runtime) {
-                var gBack = _this._c.q('b')[0], gColor = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000')), series = Core.IRuntime.Series.Rest == _this._fs || Core.IRuntime.Series.Last == _this._fs;
+                var gBack = _this._c.q('b')[0], gColor = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000').i('n')), series = Core.IRuntime.Series.Rest == _this._fs || Core.IRuntime.Series.Last == _this._fs;
                 // 需要先删除旧选择再添加新选择，否则在选择处读档时，时序流中断(因为未删除监听事件)
                 _this._c.e(_this._x['C']);
                 _this._x['C'] = new Sprite.Choose(_this._pt, function (ev) {
@@ -8952,7 +8986,7 @@ var Tag;
                     .m(kto, kco)
                     .c(kcn, kdn)
                     .c(kco, kdo);
-                director.c([_this._mo.d()]);
+                director.c([[_this._mo.o(states.g(kt))]]);
                 var map = _this._mo.gM();
                 return director.lightOff()
                     .then(function () {
@@ -9441,8 +9475,9 @@ var Tag;
         /**
          * 获取依赖素材资源列表。
          */
-        AsRoom.prototype.$d = function () {
-            return this._mo.d();
+        AsRoom.prototype.$d = function (time) {
+            return [this._mo.o(this._p[1] || (time || '默认'))];
+            //return this._mo.d();
         };
         /**
          * 获取关联房间。
@@ -10072,16 +10107,25 @@ var Tag;
         /**
          * 获取使用资源列表。
          */
-        Loop.prototype.c = function () {
+        Loop.prototype.c = function (time) {
+            var _this = this;
             var frame = [], resources = [], pack = function () {
                 if (frame.length) {
                     resources.push(frame);
                     frame = [];
                 }
             };
+            this._time = time;
             Util.each(this._s, function (action) {
                 switch (action.gN()) {
+                    case 'AsTime':
+                        frame = frame.concat(action.$d(_this._room, _this._time));
+                        _this._time = action.gT();
+                        break;
                     case 'AsRoom':
+                        frame = frame.concat(action.$d(_this._time));
+                        _this._room = action.gR();
+                        break;
                     case 'CharOn':
                     case 'CharPose':
                     case 'CharSet':
@@ -10145,10 +10189,10 @@ var Tag;
          */
         Content.prototype.p = function (runtime) {
             var _this = this;
-            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', id = states.g(kid), offline = Bigine.offline;
+            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', kt = '_t', id = states.g(kid), time = states.g(kt), offline = Bigine.offline;
             logger.o(title);
             states.s('$d', 1);
-            return director.c(offline ? [[]] : Tag.Loop.prototype.c.call(this))
+            return director.c(offline ? [[]] : Tag.Loop.prototype.c.call(this, time))
                 .then(function () { return Util.Q.every(_this._s, function (action) {
                 if (runtime.gH())
                     return E.doHalt();
@@ -13361,10 +13405,10 @@ var Tag;
          * 执行。
          */
         Fail.prototype.p = function (runtime) {
-            runtime.gS().d('_rc')
-                .d('_rd')
-                .d('$rc')
-                .d('$rd');
+            // runtime.gS().d('_rc')
+            //     .d('_rd')
+            //     .d('$rc')
+            //     .d('$rd');
             runtime.t(function () { return runtime.gD().FAIL()
                 .then(function () { return runtime.gE().p(Core.ISceneTag.Type.Fail, runtime); }); });
             return E.doHalt();
@@ -13536,6 +13580,14 @@ var Tag;
          */
         AsTime.prototype.gT = function () {
             return this._p[0];
+        };
+        /**
+         * 获取依赖素材资源列表。
+         */
+        AsTime.prototype.$d = function (room, time) {
+            if (time == this._p[0] || !room)
+                return [];
+            return [room.o(this._p[0])];
         };
         return AsTime;
     }(Tag.Action));
@@ -14967,7 +15019,7 @@ var Tag;
             Util.each(this._s, function (tag) {
                 value += states.g(tag.$p(0)) - 0 || 0;
             });
-            states.s(this._p[0], value)
+            states.s(this._p[0], parseFloat(value.toFixed(2)))
                 .c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;
@@ -15014,7 +15066,7 @@ var Tag;
             Util.each(this._s, function (tag) {
                 value -= states.g(tag.$p(0)) - 0 || 0;
             });
-            states.s(this._p[0], value)
+            states.s(this._p[0], parseFloat(value.toFixed(2)))
                 .c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;
@@ -15061,7 +15113,7 @@ var Tag;
             Util.each(this._s, function (tag) {
                 value *= states.g(tag.$p(0)) - 0 || 0;
             });
-            states.s(this._p[0], value)
+            states.s(this._p[0], parseFloat(value.toFixed(2)))
                 .c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;
@@ -16976,7 +17028,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.25.9-p1';
+    Bigine.version = '0.26.0';
     Bigine.domain = '';
     //export var offline: boolean = true;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

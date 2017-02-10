@@ -52,6 +52,11 @@ namespace Sprite {
         private _tp: Util.IHashTable<any>;
 
         /**
+         * 是否隐藏，隐藏后时序流快进。
+         */
+        private _po: boolean;
+
+        /**
          * 构造函数。
          */
         constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.WordsAnimation) => void) {
@@ -154,6 +159,7 @@ namespace Sprite {
         public h(duration?: number): Promise<Words> {
             if (!this._pi) return super.h(duration);
             if (this._h) {
+                this._po = true;
                 this._h.h();
                 this._h = undefined;
                 this.dispatchEvent(new Ev.WordsAnimation({
@@ -231,23 +237,32 @@ namespace Sprite {
          */
         protected split(clob: string, theme: string, auto: boolean): Promise<Words> {
             let words: Array<string> = clob.split('\\r'),
-                _txt: string = theme + 't',
-                funcs: Array<Function> = [];
+                _txt: string = theme + 't';
             (<G.Sprite> this._x[_txt]).c();
             this._cb[theme].y = this._tp[theme].y;
-            Util.each(words, (word: string, index: number) => {
+            // Util.each(words, (word: string, index: number) => {
+            //     let bufs: Array<string> = word.split('\\l');
+            //     if (bufs.length == 1) {
+            //         funcs.push(() => this.every(word, theme, auto, index == words.length - 1));
+            //     } else {
+            //         Util.each(bufs, (buffer: string, i: number) => {
+            //             funcs.push(() => this.every(buffer, theme, auto, false, i));
+            //         });
+            //     }
+            // });
+            // return funcs.reduce((previous: Promise<Words>, current: (value: Words) => {} | Thenable<{}>) => {
+            //     return previous.then(current);
+            // }, Promise.resolve());
+            return Util.Q.every(words, (word: string, index: number) => {
+                this._po = false;
                 let bufs: Array<string> = word.split('\\l');
-                if (bufs.length == 1) {
-                    funcs.push(() => this.every(word, theme, auto, index == words.length - 1));
-                } else {
-                    Util.each(bufs, (buffer: string, i: number) => {
-                        funcs.push(() => this.every(buffer, theme, auto, false, i));
-                    });
-                }
+                return Util.Q.every(bufs, (buffer: string, i: number) => {
+                    if (this._po) return Promise.resolve(this);
+                    var wait: boolean = bufs.length == 1 ? (index == words.length - 1) : false;
+                    var pause: number = bufs.length == 1 ? -1 : i;
+                    return this.every(buffer, theme, auto, wait, pause);
+                });
             });
-            return funcs.reduce((previous: Promise<Words>, current: (value: Words) => {} | Thenable<{}>) => {
-                return previous.then(current);
-            }, Promise.resolve());
         }
 
         /**

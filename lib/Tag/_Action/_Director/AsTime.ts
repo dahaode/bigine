@@ -39,5 +39,13 @@ namespace Tag {
         public gT(): string {
             return this._p[0];
         }
+
+        /**
+         * 获取依赖素材资源列表。
+         */
+        public $d(room?: DefRoom, time?: string): Core.IResource<HTMLImageElement>[] {
+            if (time == this._p[0] || !room) return [];
+            return [room.o(this._p[0])];
+        }
     }
 }

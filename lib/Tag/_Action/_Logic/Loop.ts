@@ -21,6 +21,16 @@ namespace Tag {
 
     export class Loop extends Action implements Core.IBlock {
         /**
+         * 记录设置房间。
+         */
+        private _room: DefRoom;
+
+        /**
+         * 记录设置时间。
+         */
+        private _time: string;
+
+        /**
          * 获取标签名称。
          */
         public gN(): string {
@@ -109,7 +119,7 @@ namespace Tag {
         /**
          * 获取使用资源列表。
          */
-        public c(): Core.IResource<string | HTMLImageElement>[][] {
+        public c(time?: string): Core.IResource<string | HTMLImageElement>[][] {
             var frame: Core.IResource<string | HTMLImageElement>[] = [],
                 resources: Core.IResource<string | HTMLImageElement>[][] = [],
                 pack: () => void = () => {
@@ -118,9 +128,17 @@ namespace Tag {
                         frame = [];
                     }
                 };
+            this._time = time;
             Util.each(this._s, (action: Action) => {
                 switch (action.gN()) {
+                    case 'AsTime':
+                        frame = frame.concat((<AsTime> action).$d(this._room, this._time));
+                        this._time = (<AsTime> action).gT();
+                        break;
                     case 'AsRoom':
+                        frame = frame.concat((<AsRoom> action).$d(this._time));
+                        this._room = (<AsRoom> action).gR();
+                        break;
                     case 'CharOn':
                     case 'CharPose':
                     case 'CharSet':

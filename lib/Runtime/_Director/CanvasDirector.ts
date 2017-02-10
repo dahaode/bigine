@@ -173,7 +173,7 @@ namespace Runtime {
             this._x = {};
             this._c = <G.Stage> new G.Stage(canvas.getContext('2d'))
                 .a(new G.Component()
-                    .a(new G.Color(bounds, '#000')).i('b').o(1))
+                    .a(new G.Color(bounds, '#000').i('n')).i('b').o(1))
                 .a(new G.Component()
                     .a(new G.Sprite(bounds)).i('M').o(0))
                 .a(new G.Component()
@@ -601,9 +601,12 @@ namespace Runtime {
             }));
             return this.lightOn()
                 .then(() => gTip.u(words).v())
-                .then(() => gTip.p(this._t = new G.WaitForClick()))
+                .then(() => gTip.p(this._t = this._h = new G.WaitForClick()))
                 .then(() => gTip.h())
-                .then(() => this._r);
+                .then(() => {
+                    this._h = this._t = undefined;
+                    return this._r;
+                });
         };
 
         /**
@@ -970,7 +973,7 @@ namespace Runtime {
         public reset(): Promise<Core.IRuntime> {
             return super.reset().then((runtime: Core.IRuntime) => {
                 var gBack: G.Element = this._c.q('b')[0],
-                    gColor: G.Element = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000')),
+                    gColor: G.Element = new G.Component().a(new G.Color(CanvasDirector.BOUNDS, '#000').i('n')),
                     series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
                 // 需要先删除旧选择再添加新选择，否则在选择处读档时，时序流中断(因为未删除监听事件)
                 this._c.e(this._x['C']);

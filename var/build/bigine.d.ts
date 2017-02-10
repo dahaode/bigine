@@ -606,6 +606,7 @@ declare namespace __Bigine {
             private _si;
             private _cb;
             private _tp;
+            private _po;
             constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.WordsAnimation) => void);
             protected pI(): Words;
             h(duration?: number): Promise<Words>;
@@ -1099,6 +1100,7 @@ declare namespace __Bigine {
             private _tl;
             private _tx;
             private _ct;
+            private _po;
             constructor(theme: Util.IHashTable<Util.IHashTable<any>>, context: CanvasRenderingContext2D, listen: (ev: Ev.FullAnimation) => void);
             protected pI(): Full;
             h(duration?: number): Promise<Full>;
@@ -1605,7 +1607,7 @@ declare namespace __Bigine {
             gN(): string;
             $b(ep: Core.IEpisode): void;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
-            $d(): Core.IResource<HTMLImageElement>[];
+            $d(time?: string): Core.IResource<HTMLImageElement>[];
             gR(): DefRoom;
         }
     }
@@ -1691,11 +1693,13 @@ declare namespace __Bigine {
     }
     namespace Tag {
         class Loop extends Action implements Core.IBlock {
+            private _room;
+            private _time;
             gN(): string;
             t(states: Core.IStates): boolean;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
             gA(): string[];
-            c(): Core.IResource<string | HTMLImageElement>[][];
+            c(time?: string): Core.IResource<string | HTMLImageElement>[][];
         }
     }
     namespace Tag {
@@ -1980,6 +1984,7 @@ declare namespace __Bigine {
             gN(): string;
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
             gT(): string;
+            $d(room?: DefRoom, time?: string): Core.IResource<HTMLImageElement>[];
         }
     }
     namespace Tag {

@@ -29,7 +29,7 @@ namespace Tag {
             Util.each(this._s, (tag: Unknown) => {
                 value *= states.g(tag.$p(0)) - 0 || 0;
             });
-            states.s(this._p[0], value)
+            states.s(this._p[0], parseFloat(value.toFixed(2)))
                 .c(this._p[0], '$v' + depth)
                 .s('$t' + depth, false);
             return true;
