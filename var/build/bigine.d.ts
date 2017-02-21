@@ -515,7 +515,7 @@ declare namespace __Bigine {
             h(duration?: number): Promise<Sprite>;
             l(): Resource.Resource<string | HTMLImageElement>[];
             protected $a(desc: string): G.Text.Align;
-            protected $w(element: G.Text, words: string, hiColor: string): Sprite;
+            protected $w(element: any, words: string, hiColor: string): Sprite;
         }
     }
     namespace Sprite {
@@ -606,8 +606,9 @@ declare namespace __Bigine {
             private _si;
             private _cb;
             private _tp;
+            private _ct;
             private _po;
-            constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.WordsAnimation) => void);
+            constructor(context: CanvasRenderingContext2D, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.WordsAnimation) => void);
             protected pI(): Words;
             h(duration?: number): Promise<Words>;
             vv(clob: string, auto?: boolean): Promise<Words>;
@@ -1107,7 +1108,7 @@ declare namespace __Bigine {
             u(clob: string, auto?: boolean): Promise<Full>;
             protected every(clob: string, auto: boolean, wait: boolean, pause?: number): Promise<Full>;
             clean(): Promise<Full>;
-            $v(text: G.Text, auto: boolean, wait: boolean): Promise<G.Element>;
+            $v(text: G.Paragraph, auto: boolean, wait: boolean): Promise<G.Element>;
             private $c();
         }
     }
@@ -2400,6 +2401,7 @@ declare namespace __Bigine {
             nickname(): string;
             plots(data: Util.IHashTable<string> | string): Runtime;
             autoLoad(id: string, type?: string): Runtime;
+            height(h: number): Runtime;
             s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime;
             a(action: Core.IIdableTag): Runtime;
             gH(): boolean;
@@ -2442,6 +2444,7 @@ declare namespace __Bigine {
     namespace Bigine {
         var version: string;
         var domain: string;
+        var height: number;
         var offline: boolean;
     }
 }

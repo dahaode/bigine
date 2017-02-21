@@ -398,6 +398,11 @@ namespace Runtime {
             return this;
         }
 
+        public height(h: number): Runtime {
+            Bigine.height = h;
+            return this;
+        }
+
         /**
          * 播报当前事件。
          */

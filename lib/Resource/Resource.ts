@@ -58,7 +58,7 @@ namespace Resource {
                 types: typeof Core.IResource.Type = Core.IResource.Type,
                 ie9: boolean = env.MSIE && 'undefined' == typeof URL,
                 ext: string = uri.substr(-4),
-                height: number = 720 <= env.Screen.Height ? 720 : 360,
+                height: number = Bigine.height,
                 filename: string = height + '.',
                 offline: boolean = Bigine.offline;
             if (types.Raw == type) {

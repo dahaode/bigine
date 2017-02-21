@@ -76,15 +76,16 @@ namespace Sprite {
         /**
          * 处理文本高亮规则。
          */
-        protected $w(element: G.Text, words: string, hiColor: string): Sprite {
+        protected $w(element: any, words: string, hiColor: string): Sprite {
             let buffer: string = '',
                 color: string = '',
                 hilite: boolean = false,
-                ii: number;
+                ii: number,
+                phrase: any = ('gP' in element) ? eval('G.Phrase') : eval('G.TextPhrase');
             element.c();
             for (ii = 0; ii < words.length; ii++) {
                 if ('【' == words[ii] && !hilite) {
-                    element.a(new G.TextPhrase(buffer));
+                    element.a(new phrase(buffer));
                     buffer = '';
                     color = words.substr(ii + 1, 7);
                     if (/^#[0-9a-fA-F]{6}$/.test(color)) {
@@ -94,14 +95,14 @@ namespace Sprite {
                     }
                     hilite = true;
                 } else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase(buffer, color));
+                    element.a(new phrase(buffer, color));
                     buffer = color = '';
                     hilite = false;
                 } else
                     buffer += words[ii];
             }
             if (buffer)
-                element.a(new G.TextPhrase(buffer, hilite ? color : ''));
+                element.a(new phrase(buffer, hilite ? color : ''));
             return this;
         }
     }

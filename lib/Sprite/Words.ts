@@ -52,6 +52,11 @@ namespace Sprite {
         private _tp: Util.IHashTable<any>;
 
         /**
+         * 离线 Canvas，用于提前计算文字行数。
+         */
+        private _ct: CanvasRenderingContext2D;
+
+        /**
          * 是否隐藏，隐藏后时序流快进。
          */
         private _po: boolean;
@@ -59,7 +64,7 @@ namespace Sprite {
         /**
          * 构造函数。
          */
-        constructor(voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.WordsAnimation) => void) {
+        constructor(context: CanvasRenderingContext2D, voiceover: Util.IHashTable<Util.IHashTable<any>>, monolog: Util.IHashTable<Util.IHashTable<any>>, speak: Util.IHashTable<Util.IHashTable<any>>, listen: (ev: Ev.WordsAnimation) => void) {
             let raw: Core.IResource.Type = Core.IResource.Type.Raw,
                 rr: typeof Resource.Resource = Resource.Resource,
                 _vback: Util.IHashTable<any> = voiceover['back'],
@@ -91,6 +96,7 @@ namespace Sprite {
                 s: <G.IBounds> _savat
             };
             this._si = undefined;
+            this._ct = context;
             this._tp = {
                 v: {x: _vtext['x'], y: _vtext['y']},
                 m: {x: _mtext['x'], y: _mtext['y']},
@@ -240,19 +246,6 @@ namespace Sprite {
                 _txt: string = theme + 't';
             (<G.Sprite> this._x[_txt]).c();
             this._cb[theme].y = this._tp[theme].y;
-            // Util.each(words, (word: string, index: number) => {
-            //     let bufs: Array<string> = word.split('\\l');
-            //     if (bufs.length == 1) {
-            //         funcs.push(() => this.every(word, theme, auto, index == words.length - 1));
-            //     } else {
-            //         Util.each(bufs, (buffer: string, i: number) => {
-            //             funcs.push(() => this.every(buffer, theme, auto, false, i));
-            //         });
-            //     }
-            // });
-            // return funcs.reduce((previous: Promise<Words>, current: (value: Words) => {} | Thenable<{}>) => {
-            //     return previous.then(current);
-            // }, Promise.resolve());
             return Util.Q.every(words, (word: string, index: number) => {
                 this._po = false;
                 let bufs: Array<string> = word.split('\\l');
@@ -266,16 +259,15 @@ namespace Sprite {
         }
 
         /**
-         * 对于分解的话逐行进行处理。
+         * 对于分解的文本逐条进行处理。
          */
         protected every(clob: string, theme: string, auto: boolean, wait: boolean, pause: number = -1): Promise<Words> {
             let _img: string = theme + 'c',
                 _txt: string = theme + 't',
                 eRow: number = 0,
                 tBound: G.IBounds = Util.clone(this._cb[theme]),
-                tText: G.Text,
+                para: G.Paragraph,
                 image: G.Image = <G.Image> this._x[_img],
-                left: G.Text.Align = G.Text.Align.Left,
                 lHeight: number = Math.max(tBound['lh'], tBound['s']);
             if (image) image.o(0);
             while (/^\\n.*/.test(clob)) {   // 计算开头的空白行行数
@@ -285,23 +277,19 @@ namespace Sprite {
             if (eRow > 0) {
                 tBound.y += eRow * lHeight;
                 this._tp['c'].x = 0;
-            } else {
-                if (pause > 0) tBound.y -= lHeight;
             }
             if (clob == '') return Promise.resolve(this);
-            tText = new G.Text(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
-                .tc(tBound['c'])
-                .tl(tBound['ls'])
+            if (pause > 0) tBound.y -= lHeight;
+            para = new G.Paragraph(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], true)
                 .to(pause > 0 ? this._tp['c'].x : 0);
-                //.ts(tBound['ss']);
-            (<G.Sprite> this._x[_txt]).a(tText);
-            this.$w(<G.Text> tText.o(0), clob, this._c[theme]);
             (<G.Sprite> this._x[theme]).o(1);
-            return this.$v(tText, auto, image, pause >= 0 ? true : wait).then(() => {
+            (<G.Sprite> this._x[_txt]).a(para);
+            this.$w(para.o(0), clob, this._c[theme]);
+            return this.$v(para, auto, image, pause >= 0 ? true : wait).then(() => {
                 if (this._h) {
-                    let pnt: G.IPoint = tText.gCp();
-                    this._cb[theme].y = pnt.y;
-                    this._tp['c'].x = pnt.x - this._tp[theme].x;
+                    let pnt: G.IPoint = para.gP(this._ct);
+                    this._cb[theme].y = pnt.y + lHeight;
+                    this._tp['c'].x = pnt.x;
                 }
                 return this;
             });
@@ -310,17 +298,17 @@ namespace Sprite {
         /**
          * 显示内容文字。
          */
-        private $v(text: G.Text, auto: boolean, image: G.Image, wait: boolean): Promise<G.Element> {
+        private $v(text: G.Paragraph, auto: boolean, image: G.Image, wait: boolean): Promise<G.Element> {
             this.o(1);
             return new Promise<void>((resolve: () => void) => {
-                let aType: G.Type = new G.Type(1),
+                let aTyping: G.Typing = new G.Typing(1),
                     aWFC: G.WaitForClick;
                 if (auto)
-                    return text.p(aType).then(() => {
+                    return text.p(aTyping).then(() => {
                         resolve();
                     });
                 aWFC = new G.WaitForClick(() => {
-                    aType.h();
+                    aTyping.h();
                 });
                 this._h = aWFC;
                 this.dispatchEvent(new Ev.WordsAnimation({
@@ -328,7 +316,7 @@ namespace Sprite {
                     animation: aWFC
                 }));
                 Promise.race<any>([
-                    text.p(aType).then(() => {
+                    text.p(aTyping).then(() => {
                         aWFC.h();
                     }),
                     this.p(aWFC)
@@ -351,12 +339,12 @@ namespace Sprite {
                         animation = new G.WaitForClick();
                         target = this;
                         if (image) {
-                        image.o(1);
-                        this._si = setInterval(() => {
-                            let next: number = image.gO() == 1 ? 0 : 1;
-                            image.o(next);
-                        }, 500);
-                    }
+                            image.o(1);
+                            this._si = setInterval(() => {
+                                let next: number = image.gO() == 1 ? 0 : 1;
+                                image.o(next);
+                            }, 500);
+                        }
                     }
                 } else {
                     animation = new G.TypeDelay(0.1);

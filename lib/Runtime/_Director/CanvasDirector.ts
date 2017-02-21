@@ -335,41 +335,6 @@ namespace Runtime {
                             return this.lightOn();
                         });
                 });
-            // let series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
-            // (<Sprite.Start> this._x['s']).u(title, series, this._c);
-            // return this.c([[this._i['o']]])
-            //     .then(() => this.reset())
-            //     .then(() => {
-            //         this._c.z();
-            //         let q: Promise<any>;
-            //         if (!isWx) {
-            //             let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
-            //             this._c.a(gLogo, this._x['c']);
-            //             q = this.lightOn()
-            //                 .then(() => gLogo.p(new G.Delay(1000)))
-            //                 .then(() => this.lightOff())
-            //                 .then(() => this._c.e(gLogo));
-            //         } else {
-            //             q = this.lightOff();
-            //         }
-            //         return q.then(() => {
-            //                 if (!author && !title) return;
-            //                 let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
-            //                 gAuthor.v(0);
-            //                 return this.lightOn()
-            //                     .then(() => gAuthor.p(new G.Delay(1000)))
-            //                     .then(() => this.lightOff())
-            //                     .then(() => gAuthor.o(0));
-            //             }).then(() => super.OP(start, title, author, isWx))
-            //             .then((runtime: Core.IRuntime) => {
-            //                 if (!this._a)
-            //                     this._x['t'].v(0);
-            //                 if (!start)
-            //                     return runtime;
-            //                 this._x['s'].v(0);
-            //                 return this.lightOn();
-            //             });
-            //     });
         }
 
         /**
@@ -1160,7 +1125,7 @@ namespace Runtime {
             // 特写。
             this._c.a(this._x['G'] = <Sprite.CG> new Sprite.CG(theme['cg']), gCurtain);
             // 某白。
-            this._x['W'] = <Sprite.Words> new Sprite.Words(theme['voiceover'], theme['monolog'], theme['speak'], (ev: Ev.WordsAnimation) => {
+            this._x['W'] = <Sprite.Words> new Sprite.Words(this._cm, theme['voiceover'], theme['monolog'], theme['speak'], (ev: Ev.WordsAnimation) => {
                     this._t = this._h = ev.animation;
                 });
             resources.unshift(this._x['W'].l());
@@ -1176,10 +1141,6 @@ namespace Runtime {
             this._x['S'] = <Sprite.Status> new Sprite.Status(theme['status']);
             resources.unshift(this._x['S'].l());
             this._c.a(this._x['S'], gCurtain);
-            // 选择。
-            // this._x['C'] = <Sprite.Choose> new Sprite.Choose(theme['choose']);
-            // resources.unshift(this._x['C'].l());
-            // this._c.a(this._x['C'], gCurtain);
             // 提示。
             this._x['T'] = <Sprite.Tip> new Sprite.Tip(theme['tip']);
             resources.unshift(this._x['T'].l());
@@ -1240,38 +1201,18 @@ namespace Runtime {
                 });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
-            // let _s: () => void = () => {
-            //     if (this._s) return;
-            //     this._s = {
-            //         b: new Audio(),
-            //         e: new Audio(),
-            //         s: new Audio()
-            //     };
-            //     this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
-            //     this._s['b'].loop = this._s['s'].loop = true;
-            //     this._s['b'].src = this._s['s'].src = this._i['s'].l();
-            //     this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
-            //     this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
-            //     this._s['e']['cd'] = -1;
-            //     this.playMusic(Core.IResource.Type.BGM);
-            //     this.playMusic(Core.IResource.Type.ESM);
-            //     this.playSE();
-            // };
             // 开始菜单。
             this._x['s'] = <Sprite.Start> new Sprite.Start(theme['start'], (event: Ev.StartNew) => {
-                    //_s();
                     this.playSE(this._i['t'] || this._i['c']);
                     this.lightOff().then(() => {
                         event.target.h(0);
                         this._r.dispatchEvent(new Ev.Begin({ target: this._r.gE() }));
                     });
                 }, () => {
-                    //_s();
                     slotsFromStart = true;
                     this.playSE(this._i['t'] || this._i['c']);
                     (<Sprite.SeriesSlots> this._x['ss']).vl(this._r);
                 }, () => {
-                    //_s();
                     slotsFromStart = true;
                     this.playSE(this._i['t'] || this._i['c']);
                     (<Sprite.Slots> this._x['sl']).vl(this._r)

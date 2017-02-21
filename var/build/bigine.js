@@ -646,7 +646,9 @@ var Resource;
          */
         function Resource(uri, type, start) {
             if (start === void 0) { start = false; }
-            var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext = uri.substr(-4), height = 720 <= env.Screen.Height ? 720 : 360, filename = height + '.', offline = Bigine.offline;
+            var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext = uri.substr(-4), 
+            //height: number = 720 <= env.Screen.Height ? 720 : 360,
+            height = Bigine.height, filename = height + '.', offline = Bigine.offline;
             if (types.Raw == type) {
                 if (offline) {
                     this._l = 'res/theme' + uri.substr(uri.indexOf('\/'));
@@ -1856,11 +1858,11 @@ var Sprite;
          * 处理文本高亮规则。
          */
         Sprite.prototype.$w = function (element, words, hiColor) {
-            var buffer = '', color = '', hilite = false, ii;
+            var buffer = '', color = '', hilite = false, ii, phrase = ('gP' in element) ? eval('G.Phrase') : eval('G.TextPhrase');
             element.c();
             for (ii = 0; ii < words.length; ii++) {
                 if ('【' == words[ii] && !hilite) {
-                    element.a(new G.TextPhrase(buffer));
+                    element.a(new phrase(buffer));
                     buffer = '';
                     color = words.substr(ii + 1, 7);
                     if (/^#[0-9a-fA-F]{6}$/.test(color)) {
@@ -1872,7 +1874,7 @@ var Sprite;
                     hilite = true;
                 }
                 else if ('】' == words[ii] && hilite) {
-                    element.a(new G.TextPhrase(buffer, color));
+                    element.a(new phrase(buffer, color));
                     buffer = color = '';
                     hilite = false;
                 }
@@ -1880,7 +1882,7 @@ var Sprite;
                     buffer += words[ii];
             }
             if (buffer)
-                element.a(new G.TextPhrase(buffer, hilite ? color : ''));
+                element.a(new phrase(buffer, hilite ? color : ''));
             return this;
         };
         return Sprite;
@@ -2305,7 +2307,7 @@ var Sprite;
         /**
          * 构造函数。
          */
-        function Words(voiceover, monolog, speak, listen) {
+        function Words(context, voiceover, monolog, speak, listen) {
             var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _vback = voiceover['back'], _vtext = voiceover['text'], _vcurs = voiceover['cursor'], _mback = monolog['back'], _mavat = monolog['avatar'], _mtext = monolog['text'], _mcurs = monolog['cursor'], _sback = speak['back'], _savat = speak['avatar'], _stext = speak['text'], _scurs = speak['cursor'], theme = { voiceover: voiceover, monolog: monolog, speak: speak };
             _super.call(this, theme);
             this._rr = [
@@ -2324,6 +2326,7 @@ var Sprite;
                 s: _savat
             };
             this._si = undefined;
+            this._ct = context;
             this._tp = {
                 v: { x: _vtext['x'], y: _vtext['y'] },
                 m: { x: _mtext['x'], y: _mtext['y'] },
@@ -2461,19 +2464,6 @@ var Sprite;
             var words = clob.split('\\r'), _txt = theme + 't';
             this._x[_txt].c();
             this._cb[theme].y = this._tp[theme].y;
-            // Util.each(words, (word: string, index: number) => {
-            //     let bufs: Array<string> = word.split('\\l');
-            //     if (bufs.length == 1) {
-            //         funcs.push(() => this.every(word, theme, auto, index == words.length - 1));
-            //     } else {
-            //         Util.each(bufs, (buffer: string, i: number) => {
-            //             funcs.push(() => this.every(buffer, theme, auto, false, i));
-            //         });
-            //     }
-            // });
-            // return funcs.reduce((previous: Promise<Words>, current: (value: Words) => {} | Thenable<{}>) => {
-            //     return previous.then(current);
-            // }, Promise.resolve());
             return Util.Q.every(words, function (word, index) {
                 _this._po = false;
                 var bufs = word.split('\\l');
@@ -2487,12 +2477,12 @@ var Sprite;
             });
         };
         /**
-         * 对于分解的话逐行进行处理。
+         * 对于分解的文本逐条进行处理。
          */
         Words.prototype.every = function (clob, theme, auto, wait, pause) {
             var _this = this;
             if (pause === void 0) { pause = -1; }
-            var _img = theme + 'c', _txt = theme + 't', eRow = 0, tBound = Util.clone(this._cb[theme]), tText, image = this._x[_img], left = G.Text.Align.Left, lHeight = Math.max(tBound['lh'], tBound['s']);
+            var _img = theme + 'c', _txt = theme + 't', eRow = 0, tBound = Util.clone(this._cb[theme]), para, image = this._x[_img], lHeight = Math.max(tBound['lh'], tBound['s']);
             if (image)
                 image.o(0);
             while (/^\\n.*/.test(clob)) {
@@ -2503,25 +2493,20 @@ var Sprite;
                 tBound.y += eRow * lHeight;
                 this._tp['c'].x = 0;
             }
-            else {
-                if (pause > 0)
-                    tBound.y -= lHeight;
-            }
             if (clob == '')
                 return Promise.resolve(this);
-            tText = new G.Text(tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
-                .tc(tBound['c'])
-                .tl(tBound['ls'])
+            if (pause > 0)
+                tBound.y -= lHeight;
+            para = new G.Paragraph(tBound, tBound['ff'], tBound['s'], tBound['lh'], true)
                 .to(pause > 0 ? this._tp['c'].x : 0);
-            //.ts(tBound['ss']);
-            this._x[_txt].a(tText);
-            this.$w(tText.o(0), clob, this._c[theme]);
             this._x[theme].o(1);
-            return this.$v(tText, auto, image, pause >= 0 ? true : wait).then(function () {
+            this._x[_txt].a(para);
+            this.$w(para.o(0), clob, this._c[theme]);
+            return this.$v(para, auto, image, pause >= 0 ? true : wait).then(function () {
                 if (_this._h) {
-                    var pnt = tText.gCp();
-                    _this._cb[theme].y = pnt.y;
-                    _this._tp['c'].x = pnt.x - _this._tp[theme].x;
+                    var pnt = para.gP(_this._ct);
+                    _this._cb[theme].y = pnt.y + lHeight;
+                    _this._tp['c'].x = pnt.x;
                 }
                 return _this;
             });
@@ -2533,13 +2518,13 @@ var Sprite;
             var _this = this;
             this.o(1);
             return new Promise(function (resolve) {
-                var aType = new G.Type(1), aWFC;
+                var aTyping = new G.Typing(1), aWFC;
                 if (auto)
-                    return text.p(aType).then(function () {
+                    return text.p(aTyping).then(function () {
                         resolve();
                     });
                 aWFC = new G.WaitForClick(function () {
-                    aType.h();
+                    aTyping.h();
                 });
                 _this._h = aWFC;
                 _this.dispatchEvent(new Ev.WordsAnimation({
@@ -2547,7 +2532,7 @@ var Sprite;
                     animation: aWFC
                 }));
                 Promise.race([
-                    text.p(aType).then(function () {
+                    text.p(aTyping).then(function () {
                         aWFC.h();
                     }),
                     _this.p(aWFC)
@@ -5757,44 +5742,15 @@ var Sprite;
             var _this = this;
             if (auto === void 0) { auto = false; }
             this.pI();
-            var words = clob.split('\\r'), font = this._be['s'] + 'px/' + Math.max(this._be['lh'], this._be['s']) + 'px "' + (this._be['ff'] || '') + '", ' + G.TextPhrase.FONT;
-            this._ct.canvas.style.letterSpacing = this._be['ls'] + 'px'; // 设置字间距
-            // Util.each(words, (word: string, index: number) => {
-            //     let bufs: Array<string> = word.split('\\l');
-            //     if (bufs.length == 1) {
-            //         funcs.push(() => this.every(word, auto, index == words.length - 1));
-            //     } else {
-            //         let str: string = word.replace(/\\l/g, '')
-            //             .replace(/\\n/g, '')
-            //             .replace(/【#[0-9a-fA-F]{6}/g, '')
-            //             .replace(/【/g, '')
-            //             .replace(/】/g, '');
-            //         this._ct.save();
-            //         this._ct.font = font;
-            //         let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
-            //         this._ct.restore();
-            //         if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
-            //         Util.each(bufs, (buffer: string, i: number) => {
-            //             funcs.push(() => this.every(buffer, auto, false, i));
-            //         });
-            //     }
-            // });
-            // return funcs.reduce((previous: Promise<Full>, current: (value: Full) => {} | Thenable<{}>) => {
-            //     return previous.then(current);
-            // }, Promise.resolve());
+            var words = clob.split('\\r');
             return Util.Q.every(words, function (word, index) {
                 _this._po = false;
-                var bufs = word.split('\\l'), str = word.replace(/\\l/g, '')
-                    .replace(/\\n/g, '')
-                    .replace(/【#[0-9a-fA-F]{6}/g, '')
-                    .replace(/【/g, '')
-                    .replace(/】/g, '');
-                _this._ct.save();
-                _this._ct.font = font;
-                var row = Math.ceil(_this._ct.measureText(str).width / _this._be.w);
-                _this._ct.restore();
-                if (_this._tl + row > _this._be['row'])
-                    _this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
+                var str = word.replace(/\\l/g, '').replace(/\\n/g, ''), bufs = word.split('\\l'), tBound = Util.clone(_this._cb), para = new G.Paragraph(tBound, tBound['ff'], tBound['s'], tBound['lh'], true);
+                _this.$w(para, str, _this._c);
+                var pnt = para.gP(_this._ct);
+                _this._tl = (pnt.y - _this._be.y) / Math.max(_this._be['lh'], _this._be['s']) + 1;
+                if (_this._tl > _this._be['row'])
+                    _this.$c();
                 return Util.Q.every(bufs, function (buffer, i) {
                     if (_this._po)
                         return Promise.resolve(_this);
@@ -5810,7 +5766,7 @@ var Sprite;
         Full.prototype.every = function (clob, auto, wait, pause) {
             var _this = this;
             if (pause === void 0) { pause = -1; }
-            var eRow = 0, row, tBound, bBound = this._be, tText, left = G.Text.Align.Left, lHeight = Math.max(bBound['lh'], bBound['s']), font = bBound['s'] + 'px/' + lHeight + 'px "' + (bBound['ff'] || '') + '", ' + G.TextPhrase.FONT, sClob;
+            var eRow = 0, tBound, bBound = this._be, para, lHeight = Math.max(bBound['lh'], bBound['s']);
             while (/^\\n.*/.test(clob)) {
                 eRow++;
                 clob = clob.substr(2);
@@ -5826,36 +5782,28 @@ var Sprite;
             }
             if (clob == '')
                 return Promise.resolve(this);
-            sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '')
-                .replace(/【/g, '')
-                .replace(/】/g, '');
-            this._ct.save();
-            this._ct.font = font;
-            row = Math.ceil(this._ct.measureText(sClob).width / bBound.w);
-            this._ct.restore();
-            if (this._tl + row > bBound['row'] && pause < 1)
-                this.$c(); // 预计会有多少行内容，超出最大行，重起绘制
-            tBound = Util.clone(this._cb);
-            tText = new G.Text(tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
-                .tc(tBound['c'])
-                .tl(tBound['ls'])
-                .to(pause > 0 ? this._tx : 0);
-            //.ts(tBound['ss']);
-            this._x['f'].a(tText);
-            this.$w(tText.o(0), clob, this._c);
-            this._x['f'].o(1);
-            return this.$v(tText, auto, pause >= 0 ? true : wait).then(function () {
-                // if (this._h) {
-                //     let pnt: G.IPoint = tText.gCp();
-                //     this._cb.y = pnt.y;
-                //     this._tx = pnt.x - bBound.x;
-                //     this._tl = (pnt.y - bBound.y) / lHeight;
-                // }
-                tText.d(_this._ct);
-                var pnt = tText.gCp();
-                _this._cb.y = pnt.y;
-                _this._tx = pnt.x - bBound.x;
-                _this._tl = (pnt.y - bBound.y) / lHeight;
+            var clear = false;
+            do {
+                if (this._tl > bBound['row']) {
+                    this.$c();
+                    clear = true;
+                }
+                tBound = Util.clone(this._cb);
+                para = new G.Paragraph(tBound, tBound['ff'], tBound['s'], tBound['lh'], true)
+                    .to(pause > 0 ? this._tx : 0);
+                this.$w(para.o(0), clob, this._c);
+                var pnt = para.gP(this._ct);
+                this._cb.y = pnt.y;
+                this._tl = (pnt.y - bBound.y) / lHeight + 1;
+            } while (this._tl > bBound['row'] && !clear);
+            this._x['f'].a(para).o(1);
+            return this.$v(para, auto, pause >= 0 ? true : wait).then(function () {
+                if (_this._h) {
+                    var pnt = para.gP(_this._ct);
+                    _this._cb.y = pnt.y + lHeight;
+                    _this._tx = pnt.x;
+                    _this._tl = (pnt.y - bBound.y) / lHeight + 1;
+                }
                 return _this;
             });
         };
@@ -5872,22 +5820,22 @@ var Sprite;
             var _this = this;
             this.o(1);
             return new Promise(function (resolve) {
-                var aType = new G.Type(1), aWFC;
+                var aTyping = new G.Typing(1), aWFC;
                 if (auto)
-                    return text.p(aType).then(function () {
+                    return text.p(aTyping).then(function () {
                         resolve();
                     });
                 aWFC = new G.WaitForClick(function () {
-                    aType.h();
+                    aTyping.h();
                 });
                 _this._h = aWFC;
                 _this.dispatchEvent(new Ev.FullAnimation({
                     target: _this,
                     animation: aWFC,
-                    type: aType
+                    type: aTyping
                 }));
                 Promise.race([
-                    text.p(aType).then(function () {
+                    text.p(aTyping).then(function () {
                         aWFC.h();
                     }),
                     _this.p(aWFC)
@@ -6402,41 +6350,6 @@ var Runtime;
                     return _this.lightOn();
                 });
             });
-            // let series: boolean = Core.IRuntime.Series.Rest == this._fs || Core.IRuntime.Series.Last == this._fs;
-            // (<Sprite.Start> this._x['s']).u(title, series, this._c);
-            // return this.c([[this._i['o']]])
-            //     .then(() => this.reset())
-            //     .then(() => {
-            //         this._c.z();
-            //         let q: Promise<any>;
-            //         if (!isWx) {
-            //             let gLogo: G.Element = new G.Component().a(new G.Image(this._i['o'].o(), CanvasDirector.BOUNDS)).o(1);
-            //             this._c.a(gLogo, this._x['c']);
-            //             q = this.lightOn()
-            //                 .then(() => gLogo.p(new G.Delay(1000)))
-            //                 .then(() => this.lightOff())
-            //                 .then(() => this._c.e(gLogo));
-            //         } else {
-            //             q = this.lightOff();
-            //         }
-            //         return q.then(() => {
-            //                 if (!author && !title) return;
-            //                 let gAuthor: Sprite.Author = (<Sprite.Author> this._x['a']).u(author ? author : title);
-            //                 gAuthor.v(0);
-            //                 return this.lightOn()
-            //                     .then(() => gAuthor.p(new G.Delay(1000)))
-            //                     .then(() => this.lightOff())
-            //                     .then(() => gAuthor.o(0));
-            //             }).then(() => super.OP(start, title, author, isWx))
-            //             .then((runtime: Core.IRuntime) => {
-            //                 if (!this._a)
-            //                     this._x['t'].v(0);
-            //                 if (!start)
-            //                     return runtime;
-            //                 this._x['s'].v(0);
-            //                 return this.lightOn();
-            //             });
-            //     });
         };
         /**
          * 完结动画。
@@ -7181,7 +7094,7 @@ var Runtime;
             // 特写。
             this._c.a(this._x['G'] = new Sprite.CG(theme['cg']), gCurtain);
             // 某白。
-            this._x['W'] = new Sprite.Words(theme['voiceover'], theme['monolog'], theme['speak'], function (ev) {
+            this._x['W'] = new Sprite.Words(this._cm, theme['voiceover'], theme['monolog'], theme['speak'], function (ev) {
                 _this._t = _this._h = ev.animation;
             });
             resources.unshift(this._x['W'].l());
@@ -7197,10 +7110,6 @@ var Runtime;
             this._x['S'] = new Sprite.Status(theme['status']);
             resources.unshift(this._x['S'].l());
             this._c.a(this._x['S'], gCurtain);
-            // 选择。
-            // this._x['C'] = <Sprite.Choose> new Sprite.Choose(theme['choose']);
-            // resources.unshift(this._x['C'].l());
-            // this._c.a(this._x['C'], gCurtain);
             // 提示。
             this._x['T'] = new Sprite.Tip(theme['tip']);
             resources.unshift(this._x['T'].l());
@@ -7263,38 +7172,18 @@ var Runtime;
             });
             resources.unshift(this._x['m'].l());
             this._c.a(this._x['m'], gCurtain);
-            // let _s: () => void = () => {
-            //     if (this._s) return;
-            //     this._s = {
-            //         b: new Audio(),
-            //         e: new Audio(),
-            //         s: new Audio()
-            //     };
-            //     this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
-            //     this._s['b'].loop = this._s['s'].loop = true;
-            //     this._s['b'].src = this._s['s'].src = this._i['s'].l();
-            //     this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
-            //     this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
-            //     this._s['e']['cd'] = -1;
-            //     this.playMusic(Core.IResource.Type.BGM);
-            //     this.playMusic(Core.IResource.Type.ESM);
-            //     this.playSE();
-            // };
             // 开始菜单。
             this._x['s'] = new Sprite.Start(theme['start'], function (event) {
-                //_s();
                 _this.playSE(_this._i['t'] || _this._i['c']);
                 _this.lightOff().then(function () {
                     event.target.h(0);
                     _this._r.dispatchEvent(new Ev.Begin({ target: _this._r.gE() }));
                 });
             }, function () {
-                //_s();
                 slotsFromStart = true;
                 _this.playSE(_this._i['t'] || _this._i['c']);
                 _this._x['ss'].vl(_this._r);
             }, function () {
-                //_s();
                 slotsFromStart = true;
                 _this.playSE(_this._i['t'] || _this._i['c']);
                 _this._x['sl'].vl(_this._r)['catch'](function () {
@@ -16649,6 +16538,10 @@ var Runtime;
             this._al[2] = type;
             return this;
         };
+        Runtime.prototype.height = function (h) {
+            Bigine.height = h;
+            return this;
+        };
         /**
          * 播报当前事件。
          */
@@ -17030,7 +16923,7 @@ var Bigine;
 (function (Bigine) {
     Bigine.version = '0.26.0';
     Bigine.domain = '';
-    //export var offline: boolean = true;
+    Bigine.height = 720;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;
 })(Bigine || (Bigine = {}));
 module.exports = Bigine;

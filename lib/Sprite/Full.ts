@@ -118,45 +118,17 @@ namespace Sprite {
          */
         public u(clob: string, auto: boolean = false): Promise<Full> {
             this.pI();
-            let words: Array<string> = clob.split('\\r'),
-                font: string = this._be['s'] + 'px/' + Math.max(this._be['lh'], this._be['s']) + 'px "' + (this._be['ff'] || '') + '", ' + G.TextPhrase.FONT;
-            this._ct.canvas.style.letterSpacing = this._be['ls'] + 'px';  // 设置字间距
-            // Util.each(words, (word: string, index: number) => {
-            //     let bufs: Array<string> = word.split('\\l');
-            //     if (bufs.length == 1) {
-            //         funcs.push(() => this.every(word, auto, index == words.length - 1));
-            //     } else {
-            //         let str: string = word.replace(/\\l/g, '')
-            //             .replace(/\\n/g, '')
-            //             .replace(/【#[0-9a-fA-F]{6}/g, '')
-            //             .replace(/【/g, '')
-            //             .replace(/】/g, '');
-            //         this._ct.save();
-            //         this._ct.font = font;
-            //         let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
-            //         this._ct.restore();
-            //         if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
-            //         Util.each(bufs, (buffer: string, i: number) => {
-            //             funcs.push(() => this.every(buffer, auto, false, i));
-            //         });
-            //     }
-            // });
-            // return funcs.reduce((previous: Promise<Full>, current: (value: Full) => {} | Thenable<{}>) => {
-            //     return previous.then(current);
-            // }, Promise.resolve());
+            let words: Array<string> = clob.split('\\r');
             return Util.Q.every(words, (word: string, index: number) => {
                 this._po = false;
-                let bufs: Array<string> = word.split('\\l'),
-                    str: string = word.replace(/\\l/g, '')
-                        .replace(/\\n/g, '')
-                        .replace(/【#[0-9a-fA-F]{6}/g, '')
-                        .replace(/【/g, '')
-                        .replace(/】/g, '');
-                this._ct.save();
-                this._ct.font = font;
-                let row: number = Math.ceil(this._ct.measureText(str).width / this._be.w);
-                this._ct.restore();
-                if (this._tl + row > this._be['row']) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
+                let str: string = word.replace(/\\l/g, '').replace(/\\n/g, ''),
+                    bufs: Array<string> = word.split('\\l'),
+                    tBound: G.IBounds = Util.clone(this._cb),
+                    para: G.Paragraph = new G.Paragraph(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], true);
+                this.$w(para, str, this._c);
+                var pnt: G.IPoint = para.gP(this._ct);
+                this._tl = (pnt.y - this._be.y) / Math.max(this._be['lh'], this._be['s']) + 1;
+                if (this._tl > this._be['row']) this.$c();
                 return Util.Q.every(bufs, (buffer: string, i: number) => {
                     if (this._po) return Promise.resolve(this);
                     var wait: boolean = bufs.length == 1 ? (index == words.length - 1) : false;
@@ -171,15 +143,11 @@ namespace Sprite {
          */
         protected every(clob: string, auto: boolean, wait: boolean, pause: number = -1): Promise<Full> {
             let eRow: number = 0,
-                row: number,
                 tBound: G.IBounds,
                 bBound: G.IBounds = this._be,
-                tText: G.Text,
-                left: G.Text.Align = G.Text.Align.Left,
-                lHeight: number = Math.max(bBound['lh'], bBound['s']),
-                font: string = bBound['s'] + 'px/' + lHeight + 'px "' + (bBound['ff'] || '') + '", ' + G.TextPhrase.FONT,
-                sClob: string;
-            while (/^\\n.*/.test(clob)) {   // 计算开头的空白行行数
+                para: G.Paragraph,
+                lHeight: number = Math.max(bBound['lh'], bBound['s']);
+            while (/^\\n.*/.test(clob)) {
                 eRow++;
                 clob = clob.substr(2);
             }
@@ -191,35 +159,28 @@ namespace Sprite {
                 if (pause > 0 && clob != '') this._cb.y -= lHeight;
             }
             if (clob == '') return Promise.resolve(this);
-            sClob = clob.replace(/【#[0-9a-fA-F]{6}/g, '')
-                .replace(/【/g, '')
-                .replace(/】/g, '');
-            this._ct.save();
-            this._ct.font = font;
-            row = Math.ceil(this._ct.measureText(sClob).width / bBound.w);
-            this._ct.restore();
-            if (this._tl + row > bBound['row'] && pause < 1) this.$c();        // 预计会有多少行内容，超出最大行，重起绘制
-            tBound = Util.clone(this._cb);
-            tText = new G.Text(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], left, true)
-                .tc(tBound['c'])
-                .tl(tBound['ls'])
-                .to(pause > 0 ? this._tx : 0);
-                //.ts(tBound['ss']);
-            (<G.Sprite> this._x['f']).a(tText);
-            this.$w(<G.Text> tText.o(0), clob, this._c);
-            (<G.Sprite> this._x['f']).o(1);
-            return this.$v(tText, auto, pause >= 0 ? true : wait).then(() => {
-                // if (this._h) {
-                //     let pnt: G.IPoint = tText.gCp();
-                //     this._cb.y = pnt.y;
-                //     this._tx = pnt.x - bBound.x;
-                //     this._tl = (pnt.y - bBound.y) / lHeight;
-                // }
-                tText.d(this._ct);
-                let pnt: G.IPoint = tText.gCp();
+            var clear: boolean = false;
+            do {
+                if (this._tl > bBound['row']) {
+                    this.$c();
+                    clear = true;
+                }
+                tBound = Util.clone(this._cb);
+                para = new G.Paragraph(<G.IBounds> tBound, tBound['ff'], tBound['s'], tBound['lh'], true)
+                    .to(pause > 0 ? this._tx : 0);
+                this.$w(para.o(0), clob, this._c);
+                let pnt: G.IPoint = para.gP(this._ct);
                 this._cb.y = pnt.y;
-                this._tx = pnt.x - bBound.x;
-                this._tl = (pnt.y - bBound.y) / lHeight;
+                this._tl = (pnt.y - bBound.y) / lHeight + 1;
+            } while (this._tl > bBound['row'] && !clear);
+            (<G.Sprite> this._x['f']).a(para).o(1);
+            return this.$v(para, auto, pause >= 0 ? true : wait).then(() => {
+                if (this._h) {
+                    let pnt: G.IPoint = para.gP(this._ct);
+                    this._cb.y = pnt.y + lHeight;
+                    this._tx = pnt.x;
+                    this._tl = (pnt.y - bBound.y) / lHeight + 1;
+                }
                 return this;
             });
         }
@@ -234,26 +195,26 @@ namespace Sprite {
         /**
          * 显示内容文字。
          */
-        public $v(text: G.Text, auto: boolean, wait: boolean): Promise<G.Element> {
+        public $v(text: G.Paragraph, auto: boolean, wait: boolean): Promise<G.Element> {
             this.o(1);
             return new Promise<void>((resolve: () => void) => {
-                let aType: G.Type = new G.Type(1),
+                let aTyping: G.Typing = new G.Typing(1),
                     aWFC: G.WaitForClick;
                 if (auto)
-                    return text.p(aType).then(() => {
+                    return text.p(aTyping).then(() => {
                         resolve();
                     });
                 aWFC = new G.WaitForClick(() => {
-                    aType.h();
+                    aTyping.h();
                 });
                 this._h = aWFC;
                 this.dispatchEvent(new Ev.FullAnimation({
                     target: this,
                     animation: aWFC,
-                    type: aType,
+                    type: aTyping,
                 }));
                 Promise.race<any>([
-                    text.p(aType).then(() => {
+                    text.p(aTyping).then(() => {
                         aWFC.h();
                     }),
                     this.p(aWFC)
