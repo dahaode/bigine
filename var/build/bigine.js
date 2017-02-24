@@ -646,9 +646,7 @@ var Resource;
          */
         function Resource(uri, type, start) {
             if (start === void 0) { start = false; }
-            var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext = uri.substr(-4), 
-            //height: number = 720 <= env.Screen.Height ? 720 : 360,
-            height = Bigine.height, filename = height + '.', offline = Bigine.offline;
+            var env = Util.ENV, types = Core.IResource.Type, ie9 = env.MSIE && 'undefined' == typeof URL, ext = uri.substr(-4), height = Bigine.height, filename = height + '.', offline = Bigine.offline;
             if (types.Raw == type) {
                 if (offline) {
                     this._l = 'res/theme' + uri.substr(uri.indexOf('\/'));
@@ -6769,10 +6767,10 @@ var Runtime;
                         return _this._r;
                     });
                 case 'ShutterH':
-                    curtain = new G.Shutter(secend || 1000, { direction: 'H', bsize: 720 <= Util.ENV.Screen.Height });
+                    curtain = new G.Shutter(secend || 1000, { direction: 'H', size: Bigine.height });
                     break;
                 case 'ShutterV':
-                    curtain = new G.Shutter(secend || 1000, { direction: 'V', bsize: 720 <= Util.ENV.Screen.Height });
+                    curtain = new G.Shutter(secend || 1000, { direction: 'V', size: Bigine.height });
                     break;
                 case 'Gradient':
                     return gNew.p(new G.FadeIn(secend || 500)).then(function () {
@@ -16921,7 +16919,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.26.0';
+    Bigine.version = '0.26.1';
     Bigine.domain = '';
     Bigine.height = 720;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

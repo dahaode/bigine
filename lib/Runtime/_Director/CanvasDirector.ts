@@ -779,10 +779,10 @@ namespace Runtime {
                             return this._r;
                         });
                 case 'ShutterH':
-                    curtain = new G.Shutter(secend || 1000, { direction: 'H', bsize: 720 <= Util.ENV.Screen.Height });
+                    curtain = new G.Shutter(secend || 1000, { direction: 'H', size: Bigine.height });
                     break;
                 case 'ShutterV':
-                    curtain = new G.Shutter(secend || 1000, { direction: 'V', bsize: 720 <= Util.ENV.Screen.Height });
+                    curtain = new G.Shutter(secend || 1000, { direction: 'V', size: Bigine.height });
                     break;
                 case 'Gradient':
                     return gNew.p(new G.FadeIn(secend || 500)).then(() => {
