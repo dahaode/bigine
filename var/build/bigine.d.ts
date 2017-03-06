@@ -2359,6 +2359,18 @@ declare namespace __Bigine {
             p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
         }
     }
+    namespace Tag {
+        class Jump extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
+    namespace Tag {
+        class Stop extends Action {
+            gN(): string;
+            p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime>;
+        }
+    }
     namespace Runtime {
         class Runtime implements Core.IRuntime {
             private _a;
@@ -2377,6 +2389,7 @@ declare namespace __Bigine {
             private _n;
             private _nn;
             private _al;
+            private _lj;
             constructor(ep: Core.IRootTag);
             addEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime;
             removeEventListener<T>(type: string, listener: Util.IEventListener<T>): Runtime;
@@ -2402,6 +2415,7 @@ declare namespace __Bigine {
             plots(data: Util.IHashTable<string> | string): Runtime;
             autoLoad(id: string, type?: string): Runtime;
             height(h: number): Runtime;
+            publish(b: boolean): Runtime;
             s(scene: Core.ISceneTag, title: string, actions: string[]): Runtime;
             a(action: Core.IIdableTag): Runtime;
             gH(): boolean;

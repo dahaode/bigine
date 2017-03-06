@@ -242,6 +242,9 @@ namespace Sprite {
          * 文本分解。
          */
         protected split(clob: string, theme: string, auto: boolean): Promise<Words> {
+            while (/^\\l.*/.test(clob)) {
+                clob = clob.substr(2);
+            }
             let words: Array<string> = clob.split('\\r'),
                 _txt: string = theme + 't';
             (<G.Sprite> this._x[_txt]).c();

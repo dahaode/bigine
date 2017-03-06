@@ -96,6 +96,8 @@ namespace Runtime {
          */
         private _al: [string, Util.IHashTable<any>, string];
 
+        private _lj: boolean;
+
         /**
          * 构造函数。
          */
@@ -257,7 +259,7 @@ namespace Runtime {
             this._fb = false;
             if (!this._fr)
                 return this;
-            this._s.i({});
+            this._s.i({'.lj': this._lj});
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
@@ -398,8 +400,19 @@ namespace Runtime {
             return this;
         }
 
+        /**
+         * 图片资源高
+         */
         public height(h: number): Runtime {
             Bigine.height = h;
+            return this;
+        }
+
+        /**
+         * 是否为预览页调用
+         */
+        public publish(b: boolean): Runtime {
+            this._lj = b;
             return this;
         }
 

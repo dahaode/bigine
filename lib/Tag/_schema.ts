@@ -14,6 +14,8 @@ namespace Tag {
     export var T: { [name: string]: string } = {
         Unknown: 'UNKNOWN',
         Root: 'ROOT',
+        Jump: 'jump',
+        Stop: 'stop',
 
         DefBGM: '音乐',
         Audio: '音源',
@@ -155,7 +157,7 @@ namespace Tag {
      *     }
      * }
      */
-    export var S: { [index: number]: any[] } = { // next 114
+    export var S: { [index: number]: any[] } = { // next 116
         '-1': ['Root', 0, -1, {
             54: [0, 1],
             113: [0, 1],
@@ -264,6 +266,8 @@ namespace Tag {
         48: ['DefWeather', 0, 1], // 名称
 
         53: ['Unknown', [1, 2], 0], // [标签名称] 内容
+        114: ['Jump', 0, -1],
+        115: ['Stop', 0, -1],
 
         0: ['CharOn', [0, 1], 1], // [位置?] 人物名, 姿态?
         1: ['CharOff', 1, -1], // [人物名]

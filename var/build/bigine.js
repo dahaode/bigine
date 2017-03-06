@@ -107,6 +107,8 @@ var Ev;
  *     * `.c<站位>` - 人物名 - Tag
  *     * `.z` -  房间状态 - Tag
  *     * `.l` -  资源加载状态 - Tag
+ *     * `.j` -  跳跃状态标记 - Tag
+ *     * `.lj` -  禁止跳跃状态标记 - Tag
  *     * `.al` -  自动读档标记 - Tag
  *     * `.oc` -  screen 的 open 事件标记 - Tag
  *     * `.ld` -  正在读档标记 - Tag
@@ -2459,6 +2461,9 @@ var Sprite;
          */
         Words.prototype.split = function (clob, theme, auto) {
             var _this = this;
+            while (/^\\l.*/.test(clob)) {
+                clob = clob.substr(2);
+            }
             var words = clob.split('\\r'), _txt = theme + 't';
             this._x[_txt].c();
             this._cb[theme].y = this._tp[theme].y;
@@ -3989,6 +3994,8 @@ var Tag;
     Tag.T = {
         Unknown: 'UNKNOWN',
         Root: 'ROOT',
+        Jump: 'jump',
+        Stop: 'stop',
         DefBGM: '音乐',
         Audio: '音源',
         Image: '画面',
@@ -4216,6 +4223,8 @@ var Tag;
             }],
         48: ['DefWeather', 0, 1],
         53: ['Unknown', [1, 2], 0],
+        114: ['Jump', 0, -1],
+        115: ['Stop', 0, -1],
         0: ['CharOn', [0, 1], 1],
         1: ['CharOff', 1, -1],
         2: ['CharSet', [0, 1], 1],
@@ -5740,6 +5749,9 @@ var Sprite;
             var _this = this;
             if (auto === void 0) { auto = false; }
             this.pI();
+            while (/^\\l.*/.test(clob)) {
+                clob = clob.substr(2);
+            }
             var words = clob.split('\\r');
             return Util.Q.every(words, function (word, index) {
                 _this._po = false;
@@ -9931,7 +9943,7 @@ var Tag;
          */
         Loop.prototype.p = function (runtime) {
             var _this = this;
-            var states = runtime.gS(), logger = runtime.gL(), title = 'LOOP', kd = '$d', depth = states.g(kd), kid = '.a', id, loop = function () {
+            var states = runtime.gS(), logger = runtime.gL(), title = 'LOOP', kd = '$d', depth = states.g(kd), kid = '.a', ks = '.j', actions = { 'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1 }, id, loop = function () {
                 return Util.Q.every(_this._s, function (action) {
                     if (runtime.gH())
                         return E.doBreak();
@@ -9950,6 +9962,8 @@ var Tag;
                         else
                             return runtime;
                     }
+                    if (states.g(ks) && action.gN() in actions)
+                        return runtime;
                     return action.p(runtime);
                 }).then(loop);
             };
@@ -10076,7 +10090,7 @@ var Tag;
          */
         Content.prototype.p = function (runtime) {
             var _this = this;
-            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', kt = '_t', id = states.g(kid), time = states.g(kt), offline = Bigine.offline;
+            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', kt = '_t', ks = '.j', id = states.g(kid), time = states.g(kt), actions = { 'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1 }, offline = Bigine.offline;
             logger.o(title);
             states.s('$d', 1);
             return director.c(offline ? [[]] : Tag.Loop.prototype.c.call(this, time))
@@ -10098,6 +10112,8 @@ var Tag;
                     else
                         return runtime;
                 }
+                if (states.g(ks) && action.gN() in actions)
+                    return runtime;
                 return action.p(runtime);
             }); })['catch'](function (error) {
                 if (error && E.Signal.HALT == error.signal)
@@ -13957,7 +13973,7 @@ var Tag;
          * 执行。
          */
         Otherwise.prototype.p = function (runtime) {
-            var states = runtime.gS(), logger = runtime.gL(), title = 'OTHERWISE', kd = '$d', depth = states.g(kd), kt = '$t' + depth, kid = '.a', id = states.g(kid);
+            var states = runtime.gS(), logger = runtime.gL(), title = 'OTHERWISE', kd = '$d', depth = states.g(kd), kt = '$t' + depth, kid = '.a', ks = '.j', actions = { 'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1 }, id = states.g(kid);
             if (!id && states.g(kt))
                 return runtime;
             logger.o(title);
@@ -13979,6 +13995,8 @@ var Tag;
                     else
                         return runtime;
                 }
+                if (states.g(ks) && action.gN() in actions)
+                    return runtime;
                 return action.p(runtime);
             })['catch'](function (error) {
                 if (error && E.Signal.HALT == error.signal)
@@ -14043,7 +14061,7 @@ var Tag;
          * 执行。
          */
         Then.prototype.p = function (runtime) {
-            var states = runtime.gS(), logger = runtime.gL(), title = 'THEN', kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
+            var states = runtime.gS(), logger = runtime.gL(), title = 'THEN', kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', ks = '.j', actions = { 'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1 }, id = states.g(kid);
             if (!id && (states.g(kt) || !states.g(kv)))
                 return runtime;
             logger.o(title);
@@ -14065,6 +14083,8 @@ var Tag;
                     else
                         return runtime;
                 }
+                if (states.g(ks) && action.gN() in actions)
+                    return runtime;
                 return action.p(runtime);
             })['catch'](function (error) {
                 if (error && E.Signal.HALT == error.signal)
@@ -14129,7 +14149,7 @@ var Tag;
          * 执行。
          */
         When.prototype.p = function (runtime) {
-            var states = runtime.gS(), logger = runtime.gL(), value = this.$v(this._p[0]), title = 'WHEN ' + value, kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
+            var states = runtime.gS(), logger = runtime.gL(), value = this.$v(this._p[0]), title = 'WHEN ' + value, kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', ks = '.j', actions = { 'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1 }, id = states.g(kid);
             if (!id && (states.g(kt) || states.g(kv) != value))
                 return runtime;
             logger.o(title);
@@ -14151,6 +14171,8 @@ var Tag;
                     else
                         return runtime;
                 }
+                if (states.g(ks) && action.gN() in actions)
+                    return runtime;
                 return action.p(runtime);
             })['catch'](function (error) {
                 if (error && E.Signal.HALT == error.signal)
@@ -14509,7 +14531,7 @@ var Tag;
          * 执行。
          */
         WhenVar.prototype.p = function (runtime) {
-            var states = runtime.gS(), logger = runtime.gL(), value = this.$v(states.g(this._p[0])), title = 'WHENVAR ' + this._p[0], kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', id = states.g(kid);
+            var states = runtime.gS(), logger = runtime.gL(), value = this.$v(states.g(this._p[0])), title = 'WHENVAR ' + this._p[0], kd = '$d', depth = states.g(kd), kt = '$t' + depth, kv = '$v' + depth, kid = '.a', ks = '.j', actions = { 'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1 }, id = states.g(kid);
             if (!id && (states.g(kt) || states.g(kv) != value))
                 return runtime;
             logger.o(title);
@@ -14531,6 +14553,8 @@ var Tag;
                     else
                         return runtime;
                 }
+                if (states.g(ks) && action.gN() in actions)
+                    return runtime;
                 return action.p(runtime);
             })['catch'](function (error) {
                 if (error && E.Signal.HALT == error.signal)
@@ -16117,6 +16141,78 @@ var Tag;
     Tag.Unlock = Unlock;
 })(Tag || (Tag = {}));
 /**
+ * 定义跳跃动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2017 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Flow/Jump.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Jump = (function (_super) {
+        __extends(Jump, _super);
+        function Jump() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Jump.prototype.gN = function () {
+            return 'Jump';
+        };
+        /**
+         * 执行。
+         */
+        Jump.prototype.p = function (runtime) {
+            var states = runtime.gS();
+            if (!states.g('.lj'))
+                return runtime;
+            states.s('.j', true);
+            return runtime;
+        };
+        return Jump;
+    }(Tag.Action));
+    Tag.Jump = Jump;
+})(Tag || (Tag = {}));
+/**
+ * 定义停止跳跃动作标签组件。
+ *
+ * @author    李倩 <qli@atfacg.com>
+ * @copyright © 2017 Dahao.de
+ * @license   GPL-3.0
+ * @file      Tag/_Action/_Flow/Stop.ts
+ */
+/// <reference path="../../Action.ts" />
+var Tag;
+(function (Tag) {
+    var Stop = (function (_super) {
+        __extends(Stop, _super);
+        function Stop() {
+            _super.apply(this, arguments);
+        }
+        /**
+         * 获取标签名称。
+         */
+        Stop.prototype.gN = function () {
+            return 'Stop';
+        };
+        /**
+         * 执行。
+         */
+        Stop.prototype.p = function (runtime) {
+            var states = runtime.gS();
+            if (!states.g('.lj'))
+                return runtime;
+            states.d('.j');
+            return runtime;
+        };
+        return Stop;
+    }(Tag.Action));
+    Tag.Stop = Stop;
+})(Tag || (Tag = {}));
+/**
  * 打包所有已定义地标签组件。
  *
  * @author    郑煜宇 <yzheng@atfacg.com>
@@ -16238,6 +16334,8 @@ var Tag;
 /// <reference path="_Action/_Text/FullClean.ts" />
 /// <reference path="_Action/_Text/FullHide.ts" />
 /// <reference path="_Action/_Logic/Unlock.ts" />
+/// <reference path="_Action/_Flow/Jump.ts" />
+/// <reference path="_Action/_Flow/Stop.ts" />
 /**
  * 定义（作品）运行时组件。
  *
@@ -16410,7 +16508,7 @@ var Runtime;
             this._fb = false;
             if (!this._fr)
                 return this;
-            this._s.i({});
+            this._s.i({ '.lj': this._lj });
             this._d.playMusic(Core.IResource.Type.BGM);
             this._d.playMusic(Core.IResource.Type.ESM);
             this._d.playSE();
@@ -16536,8 +16634,18 @@ var Runtime;
             this._al[2] = type;
             return this;
         };
+        /**
+         * 图片资源高
+         */
         Runtime.prototype.height = function (h) {
             Bigine.height = h;
+            return this;
+        };
+        /**
+         * 是否为预览页调用
+         */
+        Runtime.prototype.publish = function (b) {
+            this._lj = b;
             return this;
         };
         /**
@@ -16919,7 +17027,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.26.1';
+    Bigine.version = '0.26.2';
     Bigine.domain = '';
     Bigine.height = 720;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

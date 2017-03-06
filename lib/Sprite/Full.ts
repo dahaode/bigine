@@ -118,6 +118,9 @@ namespace Sprite {
          */
         public u(clob: string, auto: boolean = false): Promise<Full> {
             this.pI();
+            while (/^\\l.*/.test(clob)) {
+                clob = clob.substr(2);
+            }
             let words: Array<string> = clob.split('\\r');
             return Util.Q.every(words, (word: string, index: number) => {
                 this._po = false;

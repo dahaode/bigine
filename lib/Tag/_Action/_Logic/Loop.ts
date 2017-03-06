@@ -54,6 +54,8 @@ namespace Tag {
                 kd: string = '$d',
                 depth: number = states.g(kd),
                 kid: string = '.a',
+                ks: string = '.j',
+                actions: Util.IHashTable<any> = {'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1},
                 id: string,
                 loop: () => Promise<Core.IRuntime> = () => {
                     return Util.Q.every(<Action[]> this._s, (action: Action) => {
@@ -72,6 +74,7 @@ namespace Tag {
                             } else
                                 return runtime;
                         }
+                        if (states.g(ks) && action.gN() in actions) return runtime;
                         return action.p(runtime);
                     }).then(loop);
                 };

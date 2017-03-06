@@ -42,6 +42,8 @@ namespace Tag {
                 depth: number = states.g(kd),
                 kt: string = '$t' + depth,
                 kid: string = '.a',
+                ks: string = '.j',
+                actions: Util.IHashTable<any> = {'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1},
                 id: string = states.g(kid);
             if (!id && states.g(kt))
                 return runtime;
@@ -62,6 +64,7 @@ namespace Tag {
                     } else
                         return runtime;
                 }
+                if (states.g(ks) && action.gN() in actions) return runtime;
                 return action.p(runtime);
             })['catch']((error?: E) => {
                 if (error && E.Signal.HALT == error.signal)

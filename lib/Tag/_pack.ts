@@ -121,3 +121,5 @@
 /// <reference path="_Action/_Text/FullClean.ts" />
 /// <reference path="_Action/_Text/FullHide.ts" />
 /// <reference path="_Action/_Logic/Unlock.ts" />
+/// <reference path="_Action/_Flow/Jump.ts" />
+/// <reference path="_Action/_Flow/Stop.ts" />
