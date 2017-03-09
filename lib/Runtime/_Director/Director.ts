@@ -70,6 +70,13 @@ namespace Runtime {
         }
 
         /**
+         * 初始化 Audio 列表。
+         */
+        public iAudio(): void {
+            //
+        }
+
+        /**
          * 预加载指定资源组。
          *
          * @param resources 一个（作品）事件所包含地所有资源

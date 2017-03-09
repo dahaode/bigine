@@ -50,10 +50,11 @@ namespace Sprite {
             this.a(new G.Image(this._rr[0].o(), <G.IBounds> _back));
             for (; i < 7; i++) {
                 j = this._tm[i];
+                let align: G.Text.Align = j['value']['a'] ? this.$a(j['value']['a']) : right;
                 this.a(this._x[i + 't'] = <G.Text> new G.Text(<G.IBounds> j['title'], j['title']['ff'], j['title']['s'], j['title']['lh'], left)
                     .tc(j['title']['c'])
                     .o(0)
-                ).a(this._x[i + 'v'] = <G.Text> new G.Text(<G.IBounds> j['value'], j['value']['ff'], j['value']['s'], j['value']['lh'], right)
+                ).a(this._x[i + 'v'] = <G.Text> new G.Text(<G.IBounds> j['value'], j['value']['ff'], j['value']['s'], j['value']['lh'], align)
                     .tc(j['value']['c'])
                     .o(0)
                 );

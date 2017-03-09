@@ -124,7 +124,7 @@ namespace Resource {
                         this._l = url;
                         return resolve(<any> url);
                     }
-                    if (!Bigine.offline) url = url + '?bigine-0.24.1' + Bigine.domain;
+                    if (!Bigine.offline) url = url + '?bigine-' + Bigine.version + Bigine.domain;
                     if (Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
                         xhr.open('GET', url);

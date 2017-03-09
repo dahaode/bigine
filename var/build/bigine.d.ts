@@ -441,6 +441,7 @@ declare namespace __Bigine {
             protected _o: boolean;
             protected _sr: boolean;
             constructor(runtime: Core.IRuntime);
+            iAudio(): void;
             c(resources: Resource.Resource<string | HTMLImageElement>[][], visible?: boolean): Promise<void>;
             Init(loaded: boolean): Promise<Core.IRuntime>;
             drawInit(isWechat: boolean): Promise<Core.IRuntime>;
@@ -1169,6 +1170,7 @@ declare namespace __Bigine {
             private _ss;
             private _se;
             constructor(runtime: Core.IRuntime);
+            iAudio(): void;
             c(resources: Resource.Resource<string | HTMLImageElement>[][], visible?: boolean): Promise<void>;
             Init(loaded: boolean): Promise<Core.IRuntime>;
             drawInit(isWechat: boolean): Promise<Core.IRuntime>;

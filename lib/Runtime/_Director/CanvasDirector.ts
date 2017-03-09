@@ -79,7 +79,7 @@ namespace Runtime {
         /**
          * 键盘事件监听函数。
          */
-        private _l: Util.IHashTable<(event: KeyboardEvent) => void>;
+        private _l: Util.IHashTable<(event: Event) => void>;
 
         /**
          * 画面组件集合。
@@ -199,17 +199,6 @@ namespace Runtime {
                 f: Resource.Resource.g<string>(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g<string>(assets + 'click.mp3', raw)
             };
-            this._s = {
-                b: new Audio(),
-                e: new Audio(),
-                s: new Audio()
-            };
-            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
-            this._s['b'].loop = this._s['s'].loop = true;
-            this._s['b'].src = this._s['s'].src = this._i['s'].l();
-            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
-            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
-            this._s['e']['cd'] = -1;
             this._l = {};
             this._l[0] = (event: KeyboardEvent) => {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc && !this._rv) {
@@ -222,9 +211,14 @@ namespace Runtime {
                     this.sReview(!this._rv);
                 }
             };
+            this._l[2] = (event: MouseEvent) => {
+                this.iAudio();
+                window.removeEventListener('click', this._l[2]);
+            };
             this._fs = Core.IRuntime.Series.Alone;
             window.addEventListener('keydown', this._l[0]);
             window.addEventListener('keyup', this._l[1]);
+            window.addEventListener('click', this._l[2]);
             doc.addEventListener('touchstart', (event: TouchEvent) => {
                 if (event.touches.length > 1) {
                     event.preventDefault();
@@ -241,6 +235,43 @@ namespace Runtime {
                 }
                 lastTouchEnd = now;
             }, false);
+        }
+
+        /**
+         * 初始化 Audio 列表。
+         */
+        public iAudio(): void {
+            if (this._s) return;
+            this._s = {
+                b: new Audio(),
+                e: new Audio(),
+                s: new Audio()
+            };
+            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
+            this._s['b'].loop = this._s['s'].loop = true;
+            this._s['b'].src = this._s['s'].src = this._i['s'].l();
+            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
+            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
+            this._s['e']['cd'] = -1;
+            this.playMusic(Core.IResource.Type.BGM);
+            this.playMusic(Core.IResource.Type.ESM);
+            this.playSE();
+            var states: Core.IStates = this._r.gS(),
+                ep: Core.IEpisode = this._r.gE(),
+                type: typeof Core.IEpisode.Entity = Core.IEpisode.Entity,
+                vol: number,
+                bgm: any = states.g('_b'),
+                esm: any = states.g('_e');
+            if (bgm) {
+                var defbgm: Core.IEntityTag = <Core.IEntityTag> ep.q(typeof bgm == 'string' ? bgm : bgm[0], type.BGM);
+                vol = typeof bgm == 'string' ? 1 : 0.01 * parseInt(bgm[1] || '100', 10);
+                this.playMusic(Core.IResource.Type.BGM, defbgm ? <Resource.Resource<string>> (<Tag.DefBGM> defbgm).o() : undefined, vol);
+            }
+            if (esm) {
+                var defesm: Tag.DefBGM = <Tag.DefBGM> ep.q(typeof esm == 'string' ? esm : esm[0], type.BGM);
+                vol = typeof esm == 'string' ? 1 : 0.01 * parseInt(esm[1] || '100', 10);
+                this.playMusic(Core.IResource.Type.ESM, defesm ? <Resource.Resource<string>> (<Tag.DefBGM> defesm).o() : undefined, vol);
+            }
         }
 
         /**
@@ -603,6 +634,7 @@ namespace Runtime {
          * 播放 背景音乐 / 环境音乐。
          */
         public playMusic(type: Core.IResource.Type, resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime> {
+            if (!this._s) return super.playMusic(type, resource, vol);
             var oops: string = this._i['s'].l(),
                 url: string = resource ? resource.l() : oops,
                 music: HTMLAudioElement = type == Core.IResource.Type.BGM ? this._s['b'] : this._s['s'],
@@ -639,6 +671,7 @@ namespace Runtime {
          * 播放音效。
          */
         public playSE(resource?: Resource.Resource<string>, vol?: number): Promise<Core.IRuntime> {
+            if (!this._s) return super.playSE(resource, vol);
             var url: string = (resource || this._i['s']).l(),
                 se: HTMLAudioElement = this._s['e'],
                 type: string = 'ended',

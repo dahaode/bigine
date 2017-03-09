@@ -250,6 +250,7 @@ namespace Runtime {
         public play(): Runtime {
             if (this._al[0] && this._al[1]) {
                 this._fp = true;
+                if (!Util.ENV.IOS) this._d.iAudio();
                 this._d.sl(this._al[0], true);
                 return this;
             }
@@ -260,9 +261,7 @@ namespace Runtime {
             if (!this._fr)
                 return this;
             this._s.i({'.lj': this._lj});
-            this._d.playMusic(Core.IResource.Type.BGM);
-            this._d.playMusic(Core.IResource.Type.ESM);
-            this._d.playSE();
+            this._d.iAudio();
             this._d.curtain(null);
             this._d.Init(false);
             this._d.OP(!this._e.gA(), this._n[0]);

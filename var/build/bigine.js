@@ -724,7 +724,7 @@ var Resource;
                         return resolve(url);
                     }
                     if (!Bigine.offline)
-                        url = url + '?bigine-0.24.1' + Bigine.domain;
+                        url = url + '?bigine-' + Bigine.version + Bigine.domain;
                     if (Util.ENV.MSIE && 'undefined' != typeof URL) {
                         xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
@@ -1440,6 +1440,12 @@ var Runtime;
                             this._o = false;
             this._v = 1;
         }
+        /**
+         * 初始化 Audio 列表。
+         */
+        Director.prototype.iAudio = function () {
+            //
+        };
         /**
          * 预加载指定资源组。
          *
@@ -3391,9 +3397,10 @@ var Sprite;
             this.a(new G.Image(this._rr[0].o(), _back));
             for (; i < 7; i++) {
                 j = this._tm[i];
+                var align = j['value']['a'] ? this.$a(j['value']['a']) : right;
                 this.a(this._x[i + 't'] = new G.Text(j['title'], j['title']['ff'], j['title']['s'], j['title']['lh'], left)
                     .tc(j['title']['c'])
-                    .o(0)).a(this._x[i + 'v'] = new G.Text(j['value'], j['value']['ff'], j['value']['s'], j['value']['lh'], right)
+                    .o(0)).a(this._x[i + 'v'] = new G.Text(j['value'], j['value']['ff'], j['value']['s'], j['value']['lh'], align)
                     .tc(j['value']['c'])
                     .o(0));
             }
@@ -6223,17 +6230,6 @@ var Runtime;
                 f: Resource.Resource.g(assets + 'focus.mp3', raw),
                 c: Resource.Resource.g(assets + 'click.mp3', raw)
             };
-            this._s = {
-                b: new Audio(),
-                e: new Audio(),
-                s: new Audio()
-            };
-            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
-            this._s['b'].loop = this._s['s'].loop = true;
-            this._s['b'].src = this._s['s'].src = this._i['s'].l();
-            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
-            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
-            this._s['e']['cd'] = -1;
             this._l = {};
             this._l[0] = function (event) {
                 if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc && !_this._rv) {
@@ -6247,9 +6243,14 @@ var Runtime;
                     _this.sReview(!_this._rv);
                 }
             };
+            this._l[2] = function (event) {
+                _this.iAudio();
+                window.removeEventListener('click', _this._l[2]);
+            };
             this._fs = Core.IRuntime.Series.Alone;
             window.addEventListener('keydown', this._l[0]);
             window.addEventListener('keyup', this._l[1]);
+            window.addEventListener('click', this._l[2]);
             doc.addEventListener('touchstart', function (event) {
                 if (event.touches.length > 1) {
                     event.preventDefault();
@@ -6267,6 +6268,38 @@ var Runtime;
                 lastTouchEnd = now;
             }, false);
         }
+        /**
+         * 初始化 Audio 列表。
+         */
+        CanvasDirector.prototype.iAudio = function () {
+            if (this._s)
+                return;
+            this._s = {
+                b: new Audio(),
+                e: new Audio(),
+                s: new Audio()
+            };
+            this._s['b'].autoplay = this._s['e'].autoplay = this._s['s'].autoplay = true;
+            this._s['b'].loop = this._s['s'].loop = true;
+            this._s['b'].src = this._s['s'].src = this._i['s'].l();
+            this._s['b']['baseVolume'] = this._s['e']['baseVolume'] = this._s['s']['baseVolume'] = 1;
+            this._s['b']['scale'] = this._s['e']['scale'] = this._s['s']['scale'] = 1;
+            this._s['e']['cd'] = -1;
+            this.playMusic(Core.IResource.Type.BGM);
+            this.playMusic(Core.IResource.Type.ESM);
+            this.playSE();
+            var states = this._r.gS(), ep = this._r.gE(), type = Core.IEpisode.Entity, vol, bgm = states.g('_b'), esm = states.g('_e');
+            if (bgm) {
+                var defbgm = ep.q(typeof bgm == 'string' ? bgm : bgm[0], type.BGM);
+                vol = typeof bgm == 'string' ? 1 : 0.01 * parseInt(bgm[1] || '100', 10);
+                this.playMusic(Core.IResource.Type.BGM, defbgm ? defbgm.o() : undefined, vol);
+            }
+            if (esm) {
+                var defesm = ep.q(typeof esm == 'string' ? esm : esm[0], type.BGM);
+                vol = typeof esm == 'string' ? 1 : 0.01 * parseInt(esm[1] || '100', 10);
+                this.playMusic(Core.IResource.Type.ESM, defesm ? defesm.o() : undefined, vol);
+            }
+        };
         /**
          * 预加载指定资源组。
          *
@@ -6611,6 +6644,8 @@ var Runtime;
          */
         CanvasDirector.prototype.playMusic = function (type, resource, vol) {
             var _this = this;
+            if (!this._s)
+                return _super.prototype.playMusic.call(this, type, resource, vol);
             var oops = this._i['s'].l(), url = resource ? resource.l() : oops, music = type == Core.IResource.Type.BGM ? this._s['b'] : this._s['s'], volume = music['baseVolume'] * (vol || 1), change = function () {
                 music['scale'] = vol || 1;
                 music.volume = volume;
@@ -6644,6 +6679,8 @@ var Runtime;
          */
         CanvasDirector.prototype.playSE = function (resource, vol) {
             var _this = this;
+            if (!this._s)
+                return _super.prototype.playSE.call(this, resource, vol);
             var url = (resource || this._i['s']).l(), se = this._s['e'], type = 'ended', resume = function () {
                 se.removeEventListener(type, resume);
                 _this._s['b'].play();
@@ -16499,6 +16536,8 @@ var Runtime;
         Runtime.prototype.play = function () {
             if (this._al[0] && this._al[1]) {
                 this._fp = true;
+                if (!Util.ENV.IOS)
+                    this._d.iAudio();
                 this._d.sl(this._al[0], true);
                 return this;
             }
@@ -16509,9 +16548,7 @@ var Runtime;
             if (!this._fr)
                 return this;
             this._s.i({ '.lj': this._lj });
-            this._d.playMusic(Core.IResource.Type.BGM);
-            this._d.playMusic(Core.IResource.Type.ESM);
-            this._d.playSE();
+            this._d.iAudio();
             this._d.curtain(null);
             this._d.Init(false);
             this._d.OP(!this._e.gA(), this._n[0]);
