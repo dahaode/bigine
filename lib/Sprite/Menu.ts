@@ -32,7 +32,8 @@ namespace Sprite {
                 _save: Util.IHashTable<any> = theme['save'],
                 _load: Util.IHashTable<any> = theme['load'],
                 _set: Util.IHashTable<any> = theme['set'],
-                _replay: Util.IHashTable<any> = theme['replay'];
+                _replay: Util.IHashTable<any> = theme['replay'],
+                _bg: Util.IHashTable<any> = theme['bg'];
             super(theme);
             this._rr = [
                 rr.g<HTMLImageElement>(_close['i'], raw),
@@ -46,6 +47,7 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_replay['i'], raw),
                 rr.g<HTMLImageElement>(_replay['ih'], raw)
             ];
+            if (_bg) this._rr.push(rr.g<HTMLImageElement>(_bg['i'], raw));
             this.addEventListener('menu.close', close)
                 .addEventListener('menu.save', save)
                 .addEventListener('menu.load', load)
@@ -55,14 +57,16 @@ namespace Sprite {
 
         protected pI(): Menu {
             if (this._pi) return this;
-            let _close: Util.IHashTable<any> = this._tm['close'],
+            let _bg: Util.IHashTable<any> = this._tm['bg'],
+                _close: Util.IHashTable<any> = this._tm['close'],
                 _mask: Util.IHashTable<any> = this._tm['mask'],
                 _save: Util.IHashTable<any> = this._tm['save'],
                 _load: Util.IHashTable<any> = this._tm['load'],
                 _set: Util.IHashTable<any> = this._tm['set'],
                 _replay: Util.IHashTable<any> = this._tm['replay'];
-            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
-                .a(new G.Button(<G.IBounds> _close)
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']));
+            if (_bg) this.a(new G.Image(this._rr[10].o(), <G.IBounds> _bg, true));
+            this.a(new G.Button(<G.IBounds> _close)
                     .b(() => {
                         this.dispatchEvent(new Ev.MenuClose({ target: this }));
                     }, new G.Image(this._rr[1].o(), <G.IBounds> _close, true), new G.Image(this._rr[0].o(), <G.IBounds> _close, true))

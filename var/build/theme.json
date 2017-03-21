@@ -388,10 +388,13 @@
             "ih": "menu/replay~hover.png"
         }
     },
-    "set": {
-        "mask": {
-            "cb": "#000",
-            "o": 0.8
+    "setup": {
+        "bg": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 720,
+            "i": "menu/bg.png"
         },
         "close": {
             "x": 1166,
@@ -401,41 +404,13 @@
             "i": "menu/back.png",
             "ih": "menu/back~hover.png"
         },
-        "title": {
-            "x": 320,
-            "y": 190,
-            "w": 600,
-            "h": 36,
-            "s": 48,
-            "lh": 42,
-            "c": "#fff",
-            "a": "left"
-        },
         "bgm": {
-            "name": {
-                "x": 390,
-                "y": 294,
-                "w": 100,
-                "h": 36,
-                "s": 25,
-                "lh": 42,
-                "c": "#fff",
-                "a": "left"
-            },
             "bar": {
                 "x": 530,
-                "y": 297 ,
+                "y": 299,
                 "w": 365,
                 "h": 23,
-                "i": "menu/bar.png",
-                "ih": "menu/bar.png"
-            },
-            "bg": {
-                "x": 0,
-                "y": 0,
-                "w": 1280,
-                "h": 720,
-                "i": "menu/barbg02.png"
+                "i": "menu/bar.png"
             },
             "volume": {
                 "x": 920,
@@ -449,30 +424,12 @@
             }
         },
         "se": {
-            "name": {
-                "x": 400,
-                "y": 424,
-                "w": 100,
-                "h": 36,
-                "s": 25,
-                "lh": 42,
-                "c": "#fff",
-                "a": "left"
-            },
             "bar": {
                 "x": 530,
-                "y": 427 ,
+                "y": 429,
                 "w": 365,
                 "h": 23,
-                "i": "menu/bar.png",
-                "ih": "menu/bar.png"
-            },
-            "bg": {
-                "x": 0,
-                "y": 0,
-                "w": 1280,
-                "h": 720,
-                "i": "menu/barbg02.png"
+                "i": "menu/bar.png"
             },
             "volume": {
                 "x": 920,

@@ -41,6 +41,7 @@ namespace Sprite {
                 rr: typeof Resource.Resource = Resource.Resource,
                 _close: Util.IHashTable<any> = theme['close'],
                 _auto: Util.IHashTable<any> = theme['auto'],
+                _bg: Util.IHashTable<any> = theme['bg'],
                 _1: Util.IHashTable<any> = theme['1'],
                 _2: Util.IHashTable<any> = theme['2'],
                 _3: Util.IHashTable<any> = theme['3'],
@@ -62,6 +63,7 @@ namespace Sprite {
                 rr.g<HTMLImageElement>(_4['i'], raw),
                 rr.g<HTMLImageElement>(_4['ih'], raw)
             ];
+            if (_bg) this._rr.push(rr.g<HTMLImageElement>(_bg['i'], raw));
             this.addEventListener('slots.close', close)
                 .addEventListener('slots.save', save)
                 .addEventListener('slots.load', load);
@@ -69,11 +71,13 @@ namespace Sprite {
 
         protected pI(): SeriesSlots {
             if (this._pi) return this;
-            let _desc: Util.IHashTable<any> = this._tm['text'],
+            let _bg: Util.IHashTable<any> = this._tm['bg'],
+                _desc: Util.IHashTable<any> = this._tm['text'],
                 _close: Util.IHashTable<any> = this._tm['close'],
                 _mask: Util.IHashTable<any> = this._tm['mask'];
-            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
-                .a(new G.Button(<G.IBounds> _close)
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']));
+            if (_bg) this.a(new G.Image(this._rr[12].o(), <G.IBounds> _bg, true));
+            this.a(new G.Button(<G.IBounds> _close)
                     .b(() => {
                         this.dispatchEvent(new Ev.SlotsClose({ target: this }));
                     }, new G.Image(this._rr[1].o(), <G.IBounds> _close, true), new G.Image(this._rr[0].o(), <G.IBounds> _close, true))
