@@ -675,7 +675,7 @@ var Resource;
                         filename += 'png';
                         break;
                     case types.Avatar:
-                        filename = Math.round(height / 4) + '.png';
+                        filename = '240.png';
                         break;
                     case types.BGM:
                     case types.SE:
@@ -3014,7 +3014,7 @@ var Sprite;
          * 构造函数。
          */
         function Menu(theme, close, save, load, set, replay) {
-            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _save = theme['save'], _load = theme['load'], _set = theme['set'], _replay = theme['replay'];
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _save = theme['save'], _load = theme['load'], _set = theme['set'], _replay = theme['replay'], _bg = theme['bg'];
             _super.call(this, theme);
             this._rr = [
                 rr.g(_close['i'], raw),
@@ -3028,6 +3028,8 @@ var Sprite;
                 rr.g(_replay['i'], raw),
                 rr.g(_replay['ih'], raw)
             ];
+            if (_bg)
+                this._rr.push(rr.g(_bg['i'], raw));
             this.addEventListener('menu.close', close)
                 .addEventListener('menu.save', save)
                 .addEventListener('menu.load', load)
@@ -3038,9 +3040,11 @@ var Sprite;
             var _this = this;
             if (this._pi)
                 return this;
-            var _close = this._tm['close'], _mask = this._tm['mask'], _save = this._tm['save'], _load = this._tm['load'], _set = this._tm['set'], _replay = this._tm['replay'];
-            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
-                .a(new G.Button(_close)
+            var _bg = this._tm['bg'], _close = this._tm['close'], _mask = this._tm['mask'], _save = this._tm['save'], _load = this._tm['load'], _set = this._tm['set'], _replay = this._tm['replay'];
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']));
+            if (_bg)
+                this.a(new G.Image(this._rr[10].o(), _bg, true));
+            this.a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.MenuClose({ target: _this }));
             }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true))).a(new G.Button(_save)
@@ -3222,7 +3226,7 @@ var Sprite;
          * 构造函数。
          */
         function Slots(theme, close, save, load) {
-            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _auto = theme['auto'], _bg = theme['bg'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
             _super.call(this, theme);
             this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
@@ -3240,6 +3244,8 @@ var Sprite;
                 rr.g(_4['i'], raw),
                 rr.g(_4['ih'], raw)
             ];
+            if (_bg)
+                this._rr[12] = rr.g(_bg['i'], raw);
             this.addEventListener('slots.close', close)
                 .addEventListener('slots.save', save)
                 .addEventListener('slots.load', load);
@@ -3248,9 +3254,11 @@ var Sprite;
             var _this = this;
             if (this._pi)
                 return this;
-            var _close = this._tm['close'], _mask = this._tm['mask'];
-            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
-                .a(new G.Button(_close)
+            var _close = this._tm['close'], _bg = this._tm['bg'], _mask = this._tm['mask'];
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']));
+            if (_bg)
+                this.a(new G.Image(this._rr[12].o(), _bg, true));
+            this.a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
             }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true)));
@@ -5052,7 +5060,7 @@ var Sprite;
          * 构造函数。
          */
         function SeriesSlots(theme, close, save, load) {
-            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _auto = theme['auto'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _auto = theme['auto'], _bg = theme['bg'], _1 = theme['1'], _2 = theme['2'], _3 = theme['3'], _4 = theme['4'];
             _super.call(this, theme);
             this._c = [_auto, _1, _2, _3, _4];
             this._x = {};
@@ -5070,6 +5078,8 @@ var Sprite;
                 rr.g(_4['i'], raw),
                 rr.g(_4['ih'], raw)
             ];
+            if (_bg)
+                this._rr.push(rr.g(_bg['i'], raw));
             this.addEventListener('slots.close', close)
                 .addEventListener('slots.save', save)
                 .addEventListener('slots.load', load);
@@ -5078,9 +5088,11 @@ var Sprite;
             var _this = this;
             if (this._pi)
                 return this;
-            var _desc = this._tm['text'], _close = this._tm['close'], _mask = this._tm['mask'];
-            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
-                .a(new G.Button(_close)
+            var _bg = this._tm['bg'], _desc = this._tm['text'], _close = this._tm['close'], _mask = this._tm['mask'];
+            this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']));
+            if (_bg)
+                this.a(new G.Image(this._rr[12].o(), _bg, true));
+            this.a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SlotsClose({ target: _this }));
             }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true)))
@@ -5374,15 +5386,15 @@ var Sprite;
          * 构造函数。
          */
         function Set(theme, close, volume) {
-            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _bgm = theme['bgm'];
+            var raw = Core.IResource.Type.Raw, rr = Resource.Resource, _close = theme['close'], _bg = theme['bg'], _bgm = theme['bgm'];
             _super.call(this, theme);
             this._vo = true;
             this._rr = [
+                rr.g(_bg['i'], raw),
                 rr.g(_close['i'], raw),
                 rr.g(_close['ih'], raw),
-                rr.g(_bgm['bar']['i'], raw),
-                rr.g(_bgm['bg']['i'], raw),
-                rr.g(_bgm['bar']['ih'], raw)
+                rr.g('_/menu/empty.png', raw),
+                rr.g(_bgm['bar']['i'], raw)
             ];
             this.addEventListener('set.close', close)
                 .addEventListener('set.volume', volume);
@@ -5391,26 +5403,19 @@ var Sprite;
             var _this = this;
             if (this._pi)
                 return this;
-            var _close = this._tm['close'], _mask = this._tm['mask'], _title = this._tm['title'], _bgm = this._tm['bgm'], _se = this._tm['se'];
+            var _close = this._tm['close'], _mask = this._tm['mask'], _bg = this._tm['bg'], _bgm = this._tm['bgm'], _se = this._tm['se'];
             this.a(new G.Color(0, 0, 1280, 720, _mask['cb']).o(_mask['o']))
+                .a(new G.Image(this._rr[0].o(), _bg, true))
                 .a(new G.Button(_close)
                 .b(function () {
                 _this.dispatchEvent(new Ev.SetClose({ target: _this }));
-            }, new G.Image(this._rr[1].o(), _close, true), new G.Image(this._rr[0].o(), _close, true))).a(new G.Text(_title, _title['ff'], _title['s'], _title['lh'], this.$a(_title['a']), true)
-                .tc(_title['c'])
-                .a(new G.TextPhrase('声音设定'))).a(new G.Text(_bgm['name'], _bgm['name']['ff'], _bgm['name']['s'], _bgm['name']['lh'], this.$a(_bgm['name']['a']), true)
-                .tc(_bgm['name']['c'])
-                .a(new G.TextPhrase('音乐'))).a(new G.Button(_bgm['bar'])
+            }, new G.Image(this._rr[2].o(), _close, true), new G.Image(this._rr[1].o(), _close, true))).a(new G.Button(_bgm['bar'])
                 .b(function (event) {
                 _this.sv(event['x'], 'bgm');
-            }, new G.Image(this._rr[2].o(), _bgm['bar'], true), new G.Image(this._rr[2].o(), _bgm['bar'], true))).a(new G.Image(this._rr[3].o(), _bgm['bg'], true))
-                .a(this._xb = new G.Text(_bgm['volume'], _bgm['volume']['ff'], _bgm['volume']['s'], _bgm['volume']['lh'], this.$a(_bgm['volume']['a']), true)).a(new G.Text(_se['name'], _se['name']['ff'], _se['name']['s'], _se['name']['lh'], this.$a(_se['name']['a']), true)
-                .tc(_se['name']['c'])
-                .a(new G.TextPhrase('音效'))).a(new G.Button(_se['bar'])
+            }, new G.Image(this._rr[3].o(), _bgm['bar'], true), new G.Image(this._rr[3].o(), _bgm['bar'], true))).a(this._xb = new G.Text(_bgm['volume'], _bgm['volume']['ff'], _bgm['volume']['s'], _bgm['volume']['lh'], this.$a(_bgm['volume']['a']), true)).a(new G.Button(_se['bar'])
                 .b(function (event) {
                 _this.sv(event['x'], 'se');
-            }, new G.Image(this._rr[2].o(), _se['bar'], true), new G.Image(this._rr[2].o(), _se['bar'], true))).a(new G.Image(this._rr[3].o(), _se['bg'], true))
-                .a(this._xe = new G.Text(_se['volume'], _se['volume']['ff'], _se['volume']['s'], _se['volume']['lh'], this.$a(_se['volume']['a']), true));
+            }, new G.Image(this._rr[3].o(), _se['bar'], true), new G.Image(this._rr[3].o(), _se['bar'], true))).a(this._xe = new G.Text(_se['volume'], _se['volume']['ff'], _se['volume']['s'], _se['volume']['lh'], this.$a(_se['volume']['a']), true));
             return _super.prototype.pI.call(this);
         };
         /**
@@ -5419,15 +5424,16 @@ var Sprite;
         Set.prototype.sv = function (x, voice) {
             if (!this._vo)
                 return;
-            var gBound = Util.clone(this._tm[voice]['bar']), width = Math.max(gBound['x'], Math.min(x, gBound['w'] + gBound['x'])) - gBound['x'], count = Math.round(width / this._tm[voice]['bar']['w'] * 100);
+            var gBound = Util.clone(this._tm[voice]['bar']), iBound = { x: 0, y: 0, w: 0, h: gBound.h }, width = Math.max(gBound['x'], Math.min(x, gBound['w'] + gBound['x'])) - gBound['x'], count = Math.round(width / this._tm[voice]['bar']['w'] * 100);
             if (count <= 2) {
-                count = gBound['w'] = 0;
+                count = gBound.w = 0;
             }
             else if (count >= 98) {
                 count = 100;
+                iBound.w = gBound.w;
             }
             else {
-                gBound['w'] = width;
+                gBound.w = iBound.w = width;
             }
             switch (voice) {
                 case 'bgm':
@@ -5438,7 +5444,7 @@ var Sprite;
                         this._ib = undefined;
                     }
                     if (count != 0)
-                        this.a(this._ib = new G.Image(this._rr[4].o(), gBound, true));
+                        this.a(this._ib = new G.Image(this._rr[4].o(), gBound, true, iBound));
                     break;
                 case 'se':
                     this._ve = count;
@@ -5448,7 +5454,7 @@ var Sprite;
                         this._ie = undefined;
                     }
                     if (count != 0)
-                        this.a(this._ie = new G.Image(this._rr[4].o(), gBound, true));
+                        this.a(this._ie = new G.Image(this._rr[4].o(), gBound, true, iBound));
                     break;
             }
             this.dispatchEvent(new Ev.SetVolume({ target: this, bVolume: this._vb, eVolume: this._ve }));
@@ -5465,9 +5471,9 @@ var Sprite;
             this._ve = Math.round(eVolume * 100);
             this._xb.c().a(new G.TextPhrase(this._vb.toString()));
             this._xe.c().a(new G.TextPhrase(this._ve.toString()));
-            var bBound = Util.clone(this._tm['bgm']['bar']), eBound = Util.clone(this._tm['se']['bar']);
-            bBound['w'] = Math.round(bVolume * bBound['w']);
-            eBound['w'] = Math.round(eVolume * eBound['w']);
+            var bBound = Util.clone(this._tm['bgm']['bar']), eBound = Util.clone(this._tm['se']['bar']), iBound = { x: 0, y: 0, w: 0, h: bBound.h }, jBound = { x: 0, y: 0, w: 0, h: eBound.h };
+            bBound['w'] = iBound['w'] = Math.round(bVolume * bBound['w']);
+            eBound['w'] = jBound['w'] = Math.round(eVolume * eBound['w']);
             if (this._ib) {
                 this.e(this._ib);
                 this._ib = undefined;
@@ -5477,9 +5483,9 @@ var Sprite;
                 this._ie = undefined;
             }
             if (this._vb != 0)
-                this.a(this._ib = new G.Image(this._rr[4].o(), bBound, true));
+                this.a(this._ib = new G.Image(this._rr[4].o(), bBound, true, iBound));
             if (this._ve != 0)
-                this.a(this._ie = new G.Image(this._rr[4].o(), eBound, true));
+                this.a(this._ie = new G.Image(this._rr[4].o(), eBound, true, jBound));
             return this.v(duration);
         };
         return Set;
@@ -7289,7 +7295,7 @@ var Runtime;
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
             // 设置菜单。
-            this._x['st'] = new Sprite.Set(theme['set'], function () {
+            this._x['st'] = new Sprite.Set(theme['setup'], function () {
                 _this._x['m'].v();
                 _this._x['st'].h();
             }, function (ev) {
@@ -10871,10 +10877,17 @@ var Core;
                     "ih": "menu/replay~hover.png"
                 }
             },
-            "set": {
+            "setup": {
                 "mask": {
                     "cb": "#000",
                     "o": 0.8
+                },
+                "bg": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 1280,
+                    "h": 720,
+                    "i": "menu/bg.png"
                 },
                 "close": {
                     "x": 1166,
@@ -10884,41 +10897,13 @@ var Core;
                     "i": "menu/back.png",
                     "ih": "menu/back~hover.png"
                 },
-                "title": {
-                    "x": 320,
-                    "y": 190,
-                    "w": 600,
-                    "h": 36,
-                    "s": 48,
-                    "lh": 42,
-                    "c": "#fff",
-                    "a": "left"
-                },
                 "bgm": {
-                    "name": {
-                        "x": 390,
-                        "y": 294,
-                        "w": 100,
-                        "h": 36,
-                        "s": 25,
-                        "lh": 42,
-                        "c": "#fff",
-                        "a": "left"
-                    },
                     "bar": {
                         "x": 530,
-                        "y": 297,
+                        "y": 299,
                         "w": 365,
                         "h": 23,
-                        "i": "menu/bar.png",
-                        "ih": "menu/bar.png"
-                    },
-                    "bg": {
-                        "x": 0,
-                        "y": 0,
-                        "w": 1280,
-                        "h": 720,
-                        "i": "menu/barbg02.png"
+                        "i": "menu/bar.png"
                     },
                     "volume": {
                         "x": 920,
@@ -10932,30 +10917,12 @@ var Core;
                     }
                 },
                 "se": {
-                    "name": {
-                        "x": 400,
-                        "y": 424,
-                        "w": 100,
-                        "h": 36,
-                        "s": 25,
-                        "lh": 42,
-                        "c": "#fff",
-                        "a": "left"
-                    },
                     "bar": {
                         "x": 530,
-                        "y": 427,
+                        "y": 429,
                         "w": 365,
                         "h": 23,
-                        "i": "menu/bar.png",
-                        "ih": "menu/bar.png"
-                    },
-                    "bg": {
-                        "x": 0,
-                        "y": 0,
-                        "w": 1280,
-                        "h": 720,
-                        "i": "menu/barbg02.png"
+                        "i": "menu/bar.png"
                     },
                     "volume": {
                         "x": 920,
@@ -17064,7 +17031,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.26.2';
+    Bigine.version = '0.26.4';
     Bigine.domain = '';
     Bigine.height = 720;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

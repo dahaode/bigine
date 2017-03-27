@@ -1305,7 +1305,7 @@ namespace Runtime {
             resources.push(this._x['ss'].l());
             this._c.a(this._x['ss'], gCurtain);
             // 设置菜单。
-            this._x['st'] = <Sprite.Set> new Sprite.Set(theme['set'], () => {
+            this._x['st'] = <Sprite.Set> new Sprite.Set(theme['setup'], () => {
                     this._x['m'].v();
                     this._x['st'].h();
                 }, (ev: Ev.SetVolume) => {

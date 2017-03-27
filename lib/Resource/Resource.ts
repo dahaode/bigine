@@ -84,7 +84,7 @@ namespace Resource {
                         filename += 'png';
                         break;
                     case types.Avatar:
-                        filename = Math.round(height / 4) + '.png';
+                        filename = '240.png';
                         break;
                     case types.BGM:
                     case types.SE:
