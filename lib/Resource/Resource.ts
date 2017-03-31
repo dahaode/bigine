@@ -17,6 +17,10 @@ namespace Resource {
      * 资源池。
      */
     let $r: Util.IHashTable<Resource<any>> = {};
+    /**
+     * 头像尺寸。
+     */
+    let $a: number = 240;
 
     export class Resource<T> implements Core.IResource<T> {
         /**
@@ -48,6 +52,10 @@ namespace Resource {
             if (!(key in $r))
                 $r[key] = new Resource<U>(uri, type, start);
             return $r[key];
+        }
+
+        public static a(height: number): void {
+            $a = height;
         }
 
         /**
@@ -84,7 +92,7 @@ namespace Resource {
                         filename += 'png';
                         break;
                     case types.Avatar:
-                        filename = '240.png';
+                        filename = $a + '.png';
                         break;
                     case types.BGM:
                     case types.SE:

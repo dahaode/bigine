@@ -642,6 +642,10 @@ var Resource;
      * 资源池。
      */
     var $r = {};
+    /**
+     * 头像尺寸。
+     */
+    var $a = 240;
     var Resource = (function () {
         /**
          * 构造函数。
@@ -675,7 +679,7 @@ var Resource;
                         filename += 'png';
                         break;
                     case types.Avatar:
-                        filename = '240.png';
+                        filename = $a + '.png';
                         break;
                     case types.BGM:
                     case types.SE:
@@ -704,6 +708,9 @@ var Resource;
             if (!(key in $r))
                 $r[key] = new Resource(uri, type, start);
             return $r[key];
+        };
+        Resource.a = function (height) {
+            $a = height;
         };
         /**
          * 获取真实 URL 。
@@ -810,6 +817,13 @@ var Runtime;
             ep.r(this);
             Promise.all([
                 new Promise(function (resolve) {
+                    ep.t(function (data) {
+                        Resource.Resource.a(data['spec'] ? data['spec']['avatar'] : 240);
+                        _this._c = data;
+                        resolve();
+                    });
+                }),
+                new Promise(function (resolve) {
                     var res = ep.l(function (entities) {
                         Util.each(entities, function (typed) {
                             Util.each(typed, function (entity) {
@@ -822,12 +836,6 @@ var Runtime;
                         resolve();
                 }).then(function () {
                     ep.b(_this);
-                }),
-                new Promise(function (resolve) {
-                    ep.t(function (data) {
-                        _this._c = data;
-                        resolve();
-                    });
                 }),
                 new Promise(function (resolve) {
                     setTimeout(function () {
@@ -17031,7 +17039,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.26.4';
+    Bigine.version = '0.26.5';
     Bigine.domain = '';
     Bigine.height = 720;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

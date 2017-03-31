@@ -64,6 +64,13 @@ namespace Runtime {
             ep.r(this);
             Promise.all([
                 new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
+                    ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
+                        Resource.Resource.a(data['spec'] ? data['spec']['avatar'] : 240);
+                        this._c = data;
+                        resolve();
+                    });
+                }),
+                new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
                     var res: boolean = ep.l((entities: Util.IHashTable<Util.IHashTable<Core.IEntityTag>>) => {
                         Util.each(entities, (typed: Util.IHashTable<Core.IEntityTag>) => {
                             Util.each(typed, (entity: Core.IEntityTag) => {
@@ -76,12 +83,6 @@ namespace Runtime {
                         resolve();
                 }).then(() => {
                     ep.b(this);
-                }),
-                new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
-                    ep.t((data: Util.IHashTable<Util.IHashTable<any>>) => {
-                        this._c = data;
-                        resolve();
-                    });
                 }),
                 new Promise<void>((resolve: (value?: void | Thenable<void>) => void) => {
                     setTimeout(() => {

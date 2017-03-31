@@ -314,6 +314,7 @@ declare namespace __Bigine {
             private _w;
             private _r;
             static g<U>(uri: string, type: Core.IResource.Type, start?: boolean): Resource<U>;
+            static a(height: number): void;
             constructor(uri: string, type: Core.IResource.Type, start?: boolean);
             l(): string;
             o(): Promise<T>;
