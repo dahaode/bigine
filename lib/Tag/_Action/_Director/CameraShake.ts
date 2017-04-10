@@ -22,7 +22,8 @@ namespace Tag {
          * 执行。
          */
         public p(runtime: Core.IRuntime): Core.IRuntime | Thenable<Core.IRuntime> {
-            return runtime.gD().cameraShake();
+            var offset: number = <any> (this._p[1] || 3) - 0;
+            return runtime.gD().cameraShake(this._ms, offset);
         }
     }
 }

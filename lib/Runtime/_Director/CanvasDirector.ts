@@ -510,7 +510,7 @@ namespace Runtime {
          * 创建立绘。
          */
         protected $c(resource: Resource.Resource<HTMLImageElement>, position: Core.IDirector.Position): G.Image {
-            return <G.Image> new G.Image(resource.o(), this.$x(position), 0, 1280, 720, true)
+            return <G.Image> new G.Image(resource.o(), this.$x(position), 0, 1280, 720)
                 .i(<any> position)
                 .o(0);
         }
@@ -1106,10 +1106,12 @@ namespace Runtime {
         /**
          * 抖动镜头。
          */
-        public cameraShake(): Promise<Core.IRuntime> {
-            var gRoom: G.Component = <G.Component> this._c.q('b')[0];
-            gRoom.p(new G.Shake(500));
-            return super.cameraShake();
+        public cameraShake(time: number, offset: number): Promise<Core.IRuntime> {
+            var gRoom: G.Component = <G.Component> this._c.q('b')[0],
+                gChar: G.Component = <G.Component> this._c.q('c')[0];
+            gRoom.p(new G.Shake(time, offset));
+            gChar.p(new G.Shake(time, offset));
+            return super.cameraShake(time, offset);
         }
 
         /**

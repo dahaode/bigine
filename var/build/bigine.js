@@ -1646,7 +1646,7 @@ var Runtime;
         /**
          * 抖动镜头。
          */
-        Director.prototype.cameraShake = function () {
+        Director.prototype.cameraShake = function (time, offset) {
             return this._p;
         };
         /**
@@ -4282,7 +4282,7 @@ var Tag;
         94: ['CameraZoom', [0, 1], 1],
         95: ['CameraMove', [0, 1], 1],
         96: ['Curtains', [0, 2], -1],
-        97: ['CameraShake', 0, -1],
+        97: ['CameraShake', [0, 2], -1],
         100: ['ShowStatus', 0, -1],
         101: ['HideStatus', 0, -1],
         102: ['Expression', [0, 1], -1],
@@ -6535,7 +6535,7 @@ var Runtime;
          * 创建立绘。
          */
         CanvasDirector.prototype.$c = function (resource, position) {
-            return new G.Image(resource.o(), this.$x(position), 0, 1280, 720, true)
+            return new G.Image(resource.o(), this.$x(position), 0, 1280, 720)
                 .i(position)
                 .o(0);
         };
@@ -7110,10 +7110,11 @@ var Runtime;
         /**
          * 抖动镜头。
          */
-        CanvasDirector.prototype.cameraShake = function () {
-            var gRoom = this._c.q('b')[0];
-            gRoom.p(new G.Shake(500));
-            return _super.prototype.cameraShake.call(this);
+        CanvasDirector.prototype.cameraShake = function (time, offset) {
+            var gRoom = this._c.q('b')[0], gChar = this._c.q('c')[0];
+            gRoom.p(new G.Shake(time, offset));
+            gChar.p(new G.Shake(time, offset));
+            return _super.prototype.cameraShake.call(this, time, offset);
         };
         /**
          * 状态栏开/关。
@@ -15264,7 +15265,8 @@ var Tag;
                     this._ms = 0;
                     break;
                 default:
-                    throw new E(E.TAG_PARAMS_NOT_TRUE, lineNo);
+                    this._ms = params[0] - 0;
+                    break;
             }
         }
         /**
@@ -15315,7 +15317,8 @@ var Tag;
                     this._ms = 20; // 虽说设置镜头不需要动画效果，为算法统一，将时间设为1帧，即20ms。
                     break;
                 default:
-                    throw new E(E.TAG_PARAMS_NOT_TRUE, lineNo);
+                    this._ms = params[0] - 0;
+                    break;
             }
             switch (content) {
                 case '左上':
@@ -15613,7 +15616,8 @@ var Tag;
          * 执行。
          */
         CameraShake.prototype.p = function (runtime) {
-            return runtime.gD().cameraShake();
+            var offset = (this._p[1] || 3) - 0;
+            return runtime.gD().cameraShake(this._ms, offset);
         };
         return CameraShake;
     }(Tag.Camera));
@@ -17039,7 +17043,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.26.5';
+    Bigine.version = '0.26.6';
     Bigine.domain = '';
     Bigine.height = 720;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

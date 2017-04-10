@@ -35,7 +35,8 @@ namespace Tag {
                     this._ms = 0;
                     break;
                 default:
-                    throw new E(E.TAG_PARAMS_NOT_TRUE, lineNo);
+                    this._ms = <any> params[0] - 0;
+                    break;
             }
         }
         /**

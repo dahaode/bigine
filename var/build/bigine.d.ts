@@ -160,7 +160,7 @@ declare namespace __Bigine {
             curtain(name: string, secend?: number): Promise<IRuntime>;
             cameraMove(mx: number, my: number, ms: number): Promise<IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<IRuntime>;
-            cameraShake(): Promise<IRuntime>;
+            cameraShake(time: number, offset: number): Promise<IRuntime>;
             status(onoff: boolean): Promise<IRuntime>;
             expression(name: string): Promise<IRuntime>;
             fullWords(onoff: boolean): Promise<IRuntime>;
@@ -473,7 +473,7 @@ declare namespace __Bigine {
             curtain(name: string, secend?: number): Promise<Core.IRuntime>;
             cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
-            cameraShake(): Promise<Core.IRuntime>;
+            cameraShake(time: number, offset: number): Promise<Core.IRuntime>;
             status(onoff: boolean): Promise<Core.IRuntime>;
             expression(name: string): Promise<Core.IRuntime>;
             fullWords(onoff: boolean): Promise<Core.IRuntime>;
@@ -1209,7 +1209,7 @@ declare namespace __Bigine {
             curtain(name: string, secend?: number): Promise<Core.IRuntime>;
             cameraMove(mx: number, my: number, ms: number): Promise<Core.IRuntime>;
             cameraZoom(mx: number, my: number, ms: number, scale: number): Promise<Core.IRuntime>;
-            cameraShake(): Promise<Core.IRuntime>;
+            cameraShake(time: number, offset: number): Promise<Core.IRuntime>;
             status(onoff: boolean): Promise<Core.IRuntime>;
             expression(name: string): Promise<Core.IRuntime>;
             weather(onoff: boolean, type: string): Promise<Core.IRuntime>;

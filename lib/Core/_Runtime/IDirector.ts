@@ -172,7 +172,7 @@ namespace Core {
         /**
          * 抖动镜头。
          */
-        cameraShake(): Promise<IRuntime>;
+        cameraShake(time: number, offset: number): Promise<IRuntime>;
 
         /**
          * 状态栏开/关。

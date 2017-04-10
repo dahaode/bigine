@@ -297,7 +297,7 @@ namespace Runtime {
         /**
          * 抖动镜头。
          */
-        public cameraShake(): Promise<Core.IRuntime> {
+        public cameraShake(time: number, offset: number): Promise<Core.IRuntime> {
             return this._p;
         }
 
