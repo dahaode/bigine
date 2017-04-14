@@ -258,7 +258,7 @@ namespace Sprite {
         private $c(): Full {
             this._tl = 0;
             this._cb = <G.IBounds> Util.clone(this._be);
-            (<G.Sprite> this._x['f']).c();
+            if (this._x['f']) (<G.Sprite> this._x['f']).c();
             return this;
         }
     }

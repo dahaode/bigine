@@ -5907,7 +5907,8 @@ var Sprite;
         Full.prototype.$c = function () {
             this._tl = 0;
             this._cb = Util.clone(this._be);
-            this._x['f'].c();
+            if (this._x['f'])
+                this._x['f'].c();
             return this;
         };
         return Full;
@@ -10142,7 +10143,7 @@ var Tag;
          */
         Content.prototype.p = function (runtime) {
             var _this = this;
-            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', kt = '_t', ks = '.j', id = states.g(kid), time = states.g(kt), actions = ['Monolog', 'Speak', 'VoiceOver', 'Tip', 'CameraSet', 'CameraZoom', 'CameraReset', 'CameraMove', 'CameraShake', 'Weather', 'Pause'], offline = Bigine.offline;
+            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', kt = '_t', ks = '.j', id = states.g(kid), time = states.g(kt), actions = ['Monolog', 'Speak', 'VoiceOver', 'Tip', 'CameraSet', 'CameraZoom', 'CameraReset', 'CameraMove', 'CameraShake', 'Weather', 'Pause', 'FullClean', 'ShowCG', 'HideCG'], offline = Bigine.offline;
             logger.o(title);
             states.s('$d', 1);
             return director.c(offline ? [[]] : Tag.Loop.prototype.c.call(this, time))
@@ -17043,7 +17044,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.26.7';
+    Bigine.version = '0.26.7-p1';
     Bigine.domain = '';
     Bigine.height = 720;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

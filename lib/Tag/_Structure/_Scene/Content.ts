@@ -33,7 +33,7 @@ namespace Tag {
                 ks: string = '.j',
                 id: string = states.g(kid),
                 time: string = states.g(kt),
-                actions: Array<string> = ['Monolog', 'Speak', 'VoiceOver', 'Tip', 'CameraSet', 'CameraZoom', 'CameraReset', 'CameraMove', 'CameraShake', 'Weather', 'Pause'],
+                actions: Array<string> = ['Monolog', 'Speak', 'VoiceOver', 'Tip', 'CameraSet', 'CameraZoom', 'CameraReset', 'CameraMove', 'CameraShake', 'Weather', 'Pause', 'FullClean', 'ShowCG', 'HideCG'],
                 offline: boolean = Bigine.offline;
             logger.o(title);
             states.s('$d', 1);
