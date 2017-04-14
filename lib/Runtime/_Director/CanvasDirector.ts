@@ -201,7 +201,7 @@ namespace Runtime {
             };
             this._l = {};
             this._l[0] = (event: KeyboardEvent) => {
-                if ((event.keyCode == 13 || event.keyCode == 88) && !this._a && this._t && !this._pc && !this._rv) {
+                if ([13, 88].indexOf(event.keyCode) > -1 && !this._a && this._t && !this._pc && !this._rv) {
                     if (this._ft) this._ft.h();
                     this._t.h();
                 }

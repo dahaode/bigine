@@ -6246,7 +6246,7 @@ var Runtime;
             };
             this._l = {};
             this._l[0] = function (event) {
-                if ((event.keyCode == 13 || event.keyCode == 88) && !_this._a && _this._t && !_this._pc && !_this._rv) {
+                if ([13, 88].indexOf(event.keyCode) > -1 && !_this._a && _this._t && !_this._pc && !_this._rv) {
                     if (_this._ft)
                         _this._ft.h();
                     _this._t.h();
@@ -10142,7 +10142,7 @@ var Tag;
          */
         Content.prototype.p = function (runtime) {
             var _this = this;
-            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', kt = '_t', ks = '.j', id = states.g(kid), time = states.g(kt), actions = { 'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1 }, offline = Bigine.offline;
+            var director = runtime.gD(), states = runtime.gS(), logger = runtime.gL(), title = 'CONTENT', kid = '.a', kt = '_t', ks = '.j', id = states.g(kid), time = states.g(kt), actions = ['Monolog', 'Speak', 'VoiceOver', 'Tip', 'CameraSet', 'CameraZoom', 'CameraReset', 'CameraMove', 'CameraShake', 'Weather', 'Pause'], offline = Bigine.offline;
             logger.o(title);
             states.s('$d', 1);
             return director.c(offline ? [[]] : Tag.Loop.prototype.c.call(this, time))
@@ -10164,7 +10164,7 @@ var Tag;
                     else
                         return runtime;
                 }
-                if (states.g(ks) && action.gN() in actions)
+                if (states.g(ks) && actions.indexOf(action.gN()) > -1)
                     return runtime;
                 return action.p(runtime);
             }); })['catch'](function (error) {
@@ -17043,7 +17043,7 @@ function Bigine(code) {
 }
 var Bigine;
 (function (Bigine) {
-    Bigine.version = '0.26.6';
+    Bigine.version = '0.26.7';
     Bigine.domain = '';
     Bigine.height = 720;
     Bigine.offline = typeof window != 'undefined' ? (window['bigine'] ? window['bigine']['mode'] == 'offline' : false) : false;

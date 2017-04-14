@@ -33,7 +33,7 @@ namespace Tag {
                 ks: string = '.j',
                 id: string = states.g(kid),
                 time: string = states.g(kt),
-                actions: Util.IHashTable<any> = {'Monolog': 1, 'Speak': 1, 'VoiceOver': 1, 'Tip': 1},
+                actions: Array<string> = ['Monolog', 'Speak', 'VoiceOver', 'Tip', 'CameraSet', 'CameraZoom', 'CameraReset', 'CameraMove', 'CameraShake', 'Weather', 'Pause'],
                 offline: boolean = Bigine.offline;
             logger.o(title);
             states.s('$d', 1);
@@ -54,7 +54,7 @@ namespace Tag {
                         } else
                             return runtime;
                     }
-                    if (states.g(ks) && action.gN() in actions) return runtime;
+                    if (states.g(ks) && actions.indexOf(action.gN()) > -1) return runtime;
                     return action.p(runtime);
                 }))['catch']((error?: E) => {
                     if (error && E.Signal.HALT == error.signal)
